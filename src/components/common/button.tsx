@@ -1,13 +1,15 @@
-import { cva } from "class-variance-authority";
+import { cn } from "@/lib/utils";
+import { cva, VariantProps } from "class-variance-authority";
 import React from "react";
 
-const buttonVariants = cva("", {
+const buttonVariants = cva("text-xs text-white rounded-[4px] hover:bg-blue-600 hover:cursor-pointer", {
   variants: {
+    /**색상변경 */
     variant: {
-      default: "",
+      default: "bg-blue-500",
     },
     size: {
-      default: "",
+      default: "w-full py-2",
     },
   },
   defaultVariants: {
@@ -16,8 +18,13 @@ const buttonVariants = cva("", {
   },
 });
 
-const Button = () => {
-  return <button />;
+interface ButtonProps extends React.ComponentProps<'button'>, VariantProps<typeof buttonVariants> {
+  label: string
+
+}
+
+const Button = ({ label, variant, size, ...props }: ButtonProps) => {
+  return <button className={cn(buttonVariants({ variant, size }))} {...props}>{label}</button>;
 };
 
 export default Button;

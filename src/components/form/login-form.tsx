@@ -8,6 +8,7 @@ import {
   PasswordTextFormItem,
   TextFormItem,
 } from "../common/form-input/text-field";
+import Button from "../common/button";
 
 const formSchema = z.object({
   loginId: z
@@ -55,6 +56,7 @@ const LoginForm = () => {
             />
           )}
         />
+        <Button label="로그인" />
       </form>
     </Form>
   );
