@@ -51,6 +51,8 @@ html {
 
 body {
   height: 100%;
+  font-family: var(--font-pretendard);
+  background: white;
 }
 
 /* a 링크 초기화 */

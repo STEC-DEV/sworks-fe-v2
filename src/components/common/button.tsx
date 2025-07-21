@@ -1,30 +1,57 @@
 import { cn } from "@/lib/utils";
 import { cva, VariantProps } from "class-variance-authority";
+import { icons } from "lucide-react";
 import React from "react";
 
-const buttonVariants = cva("text-xs text-white rounded-[4px] hover:bg-blue-600 hover:cursor-pointer", {
-  variants: {
-    /**색상변경 */
-    variant: {
-      default: "bg-blue-500",
+const buttonVariants = cva(
+  "flex items-center justify-center gap-4 text-xs text-white rounded-[4px] hover:bg-blue-600 hover:cursor-pointer",
+  {
+    variants: {
+      /**색상변경 */
+      variant: {
+        default: "bg-blue-500",
+        login: `border bg-white text-[var(--description-dark)] hover:border-red-500 hover:bg-white 
+          hover:ring-1 hover:ring-red-500 hover:ring-inset duration-300 group`,
+      },
+      size: {
+        default: "w-full py-2",
+      },
     },
-    size: {
-      default: "w-full py-2",
+    defaultVariants: {
+      variant: "default",
+      size: "default",
     },
-  },
-  defaultVariants: {
-    variant: "default",
-    size: "default",
-  },
-});
+  }
+);
 
-interface ButtonProps extends React.ComponentProps<'button'>, VariantProps<typeof buttonVariants> {
-  label: string
-
+interface ButtonProps
+  extends React.ComponentProps<"button">,
+    VariantProps<typeof buttonVariants> {
+  className?: string;
+  icon?: keyof typeof icons;
+  label: string;
 }
 
-const Button = ({ label, variant, size, ...props }: ButtonProps) => {
-  return <button className={cn(buttonVariants({ variant, size }))} {...props}>{label}</button>;
+const Button = ({
+  className,
+  icon,
+  label,
+  variant,
+  size,
+  ...props
+}: ButtonProps) => {
+  const SelectLucideIcon = icon ? icons[icon] : null;
+  return (
+    <button
+      className={cn(buttonVariants({ variant, size }), className)}
+      {...props}
+    >
+      {SelectLucideIcon && (
+        <SelectLucideIcon className="stroke-1 w-5 h-5 group-hover:stroke-2" />
+      )}
+      {label}
+    </button>
+  );
 };
 
 export default Button;
