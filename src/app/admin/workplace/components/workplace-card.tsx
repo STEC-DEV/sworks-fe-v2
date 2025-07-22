@@ -1,9 +1,11 @@
+import CustomCard from "@/components/common/card";
 import { WorkplaceListItem } from "@/types/admin/workplace/workplace-list";
 import React from "react";
 
 const WorkplaceCard = ({ item }: { item: WorkplaceListItem }) => {
   return (
-    <div className="flex flex-col gap-2 px-4 py-4 border border-[var(--border)] rounded-[4px]">
+    // <div className="flex flex-col gap-2 px-4 py-4 border border-[var(--border)] rounded-[4px] hover:cursor-pointer"></div>
+    <CustomCard className="hover:bg-blue-50" variant={"list"}>
       <div className="flex justify-between items-center">
         <div className="flex gap-4 items-end">
           <span className="text-sm font-bold">{item.name}</span>
@@ -27,7 +29,7 @@ const WorkplaceCard = ({ item }: { item: WorkplaceListItem }) => {
           })}
         </div>
       ) : null}
-    </div>
+    </CustomCard>
   );
 };
 

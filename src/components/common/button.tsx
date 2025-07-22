@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 import { cva, VariantProps } from "class-variance-authority";
-import { icons } from "lucide-react";
+import { icons, LucideIcon } from "lucide-react";
 import React from "react";
 
 const buttonVariants = cva(
@@ -10,6 +10,7 @@ const buttonVariants = cva(
       /**색상변경 */
       variant: {
         default: "bg-blue-500",
+        filter: "px-2 py-2",
         login: `border bg-white text-[var(--description-dark)] hover:border-red-500 hover:bg-white 
           hover:ring-1 hover:ring-red-500 hover:ring-inset duration-300 group`,
       },
@@ -28,7 +29,8 @@ interface ButtonProps
   extends React.ComponentProps<"button">,
     VariantProps<typeof buttonVariants> {
   className?: string;
-  icon?: keyof typeof icons;
+  // icon?: keyof typeof icons;
+  icon?: LucideIcon;
   label: string;
 }
 
@@ -40,14 +42,14 @@ const Button = ({
   size,
   ...props
 }: ButtonProps) => {
-  const SelectLucideIcon = icon ? icons[icon] : null;
+  const SelectLucideIcon = icon ? icon : null;
   return (
     <button
       className={cn(buttonVariants({ variant, size }), className)}
       {...props}
     >
       {SelectLucideIcon && (
-        <SelectLucideIcon className="stroke-1 w-5 h-5 group-hover:stroke-2" />
+        <SelectLucideIcon className="text-[var(--icon)] stroke-1 w-5 h-5 group-hover:stroke-2" />
       )}
       {label}
     </button>

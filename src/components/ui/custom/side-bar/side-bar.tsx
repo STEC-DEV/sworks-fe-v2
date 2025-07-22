@@ -1,7 +1,7 @@
 "use client";
 import Button from "@/components/common/button";
 import IconButton from "@/components/common/icon-button";
-import { icons } from "lucide-react";
+import { icons, LogOut } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import React, { useEffect } from "react";
 interface MenuItem {
@@ -134,7 +134,7 @@ const SideBar = ({ loginMode }: SideBarProps) => {
         <Button
           className="hover:text-red-500 hover:font-bold "
           variant={"login"}
-          icon="LogOut"
+          icon={LogOut}
           label={"로그아웃"}
         />
       </div>

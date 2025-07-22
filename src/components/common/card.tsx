@@ -10,7 +10,7 @@ const appCardVariants = cva(
     variants: {
       variant: {
         default: "",
-        small: "",
+        list: "px-4 py-4 gap-2 hover:cursor-pointer",
         large: "",
       },
       size: {
