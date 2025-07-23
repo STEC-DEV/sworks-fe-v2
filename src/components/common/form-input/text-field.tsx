@@ -24,6 +24,7 @@ export const TextFormItem = <T extends FieldValues>({
       <FormControl>
         <Input {...props} />
       </FormControl>
+      <FormMessage className="text-xs text-red-500" />
     </FormItem>
   );
 };
@@ -45,6 +46,7 @@ export const PasswordTextFormItem = <T extends FieldValues>({
       <FormControl>
         <PasswordInput {...props} />
       </FormControl>
+      <FormMessage className="text-xs text-red-500" />
     </FormItem>
   );
 };

@@ -6,25 +6,25 @@ import {
   ContractServiceType,
   SiteServiceType,
 } from "@/types/admin/workplace/workplace-filter";
-import { Building2, ReceiptText } from "lucide-react";
+import { BriefcaseBusiness, KeyRound, ReceiptText } from "lucide-react";
 import React from "react";
 const filterConfig: FilterConfig[] = [
   {
-    key: "contractServiceType",
-    placeholder: "계약유형",
+    key: "department",
+    placeholder: "부서",
     data: ContractServiceType,
-    icon: ReceiptText,
+    icon: BriefcaseBusiness,
   },
   {
-    key: "siteServiceType",
-    placeholder: "관리유형",
+    key: "permission",
+    placeholder: "권한",
     data: SiteServiceType,
-    icon: Building2,
+    icon: KeyRound,
   },
 ];
 
-const WorkplaceFilter = () => {
+const AdminFilter = () => {
   return <CommonFilter filters={filterConfig} />;
 };
 
-export default WorkplaceFilter;
+export default AdminFilter;

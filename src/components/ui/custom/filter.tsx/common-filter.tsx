@@ -42,7 +42,7 @@ const CommonFilter = ({ filters }: CommonFilterProps) => {
         onKeyDown={(e) => handleKeyDown(e, handleSearchEnter)}
         value={searchValue}
       />
-      <div>
+      <div className="flex gap-4">
         {filters.map((f, i) => (
           <MultiSelect
             key={i}

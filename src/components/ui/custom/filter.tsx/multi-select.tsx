@@ -52,7 +52,7 @@ const MultiSelect = <T extends Record<string, string>>({
           icon={Icon ?? Filter}
           variant={"filter"}
           className={`
-            text-xs bg-white border  hover:bg-gray-50 ${
+            text-nowrap text-xs bg-white border  hover:bg-gray-50 ${
               selected.length > 0
                 ? "text-black border-blue-500"
                 : "text-[var(--description-title-color)] "
@@ -68,7 +68,7 @@ const MultiSelect = <T extends Record<string, string>>({
         >
           <span className="text-xs">전체</span>
           {selected.length === Object.keys(data).length ? (
-            <Check className="w-4 h-4" />
+            <Check className="w-4 h-4 text-blue-500" />
           ) : null}
         </div>
         {Object.entries(data).map(([key, value], i) => {
@@ -80,7 +80,7 @@ const MultiSelect = <T extends Record<string, string>>({
             >
               <span className="text-xs">{key}</span>
               {selected.some((i) => i === value) ? (
-                <Check className="w-4 h-4" />
+                <Check className="w-4 h-4 text-blue-500" />
               ) : null}
             </div>
           );

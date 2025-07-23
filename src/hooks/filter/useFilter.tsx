@@ -69,6 +69,7 @@ export const useFilter = ({ filters }: UseFilterProps) => {
  *
  */
 export const useSearch = () => {
+  const router = useRouter();
   const [searchValue, setSearchValue] = useState<string>("");
 
   /**
@@ -77,10 +78,10 @@ export const useSearch = () => {
   useEffect(() => {
     if (typeof window === "undefined") return;
     const params = new URLSearchParams(window.location.search);
-    const search = params.get("search");
+    const search = params.get("searchKey");
     if (!search) return;
     setSearchValue(search);
-  }, [searchValue]);
+  }, [router]);
 
   //검색어 초기화
   const clearSearch = useCallback(() => {
@@ -123,7 +124,7 @@ export const useSearchExecution = () => {
       if (typeof window === "undefined") return;
       const params = new URLSearchParams(window.location.search);
 
-      params.set("search", searchValue.trim());
+      params.set("searchKey", searchValue.trim());
       router.push(`?${params.toString()}`);
     },
     [router]
