@@ -25,6 +25,7 @@ export const useFilter = ({ filters }: UseFilterProps) => {
    * url값 받아와서 할당
    */
   useEffect(() => {
+    if (typeof window === "undefined") return;
     const params = new URLSearchParams(window.location.search);
     const restored: Record<string, string[]> = {};
 

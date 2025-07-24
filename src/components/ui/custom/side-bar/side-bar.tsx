@@ -1,4 +1,5 @@
 "use client";
+import { logout } from "@/app/server-action/auth/auth-action";
 import Button from "@/components/common/button";
 import IconButton from "@/components/common/icon-button";
 import { icons, LogOut } from "lucide-react";
@@ -134,6 +135,7 @@ const SideBar = ({ loginMode }: SideBarProps) => {
         <Button
           className="hover:text-red-500 hover:font-bold "
           variant={"login"}
+          onClick={() => logout()}
           icon={LogOut}
           label={"로그아웃"}
         />

@@ -8,7 +8,7 @@ import React from "react";
 const CommonPagination = () => {
   const { pageFilter, handlePage, handleView } = usePagination();
   return (
-    <div className="flex justify-between">
+    <div className="flex-1 flex justify-between">
       <Pagination
         activePage={parseInt(pageFilter.pageNumber)}
         totalItemCount={50}

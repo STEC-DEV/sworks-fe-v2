@@ -22,7 +22,6 @@ interface CommonFilterProps {
 }
 
 const CommonFilter = ({ filters }: CommonFilterProps) => {
-  const searchParams = useSearchParams();
   const { filterState, updateFilter } = useFilter({ filters });
   const { searchValue, setSearchValue, clearSearch, handleKeyDown } =
     useSearch();

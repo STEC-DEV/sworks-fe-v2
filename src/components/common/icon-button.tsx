@@ -7,10 +7,18 @@ interface IconButtonProps extends HTMLAttributes<HTMLOrSVGElement> {
   size?: number;
 }
 
-const IconButton = ({ className, icon, size = 20 }: IconButtonProps) => {
+const IconButton = ({
+  className,
+  icon,
+  size = 20,
+  ...props
+}: IconButtonProps) => {
   const SelectLucideIcon = icons[icon];
   return (
-    <div className="p-2 rounded-[50px] hover:bg-[var(--background)] hover:cursor-pointer">
+    <div
+      className="p-2 rounded-[50px] hover:bg-[var(--background)] hover:cursor-pointer"
+      {...props}
+    >
       <SelectLucideIcon className="text-[var(--icon)]" size={size} />
     </div>
   );

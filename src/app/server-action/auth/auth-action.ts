@@ -54,3 +54,15 @@ export async function normalModeLoginAction(data: Record<string, string>) {
   console.log(data);
   console.log("======================");
 }
+
+/**
+ * 로그아웃
+ */
+export async function logout() {
+  const cookie = await cookies();
+
+  cookie.delete("accessToken");
+  cookie.delete("refreshToken");
+
+  redirect("/login", RedirectType.replace);
+}
