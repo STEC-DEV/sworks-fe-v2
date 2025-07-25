@@ -13,14 +13,20 @@ interface TextFormItemProps<T extends FieldValues>
  * */
 export const TextFormItem = <T extends FieldValues>({
   label,
-  required = true,
+  required = false,
   ...props
 }: TextFormItemProps<T>) => {
   return (
     <FormItem className="flex flex-col gap-2">
-      {label ? (
-        <span className="text-xs text-[var(--description-light)]">{label}</span>
-      ) : null}
+      <div className="flex">
+        {label ? (
+          <span className="text-xs text-[var(--description-light)]">
+            {label}
+          </span>
+        ) : null}
+        {required ? <span className="text-xs text-red-500">*</span> : null}
+      </div>
+
       <FormControl>
         <Input {...props} />
       </FormControl>
@@ -30,7 +36,7 @@ export const TextFormItem = <T extends FieldValues>({
 };
 
 /**
- * 텍스트 입력 받는 폼 컴포넌트
+ * 비밀번호 입력 받는 폼 컴포넌트
  * --
  * */
 export const PasswordTextFormItem = <T extends FieldValues>({
@@ -40,9 +46,15 @@ export const PasswordTextFormItem = <T extends FieldValues>({
 }: TextFormItemProps<T>) => {
   return (
     <FormItem className="flex flex-col gap-2">
-      {label ? (
-        <span className="text-xs text-[var(--description-light)]">{label}</span>
-      ) : null}
+      <div className="flex">
+        {label ? (
+          <span className="text-xs text-[var(--description-light)]">
+            {label}
+          </span>
+        ) : null}
+        {required ? <span className="text-xs text-red-500">*</span> : null}
+      </div>
+
       <FormControl>
         <PasswordInput {...props} />
       </FormControl>

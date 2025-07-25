@@ -57,8 +57,8 @@ body {
 
 /* a 링크 초기화 */
 a {
-  color: inherit;
-  text-decoration: inherit;
+  /* color: inherit; */
+  /* text-decoration: inherit; */
 }
 
 a:hover {

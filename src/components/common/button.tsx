@@ -11,11 +11,13 @@ const buttonVariants = cva(
       variant: {
         default: "bg-blue-500",
         filter: "px-2 py-2",
+        prev: "border border-[var(--border)] bg-[var(--background)] text-[var(--description-light)] hover:bg-[var(--border)]",
         login: `border bg-white text-[var(--description-dark)] hover:border-red-500 hover:bg-white 
           hover:ring-1 hover:ring-red-500 hover:ring-inset duration-300 group`,
       },
       size: {
         default: "w-full py-2",
+        sm: "w-fit px-4 py-2",
       },
     },
     defaultVariants: {
