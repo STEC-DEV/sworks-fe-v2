@@ -1,9 +1,12 @@
 "use client";
+import SelectFormItem from "@/components/common/form-input/select-field";
 import { TextFormItem } from "@/components/common/form-input/text-field";
 import CommonFormContainer from "@/components/ui/custom/form/form-container";
 import { FormField } from "@/components/ui/form";
+import { useBasicStore } from "@/store/basic-store";
+import { convertSelectOptionType } from "@/types/common/select-item";
 import { zodResolver } from "@hookform/resolvers/zod";
-import React from "react";
+import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import z from "zod";
 
@@ -16,21 +19,22 @@ const formSchema = z.object({
   siteTypeSeq: z.number("관리 유형을 선택해주세요.").min(1),
 });
 
-export type formType = z.infer<typeof formSchema>;
+export type basicFormType = z.infer<typeof formSchema>;
 
 interface WorkplaceAddFormProps {
   onPrev?: () => void;
-  onNext: () => void;
+  onNext: (values: basicFormType) => void;
 }
 
 const WorkplaceAddForm = ({ onNext, onPrev }: WorkplaceAddFormProps) => {
-  const form = useForm<formType>({
+  const { basicCode } = useBasicStore();
+  const form = useForm<basicFormType>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       siteName: "",
       siteTel: "",
       siteAddress: "",
-      siteTypeSeq: 0,
+      siteTypeSeq: undefined,
     },
   });
 
@@ -69,6 +73,27 @@ const WorkplaceAddForm = ({ onNext, onPrev }: WorkplaceAddFormProps) => {
             <TextFormItem label="주소" placeholder="주소" {...field} />
           )}
         />
+        {basicCode.typeCodes ? (
+          <FormField
+            control={form.control}
+            name="siteTypeSeq"
+            render={({ field }) => {
+              const handleValue = (value: string) => {
+                console.log("선택값 : ", value);
+                field.onChange(Number(value));
+              };
+              return (
+                <SelectFormItem
+                  label="사업장 유형"
+                  selectItem={convertSelectOptionType(basicCode.typeCodes!)}
+                  onValueChange={handleValue}
+                  defaultValue={field.value?.toString()}
+                  required
+                />
+              );
+            }}
+          />
+        ) : null}
       </div>
     </CommonFormContainer>
   );

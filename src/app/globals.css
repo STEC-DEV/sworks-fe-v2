@@ -93,6 +93,7 @@ img {
   --success-hover: #3182ce;
   --failed: #ef4444;
   --background: #f5f5f4;
+  --placeholder: oklch(0.552 0.016 285.938);
   --border: #e7e5e4;
   --icon: #8c978d;
   --default-font: #000000;

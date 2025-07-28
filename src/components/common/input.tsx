@@ -7,11 +7,13 @@ const Input = ({
   ...props
 }: React.ComponentProps<"input">) => {
   return (
+    //  focus:shadow-[inset_0_0_0_1px_var(--primary)]
     <input
       className={cn(
-        `text-xs px-3 py-1 h-9 rounded-[4px] border border-[var(--border)]
+        `text-sm px-3 py-1 h-9 rounded-[4px] border border-[var(--border)] transition-[border,box-shadow] duration-300
         hover:border-[var(--primary)]
-        focus:outline-none focus:ring-0 focus:border-[var(--primary)] focus:shadow-[inset_0_0_0_1px_var(--primary)] transition-[border,box-shadow] duration-300`,
+        focus:outline-none focus:ring-1 focus:ring-[var(--primary)] focus:border-[var(--primary)] focus:ring-inset 
+        `,
         className
       )}
       type={type}
@@ -24,7 +26,7 @@ import { EyeIcon, EyeOffIcon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
-interface PasswordInputProps extends React.ComponentProps<"input"> { }
+interface PasswordInputProps extends React.ComponentProps<"input"> {}
 
 const PasswordInput = React.forwardRef<HTMLInputElement>(
   ({ className, ...props }: PasswordInputProps, ref) => {

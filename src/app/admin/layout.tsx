@@ -1,10 +1,15 @@
 import AdminLayout from "@/components/layout/admin-layout";
-
+import BasicInitial from "./basic-initial";
 
 export default function Layout({
-    children
+  children,
 }: Readonly<{
-    children: React.ReactNode;
+  children: React.ReactNode;
 }>) {
-    return <AdminLayout children={children} />
+  return (
+    <>
+      <BasicInitial />
+      <AdminLayout children={children} />
+    </>
+  );
 }
