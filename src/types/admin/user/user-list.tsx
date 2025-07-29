@@ -7,6 +7,16 @@ export interface AdminListItem {
   department: Department;
 }
 
+export interface AdminList {
+  userSeq: number;
+  userTypeSeq: number;
+  userTypeName: string;
+  userName: string;
+  phone: string;
+  deptSeq: number;
+  deptName: string;
+}
+
 export interface Department {
   id: number;
   name: string;

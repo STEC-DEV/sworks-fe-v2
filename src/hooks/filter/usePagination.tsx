@@ -35,6 +35,7 @@ export const usePagination = () => {
       pageNumber: "1",
     }));
     params.set("pageSize", pageFilter.pageSize);
+
     router.push(`?${params.toString()}`);
   }, [pageFilter.pageSize]);
 

@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 
 interface UseFilterProps {
-  filters: FilterConfig[];
+  filters?: FilterConfig[];
 }
 
 /**
@@ -14,6 +14,7 @@ export const useFilter = ({ filters }: UseFilterProps) => {
   const router = useRouter();
   const [filterState, setFilterState] = useState<Record<string, string[]>>(
     () => {
+      if (!filters) return {};
       return filters.reduce((acc, filter) => {
         acc[filter.key] = [];
         return acc;
@@ -26,6 +27,9 @@ export const useFilter = ({ filters }: UseFilterProps) => {
    */
   useEffect(() => {
     if (typeof window === "undefined") return;
+
+    if (!filters) return;
+
     const params = new URLSearchParams(window.location.search);
     const restored: Record<string, string[]> = {};
 

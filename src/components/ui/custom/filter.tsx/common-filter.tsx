@@ -18,7 +18,7 @@ export interface FilterConfig {
 }
 
 interface CommonFilterProps {
-  filters: FilterConfig[];
+  filters?: FilterConfig[];
 }
 
 const CommonFilter = ({ filters }: CommonFilterProps) => {
@@ -41,20 +41,22 @@ const CommonFilter = ({ filters }: CommonFilterProps) => {
         onKeyDown={(e) => handleKeyDown(e, handleSearchEnter)}
         value={searchValue}
       />
-      <div className="flex gap-4">
-        {filters.map((f, i) => (
-          <MultiSelect
-            key={i}
-            placeholder={f.placeholder}
-            icon={f.icon}
-            data={f.data}
-            selected={filterState[f.key]}
-            onClick={(data) => {
-              updateFilter(f.key, data);
-            }}
-          />
-        ))}
-      </div>
+      {filters ? (
+        <div className="flex gap-4">
+          {filters.map((f, i) => (
+            <MultiSelect
+              key={i}
+              placeholder={f.placeholder}
+              icon={f.icon}
+              data={f.data}
+              selected={filterState[f.key]}
+              onClick={(data) => {
+                updateFilter(f.key, data);
+              }}
+            />
+          ))}
+        </div>
+      ) : null}
     </div>
   );
 };

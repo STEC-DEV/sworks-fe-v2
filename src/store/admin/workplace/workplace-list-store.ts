@@ -21,8 +21,8 @@ export const useWorkplaceListStore = create<WorkplaceListState>()(
           const params = new URLSearchParams(window.location.search);
 
           if (
-            params.size === 0 &&
-            !params.get("pageNumber") &&
+            params.size === 0 ||
+            !params.get("pageNumber") ||
             !params.get("pageSize")
           ) {
             params.set("pageNumber", "1");

@@ -16,7 +16,6 @@ const Page = () => {
 
   const handleNext = async (values: basicFormType) => {
     const result = await postAddWorkplace(values);
-    console.log(result);
     result.code !== 200 ? setFormResult(false) : setFormResult(true);
     setNewSeq(result.data);
     setCurStep((prev) => prev + 1);

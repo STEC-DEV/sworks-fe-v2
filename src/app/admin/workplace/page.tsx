@@ -7,7 +7,6 @@ const Page = () => {
   return (
     <>
       <AppTitle title="사업장" />
-
       <ClientPage />
     </>
   );
