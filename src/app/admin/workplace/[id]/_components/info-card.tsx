@@ -22,8 +22,8 @@ const InfoCard = ({ data }: { data: WorkplaceDetail }) => {
   return (
     <>
       {workplace ? (
-        <CustomCard className="border flex-row p-0 gap-0 overflow-hidden">
-          <div className="flex items-center justify-center w-100  bg-[var(--background)]">
+        <CustomCard className="flex-row p-0 gap-0 ">
+          <div className="flex items-center justify-center w-100  bg-[var(--background)] rounded-[4px]">
             <ImageIcon className="text-[var(--icon)]" />
           </div>
           <div className="flex flex-col flex-1">

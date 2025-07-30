@@ -1,5 +1,5 @@
 import api from "@/lib/api/api-manager";
-import { AdminList, AdminListItem } from "@/types/admin/user/user-list";
+import { AdminList, AdminListItem } from "@/types/admin/admin/user-list";
 import { WorkplaceDetail } from "@/types/admin/workplace/workplace-detail";
 import { Response } from "@/types/common/response";
 import { ListMeta, ListState } from "@/types/list-type";

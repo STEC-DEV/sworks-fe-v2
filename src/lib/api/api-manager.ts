@@ -4,9 +4,9 @@ import beforeRetry from "./hooks/beforeRetry";
 
 const instance = ky.create({
   prefixUrl: process.env.NEXT_PUBLIC_BASE_URL,
-  headers: {
-    "Content-Type": "application/json",
-  },
+  // headers: {
+  //   "Content-Type": "application/json",
+  // },
   credentials: "include",
 });
 

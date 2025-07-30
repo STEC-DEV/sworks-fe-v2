@@ -12,7 +12,7 @@ interface CommonPaginationProps {
 const CommonPagination = ({ totalCount }: CommonPaginationProps) => {
   const { pageFilter, handlePage, handleView } = usePagination();
   return (
-    <div className="flex-1 flex justify-between">
+    <div className="w-full flex justify-between">
       <Pagination
         activePage={parseInt(pageFilter.pageNumber)}
         totalItemCount={totalCount}
