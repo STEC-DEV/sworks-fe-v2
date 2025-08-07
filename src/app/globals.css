@@ -146,6 +146,13 @@ img {
   }
 }
 
+@layer utilities {
+  .side-bar-shadow {
+    box-shadow: 10px 0 12px 0px rgb(156, 156, 156),
+      10px 0 15px 0px rgba(156, 156, 156, 0.3);
+  }
+}
+
 /* --background: oklch(1 0 0);
   --foreground: oklch(0.141 0.005 285.823);
   --card: oklch(1 0 0);

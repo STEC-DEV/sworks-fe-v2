@@ -2,7 +2,7 @@
 
 import React, { useEffect } from "react";
 import WorkplacePagination from "./components/workplace-pagination";
-import WorkplaceCard from "./components/workplace-card";
+import WorkplaceCardWrapper from "./components/workplace-card";
 import { useWorkplaceListStore } from "@/store/admin/workplace/workplace-list-store";
 import WorkplaceFilter from "./components/workplace-filter";
 import { useSearchParams } from "next/navigation";
@@ -23,7 +23,9 @@ const ClientPage = () => {
       <WorkplacePagination />
       <div className="flex flex-col gap-2">
         {workplaceList.type === "data"
-          ? workplaceList.data.map((w, i) => <WorkplaceCard key={i} item={w} />)
+          ? workplaceList.data.map((w, i) => (
+              <WorkplaceCardWrapper key={i} item={w} />
+            ))
           : null}
       </div>
     </>

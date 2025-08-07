@@ -8,6 +8,17 @@ export interface AdminListItem {
   deptName: string;
 }
 
+export interface SelectAdminList {
+  userSeq: number;
+  userName: string;
+  phone: string;
+  job: string;
+  role: string;
+  deptSeq: number;
+  deptName: string;
+  isAdminSite: boolean;
+}
+
 export const mockAdminList: AdminListItem[] = [
   {
     userSeq: 1,

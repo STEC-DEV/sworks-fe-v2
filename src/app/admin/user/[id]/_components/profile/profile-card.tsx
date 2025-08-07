@@ -1,22 +1,19 @@
 "use client";
 import Button from "@/components/common/button";
 import CustomCard from "@/components/common/card";
+import InfoEditForm from "@/components/form/admin/user/info-edit";
+import BaseDialog from "@/components/ui/custom/base-dialog";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAdminDetailStore } from "@/store/admin/admin/admin-detail";
-import {
-  BriefcaseBusiness,
-  Building2,
-  LucideIcon,
-  Mail,
-  Phone,
-  User,
-} from "lucide-react";
+import { Building2, LucideIcon, Mail, Phone, User } from "lucide-react";
 import { useParams } from "next/navigation";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 const ProfileCard = () => {
   const { admin, getAdminDetail } = useAdminDetailStore();
   const { id } = useParams<{ id: string }>();
+  const [editInfoOpen, setEditInfoOpen] = useState<boolean>(false);
+  const [editPwOpen, setEditPwOpen] = useState<boolean>(false);
 
   useEffect(() => {
     if (!id) return;
@@ -60,8 +57,25 @@ const ProfileCard = () => {
         </div>
       </CustomCard>
       <div className="flex gap-4">
-        <Button size={"sm"} label="정보수정" />
-        <Button variant={"prev"} size={"sm"} label="패스워드 변경" />
+        <BaseDialog
+          title="정보수정"
+          triggerChildren={<Button size={"sm"} label="정보수정" />}
+          open={editInfoOpen}
+          setOpen={setEditInfoOpen}
+        >
+          <InfoEditForm setOpen={setEditInfoOpen} />
+        </BaseDialog>
+        {/*  */}
+        <BaseDialog
+          title="비밀번호 변경"
+          triggerChildren={
+            <Button variant={"prev"} size={"sm"} label="비밀번호 변경" />
+          }
+          open={editPwOpen}
+          setOpen={setEditPwOpen}
+        >
+          <div></div>
+        </BaseDialog>
       </div>
     </div>
   ) : (

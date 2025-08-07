@@ -1,28 +1,59 @@
 "use client";
 import CustomCard from "@/components/common/card";
 import { AdminListItem } from "@/types/admin/admin/user-list";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 import React from "react";
 
-const AdminCard = ({
-  item,
-  link = false,
-}: {
+interface AdminCardWrapperProps {
   item: AdminListItem;
   link?: boolean;
-}) => {
-  const router = useRouter();
+  checkOption?: boolean;
+  isCheck?: boolean;
+  onClick?: (item: AdminListItem) => void;
+}
 
-  const handleClick = () => {
-    router.push(`user/${item.userSeq}`);
-  };
+const AdminCardWrapper = ({
+  item,
+  link,
+  checkOption,
+  isCheck,
+  onClick,
+}: AdminCardWrapperProps) => {
+  return (
+    <>
+      {checkOption ? (
+        <AdminCard item={item} isCheck={isCheck} onClick={onClick} />
+      ) : (
+        <>
+          {link === true ? (
+            <Link href={`/admin/user/${item.userSeq}`}>
+              <AdminCard item={item} />
+            </Link>
+          ) : (
+            <AdminCard item={item} />
+          )}
+        </>
+      )}
+    </>
+  );
+};
 
+interface AdminCardProps {
+  item: AdminListItem;
+  isCheck?: boolean;
+  onClick?: (item: AdminListItem) => void;
+}
+
+const AdminCard = ({ item, isCheck, onClick }: AdminCardProps) => {
   return (
     <CustomCard
-      className="flex-row items-center justify-between hover:bg-blue-50 py-2"
+      className={`flex-row items-center justify-between hover:bg-blue-50 py-2 ${
+        isCheck ? "bg-blue-50 border-blue-500" : null
+      }`}
       variant={"list"}
-      onClick={link ? () => handleClick() : undefined}
+      onClick={() => onClick?.(item)}
     >
       <div className="flex gap-4 items-center">
         <div className="flex flex-col gap-1 min-w-20">
@@ -49,4 +80,4 @@ const AdminCard = ({
   );
 };
 
-export default AdminCard;
+export default AdminCardWrapper;

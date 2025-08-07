@@ -70,6 +70,7 @@ const LoginForm = () => {
             <PasswordTextFormItem
               label="비밀번호"
               placeholder="비밀번호"
+              required={false}
               {...field}
             />
           )}

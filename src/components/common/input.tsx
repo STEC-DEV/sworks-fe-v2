@@ -7,7 +7,6 @@ const Input = ({
   ...props
 }: React.ComponentProps<"input">) => {
   return (
-    //  focus:shadow-[inset_0_0_0_1px_var(--primary)]
     <input
       className={cn(
         `text-sm px-3 py-1 h-9 rounded-[4px] border border-[var(--border)] transition-[border,box-shadow] duration-300

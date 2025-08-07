@@ -5,7 +5,7 @@ import WorkplaceAddForm, {
 import FormLayout from "@/components/layout/form-layout";
 import ResultDialog from "@/components/ui/custom/form/result-dialog";
 import { useWorkplaceListStore } from "@/store/admin/workplace/workplace-list-store";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
 const Page = () => {
   const [formResult, setFormResult] = useState<boolean>(false);

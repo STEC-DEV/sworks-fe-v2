@@ -102,7 +102,7 @@ interface SideBarProps {
 
 const SideBar = ({ loginMode }: SideBarProps) => {
   return (
-    <div className="flex flex-col w-70 h-full bg-[var(--primary)] ">
+    <div className="flex flex-col w-70 h-full bg-[var(--primary)] side-bar-shadow">
       {/**
        * 헤더
        * 로고, 프로필

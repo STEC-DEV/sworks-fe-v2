@@ -17,8 +17,6 @@ export const useAdminListStore = create<AdminListState>()(
       (set, get) => ({
         adminList: { type: "loading" },
         getAdminList: async (params) => {
-          //     if (typeof window === "undefined") return;
-          //   const params = new URLSearchParams(window.location.search);
 
           if (
             params.size === 0 ||

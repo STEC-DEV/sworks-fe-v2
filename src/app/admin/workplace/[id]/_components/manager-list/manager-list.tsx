@@ -6,18 +6,23 @@ import ManagerPagination from "./manager-pagination";
 import { useWorkplaceDetailStore } from "@/store/admin/workplace/workplace-detail-store";
 import UserCard from "@/app/admin/user/components/user-card";
 import { Skeleton } from "@/components/ui/skeleton";
+import AppTitle from "@/components/common/label/title";
+import { useParams, useSearchParams } from "next/navigation";
 
 const ManagerList = () => {
   const { managers, getManagers } = useWorkplaceDetailStore();
+  const searchParams = useSearchParams();
+  const { id } = useParams<{ id: string }>();
   useEffect(() => {
-    getManagers();
+    getManagers(new URLSearchParams(searchParams));
   }, []);
 
+  useEffect(() => {
+    getManagers(new URLSearchParams(searchParams));
+  }, [searchParams]);
   return (
     <div className="flex flex-col gap-6">
-      <div>
-        <span className="text-sm">담당 관리자</span>
-      </div>
+      <AppTitle title="담당 관리자" />
       {managers.type === "data" ? (
         <>
           <ManagerFilter />

@@ -3,39 +3,78 @@ import { WorkplaceListItem } from "@/types/admin/workplace/workplace-list";
 import Link from "next/link";
 import React from "react";
 
-const WorkplaceCard = ({ item }: { item: WorkplaceListItem }) => {
+interface WorkplaceCardWrapperProps {
+  item: WorkplaceListItem;
+  checkOption?: boolean;
+  isCheck?: boolean;
+  onClick?: (item: WorkplaceListItem) => void;
+}
+
+const WorkplaceCardWrapper = ({
+  item,
+  checkOption = false,
+  isCheck = false,
+  onClick,
+}: WorkplaceCardWrapperProps) => {
   return (
-    // <div className="flex flex-col gap-2 px-4 py-4 border border-[var(--border)] rounded-[4px] hover:cursor-pointer"></div>
-    <Link href={`workplace/${item.siteSeq}`}>
-      <CustomCard className="hover:bg-blue-50" variant={"list"}>
-        <div className="flex justify-between items-center">
-          <div className="flex gap-4 items-end">
-            <span className="text-sm font-bold">{item.siteName}</span>
-            <span className="text-xs">{item.siteAddress}</span>
-          </div>
-          <span className="text-xs text-[var(--description-light)]">
-            {item.siteTel}
-          </span>
-        </div>
-        {/**
-         * 업무유형
-         */}
-        {item.contracts && item.contracts.length > 0 ? (
-          <div className="flex gap-2">
-            {item.contracts.map((c, i) => {
-              return (
-                <div key={i} className="rounded-[4px] bg-blue-50 px-4">
-                  <span className="text-xs text-blue-500">
-                    {c.serviceTypeName}
-                  </span>
-                </div>
-              );
-            })}
-          </div>
-        ) : null}
-      </CustomCard>
-    </Link>
+    <>
+      {checkOption ? (
+        <WorkplaceCard item={item} isCheck={isCheck} onClick={onClick} />
+      ) : (
+        <Link href={`/admin/workplace/${item.siteSeq}`}>
+          <WorkplaceCard item={item} />
+        </Link>
+      )}
+    </>
   );
 };
 
-export default WorkplaceCard;
+interface WorkplaceCardProps {
+  item: WorkplaceListItem;
+  isCheck?: boolean;
+  onClick?: (item: WorkplaceListItem) => void;
+}
+
+const WorkplaceCard = ({
+  item,
+  isCheck = false,
+  onClick,
+}: WorkplaceCardProps) => {
+  return (
+    <CustomCard
+      className={`hover:bg-blue-50 hover:border-blue-500 ${
+        isCheck ? "bg-blue-50 border-blue-500" : null
+      }`}
+      variant={"list"}
+      onClick={() => onClick?.(item)}
+    >
+      <div className="flex justify-between items-center">
+        <div className="flex gap-4 items-end">
+          <span className="text-sm font-bold">{item.siteName}</span>
+          <span className="text-xs">{item.siteAddress}</span>
+        </div>
+        <span className="text-xs text-[var(--description-light)]">
+          {item.siteTel}
+        </span>
+      </div>
+      {/**
+       * 업무유형
+       */}
+      {item.contracts && item.contracts.length > 0 ? (
+        <div className="flex gap-2">
+          {item.contracts.map((c, i) => {
+            return (
+              <div key={i} className="rounded-[4px] bg-blue-50 px-4">
+                <span className="text-xs text-blue-500">
+                  {c.serviceTypeName}
+                </span>
+              </div>
+            );
+          })}
+        </div>
+      ) : null}
+    </CustomCard>
+  );
+};
+
+export default WorkplaceCardWrapper;

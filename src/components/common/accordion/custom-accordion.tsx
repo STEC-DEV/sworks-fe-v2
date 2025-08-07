@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 import {
   Accordion,
@@ -6,15 +7,20 @@ import {
   AccordionTrigger,
 } from "../../ui/accordion";
 import { LucideIcon } from "lucide-react";
-import IconButton from "../icon-button";
 
 interface CustomAccordionProps {
   icon: LucideIcon;
   label: string;
+  optionChildren?: React.ReactNode;
   children: React.ReactNode;
 }
 
-const CustomAccordion = ({ icon, label, children }: CustomAccordionProps) => {
+const CustomAccordion = ({
+  icon,
+  label,
+  children,
+  optionChildren,
+}: CustomAccordionProps) => {
   const Icon = icon;
   return (
     <Accordion
@@ -29,7 +35,7 @@ const CustomAccordion = ({ icon, label, children }: CustomAccordionProps) => {
               <Icon className="w-5 h-5 text-[var(--icon)] " />
               <span className="text-sm font-normal">{label}</span>
             </div>
-            <IconButton icon="Plus" />
+            <div onClick={(e) => e.stopPropagation()}>{optionChildren}</div>
           </div>
         </AccordionTrigger>
         <AccordionContent>{children}</AccordionContent>

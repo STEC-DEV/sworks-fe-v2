@@ -1,3 +1,4 @@
+"use client";
 import CustomAccordion from "@/components/common/accordion/custom-accordion";
 import { ListCheck } from "lucide-react";
 import React from "react";

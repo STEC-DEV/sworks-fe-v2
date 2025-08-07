@@ -1,12 +1,15 @@
-export interface ContractInfo {
+export interface Contract {
   contractSeq: number;
   contractTypeSeq: number;
   contractTypeName: string;
-  status: number;
-  contractAmount: number;
-  contractStaff: string;
+  status: boolean;
+  //금액
+  contractAmount?: number;
+  //직원수
+  contractStaff?: string;
   startDt: Date;
   endDt?: Date | null;
-  contractManager: string;
-  comments: string;
+  //계약담당
+  contractManager?: string;
+  comments?: string;
 }
