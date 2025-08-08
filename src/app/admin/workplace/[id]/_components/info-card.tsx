@@ -1,17 +1,19 @@
 "use client";
 import CustomCard from "@/components/common/card";
 import IconButton from "@/components/common/icon-button";
+import WorkplaceInfoEditForm from "@/components/form/admin/workplace/workplace-edit";
+import BaseDialog from "@/components/ui/custom/base-dialog";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useWorkplaceDetailStore } from "@/store/admin/workplace/workplace-detail-store";
 import { WorkplaceDetail } from "@/types/admin/workplace/workplace-detail";
 import { Building2, ImageIcon, LucideIcon, MapPin, Phone } from "lucide-react";
 import { useParams } from "next/navigation";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
-const InfoCard = ({ data }: { data: WorkplaceDetail }) => {
+const InfoCard = () => {
   const { id } = useParams<{ id: string }>();
   const { workplace, getWorkplaceDetail } = useWorkplaceDetailStore();
-
+  const [editInfoOpen, setEditInfoOpen] = useState<boolean>(false);
   useEffect(() => {
     if (!id) return;
     getWorkplaceDetail(parseInt(id));
@@ -29,7 +31,18 @@ const InfoCard = ({ data }: { data: WorkplaceDetail }) => {
           <div className="flex flex-col flex-1">
             <div className="flex justify-between items-center w-full px-6 py-4 border-b border-[var(--border)]">
               <span className="font-bold">{workplace.siteName}</span>
-              <IconButton icon="SquarePen" />
+
+              <BaseDialog
+                title="사업장 정보수정"
+                triggerChildren={<IconButton icon="SquarePen" size={16} />}
+                open={editInfoOpen}
+                setOpen={setEditInfoOpen}
+              >
+                <WorkplaceInfoEditForm
+                  data={workplace}
+                  setOpen={setEditInfoOpen}
+                />
+              </BaseDialog>
             </div>
             <div className="grid grid-cols-2 gap-y-6 px-6 py-4">
               <IconLabel

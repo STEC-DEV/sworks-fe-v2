@@ -4,7 +4,7 @@ import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 import { Response } from "@/types/common/response";
 interface ChecklistState {
-  commonChecklist: ListState<ChecklistItem>;
+  commonChecklist: ListState<ChecklistTableItem>;
   getCommonChecklist: () => Promise<void>;
 }
 
@@ -32,7 +32,7 @@ export const useChecklistStore = create<ChecklistState>()(
             });
 
             const response = (await res.json()) as Response<{
-              data: ChecklistItem[];
+              data: ChecklistTableItem[];
               meta: ListMeta;
             }>;
 

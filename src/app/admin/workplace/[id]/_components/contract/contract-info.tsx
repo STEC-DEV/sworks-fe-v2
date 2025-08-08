@@ -12,6 +12,7 @@ import { useParams, useRouter } from "next/navigation";
 import BaseSkeleton from "@/components/common/base-skeleton";
 import BaseDialog from "@/components/ui/custom/base-dialog";
 import ContractEditForm from "@/components/form/admin/workplace/contract-edit";
+import CheckDialog from "@/components/common/check-dialog";
 
 const ContractWrapper = () => {
   const { contractList, getContractList } = useWorkplaceDetailStore();
@@ -46,6 +47,9 @@ const ContractWrapper = () => {
 
 const ContractCard = ({ data }: { data: Contract }) => {
   const [editOpen, setEditOpen] = useState<boolean>(false);
+  const handleDelete = () => {
+    console.log(data);
+  };
   return (
     <CustomCard className="w-full items-end gap-0 py-4 ">
       <div className="flex gap-2">
@@ -57,7 +61,14 @@ const ContractCard = ({ data }: { data: Contract }) => {
         >
           <ContractEditForm data={data} setOpen={setEditOpen} />
         </BaseDialog>
-        <IconButton size={16} icon="Trash2" />
+        <CheckDialog
+          title="삭제하시겠습니까?"
+          description="해당 계약 정보를 삭제하면 사업장의 해당 계약 정보가 삭제됩니다. 이 작업은 되돌릴 수 없습니다."
+          actionLabel="삭제"
+          onClick={handleDelete}
+        >
+          <IconButton icon="Trash2" size={16} />
+        </CheckDialog>
       </div>
       <div className="flex flex-col gap-4 w-full px-4">
         <span className="text-sm text-blue-500">{data.contractTypeName}</span>

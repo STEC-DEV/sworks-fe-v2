@@ -1,7 +1,7 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
 
-export const checklistCol: ColumnDef<ChecklistItem>[] = [
+export const checklistCol: ColumnDef<ChecklistTableItem>[] = [
   {
     accessorKey: "serviceTypeName",
     header: "업무 유형",

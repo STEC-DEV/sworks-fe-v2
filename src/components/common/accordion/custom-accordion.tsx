@@ -9,7 +9,7 @@ import {
 import { LucideIcon } from "lucide-react";
 
 interface CustomAccordionProps {
-  icon: LucideIcon;
+  icon?: LucideIcon;
   label: string;
   optionChildren?: React.ReactNode;
   children: React.ReactNode;
@@ -32,7 +32,8 @@ const CustomAccordion = ({
         <AccordionTrigger className=" px-6 hover:no-underline items-center focus-visible:ring-0 focus-visible:outline-none">
           <div className="flex justify-between items-center w-full">
             <div className="flex gap-4">
-              <Icon className="w-5 h-5 text-[var(--icon)] " />
+              {Icon ? <Icon className="w-5 h-5 text-[var(--icon)] " /> : null}
+
               <span className="text-sm font-normal">{label}</span>
             </div>
             <div onClick={(e) => e.stopPropagation()}>{optionChildren}</div>

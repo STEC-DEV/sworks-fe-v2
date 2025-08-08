@@ -1,9 +1,8 @@
 "use client";
-import AdminAddForm, { basicFormType } from "@/components/form/admin/admin-add";
+import ChecklistItemAddForm from "@/components/form/admin/checklist/add";
 import FormLayout from "@/components/layout/form-layout";
 import ResultDialog from "@/components/ui/custom/form/result-dialog";
-import { useAdminListStore } from "@/store/admin/admin/admin-list-store";
-
+import { useChecklistDetailStore } from "@/store/admin/checklist/checklist-detail-store";
 import React, { useState } from "react";
 
 const Page = () => {
@@ -11,26 +10,27 @@ const Page = () => {
   const [newSeq, setNewSeq] = useState<number>(-1);
   const [curStep, setCurStep] = useState<number>(1);
   const [open, setOpen] = useState<boolean>(false);
-  const { postAddAdmin } = useAdminListStore();
+  const { postAddChecklistItem } = useChecklistDetailStore();
 
-  const handleNext = async (values: basicFormType) => {
-    const result = await postAddAdmin(values);
+  const handleSubmit = async (values: Record<string, any>) => {
+    console.log(values);
+    const result = await postAddChecklistItem(values);
     result.code !== 200 ? setFormResult(false) : setFormResult(true);
     setNewSeq(result.data);
     setCurStep((prev) => prev + 1);
     setOpen(true);
   };
-
   const formsConfig = {
-    titles: ["기본정보"],
-    forms: [<AdminAddForm onNext={handleNext} />],
+    titles: ["평가항목"],
+    forms: [<ChecklistItemAddForm onNext={handleSubmit} />],
   };
+
   return (
     <>
       <FormLayout
+        title="평가항목 생성"
+        description="평가항목 정보"
         steps={formsConfig}
-        title="관리자 생성"
-        description="관리자정보"
         curStep={curStep}
       />
       <ResultDialog

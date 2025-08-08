@@ -1,4 +1,4 @@
-interface ChecklistItem {
+interface ChecklistTableItem {
   chkSeq: number;
   serviceTypeSeq: number;
   serviceTypeName: string;

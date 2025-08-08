@@ -11,6 +11,7 @@ interface WorkplaceDetailState {
   //사업장
   workplace: WorkplaceDetail | undefined;
   getWorkplaceDetail: (id: number) => Promise<void>;
+  patchWorkplaceInfo: (updateWorkplace: WorkplaceDetail) => Promise<void>;
   //계약정보
   //조회
   contractList: Contract[] | undefined;
@@ -48,6 +49,18 @@ export const useWorkplaceDetailStore = create<WorkplaceDetailState>()(
             const response: Response<WorkplaceDetail> = await res.json();
 
             set({ workplace: response.data });
+          } catch (err) {
+            console.log(err);
+          }
+        },
+        patchWorkplaceInfo: async (updateWorkplace) => {
+          try {
+            const res: Response<number> = await api
+              .patch(`site/w/sign/updatesiteinfo`, {
+                json: { ...updateWorkplace },
+              })
+              .json();
+            console.log(res);
           } catch (err) {
             console.log(err);
           }
