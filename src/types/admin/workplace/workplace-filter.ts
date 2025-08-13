@@ -14,6 +14,18 @@ export type ContractServiceType =
   (typeof ContractServiceType)[keyof typeof ContractServiceType];
 
 /**
+ * 계약유형
+ * --
+ */
+export const DivType = {
+  일반: "30",
+  위험: "31",
+  품질: "32",
+};
+
+export type DivType = (typeof DivType)[keyof typeof DivType];
+
+/**
  * 관리 유형
  * --
  */

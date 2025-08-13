@@ -1,18 +1,31 @@
 "use client";
-import ContractAddForm from "@/components/form/admin/workplace/contract-add";
+import ContractAddForm, {
+  basicFormType,
+} from "@/components/form/admin/workplace/contract-add";
 import FormLayout from "@/components/layout/form-layout";
-import React, { useState } from "react";
+import ResultDialog from "@/components/ui/custom/form/result-dialog";
+import { useWorkplaceDetailStore } from "@/store/admin/workplace/workplace-detail-store";
+import { format } from "date-fns";
+import { useParams } from "next/navigation";
+import React, { useEffect, useState } from "react";
 
 const Page = () => {
   const [formResult, setFormResult] = useState<boolean>(false);
-  const [newSeq, setNewSeq] = useState<number>(-1);
   const [curStep, setCurStep] = useState<number>(1);
   const [open, setOpen] = useState<boolean>(false);
+  const { postAddContract } = useWorkplaceDetailStore();
+  const { id } = useParams();
 
-  const handleNext = async (values: Record<string, any>) => {
-    //   const result = await postAddWorkplace(values);
-    //   result.code !== 200 ? setFormResult(false) : setFormResult(true);
-    //   setNewSeq(result.data);
+  const handleNext = async (values: basicFormType) => {
+    const addData = {
+      ...values,
+      startDt: format(values.startDt, "yyyy-MM-dd"),
+      siteSeq: id,
+    };
+
+    const res = await postAddContract(addData);
+
+    setFormResult(res.code === 200 ? true : false);
     setCurStep((prev) => prev + 1);
     setOpen(true);
   };
@@ -28,6 +41,13 @@ const Page = () => {
         title="계약정보 생성"
         description="계약정보"
         curStep={curStep}
+      />
+      <ResultDialog
+        result={formResult}
+        open={open}
+        setOpen={setOpen}
+        successUrl={`/admin/workplace/${id}`}
+        failedUrl={`/admin/workplace/${id}`}
       />
     </>
   );

@@ -12,6 +12,7 @@ interface ChecklistDetail {
 interface Checklist {
   chkMainSeq: number;
   chkMainTitle: string;
+  sumYn: boolean;
   subs: ChecklistItem[];
 }
 
@@ -19,6 +20,7 @@ interface Checklist {
 interface ChecklistItem {
   chkSubSeq: number;
   chkSubTitle: string;
+  sumYn: boolean;
   details: ChecklistItemDetail[];
 }
 

@@ -6,9 +6,10 @@ import ChecklistPagination from "./_components/checklist-pagination";
 import DataTable from "@/components/common/data-table";
 import { checklistCol } from "./_components/table-columns";
 import BaseSkeleton from "@/components/common/base-skeleton";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 const ClientPage = () => {
+  const searchParams = useSearchParams();
   const { commonChecklist, getCommonChecklist } = useChecklistStore();
   const router = useRouter();
 
@@ -17,8 +18,8 @@ const ClientPage = () => {
   }, []);
 
   useEffect(() => {
-    console.log(commonChecklist);
-  }, [commonChecklist]);
+    getCommonChecklist();
+  }, [searchParams]);
   return (
     <>
       <ChecklistFilter />

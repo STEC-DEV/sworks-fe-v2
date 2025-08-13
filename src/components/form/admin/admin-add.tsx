@@ -51,12 +51,6 @@ const AdminAddForm = ({ onNext, onPrev }: AdminAddFormProps) => {
     getDepartmentList();
   }, []);
 
-  useEffect(() => {
-    if (!departmentList) return;
-    const a = convertSelectOptionType(departmentList);
-    console.log(a);
-  }, [departmentList]);
-
   return (
     <CommonFormContainer
       title="기본정보"
@@ -106,7 +100,6 @@ const AdminAddForm = ({ onNext, onPrev }: AdminAddFormProps) => {
             name="deptSeq"
             render={({ field }) => {
               const handleValue = (value: string) => {
-                console.log("선택값 : ", value);
                 field.onChange(Number(value));
               };
               return (

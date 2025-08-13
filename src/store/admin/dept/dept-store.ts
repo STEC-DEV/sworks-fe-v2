@@ -14,9 +14,13 @@ export const useDeptStore = create<DeptState>()(
       (set, get) => ({
         departmentList: undefined,
         getDepartmentList: async () => {
-          const res = await api.get(`dept/w/sign/deptlist`);
-          const data = ((await res.json()) as Response<Department[]>).data;
-          set({ departmentList: data });
+          try {
+            const res = await api.get(`dept/w/sign/deptlist`);
+            const data = ((await res.json()) as Response<Department[]>).data;
+            set({ departmentList: data });
+          } catch (err) {
+            console.log(err);
+          }
         },
       }),
       { name: "dept-store" }

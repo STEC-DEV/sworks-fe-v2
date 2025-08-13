@@ -4,33 +4,34 @@ import CommonFilter, {
 } from "@/components/ui/custom/filter.tsx/common-filter";
 import {
   ContractServiceType,
+  DivType,
   SiteServiceType,
 } from "@/types/admin/workplace/workplace-filter";
-import { Building2, ReceiptText } from "lucide-react";
+import { Building2, ReceiptText, Table2 } from "lucide-react";
 import React from "react";
 const filterConfig: FilterConfig[] = [
   {
-    key: "contractServiceType",
-    placeholder: "업무유형",
+    key: "serviceTypeSeq",
+    placeholder: "계약유형",
     data: ContractServiceType,
     icon: ReceiptText,
   },
   {
-    key: "siteServiceType",
+    key: "divTypeSeq",
     placeholder: "관리부문",
-    data: SiteServiceType,
-    icon: Building2,
+    data: DivType,
+    icon: Table2,
   },
   {
-    key: "siteServiceType",
-    placeholder: "관리부문",
+    key: "typeCodeSeq",
+    placeholder: "관리유형",
     data: SiteServiceType,
     icon: Building2,
   },
 ];
 
 const ChecklistFilter = () => {
-  return <CommonFilter filters={filterConfig} />;
+  return <CommonFilter filters={filterConfig} search={false} />;
 };
 
 export default ChecklistFilter;

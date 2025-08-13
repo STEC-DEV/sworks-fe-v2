@@ -10,6 +10,7 @@ interface CommonFormContainerProps<T extends FieldValues> {
   onNext: (value: T) => void;
   onPrev?: () => void;
   children: React.ReactNode;
+  titleOptionChildren?: React.ReactNode;
 }
 
 const CommonFormContainer = <T extends FieldValues, TSubmit>({
@@ -19,11 +20,13 @@ const CommonFormContainer = <T extends FieldValues, TSubmit>({
   onNext,
   onPrev,
   children,
+  titleOptionChildren,
 }: CommonFormContainerProps<T>) => {
   return (
     <Form {...form}>
-      <div className="py-4 border-b border-[var(--border)]">
+      <div className="flex items-center justify-between py-4 border-b border-[var(--border)]">
         <span className="text-md font-semibold">{title}</span>
+        {titleOptionChildren}
       </div>
       <form
         className="flex flex-col gap-6"

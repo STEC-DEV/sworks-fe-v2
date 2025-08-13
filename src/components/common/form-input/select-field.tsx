@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/select";
 import { SelectOption } from "@/types/common/select-item";
 import { SelectProps } from "@radix-ui/react-select";
-import React from "react";
+import React, { useEffect } from "react";
 import { FieldValues } from "react-hook-form";
 
 interface TextFormItemProps<TField extends FieldValues = FieldValues>
@@ -28,6 +28,11 @@ const SelectFormItem = <T extends FieldValues>({
   defaultValue,
   ...props
 }: TextFormItemProps<T>) => {
+  useEffect(() => {
+    console.log(label, "초기값");
+
+    console.log(defaultValue);
+  }, [defaultValue]);
   return (
     <FormItem className="flex flex-col gap-2">
       <div className="flex">
@@ -40,7 +45,7 @@ const SelectFormItem = <T extends FieldValues>({
       </div>
       <Select
         onValueChange={(value) => onValueChange(value)}
-        defaultValue={defaultValue}
+        value={defaultValue}
         {...props}
       >
         <FormControl>
@@ -56,18 +61,24 @@ const SelectFormItem = <T extends FieldValues>({
         </FormControl>
         <FormMessage className="text-xs text-red-500" />
         <SelectContent className="rounded-[4px] bg-white">
-          {selectItem.map((v, i) => (
-            <SelectItem
-              className={`
+          {selectItem.length > 0 ? (
+            selectItem.map((v, i) => (
+              <SelectItem
+                className={`
                  rounded-[4px]
                 hover:cursor-pointer hover:hover:bg-[var(--background)]
                 `}
-              key={i}
-              value={v.value.toString()}
-            >
-              {v.key}
-            </SelectItem>
-          ))}
+                key={i}
+                value={v.value.toString()}
+              >
+                {v.key}
+              </SelectItem>
+            ))
+          ) : (
+            <span className="px-2 py-1.5 text-sm text-[var(--description-dark)] ">
+              이전 값을 선택해주세요.
+            </span>
+          )}
         </SelectContent>
       </Select>
     </FormItem>

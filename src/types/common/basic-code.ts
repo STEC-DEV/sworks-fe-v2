@@ -16,3 +16,23 @@ export type BasicCodeCategory =
   | "userCodes";
 
 export type BasicCodeType = Partial<Record<BasicCodeCategory, BasicCode[]>>;
+
+export interface ContractType {
+  contractTypeSeq: number;
+  contractTypeName: string;
+}
+
+export interface ServiceType {
+  serviceTypeSeq: number;
+  serviceTypeName: string;
+}
+
+export interface DivCodeType {
+  divCodeSeq: number;
+  divCodeName: string;
+}
+
+export interface TypeCodeType {
+  typeCodeSeq: number;
+  typeCodeName: string;
+}

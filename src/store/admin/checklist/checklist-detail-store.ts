@@ -4,6 +4,7 @@ import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 
 interface ChecklistDetailState {
+  //상세정보
   checklistDetail: ChecklistDetail | undefined;
   getChecklistDetail: (chkSeq: string) => Promise<void>;
 
@@ -11,6 +12,12 @@ interface ChecklistDetailState {
   postAddChecklistItem: (
     item: Record<string, any>
   ) => Promise<Response<number>>;
+
+  //편집
+  editChecklistItem: Checklist | undefined;
+  setEditChecklistItem: (id: number) => void;
+  resetEditChecklistItem: () => void;
+  putEditChecklistItem: (item: Checklist) => Promise<void>;
 }
 
 export const useChecklistDetailStore = create<ChecklistDetailState>()(
@@ -57,6 +64,33 @@ export const useChecklistDetailStore = create<ChecklistDetailState>()(
               data: -1,
             };
             return response;
+          }
+        },
+
+        editChecklistItem: undefined,
+        setEditChecklistItem: (id) => {
+          const { checklistDetail } = get();
+          const editChecklistItem = checklistDetail?.mains.find(
+            (c) => c.chkMainSeq === id
+          );
+          set({ editChecklistItem: editChecklistItem });
+        },
+        resetEditChecklistItem: () => {
+          set({ editChecklistItem: undefined });
+        },
+        putEditChecklistItem: async (item) => {
+          console.log("항목");
+          console.log(item);
+          try {
+            const res: Response<number> = await api
+              .put(`checklist/w/sign/updatechecklist`, {
+                json: item,
+              })
+              .json();
+
+            console.log(res);
+          } catch (err) {
+            console.log(err);
           }
         },
       }),

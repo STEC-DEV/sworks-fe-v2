@@ -1,10 +1,14 @@
+"use client";
+import Button from "@/components/common/button";
 import CheckFormItem from "@/components/common/form-input/check-field";
 import { TextFormItem } from "@/components/common/form-input/text-field";
 import IconButton from "@/components/common/icon-button";
-import CommonFormContainer from "@/components/ui/custom/form/form-container";
-import { FormField } from "@/components/ui/form";
+
+import { Form, FormField } from "@/components/ui/form";
+import { useChecklistDetailStore } from "@/store/admin/checklist/checklist-detail-store";
 import { zodResolver } from "@hookform/resolvers/zod";
-import React from "react";
+import { useRouter } from "next/navigation";
+import React, { useEffect } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import z from "zod";
 
@@ -13,10 +17,12 @@ const formSchema = z.object({
   sumYn: z.boolean(),
   subs: z.array(
     z.object({
+      chkSubSeq: z.number(),
       chkSubTitle: z.string().min(1, "점검항목명을 입력해주세요."),
       sumYn: z.boolean(),
       details: z.array(
         z.object({
+          chkDetailSeq: z.number(),
           chkDetailTitle: z.string().min(1, "세부항목명을 입력해주세요."),
           chkItem: z.string().min(1, "세부내용을 입력해주세요."),
           chkPoint: z.string(),
@@ -29,10 +35,12 @@ const formSchema = z.object({
 type FormType = z.infer<typeof formSchema>;
 
 const subInit = {
+  chkSubSeq: 0,
   chkSubTitle: "",
   sumYn: false,
   details: [
     {
+      chkDetailSeq: 0,
       chkDetailTitle: "",
       chkItem: "",
       chkPoint: "0",
@@ -41,36 +49,46 @@ const subInit = {
 };
 
 const detailInit = {
+  chkDetailSeq: 0,
   chkDetailTitle: "",
   chkItem: "",
   chkPoint: "0",
 };
 
-interface ChecklistItemAddFormProps {
-  onNext: (values: Record<string, any>) => void;
-}
-
-const ChecklistItemAddForm = ({ onNext }: ChecklistItemAddFormProps) => {
+const ChecklistItemEditForm = () => {
+  const router = useRouter();
+  const { editChecklistItem, putEditChecklistItem } = useChecklistDetailStore();
   const form = useForm<FormType>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       chkMainTitle: "",
       sumYn: false,
-      subs: [
-        {
-          chkSubTitle: "",
-          sumYn: false,
-          details: [
-            {
-              chkDetailTitle: "",
-              chkItem: "",
-              chkPoint: "0",
-            },
-          ],
-        },
-      ],
+      subs: [subInit],
     },
   });
+
+  // 데이터 로드 후 폼 값 업데이트
+  useEffect(() => {
+    if (editChecklistItem) {
+      form.reset({
+        chkMainTitle: editChecklistItem.chkMainTitle,
+        sumYn: editChecklistItem.sumYn,
+        subs:
+          editChecklistItem.subs?.map((sub) => ({
+            chkSubSeq: sub.chkSubSeq,
+            chkSubTitle: sub.chkSubTitle,
+            sumYn: sub.sumYn,
+            details:
+              sub.details?.map((detail) => ({
+                chkDetailSeq: detail.chkDetailSeq,
+                chkDetailTitle: detail.chkDetailTitle,
+                chkItem: detail.chkItem,
+                chkPoint: detail.chkPoint.toString(),
+              })) || [],
+          })) || [],
+      });
+    }
+  }, [editChecklistItem, form]);
 
   const {
     fields: subFields,
@@ -189,60 +207,85 @@ const ChecklistItemAddForm = ({ onNext }: ChecklistItemAddFormProps) => {
       </div>
     );
   };
+  const handleSubmit = async (values: FormType) => {
+    if (!editChecklistItem) return;
+    const submitData: Checklist = {
+      chkMainSeq: editChecklistItem?.chkMainSeq,
+      chkMainTitle: values.chkMainTitle,
+      sumYn: values.sumYn,
+      subs: values.subs.map((sub) => ({
+        ...sub,
+        details: sub.details.map((d) => ({
+          ...d,
+          chkPoint: parseInt(d.chkPoint),
+        })),
+      })),
+    };
+
+    await putEditChecklistItem(submitData);
+
+    router.back();
+  };
+  const handleError = (errors: any) => {
+    console.log("Form 에러:", errors);
+  };
 
   return (
-    <CommonFormContainer
-      title="평가항목"
-      form={form}
-      nextLabel="생성"
-      onNext={onNext}
-    >
-      <div className="flex flex-col gap-2 ">
-        <div className="flex justify-between items-center">
-          <span className="text-sm font-bold">평가항목</span>
-          <IconButton
-            icon="Plus"
-            size={16}
-            onClick={() => appendSub(subInit)}
-          />
-        </div>
+    <Form {...form}>
+      <form
+        className="flex flex-col gap-6"
+        onSubmit={form.handleSubmit(handleSubmit, handleError)}
+      >
+        <div className="flex flex-col gap-2 ">
+          <div className="flex justify-between items-center">
+            <span className="text-sm font-bold">평가항목</span>
+            <IconButton
+              icon="Plus"
+              size={16}
+              onClick={() => appendSub(subInit)}
+            />
+          </div>
 
-        <div className="flex flex-col gap-6 p-6 border border-[var(--border)] bg-[var(--background)]">
-          <FormField
-            control={form.control}
-            name="chkMainTitle"
-            render={({ field }) => (
-              <TextFormItem
-                label="평가항목명"
-                placeholder="평가항목명"
-                required
-                {...field}
-              />
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="sumYn"
-            render={({ field }) => (
-              <CheckFormItem
-                label="평가항목 소계 사용"
-                description="평가항목 소계 미사용 시 자동 점검항목 소계사용"
-                checked={field.value}
-                onChange={field.onChange}
-                onBlur={field.onBlur}
-                name={field.name}
-                ref={field.ref}
-              />
-            )}
-          />
-          {/* //소계 체크 */}
-          {subFields.map((v, i) => (
-            <SubItem key={i} idx={i} />
-          ))}
+          <div className="flex flex-col gap-6 p-6 border border-[var(--border)] bg-[var(--background)]">
+            <FormField
+              control={form.control}
+              name="chkMainTitle"
+              render={({ field }) => (
+                <TextFormItem
+                  label="평가항목명"
+                  placeholder="평가항목명"
+                  required
+                  {...field}
+                />
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="sumYn"
+              render={({ field }) => (
+                <CheckFormItem
+                  label="평가항목 소계 사용"
+                  description="평가항목 소계 미사용 시 자동 점검항목 소계사용"
+                  checked={field.value}
+                  onChange={field.onChange}
+                  onBlur={field.onBlur}
+                  name={field.name}
+                  ref={field.ref}
+                />
+              )}
+            />
+            {/* //소계 체크 */}
+            {subFields.map((v, i) => (
+              <SubItem key={i} idx={i} />
+            ))}
+          </div>
         </div>
-      </div>
-    </CommonFormContainer>
+        <div className="flex justify-end">
+          <Button label="저장" size={"sm"} />
+        </div>
+      </form>
+    </Form>
   );
 };
 
-export default ChecklistItemAddForm;
+export default ChecklistItemEditForm;

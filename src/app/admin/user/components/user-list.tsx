@@ -12,6 +12,10 @@ const AdminList = () => {
     getAdminList(new URLSearchParams(searchParams));
   }, []);
 
+  useEffect(() => {
+    getAdminList(new URLSearchParams(searchParams));
+  }, [searchParams]);
+
   return (
     <>
       {adminList.type === "data" ? (

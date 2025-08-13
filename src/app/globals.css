@@ -148,7 +148,7 @@ img {
 
 @layer utilities {
   .side-bar-shadow {
-    box-shadow: 10px 0 12px 0px rgb(156, 156, 156),
+    box-shadow: 5px 0 12px 0px rgb(156, 156, 156),
       10px 0 15px 0px rgba(156, 156, 156, 0.3);
   }
 }

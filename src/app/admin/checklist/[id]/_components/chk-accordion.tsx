@@ -3,16 +3,25 @@ import CheckDialog from "@/components/common/check-dialog";
 import IconButton from "@/components/common/icon-button";
 import dialogText from "../../../../../../public/dialog-text.json";
 import React from "react";
+import { useParams, useRouter } from "next/navigation";
+import { CircleCheckBig } from "lucide-react";
 
 const ChkAccordion = ({ data }: { data: Checklist }) => {
-  const handleEditItem = () => {};
+  const router = useRouter();
+  const { id } = useParams();
+
   const handleDeleteItem = () => {};
   return (
     <CustomAccordion
       label={data.chkMainTitle}
+      icon={CircleCheckBig}
       optionChildren={
         <div className="flex gap-2">
-          <IconButton icon="SquarePen" size={16} />
+          <IconButton
+            icon="SquarePen"
+            size={16}
+            onClick={() => router.push(`${id}/${data.chkMainSeq}`)}
+          />
           <CheckDialog
             title={dialogText.checklistItemDelete.title}
             description={dialogText.checklistItemDelete.description}
@@ -31,7 +40,7 @@ const ChkAccordion = ({ data }: { data: Checklist }) => {
   );
 };
 
-const CheckItemWrapper = ({ data }: { data: ChecklistItem }) => {
+export const CheckItemWrapper = ({ data }: { data: ChecklistItem }) => {
   return (
     <div>
       <span className="block px-4 py-2 bg-[var(--background)]">
@@ -46,7 +55,7 @@ const CheckItemWrapper = ({ data }: { data: ChecklistItem }) => {
   );
 };
 
-const CheckItem = ({ item }: { item: ChecklistItemDetail }) => {
+export const CheckItem = ({ item }: { item: ChecklistItemDetail }) => {
   return (
     <div className="flex justify-between items-center ">
       <div className="flex flex-col gap-1">

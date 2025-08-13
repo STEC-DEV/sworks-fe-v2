@@ -6,6 +6,7 @@ import useDateValidation from "@/hooks/date/useDateSet";
 import { useWorkplaceDetailStore } from "@/store/admin/workplace/workplace-detail-store";
 import { Contract } from "@/types/admin/workplace/contract-info";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { format } from "date-fns";
 import { useParams } from "next/navigation";
 import React from "react";
 import { useForm } from "react-hook-form";
@@ -56,10 +57,12 @@ const ContractEditForm = ({
     if (!id) return;
     const updateContract: Record<string, any> = {
       ...values,
+      // startDt: format(values.startDt, "yyyy-MM-dd"),
       contractAmount: values.contractAmount
         ? parseInt(values.contractAmount)
         : 0,
     };
+    console.log(updateContract);
     await patchContract(updateContract);
 
     await getContractList(id?.toString());

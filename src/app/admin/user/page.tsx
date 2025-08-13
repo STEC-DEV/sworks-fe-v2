@@ -1,3 +1,4 @@
+"use client";
 import AppTitle from "@/components/common/label/title";
 import React from "react";
 

@@ -1,7 +1,9 @@
 import api from "@/lib/api/api-manager";
 import { AdminListItem, SelectAdminList } from "@/types/admin/admin/user-list";
+import { ChecklistMultiType } from "@/types/admin/workplace/chk-types";
 import { Contract } from "@/types/admin/workplace/contract-info";
 import { WorkplaceDetail } from "@/types/admin/workplace/workplace-detail";
+import { ContractType } from "@/types/common/basic-code";
 import { Response } from "@/types/common/response";
 import { ListMeta, ListState } from "@/types/list-type";
 import { create } from "zustand";
@@ -12,15 +14,38 @@ interface WorkplaceDetailState {
   workplace: WorkplaceDetail | undefined;
   getWorkplaceDetail: (id: number) => Promise<void>;
   patchWorkplaceInfo: (updateWorkplace: WorkplaceDetail) => Promise<void>;
-  //계약정보
+  ////계약정보
   //조회
   contractList: Contract[] | undefined;
   getContractList: (workplaceId: string) => Promise<void>;
+  workplaceContractTypeList: ContractType[] | undefined;
+  getWorkplaceServiceType: (workplaceId: string) => Promise<void>;
+  //등록
+  postAddContract: (value: Record<string, any>) => Promise<Response<number>>;
   //수정
   patchContract: (updateContract: Record<string, any>) => Promise<void>;
 
-  //체크리스트
-  //담당관리자
+  ////체크리스트
+  //조회
+  checklist: WorkplaceChecklist[] | undefined;
+  getChecklist: (workplaceId: string) => Promise<void>;
+
+  //생성
+  checklistMultiType: ChecklistMultiType[] | undefined;
+  getCheckMultiType: (workplaceId: string) => Promise<void>;
+  /* 체크리스트 생성 객체*/
+  createChecklist: CreateChecklist;
+  setCreateChecklist: (value: Record<string, any>) => void;
+  resetCreateChecklist: () => void;
+  /* 선택한 유형의 체크리스트 조회 */
+  availableChecklistItem: Checklist[] | undefined;
+  getAvailableChecklistItem: (workplaceId: string) => Promise<void>;
+  /* 선택한 체크리스트 */
+  selectedAvailableChecklistItem: Checklist[];
+  resetSelectedAvailableChecklistItem: () => void;
+  updateSelectedAvailableChecklistItem: (checklist: Checklist[]) => void;
+
+  ////담당관리자
   managers: ListState<AdminListItem>;
   //--담당관리자 관련--
   getManagers: (params: URLSearchParams) => Promise<void>;
@@ -32,6 +57,13 @@ interface WorkplaceDetailState {
   //담당 관리자 수정 put
   putManagerList: (workplaceId: string) => Promise<void>;
 }
+
+const initialCreateChecklist: CreateChecklist = {
+  serviceTypeSeq: undefined,
+  divCodeSeq: undefined,
+  typeCodeSeq: undefined,
+  mains: [],
+};
 
 export const useWorkplaceDetailStore = create<WorkplaceDetailState>()(
   devtools(
@@ -82,6 +114,25 @@ export const useWorkplaceDetailStore = create<WorkplaceDetailState>()(
             console.log(err);
           }
         },
+        postAddContract: async (value): Promise<Response<number>> => {
+          console.log(value);
+          try {
+            const res: Response<number> = await api
+              .post(`site/w/sign/addcontract`, {
+                json: { ...value },
+              })
+              .json();
+            return res;
+          } catch (err) {
+            console.log(err);
+
+            return {
+              code: 500,
+              data: 0,
+              message: "등록 실패",
+            };
+          }
+        },
         patchContract: async (updateContract) => {
           console.log(updateContract);
           try {
@@ -90,12 +141,104 @@ export const useWorkplaceDetailStore = create<WorkplaceDetailState>()(
                 json: { ...updateContract },
               })
               .json();
-            console.log(res);
+          } catch (err) {
+            console.log(err);
+          }
+        },
+        workplaceContractTypeList: undefined,
+        getWorkplaceServiceType: async (workplaceId) => {
+          try {
+            const res: Response<ContractType[]> = await api
+              .get(`site/w/sign/classificationlist`, {
+                searchParams: { siteSeq: workplaceId },
+              })
+              .json();
+
+            const data = await res.data;
+
+            set({ workplaceContractTypeList: data });
           } catch (err) {
             console.log(err);
           }
         },
         // -------------------------체크리스트-------------------------
+        checklist: undefined,
+        getChecklist: async (workplaceId) => {
+          try {
+            const res: Response<WorkplaceChecklist[]> = await api
+              .get(`site/w/sign/getsitechecklistdetail`, {
+                searchParams: { siteSeq: workplaceId },
+              })
+              .json();
+
+            console.log(res.data);
+            const data = res.data;
+            set({ checklist: data });
+          } catch (err) {
+            console.log(err);
+          }
+        },
+        checklistMultiType: undefined,
+        getCheckMultiType: async (workplaceId) => {
+          try {
+            const res: Response<ChecklistMultiType[]> = await api
+              .get(`site/w/sign/getaddchkclassification`, {
+                searchParams: { siteSeq: workplaceId },
+              })
+              .json();
+
+            const data = res.data;
+
+            set({ checklistMultiType: data });
+          } catch (err) {
+            console.log(err);
+          }
+        },
+        /* 선택한 체크리스트 */
+        selectedAvailableChecklistItem: [],
+        resetSelectedAvailableChecklistItem: () => {
+          set({ selectedAvailableChecklistItem: [] });
+        },
+        updateSelectedAvailableChecklistItem: (checklist) => {
+          console.log(checklist);
+          set({ selectedAvailableChecklistItem: checklist });
+        },
+        createChecklist: initialCreateChecklist,
+        setCreateChecklist: (value) => {
+          set((prev) => ({
+            createChecklist: { ...prev.createChecklist, ...value },
+          }));
+        },
+        resetCreateChecklist: () => {
+          set({ createChecklist: initialCreateChecklist });
+        },
+        availableChecklistItem: undefined,
+        getAvailableChecklistItem: async (workplaceId) => {
+          try {
+            const { createChecklist } = get();
+            if (
+              !createChecklist.serviceTypeSeq ||
+              !createChecklist.divCodeSeq ||
+              !createChecklist.typeCodeSeq
+            )
+              return;
+            const res: Response<Checklist[]> = await api
+              .get(`site/w/sign/addsitechecklistclassification`, {
+                searchParams: {
+                  siteSeq: workplaceId,
+                  serviceTypeSeq: createChecklist.serviceTypeSeq,
+                  divCodeSeq: createChecklist.divCodeSeq,
+                  typeCodeSeq: createChecklist.typeCodeSeq,
+                },
+              })
+              .json();
+
+            const data = res.data;
+            set({ availableChecklistItem: data });
+          } catch (err) {
+            console.log(err);
+          }
+        },
         // -------------------------관리자-------------------------
 
         managers: { type: "loading" },

@@ -34,7 +34,7 @@ const ContractWrapper = () => {
         />
       }
     >
-      <div className="grid grid-cols-4 gap-6 px-6">
+      <div className="grid grid-cols-4 gap-6 px-4">
         {contractList
           ? contractList.map((c, i) => <ContractCard key={i} data={c} />)
           : Array.from({ length: 4 }, (_, i) => (
@@ -84,7 +84,7 @@ const ContractCard = ({ data }: { data: Contract }) => {
           />
           <KeyValue
             label={"해약일"}
-            value={format(data.startDt, "yyyy-MM-dd")}
+            value={data.endDt ? format(data.endDt, "yyyy-MM-dd") : ""}
           />
           <KeyValue
             label={"계약금액"}

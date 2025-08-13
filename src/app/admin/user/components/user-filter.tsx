@@ -2,28 +2,71 @@
 import CommonFilter, {
   FilterConfig,
 } from "@/components/ui/custom/filter.tsx/common-filter";
+import { useDeptStore } from "@/store/admin/dept/dept-store";
+import { useBasicStore } from "@/store/basic-store";
 import {
   ContractServiceType,
   SiteServiceType,
 } from "@/types/admin/workplace/workplace-filter";
+import { convertSelectOptionType } from "@/types/common/select-item";
+import { convertKeyValueArrayToRecord } from "@/utils/basic-code-convert";
 import { BriefcaseBusiness, KeyRound, ReceiptText } from "lucide-react";
-import React from "react";
-const filterConfig: FilterConfig[] = [
-  {
-    key: "department",
-    placeholder: "부서",
-    data: ContractServiceType,
-    icon: BriefcaseBusiness,
-  },
-  {
-    key: "permission",
-    placeholder: "권한",
-    data: SiteServiceType,
-    icon: KeyRound,
-  },
-];
+import React, { useEffect, useState } from "react";
 
 const AdminFilter = () => {
+  const { departmentList, getDepartmentList } = useDeptStore();
+  const { basicCode } = useBasicStore();
+  const [filterConfig, setFilterConfig] = useState<FilterConfig[]>([
+    {
+      key: "deptSeq",
+      placeholder: "부서",
+      data: {},
+      icon: BriefcaseBusiness,
+    },
+    {
+      key: "role",
+      placeholder: "권한",
+      data: {},
+      icon: BriefcaseBusiness,
+    },
+  ]);
+
+  useEffect(() => {
+    getDepartmentList();
+  }, []);
+
+  useEffect(() => {
+    handleConvertDeptData();
+  }, [departmentList]);
+
+  useEffect(() => {
+    handleConvertRoleData();
+  }, [basicCode]);
+
+  const handleConvertDeptData = async () => {
+    if (!departmentList) return;
+    const data = await convertSelectOptionType(departmentList);
+    const convertData = await convertKeyValueArrayToRecord(data);
+    console.log(convertData);
+    setFilterConfig((prev) =>
+      prev.map((item) =>
+        item.key === "deptSeq" ? { ...item, data: convertData } : item
+      )
+    );
+  };
+
+  const handleConvertRoleData = async () => {
+    if (!basicCode.managerCodes) return;
+    const data = convertSelectOptionType(basicCode.managerCodes);
+    const convertData = convertKeyValueArrayToRecord(data);
+
+    setFilterConfig((prev) =>
+      prev.map((item) =>
+        item.key === "role" ? { ...item, data: convertData } : item
+      )
+    );
+  };
+
   return <CommonFilter filters={filterConfig} />;
 };
 

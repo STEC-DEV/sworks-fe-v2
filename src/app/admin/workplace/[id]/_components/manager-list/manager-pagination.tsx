@@ -19,7 +19,7 @@ const ManagerPagination = () => {
         <div className="flex gap-4">
           <CommonPagination totalCount={managers.meta.totalCount} />
           <BaseDialog
-            triggerChildren={<IconButton icon={"SquarePen"} />}
+            triggerChildren={<IconButton icon={"SquarePen"} size={16} />}
             title="담당 사업장 수정"
             open={open}
             setOpen={setOpen}

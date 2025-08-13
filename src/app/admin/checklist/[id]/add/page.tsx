@@ -3,6 +3,7 @@ import ChecklistItemAddForm from "@/components/form/admin/checklist/add";
 import FormLayout from "@/components/layout/form-layout";
 import ResultDialog from "@/components/ui/custom/form/result-dialog";
 import { useChecklistDetailStore } from "@/store/admin/checklist/checklist-detail-store";
+import { useParams } from "next/navigation";
 import React, { useState } from "react";
 
 const Page = () => {
@@ -11,9 +12,9 @@ const Page = () => {
   const [curStep, setCurStep] = useState<number>(1);
   const [open, setOpen] = useState<boolean>(false);
   const { postAddChecklistItem } = useChecklistDetailStore();
+  const { id } = useParams();
 
   const handleSubmit = async (values: Record<string, any>) => {
-    console.log(values);
     const result = await postAddChecklistItem(values);
     result.code !== 200 ? setFormResult(false) : setFormResult(true);
     setNewSeq(result.data);
@@ -37,9 +38,8 @@ const Page = () => {
         result={formResult}
         open={open}
         setOpen={setOpen}
-        successUrl={newSeq.toString()}
-        successSubUrl={"/admin/user"}
-        failedUrl={"/admin/user"}
+        successUrl={`/admin/checklist/${id}`}
+        failedUrl={`/admin/checklist/${id}`}
       />
     </>
   );

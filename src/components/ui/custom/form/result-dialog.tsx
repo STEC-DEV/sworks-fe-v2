@@ -14,7 +14,7 @@ import { useRouter } from "next/navigation";
 interface ResultDialogProps {
   result: boolean;
   successUrl: string;
-  successSubUrl: string;
+  successSubUrl?: string;
   failedUrl: string;
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -43,7 +43,7 @@ const ResultDialog = ({
             onClick={() => router.replace(result ? successUrl : failedUrl)}
             label={"확인"}
           />
-          {result ? (
+          {successSubUrl && result ? (
             <a
               href={successSubUrl}
               className="text-xs text-[var(--description-dark)] underline decoration-[var(--description-dark)]"
