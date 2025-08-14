@@ -8,41 +8,72 @@ import React, { useEffect, useState } from "react";
 
 const ChecklistDialog = ({
   setOpen,
-}: {
+}: // onChange,
+{
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  // onChange: (value: Checklist[]) => void;
 }) => {
   const {
     availableChecklistItem,
     selectedAvailableChecklistItem,
     updateSelectedAvailableChecklistItem,
+    resetAvailableChecklistItem,
     getAvailableChecklistItem,
   } = useWorkplaceDetailStore();
-  const { id } = useParams();
+  const { id, types } = useParams();
   const [search, setSearch] = useState<string>("");
   const [selectedChecklist, setSelectedChecklist] = useState<Checklist[]>(
     selectedAvailableChecklistItem ?? []
   );
 
   useEffect(() => {
+    if (selectedAvailableChecklistItem) {
+      setSelectedChecklist(selectedAvailableChecklistItem);
+    }
+  }, [selectedAvailableChecklistItem]);
+
+  useEffect(() => {
     if (!id) return;
-    getAvailableChecklistItem(id?.toString());
+
+    if (id && types) {
+      const [a, b, c] = types.toString().split("-");
+      getAvailableChecklistItem(id?.toString(), a, b, c);
+    } else {
+      getAvailableChecklistItem(id?.toString());
+    }
+
+    //언마운트시 초기화
+    return () => {
+      resetAvailableChecklistItem();
+    };
   }, []);
+
+  const isChecked = (item: Checklist) => {
+    return selectedChecklist.some(
+      (selected) => selected.chkMainSeq === item.chkMainSeq
+    );
+  };
 
   //선택 함수
   const handleCheck = (item: Checklist) => {
-    console.log(item);
     setSelectedChecklist((prev) => {
-      return prev.includes(item)
-        ? prev.filter((v) => v !== item)
-        : [...prev, item];
+      const isSelected = prev.some(
+        (selected) => selected.chkMainSeq === item.chkMainSeq
+      );
+      if (isSelected) {
+        return prev.filter(
+          (selected) => selected.chkMainSeq !== item.chkMainSeq
+        );
+      } else {
+        return [...prev, item];
+      }
     });
   };
-
-  useEffect(() => {});
 
   //저장
   const handleSubmit = async () => {
     updateSelectedAvailableChecklistItem(selectedChecklist);
+    // onChange(selectedChecklist);
     setOpen(false);
   };
 
@@ -60,7 +91,7 @@ const ChecklistDialog = ({
             <ChecklistCard
               key={i}
               item={c}
-              isChecked={selectedChecklist.includes(c)}
+              isChecked={isChecked(c)}
               onClick={handleCheck}
             />
           ))

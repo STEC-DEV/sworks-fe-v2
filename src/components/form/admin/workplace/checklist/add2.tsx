@@ -1,3 +1,4 @@
+"use client";
 import ChecklistDialog from "@/app/admin/workplace/[id]/checklist/add/_components/checklist-dialog";
 import DraggableCheckAccordion from "@/app/admin/workplace/[id]/checklist/add/_components/chk-drag-accordion";
 import IconButton from "@/components/common/icon-button";
@@ -6,32 +7,34 @@ import CommonFormContainer from "@/components/ui/custom/form/form-container";
 import { useWorkplaceDetailStore } from "@/store/admin/workplace/workplace-detail-store";
 import { zodResolver } from "@hookform/resolvers/zod";
 import React, { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useFieldArray, useForm } from "react-hook-form";
 import {
   closestCenter,
   DndContext,
   DragEndEvent,
   DragStartEvent,
-  KeyboardSensor,
   MouseSensor,
-  PointerSensor,
   TouchSensor,
   UniqueIdentifier,
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
-import {
-  arrayMove,
-  SortableContext,
-  sortableKeyboardCoordinates,
-} from "@dnd-kit/sortable";
+import { arrayMove, SortableContext } from "@dnd-kit/sortable";
 import z from "zod";
+import {
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from "@/components/ui/form";
 
 const formSchema = z.object({
-  mains: z.array(z.number()).min(0),
+  chkMainSeq: z
+    .array(z.number())
+    .min(1, "최소 1개 이상 평가항목을 추가해주세요."),
 });
 
-type ChecklistAddFormType = z.infer<typeof formSchema>;
+export type ChecklistAddFormType = z.infer<typeof formSchema>;
 
 interface ChecklistAddFormProps {
   onPrev?: () => void;
@@ -47,13 +50,22 @@ const ChecklistAddForm = ({ onPrev, onNext }: ChecklistAddFormProps) => {
   const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
   // 로컬 상태로 드래그 가능한 아이템들 관리
   const [items, setItems] = useState(selectedAvailableChecklistItem || []);
+  const { createChecklist } = useWorkplaceDetailStore();
 
   const form = useForm<ChecklistAddFormType>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      mains: [],
+      chkMainSeq: items.map((item) => item.chkMainSeq),
     },
   });
+
+  useEffect(() => {
+    updateSelectedAvailableChecklistItem([]);
+  }, []);
+
+  useEffect(() => {
+    setItems(selectedAvailableChecklistItem);
+  }, [selectedAvailableChecklistItem]);
 
   const sensors = useSensors(
     useSensor(MouseSensor, { activationConstraint: { distance: 5 } }),
@@ -73,11 +85,19 @@ const ChecklistAddForm = ({ onPrev, onNext }: ChecklistAddFormProps) => {
     if (over && activeId) {
       const activeIndex = items.findIndex((c) => c.chkMainSeq === activeId);
       const overIndex = items.findIndex((c) => c.chkMainSeq === over.id);
-      setItems(arrayMove(items, activeIndex, overIndex));
-      updateSelectedAvailableChecklistItem(
-        arrayMove(items, activeIndex, overIndex)
+      const newItems = arrayMove(items, activeIndex, overIndex);
+      setItems(newItems);
+      updateSelectedAvailableChecklistItem(newItems);
+      form.setValue(
+        "chkMainSeq",
+        newItems.map((i) => i.chkMainSeq)
       );
     }
+  };
+
+  const handleFormFieldChange = (selectItem: Checklist[]) => {
+    const dataSeq = selectItem.map((i) => i.chkMainSeq);
+    form.setValue("chkMainSeq", dataSeq);
   };
 
   return (
@@ -85,35 +105,47 @@ const ChecklistAddForm = ({ onPrev, onNext }: ChecklistAddFormProps) => {
       title="평가항목"
       form={form}
       nextLabel="생성"
-      onPrev={onPrev}
       onNext={onNext}
+      onPrev={onPrev}
       titleOptionChildren={
         <BaseDialog
           triggerChildren={<IconButton icon={"SquarePen"} size={16} />}
-          title="평가항목 선택"
+          title="평가항목 수정"
           open={open}
           setOpen={setOpen}
         >
           <ChecklistDialog setOpen={setOpen} />
+          {/* onChange={handleFormFieldChange} */}
         </BaseDialog>
       }
     >
-      <DndContext
-        sensors={sensors}
-        collisionDetection={closestCenter}
-        onDragStart={handleDragStart}
-        onDragEnd={handleDragEnd}
-      >
-        <div className="flex flex-col gap-2">
-          {items ? (
-            <SortableContext items={items.map((c) => c.chkMainSeq)}>
-              {items.map((c, i) => (
-                <DraggableCheckAccordion key={i} data={c} />
-              ))}
-            </SortableContext>
-          ) : null}
-        </div>
-      </DndContext>
+      <FormField
+        control={form.control}
+        name="chkMainSeq"
+        render={({ field }) => (
+          <FormItem>
+            <FormMessage className="text-red-500" />
+            <FormControl>
+              <DndContext
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                onDragStart={handleDragStart}
+                onDragEnd={handleDragEnd}
+              >
+                <div className="flex flex-col gap-2">
+                  {items ? (
+                    <SortableContext items={items.map((c) => c.chkMainSeq)}>
+                      {items.map((c, i) => (
+                        <DraggableCheckAccordion key={i} data={c} />
+                      ))}
+                    </SortableContext>
+                  ) : null}
+                </div>
+              </DndContext>
+            </FormControl>
+          </FormItem>
+        )}
+      />
     </CommonFormContainer>
   );
 };

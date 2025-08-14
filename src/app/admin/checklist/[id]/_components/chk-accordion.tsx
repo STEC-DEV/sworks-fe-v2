@@ -65,7 +65,7 @@ export const CheckItem = ({ item }: { item: ChecklistItemDetail }) => {
         </span>
       </div>
       <div className="px-4 py-1 bg-blue-500 text-white text-sm rounded-[4px]">
-        {item.chkPoint}점
+        {item.chkDetailPoint}점
       </div>
     </div>
   );

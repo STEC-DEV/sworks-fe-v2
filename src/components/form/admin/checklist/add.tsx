@@ -19,7 +19,7 @@ const formSchema = z.object({
         z.object({
           chkDetailTitle: z.string().min(1, "세부항목명을 입력해주세요."),
           chkItem: z.string().min(1, "세부내용을 입력해주세요."),
-          chkPoint: z.string(),
+          chkDetailPoint: z.string(),
         })
       ),
     })
@@ -35,7 +35,7 @@ const subInit = {
     {
       chkDetailTitle: "",
       chkItem: "",
-      chkPoint: "0",
+      chkDetailPoint: "0",
     },
   ],
 };
@@ -43,7 +43,7 @@ const subInit = {
 const detailInit = {
   chkDetailTitle: "",
   chkItem: "",
-  chkPoint: "0",
+  chkDetailPoint: "0",
 };
 
 interface ChecklistItemAddFormProps {
@@ -64,7 +64,7 @@ const ChecklistItemAddForm = ({ onNext }: ChecklistItemAddFormProps) => {
             {
               chkDetailTitle: "",
               chkItem: "",
-              chkPoint: "0",
+              chkDetailPoint: "0",
             },
           ],
         },
@@ -168,7 +168,7 @@ const ChecklistItemAddForm = ({ onNext }: ChecklistItemAddFormProps) => {
                     />
                     <FormField
                       control={form.control}
-                      name={`subs.${idx}.details.${i}.chkPoint`}
+                      name={`subs.${idx}.details.${i}.chkDetailPoint`}
                       render={({ field }) => (
                         <TextFormItem
                           label="배점"

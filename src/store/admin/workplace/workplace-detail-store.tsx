@@ -26,11 +26,24 @@ interface WorkplaceDetailState {
   patchContract: (updateContract: Record<string, any>) => Promise<void>;
 
   ////체크리스트
-  //조회
+  /* 전체 조회 */
   checklist: WorkplaceChecklist[] | undefined;
   getChecklist: (workplaceId: string) => Promise<void>;
-
-  //생성
+  /* 상세 조회 */
+  checklistDetail: ChecklistDetail | undefined;
+  getChecklistDetail: (
+    workplaceId: string,
+    serviceTypeSeq: string,
+    divCodeSeq: string,
+    typeCodeSeq: string
+  ) => Promise<void>;
+  /* 생성 */
+  postAddChecklist: (workplaceId: string) => Promise<Response<CreateChecklist>>;
+  putUpdateChecklist: (
+    workplaceId: string,
+    value: Record<string, any>
+  ) => Promise<void>;
+  /* 체크리스트 조회시 필요한 유형,부문 */
   checklistMultiType: ChecklistMultiType[] | undefined;
   getCheckMultiType: (workplaceId: string) => Promise<void>;
   /* 체크리스트 생성 객체*/
@@ -39,7 +52,13 @@ interface WorkplaceDetailState {
   resetCreateChecklist: () => void;
   /* 선택한 유형의 체크리스트 조회 */
   availableChecklistItem: Checklist[] | undefined;
-  getAvailableChecklistItem: (workplaceId: string) => Promise<void>;
+  resetAvailableChecklistItem: () => void;
+  getAvailableChecklistItem: (
+    workplaceId: string,
+    serviceTypeSeq?: string,
+    divCodeSeq?: string,
+    typeCodeSeq?: string
+  ) => Promise<void>;
   /* 선택한 체크리스트 */
   selectedAvailableChecklistItem: Checklist[];
   resetSelectedAvailableChecklistItem: () => void;
@@ -62,7 +81,7 @@ const initialCreateChecklist: CreateChecklist = {
   serviceTypeSeq: undefined,
   divCodeSeq: undefined,
   typeCodeSeq: undefined,
-  mains: [],
+  chkMainSeq: [],
 };
 
 export const useWorkplaceDetailStore = create<WorkplaceDetailState>()(
@@ -85,6 +104,7 @@ export const useWorkplaceDetailStore = create<WorkplaceDetailState>()(
             console.log(err);
           }
         },
+
         patchWorkplaceInfo: async (updateWorkplace) => {
           try {
             const res: Response<number> = await api
@@ -178,6 +198,70 @@ export const useWorkplaceDetailStore = create<WorkplaceDetailState>()(
             console.log(err);
           }
         },
+        checklistDetail: undefined,
+        getChecklistDetail: async (
+          siteSeq,
+          serviceTypeSeq,
+          divCodeSeq,
+          typeCodeSeq
+        ) => {
+          try {
+            const res: Response<ChecklistDetail> = await api
+              .get(`site/w/sign/sitechecklist`, {
+                searchParams: {
+                  siteSeq,
+                  serviceTypeSeq,
+                  divCodeSeq,
+                  typeCodeSeq,
+                },
+              })
+              .json();
+            const data = res.data;
+
+            set({ checklistDetail: data });
+            console.log(res);
+          } catch (err) {
+            console.log(err);
+          }
+        },
+        postAddChecklist: async (workplaceId) => {
+          const { createChecklist, resetCreateChecklist } = get();
+
+          try {
+            const res: Response<CreateChecklist> = await api
+              .put(`site/w/sign/upsertsitechecklist`, {
+                json: { siteSeq: workplaceId, ...createChecklist },
+              })
+              .json();
+
+            const data = res.data;
+
+            resetCreateChecklist();
+            return res;
+          } catch (err) {
+            console.log(err);
+            resetCreateChecklist();
+            return {
+              code: 500,
+              data: initialCreateChecklist,
+              message: "등록 에러 발생",
+            };
+          }
+        },
+        putUpdateChecklist: async (workplaceId, value) => {
+          try {
+            const res: Response<CreateChecklist> = await api
+              .put(`site/w/sign/upsertsitechecklist`, {
+                json: { siteSeq: workplaceId, ...value },
+              })
+              .json();
+
+            const data = res.data;
+            console.log(data);
+          } catch (err) {
+            console.log(err);
+          }
+        },
         checklistMultiType: undefined,
         getCheckMultiType: async (workplaceId) => {
           try {
@@ -213,22 +297,33 @@ export const useWorkplaceDetailStore = create<WorkplaceDetailState>()(
           set({ createChecklist: initialCreateChecklist });
         },
         availableChecklistItem: undefined,
-        getAvailableChecklistItem: async (workplaceId) => {
+        resetAvailableChecklistItem: () => {
+          set({ availableChecklistItem: undefined });
+        },
+        getAvailableChecklistItem: async (
+          workplaceId,
+          serviceTypeSeq,
+          divCodeSeq,
+          typeCodeSeq
+        ) => {
           try {
             const { createChecklist } = get();
-            if (
-              !createChecklist.serviceTypeSeq ||
-              !createChecklist.divCodeSeq ||
-              !createChecklist.typeCodeSeq
-            )
+
+            const finalServiceTypeSeq =
+              serviceTypeSeq ?? createChecklist.serviceTypeSeq;
+            const finalDivCodeSeq = divCodeSeq ?? createChecklist.divCodeSeq;
+            const finalTypeCodeSeq = typeCodeSeq ?? createChecklist.typeCodeSeq;
+
+            if (!finalServiceTypeSeq || !finalDivCodeSeq || !finalTypeCodeSeq)
               return;
+            //site/w/sign/addsitechecklistclassification
             const res: Response<Checklist[]> = await api
-              .get(`site/w/sign/addsitechecklistclassification`, {
+              .get(`site/w/sign/getupsertchkclassification`, {
                 searchParams: {
                   siteSeq: workplaceId,
-                  serviceTypeSeq: createChecklist.serviceTypeSeq,
-                  divCodeSeq: createChecklist.divCodeSeq,
-                  typeCodeSeq: createChecklist.typeCodeSeq,
+                  serviceTypeSeq: finalServiceTypeSeq,
+                  divCodeSeq: finalDivCodeSeq,
+                  typeCodeSeq: finalTypeCodeSeq,
                 },
               })
               .json();

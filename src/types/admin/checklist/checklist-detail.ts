@@ -29,5 +29,5 @@ interface ChecklistItemDetail {
   chkDetailSeq: number;
   chkDetailTitle: string;
   chkItem: string;
-  chkPoint: number;
+  chkDetailPoint: number;
 }

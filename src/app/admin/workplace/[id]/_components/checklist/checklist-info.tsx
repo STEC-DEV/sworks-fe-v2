@@ -5,6 +5,7 @@ import IconButton from "@/components/common/icon-button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useWorkplaceDetailStore } from "@/store/admin/workplace/workplace-detail-store";
 import { ListCheck } from "lucide-react";
+import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import React, { useEffect } from "react";
 
@@ -39,18 +40,23 @@ const ChecklistWrapper = () => {
 };
 
 const ChecklistCard = ({ data }: { data: WorkplaceChecklist }) => {
+  const { id } = useParams();
   return (
-    <CustomCard className="w-full  gap-0 py-4 hover:cursor-pointer hover:border-blue-500">
-      <div className="flex justify-end px-4">
-        <IconButton icon="Trash2" size={16} />
-      </div>
-      <div className="flex justify-between items-center px-4">
-        <span className="text-blue-500">{data.serviceTypeName}</span>
-        <span>
-          {data.divCodeName}({data.typeCodeName})
-        </span>
-      </div>
-    </CustomCard>
+    <Link
+      href={`${id}/checklist/${data.serviceTypeSeq}-${data.divCodeSeq}-${data.typeCodeSeq}`}
+    >
+      <CustomCard className="w-full  gap-0 py-4 hover:cursor-pointer hover:border-blue-500">
+        <div className="flex justify-end px-4">
+          <IconButton icon="Trash2" size={16} />
+        </div>
+        <div className="flex justify-between items-center px-4">
+          <span className="text-blue-500">{data.serviceTypeName}</span>
+          <span>
+            {data.divCodeName}({data.typeCodeName})
+          </span>
+        </div>
+      </CustomCard>
+    </Link>
   );
 };
 

@@ -26,7 +26,7 @@ const CustomAccordion = ({
     <Accordion
       type="single"
       collapsible
-      className="border border-[var(--border)] rounded-[4px] shadow-sm "
+      className="flex-1 border border-[var(--border)] rounded-[4px] shadow-sm bg-white"
     >
       <AccordionItem value="item-1">
         <AccordionTrigger className=" px-4 py-2 hover:no-underline items-center focus-visible:ring-0 focus-visible:outline-none">

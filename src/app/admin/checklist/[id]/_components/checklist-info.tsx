@@ -25,7 +25,13 @@ const ChecklistInfo = () => {
   );
 };
 
-const KeyValue = ({ label, value }: { label: string; value: string }) => {
+export const KeyValue = ({
+  label,
+  value,
+}: {
+  label: string;
+  value: string;
+}) => {
   return (
     <div className="flex justify-between items-center">
       <span className="text-xs text-[var(--description-light)]">{label}</span>
