@@ -22,7 +22,7 @@ const formSchema = z.object({
     .string()
     .min(9, { message: "자릿수를 확인해주세요." })
     .max(11, { message: "자릿수를 확인해주세요." }),
-  email: z.string().email({ message: "이메일 형식을 확인해주세요." }),
+  email: z.email({ message: "이메일 형식을 확인해주세요." }),
 });
 
 export type basicFormType = z.infer<typeof formSchema>;

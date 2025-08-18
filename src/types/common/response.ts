@@ -3,3 +3,8 @@ export interface Response<T> {
   data: T;
   code: number;
 }
+
+export interface ReturnToken {
+  accessToken: string;
+  refreshToken: string;
+}

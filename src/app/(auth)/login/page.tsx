@@ -5,7 +5,7 @@ import React from "react";
 
 const page = () => {
   return (
-    <div className="flex items-center justify-center h-full bg-gradient-to-l from-sky-100 via-sky-300 to-sky-400">
+    <div className="flex items-center justify-center h-full bg-gradient-to-l from-blue-100 via-blue-300 to-blue-500">
       <CustomCard className={`w-130`} size={"lg"}>
         {/* 헤드 */}
         <div className="flex flex-col gap-2 px-16">

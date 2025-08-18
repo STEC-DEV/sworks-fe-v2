@@ -9,10 +9,7 @@ import {
   TextFormItem,
 } from "../common/form-input/text-field";
 import Button from "../common/button";
-import {
-  adminModeLoginAction,
-  normalModeLoginAction,
-} from "@/app/server-action/auth/auth-action";
+import { LoginAction } from "@/app/server-action/auth/auth-action";
 import { Switch } from "../ui/switch";
 
 const formSchema = z.object({
@@ -21,6 +18,10 @@ const formSchema = z.object({
     .string("비밀번호를 입력해주세요.")
     .min(2, "2글자 이상 입력해주세요."),
 });
+/**
+ * 일반 근무자 계정 555555, stecdev1234!
+ * @returns
+ */
 
 const LoginForm = () => {
   const [loginMode, setLoginMode] = useState<boolean>(false);
@@ -51,9 +52,7 @@ const LoginForm = () => {
       </div>
       <form
         // 서버액션
-        onSubmit={form.handleSubmit(
-          loginMode ? adminModeLoginAction : normalModeLoginAction
-        )}
+        onSubmit={form.handleSubmit((data) => LoginAction(data, loginMode))}
         className="flex flex-col gap-6"
       >
         <FormField
