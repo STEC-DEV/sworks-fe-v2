@@ -15,7 +15,7 @@ const appCardVariants = cva(
       },
       size: {
         default: "",
-        sm: "",
+        sm: "px-2 py-2",
         lg: "py-16",
       },
     },

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 // import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import localFont from "next/font/local";
+import BaseToast from "@/components/common/toast/base-toast";
 
 // font-family addition
 const pretendard = localFont({
@@ -24,7 +25,10 @@ export default function RootLayout({
   return (
     // className={`${geistSans.variable} ${geistMono.variable} antialiased`}
     <html lang="en" className={pretendard.variable}>
-      <body>{children}</body>
+      <body>
+        {children}
+        <BaseToast />
+      </body>
     </html>
   );
 }

@@ -16,6 +16,7 @@ interface FileFormItemProps<T extends FieldValues>
   // React Hook Form props
   onChange?: (...event: any[]) => void;
   value?: File[];
+  imageOnly?: boolean;
 }
 
 const FileFormItem = <T extends FieldValues>({
@@ -24,7 +25,7 @@ const FileFormItem = <T extends FieldValues>({
   multiple = true,
   accept,
   maxSize = 10 * 1024 * 1024, // 10MB 기본값
-
+  imageOnly = false,
   onChange, // React Hook Form의 onChange
   value = [], // React Hook Form의 value
   ...props
@@ -32,6 +33,7 @@ const FileFormItem = <T extends FieldValues>({
   const handleFilesChange = (files: File[]) => {
     onChange?.(files); // React Hook Form에 알림
   };
+
   return (
     <FormItem>
       <div>
@@ -44,10 +46,12 @@ const FileFormItem = <T extends FieldValues>({
       </div>
       <FormControl>
         <DragNDropInput
+          value={value}
           accept={accept}
           maxSize={maxSize}
           multiple={multiple}
           onFilesChange={handleFilesChange}
+          imageOnly={imageOnly}
           {...props}
         />
       </FormControl>

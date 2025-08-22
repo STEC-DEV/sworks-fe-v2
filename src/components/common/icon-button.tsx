@@ -10,7 +10,7 @@ interface IconButtonProps extends HTMLAttributes<HTMLOrSVGElement> {
 const IconButton = ({
   className,
   icon,
-  size = 20,
+  size = 16,
   ...props
 }: IconButtonProps) => {
   const SelectLucideIcon = icons[icon];

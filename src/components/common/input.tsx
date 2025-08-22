@@ -27,6 +27,7 @@ import {
   EyeOffIcon,
   FileIcon,
   FileTextIcon,
+  ImageIcon,
   Upload,
   XIcon,
 } from "lucide-react";
@@ -36,6 +37,7 @@ import { file } from "zod";
 import CustomCard from "./card";
 import IconButton from "./icon-button";
 import { ScrollArea } from "../ui/scroll-area";
+import { toast } from "sonner";
 
 interface PasswordInputProps extends React.ComponentProps<"input"> {}
 
@@ -93,135 +95,186 @@ interface FileInputProps
   accept?: string;
   maxSize?: number; // bytes
   value?: File[];
+  imageOnly?: boolean;
   onFilesChange?: (files: File[]) => void;
-  [key: string]: any;
+  // [key: string]: any;
 }
 
-const DragNDropInput = ({
-  className,
-  value = [],
-  multiple = true,
-  accept,
-  maxSize = 10 * 1024 * 1024, // 10MB 기본값
-  onFilesChange,
-  ...props
-}: FileInputProps) => {
-  const [isDragOver, setIsDragOver] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+const DragNDropInput = React.forwardRef<HTMLInputElement, FileInputProps>(
+  (props, forwardedRef) => {
+    const {
+      className,
+      value = [],
+      multiple = true,
+      accept,
+      maxSize = 10 * 1024 * 1024,
+      imageOnly = false,
+      onFilesChange,
+      ...rest
+    } = props;
+    const [isDragOver, setIsDragOver] = useState(false);
+    const internalRef = React.useRef<HTMLInputElement>(null);
 
-  /** 드래그 처리 */
-  const handleDragEnter = (e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsDragOver(true);
-  };
+    // 두 ref를 모두 세팅
+    const setRefs = (el: HTMLInputElement | null) => {
+      internalRef.current = el;
+      if (typeof forwardedRef === "function") {
+        forwardedRef(el);
+      } else if (forwardedRef) {
+        (
+          forwardedRef as React.MutableRefObject<HTMLInputElement | null>
+        ).current = el;
+      }
+    };
 
-  const handleDragOver = (e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-  };
+    // 파일 입력 클릭
+    const handleClick = () => {
+      internalRef.current?.click();
+    };
 
-  const handleDragLeave = (e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsDragOver(false);
-  };
+    /** 드래그 처리 */
+    const handleDragEnter = (e: React.DragEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      setIsDragOver(true);
+    };
 
-  const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsDragOver(false);
-    handleFiles(e.dataTransfer.files);
-  };
+    const handleDragOver = (e: React.DragEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+    };
 
-  // 파일 입력 클릭
-  const handleClick = () => {
-    console.log("실행됨", fileInputRef.current?.click());
-    fileInputRef.current?.click();
-  };
+    const handleDragLeave = (e: React.DragEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      setIsDragOver(false);
+    };
 
-  //파일검증
-  const validateFile = (file: File): boolean => {
-    return true;
-  };
-
-  //파일 올리는 함수
-  const handleFiles = (fileList: FileList | null) => {
-    if (!fileList) return;
-
-    const newFiles = Array.from(fileList);
+    const handleDrop = (e: React.DragEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      setIsDragOver(false);
+      handleFiles(e.dataTransfer.files);
+    };
 
     //파일검증
-    const validFiles = newFiles.filter(validateFile);
-    if (validFiles.length !== newFiles.length) return;
+    const validateFile = (file: File): boolean => {
+      let allowExtension = [
+        // 이미지
+        ".jpg",
+        ".jpeg",
+        ".png",
+        ".gif",
+        ".webp",
+        ".bmp",
+      ];
+      const docsExtension = [
+        //문서
+        ".pdf",
+        ".doc",
+        ".docx",
+        ".xls",
+        ".xlsx",
+        ".csv",
+        ".hwp",
+        ".hwpx",
+      ];
 
-    const updatedFiles = multiple ? [...value, ...validFiles] : validFiles;
-    //console.log(updatedFiles);
-    //setFiles(updatedFiles);
-    onFilesChange?.(updatedFiles);
-  };
+      const fileExtension = file.name.toLowerCase().split(".").pop();
+      allowExtension = imageOnly
+        ? [...allowExtension]
+        : [...allowExtension, ...docsExtension];
+      if (!fileExtension) {
+        toast.error("파일 확장자가 존재하지않습니다.");
+        return false;
+      }
 
-  //파일 제거
-  const handleRemoveFile = async (item: File) => {
-    const updatedFiles = value.filter((v) => v !== item);
-    // setFiles(updatedFiles);
-    onFilesChange?.(updatedFiles);
-  };
+      if (!allowExtension.includes(`.${fileExtension}`)) {
+        toast.error(`.${fileExtension}은(는) 허용되지않은 확장자입니다.`);
+        return false;
+      } else {
+        return true;
+      }
+    };
 
-  return (
-    <div className={cn("h-60 w-full flex  gap-6 ", className)}>
-      <input
-        ref={fileInputRef}
-        type="file"
-        multiple={multiple}
-        accept={accept}
-        className="hidden"
-        onChange={(e) => handleFiles(e.target.files)}
-        {...props}
-      />
-      <div
-        className={`flex-1 flex items-center justify-center h-full rounded-[4px] border-2 border-dashed border-[var(--icon)] hover:bg-[var(--background)] hover:cursor-pointer ${
-          isDragOver
-            ? "border-solid border-[var(--primary)] bg-[var(--background)]"
-            : ""
-        }`}
-        onDragEnter={handleDragEnter}
-        onDragOver={handleDragOver}
-        onDragLeave={handleDragLeave}
-        onDrop={handleDrop}
-        onClick={handleClick}
-      >
-        <div className={`flex flex-col items-center justify-center gap-6 `}>
-          <div className="bg-[var(--primary)] rounded-[50px] p-2">
-            <Upload className="text-white" size={20} />
+    //파일 올리는 함수
+    const handleFiles = (fileList: FileList | null) => {
+      if (!fileList) return;
+
+      const newFiles = Array.from(fileList);
+
+      //파일검증
+      const validFiles = newFiles.filter(validateFile);
+      if (validFiles.length !== newFiles.length) return;
+
+      const updatedFiles = multiple ? [...value, ...validFiles] : validFiles;
+      //console.log(updatedFiles);
+      //setFiles(updatedFiles);
+      onFilesChange?.(updatedFiles);
+    };
+
+    //파일 제거
+    const handleRemoveFile = async (item: File) => {
+      const updatedFiles = value.filter((v) => v !== item);
+      // setFiles(updatedFiles);
+      onFilesChange?.(updatedFiles);
+    };
+
+    return (
+      <div className={cn("h-60 w-full flex  gap-6 ", className)}>
+        <input
+          ref={setRefs}
+          type="file"
+          multiple={multiple}
+          accept={accept}
+          className="hidden"
+          onChange={(e) => handleFiles(e.target.files)}
+          {...rest}
+        />
+        <div
+          className={`flex-1 flex items-center justify-center h-full rounded-[4px] border-2 border-dashed border-[var(--icon)] hover:bg-[var(--background)] hover:cursor-pointer ${
+            isDragOver
+              ? "border-solid border-[var(--primary)] bg-[var(--background)]"
+              : ""
+          }`}
+          onDragEnter={handleDragEnter}
+          onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
+          onDrop={handleDrop}
+          onClick={handleClick}
+        >
+          <div className={`flex flex-col items-center justify-center gap-6 `}>
+            <div className="bg-[var(--primary)] rounded-[50px] p-2">
+              <Upload className="text-white" size={20} />
+            </div>
+            <span className="text-lg font-bold">
+              파일을 드래그하거나 클릭하세요
+            </span>
+            <span className="text-md text-[var(--description-light)]">
+              여러 파일을 동시에 업로드할 수 있습니다
+            </span>
           </div>
-          <span className="text-lg font-bold">
-            파일을 드래그하거나 클릭하세요
-          </span>
-          <span className="text-md text-[var(--description-light)]">
-            여러 파일을 동시에 업로드할 수 있습니다
-          </span>
         </div>
+        {value.length > 0 ? (
+          <div className="flex-1 h-full flex flex-col gap-1 ">
+            <span className="text-sm text-[var(--description-light)]">
+              선택된 파일
+            </span>
+            <div className="flex-1 min-h-0">
+              <ScrollArea className="h-full">
+                <div className="flex flex-col gap-2 pr-2">
+                  {value.map((v, i) => (
+                    <FileBox file={v} key={i} onRemove={handleRemoveFile} />
+                  ))}
+                </div>
+              </ScrollArea>
+            </div>
+          </div>
+        ) : null}
       </div>
-      {value.length > 0 ? (
-        <div className="flex-1 h-full flex flex-col gap-1 ">
-          <span className="text-sm text-[var(--description-light)]">
-            선택된 파일
-          </span>
-          <div className="flex-1 min-h-0">
-            <ScrollArea className="h-full">
-              <div className="flex flex-col gap-2 pr-2">
-                {value.map((v, i) => (
-                  <FileBox file={v} key={i} onRemove={handleRemoveFile} />
-                ))}
-              </div>
-            </ScrollArea>
-          </div>
-        </div>
-      ) : null}
-    </div>
-  );
-};
+    );
+  }
+);
 
 const FileBox = ({
   file,
@@ -230,13 +283,34 @@ const FileBox = ({
   file: File;
   onRemove: (file: File) => void;
 }) => {
+  const [img, setImg] = useState<boolean>(false);
+  const imgExtension = [
+    // 이미지
+    ".jpg",
+    ".jpeg",
+    ".png",
+    ".gif",
+    ".webp",
+    ".bmp",
+  ];
+
+  useEffect(() => {
+    const fileExtension = file.name.toLowerCase().split(".").pop();
+    setImg(imgExtension.includes(`.${fileExtension}`));
+  }, [file]);
+
   return (
     <CustomCard
       className="flex-row justify-between px-2 py-1 items-center"
       variant={"list"}
     >
-      <div className="flex gap-2">
-        <FileTextIcon className="text-[var(--icon)]" size={20} />
+      <div className="flex items-center gap-2">
+        {img ? (
+          <ImageIcon className="text-[var(--icon)]" size={20} />
+        ) : (
+          <FileTextIcon className="text-[var(--icon)]" size={20} />
+        )}
+
         <span>{file.name}</span>
       </div>
 

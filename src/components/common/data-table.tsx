@@ -13,6 +13,7 @@ import {
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
+import { PackageOpenIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React from "react";
 
@@ -90,9 +91,16 @@ DataTableProps<TData, TValue>) => {
             <TableRow>
               <TableCell
                 colSpan={columns.length}
-                className="h-24 text-center text-muted-foreground"
+                className=" h-100 text-center text-[var(--description-light)]"
               >
-                {emptyMessage ?? "내용 없음"}
+                <div className="flex flex-col items-center gap-6">
+                  <PackageOpenIcon
+                    className="text-[var(--icon)]"
+                    strokeWidth={1}
+                    size={54}
+                  />
+                  {emptyMessage ?? "내용 없음"}
+                </div>
               </TableCell>
             </TableRow>
           )}

@@ -1,6 +1,7 @@
 "use client";
 import BaseSkeleton from "@/components/common/base-skeleton";
 import AppTitle from "@/components/common/label/title";
+import { cn } from "@/lib/utils";
 import { useChecklistDetailStore } from "@/store/admin/checklist/checklist-detail-store";
 
 //체크리스트 기본정보
@@ -28,14 +29,18 @@ const ChecklistInfo = () => {
 export const KeyValue = ({
   label,
   value,
+  valueSize,
 }: {
   label: string;
   value: string;
+  valueSize?: string;
 }) => {
   return (
     <div className="flex justify-between items-center">
       <span className="text-xs text-[var(--description-light)]">{label}</span>
-      <span className="text-sm text-[var(--description-dark)]">{value}</span>
+      <span className={cn("text-sm text-[var(--description-dark)]", valueSize)}>
+        {value}
+      </span>
     </div>
   );
 };

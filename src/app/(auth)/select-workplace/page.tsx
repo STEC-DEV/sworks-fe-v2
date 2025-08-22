@@ -22,7 +22,7 @@ const Page = () => {
 
   const handleEnter = (workplace: AdminWorkplaceSelectListItem) => {
     setEnter(true);
-    getWorkplacePermission(workplace.siteSeq.toString());
+    // getWorkplacePermission(workplace.siteSeq.toString());
     router.replace("/facility/r&m");
   };
   return (

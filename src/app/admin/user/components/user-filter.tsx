@@ -4,13 +4,10 @@ import CommonFilter, {
 } from "@/components/ui/custom/filter.tsx/common-filter";
 import { useDeptStore } from "@/store/admin/dept/dept-store";
 import { useBasicStore } from "@/store/basic-store";
-import {
-  ContractServiceType,
-  SiteServiceType,
-} from "@/types/admin/workplace/workplace-filter";
-import { convertSelectOptionType } from "@/types/common/select-item";
-import { convertKeyValueArrayToRecord } from "@/utils/basic-code-convert";
-import { BriefcaseBusiness, KeyRound, ReceiptText } from "lucide-react";
+
+import { convertSelectOptionType } from "@/utils/convert";
+import { convertKeyValueArrayToRecord } from "@/utils/convert";
+import { BriefcaseBusiness } from "lucide-react";
 import React, { useEffect, useState } from "react";
 
 const AdminFilter = () => {

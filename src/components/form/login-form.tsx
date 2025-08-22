@@ -11,6 +11,9 @@ import {
 import Button from "../common/button";
 import { LoginAction } from "@/app/server-action/auth/auth-action";
 import { Switch } from "../ui/switch";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import { useAuthStore } from "@/store/auth/auth-store";
 
 const formSchema = z.object({
   loginId: z.string("사번 입력해주세요.").min(2, "2글자 이상 입력해주세요."),
@@ -24,7 +27,9 @@ const formSchema = z.object({
  */
 
 const LoginForm = () => {
+  const router = useRouter();
   const [loginMode, setLoginMode] = useState<boolean>(false);
+  const { getWorkplacePermission, setWorkplaceId } = useAuthStore();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -32,6 +37,22 @@ const LoginForm = () => {
       loginPassword: "",
     },
   });
+
+  const handleSubmit = async (data: z.infer<typeof formSchema>) => {
+    const res = await LoginAction(data, loginMode);
+    if (!res.result) {
+      toast.error(res.message);
+    }
+
+    if (!res.url) return;
+
+    //일반 근무자 로그인 성공 시 사업장 정보 조회
+    if (res.code === 201) {
+      await getWorkplacePermission();
+    }
+
+    router.replace(res.url);
+  };
 
   return (
     <Form {...form}>
@@ -52,7 +73,7 @@ const LoginForm = () => {
       </div>
       <form
         // 서버액션
-        onSubmit={form.handleSubmit((data) => LoginAction(data, loginMode))}
+        onSubmit={form.handleSubmit(handleSubmit)}
         className="flex flex-col gap-6"
       >
         <FormField

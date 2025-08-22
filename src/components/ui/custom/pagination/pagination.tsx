@@ -40,10 +40,15 @@ const Pagination = ({
   const startPage =
     Math.floor((activePage - 1) / pageRangeDisplayed) * pageRangeDisplayed + 1;
 
-  const endPage = Math.min(
-    startPage + pageRangeDisplayed - 1,
-    allDisplayedPage
-  );
+  const endPage =
+    Math.min(startPage + pageRangeDisplayed - 1, allDisplayedPage) === 0
+      ? 1
+      : Math.min(startPage + pageRangeDisplayed - 1, allDisplayedPage);
+
+  useEffect(() => {
+    console.log(startPage);
+    console.log(endPage);
+  }, [startPage, endPage]);
 
   const pageHandler = ({ pageNumber }: { pageNumber: number }) => {
     //데이터조회

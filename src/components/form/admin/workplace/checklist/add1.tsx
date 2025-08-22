@@ -8,7 +8,8 @@ import {
   ServiceType,
   TypeCodeType,
 } from "@/types/common/basic-code";
-import { convertSelectOptionType } from "@/types/common/select-item";
+import { convertSelectOptionType } from "@/utils/convert";
+
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useParams } from "next/navigation";
 import React, { useEffect } from "react";

@@ -8,7 +8,14 @@ const DEFAULT_API_RETRY_LIMIT = 3;
 const beforeRetry: BeforeRetryHook = async ({ request, error, retryCount }) => {
   console.log("retry 에러 발생");
   const httpError = error as HTTPError;
-  console.log(httpError.response.status);
+  console.log("=== RETRY 에러 상세 분석 ===");
+  console.log("재시도 횟수:", retryCount);
+  console.log("요청 URL:", request.url);
+  console.log("요청 메서드:", request.method);
+
+  // error 객체 전체 확인
+  console.log("error 객체:", error);
+  console.log("error 타입:", error?.constructor?.name);
   //AUTH 에러 아닐 시 리턴
   if (httpError.response.status !== 401) return;
 

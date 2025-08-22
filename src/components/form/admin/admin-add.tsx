@@ -7,7 +7,8 @@ import {
 import CommonFormContainer from "@/components/ui/custom/form/form-container";
 import { FormField } from "@/components/ui/form";
 import { useDeptStore } from "@/store/admin/dept/dept-store";
-import { convertSelectOptionType } from "@/types/common/select-item";
+import { convertSelectOptionType } from "@/utils/convert";
+
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";

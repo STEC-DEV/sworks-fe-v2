@@ -1,4 +1,4 @@
-interface BasicCode {
+export interface BasicCode {
   codeSeq: number;
   codeName: string;
 }
