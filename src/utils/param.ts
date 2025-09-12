@@ -1,4 +1,7 @@
 export const paramsCheck = (params: URLSearchParams): URLSearchParams => {
+  console.log(
+    params.size === 0 || !params.get("pageNumber") || !params.get("pageSize")
+  );
   if (
     params.size === 0 ||
     !params.get("pageNumber") ||

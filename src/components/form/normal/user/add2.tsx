@@ -1,22 +1,26 @@
 import FileFormItem from "@/components/common/form-input/file-field";
+import { MultiSelectFormItem } from "@/components/common/form-input/select-field";
 import { TextFormItem } from "@/components/common/form-input/text-field";
+import { MultiSelect } from "@/components/common/select-input";
 import CommonFormContainer from "@/components/ui/custom/form/form-container";
 import { FormField } from "@/components/ui/form";
 import { useUserMainStore } from "@/store/normal/user/main-store";
+import { convertSelectOptionType } from "@/utils/convert";
 import { zodResolver } from "@hookform/resolvers/zod";
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import z from "zod";
 
 const formSchema = z.object({
-  userName: z.string("이름을 입력해주세요.").min(1),
-  sabun: z.string("사번을 입력해주세요.").min(1),
+  userName: z.string("이름을 입력해주세요.").min(1, "이름을 입력해주세요."),
+  sabun: z.string("사번을 입력해주세요.").min(1, "사번을 입력해주세요."),
   job: z.string(),
-  email: z.email(),
+  email: z.email("이메일 형식을 확인해주세요.").optional(),
   phone: z
     .string()
     .min(9, { message: "자릿수를 확인해주세요." })
     .max(11, { message: "자릿수를 확인해주세요." }),
+  serviceTypes: z.array(z.string().min(0, "담당 업무를 선택해주세요.")),
   images: z.array(z.instanceof(File)),
 });
 
@@ -28,7 +32,8 @@ interface UserAddFormProps {
 }
 
 const UserAddForm = ({ onNext, onPrev }: UserAddFormProps) => {
-  const { createUser } = useUserMainStore();
+  const { createUser, createUserClassification } = useUserMainStore();
+  const [test, setTest] = useState<string[]>([]);
   const form = useForm<UserAddFormType>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -37,6 +42,7 @@ const UserAddForm = ({ onNext, onPrev }: UserAddFormProps) => {
       job: createUser.job,
       email: createUser.email,
       phone: createUser.phone,
+      serviceTypes: [],
       images: createUser.images,
     },
   });
@@ -62,6 +68,26 @@ const UserAddForm = ({ onNext, onPrev }: UserAddFormProps) => {
           render={({ field }) => (
             <TextFormItem label="사번" placeholder="이름" required {...field} />
           )}
+        />
+        <FormField
+          control={form.control}
+          name="serviceTypes"
+          render={({ field }) => {
+            const handleValue = (value: string[]) => {
+              field.onChange(value);
+            };
+            return (
+              <MultiSelectFormItem
+                label="담당업무"
+                value={field.value}
+                onValueChange={handleValue}
+                selectItem={convertSelectOptionType(
+                  createUserClassification?.serviceTypes ?? []
+                )}
+                required
+              />
+            );
+          }}
         />
         <FormField
           control={form.control}

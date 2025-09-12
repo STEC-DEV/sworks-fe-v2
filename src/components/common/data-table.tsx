@@ -42,7 +42,8 @@ DataTableProps<TData, TValue>) => {
   const router = useRouter();
 
   return (
-    <div className="rounded-[4px] overflow-hidden bg-white ">
+    // overflow-hidden
+    <div className="rounded-[4px]  bg-white ">
       <Table className="border">
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
@@ -71,7 +72,7 @@ DataTableProps<TData, TValue>) => {
               <TableRow
                 key={row.id}
                 data-state={row.getIsSelected() && "selected"}
-                className="hover:cursor-pointer hover:bg-blue-50  hover:border-blue-500 hover:z-51 "
+                className="hover:cursor-pointer hover:bg-blue-50   hover:z-51 "
                 onClick={() => {
                   router.push(`${baseUrl}/${(row.original as any)[idName]}`);
                 }}

@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 import { cva, VariantProps } from "class-variance-authority";
-import { icons, LucideIcon } from "lucide-react";
+import { ChevronDown, icons, LucideIcon } from "lucide-react";
 import React from "react";
 
 const buttonVariants = cva(
@@ -10,6 +10,7 @@ const buttonVariants = cva(
       /**색상변경 */
       variant: {
         default: "bg-blue-500",
+        secondary: "text-blue-500 bg-parent hover:bg-blue-50",
         filter: "px-2 py-2",
         prev: "border border-[var(--border)] bg-[var(--background)] text-[var(--description-light)] hover:bg-[var(--border)]",
         login: `border bg-white text-[var(--description-dark)] hover:border-red-500 hover:bg-white 
@@ -54,6 +55,35 @@ const Button = ({
         <SelectLucideIcon className="text-[var(--icon)] stroke-1 w-5 h-5 group-hover:stroke-2" />
       )}
       {label}
+    </button>
+  );
+};
+
+export const TriggerButton = ({
+  className,
+  children,
+  ...props
+}: React.ComponentProps<"button"> & {
+  className?: string;
+  children: React.ReactNode;
+}) => {
+  return (
+    <button
+      className={cn(
+        `w-full   rounded-[4px] border border-[var(--border)] text-[var(--placeholder)] h-9 text-sm
+        flex justify-between items-center px-3 py-2
+        shadow-none transition duration-300
+                focus-visible:border-[var(--primary)] focus-visible:border-1 focus-visible:ring-1 focus-visible:ring-[var(--primary)]
+                hover:border-[var(--primary)] hover:cursor-pointer
+                data-[placeholder]:text-[var(--placeholder)] data-[state=open]:ring-[var(--primary)] data-[state=open]:border-[var(--primary)] data-[state=open]:ring-1 data-[state=open]:ring-inset
+                `,
+        className
+      )}
+      type="button"
+      {...props}
+    >
+      {children}
+      <ChevronDown size={16} className="text-[var(--icon)]" />
     </button>
   );
 };

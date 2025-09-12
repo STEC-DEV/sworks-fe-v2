@@ -10,7 +10,7 @@ interface SimpleCalendarProps {
 }
 
 const SimpleCalendar = ({ defaultValue, onSelect }: SimpleCalendarProps) => {
-  const { weeks, curDate, focusDate, onNextMonth, onPrevMonth, onFocusDate } =
+  const { weeks, curDate, focusDate, onNext, onPrev, onFocusDate } =
     useCalendar(defaultValue ?? new Date());
 
   useEffect(() => {
@@ -29,8 +29,8 @@ const SimpleCalendar = ({ defaultValue, onSelect }: SimpleCalendarProps) => {
         {/* 헤더는 고정 크기 */}
         <SimpleCalendarHeader
           date={curDate}
-          onNextMonth={onNextMonth}
-          onPrevMonth={onPrevMonth}
+          onNextMonth={onNext}
+          onPrevMonth={onPrev}
         />
       </div>
       <div className="flex-1  px-2">
@@ -161,7 +161,6 @@ const DayBox = ({
       {...props}
     >
       {format(day, "dd")}
-      {/* {dayjs(day).format("DD")} */}
     </div>
   );
 };

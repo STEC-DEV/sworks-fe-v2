@@ -1,8 +1,8 @@
 "use client";
 import AppTitle from "@/components/common/label/title";
 import { useFacilityMainStore } from "@/store/normal/facility/facility-main-store";
-import { useParams, useSearchParams } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import React, { useEffect } from "react";
 import DataTable from "@/components/common/data-table";
 import { facilityColumns } from "../_components/rnm-columns";
 import BaseSkeleton from "@/components/common/base-skeleton";
@@ -31,9 +31,8 @@ const Page = () => {
         facilitySeq = 3;
         break;
     }
-
     getFacilityList(new URLSearchParams(searchParams), facilitySeq.toString());
-  }, []);
+  }, [decodeValue]);
 
   useEffect(() => {
     if (!decodeValue) return;
@@ -49,8 +48,9 @@ const Page = () => {
         facilitySeq = 3;
         break;
     }
+
     getFacilityList(new URLSearchParams(searchParams), facilitySeq.toString());
-  }, [searchParams]);
+  }, [searchParams, decodeValue]);
   return (
     <>
       <AppTitle title={decodeValue} />
@@ -62,7 +62,7 @@ const Page = () => {
           data={facilityList.data}
           idName={"facilitySeq"}
           baseUrl={decodeValue.toLowerCase()}
-          emptyMessage="M&O 데이터를 추가해주세요"
+          emptyMessage={`${decodeValue} 데이터를 추가해주세요`}
         />
       ) : (
         <BaseSkeleton className="h-full" />

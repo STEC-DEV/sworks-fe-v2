@@ -18,7 +18,7 @@ interface UserMainState {
   createUser: CreateUser;
   updateCreateUser: (value: Record<string, any>) => void;
   resetCreateUser: () => void;
-  postAddUser: () => Promise<void>;
+  postAddUser: () => Promise<Response<boolean>>;
   //사용자 업무유형 조회
   createUserClassification: CreateUserClassification | undefined;
   getCreateUserClassification: () => Promise<void>;
@@ -29,7 +29,7 @@ const initialCreateUser: CreateUser = {
   userName: "",
   sabun: "",
   job: "",
-  email: "",
+  email: undefined,
   phone: "",
   images: [],
 };
@@ -76,9 +76,24 @@ export const useUserMainStore = create<UserMainState>()(
         postAddUser: async () => {
           const { createUser } = get();
           const formData = convertRecordDataToFormData(createUser);
-          console.log(formData);
+
           try {
-          } catch (err) {}
+            const res: Response<boolean> = await api
+              .post("user/w/sign/adduser", {
+                body: formData,
+              })
+              .json();
+
+            return res;
+          } catch (err) {
+            const response: Response<boolean> = {
+              code: 500,
+              message: "요청 중 오류가 발생했습니다.",
+              data: false,
+            };
+
+            return response;
+          }
         },
         createUserClassification: undefined,
         getCreateUserClassification: async () => {
@@ -89,14 +104,12 @@ export const useUserMainStore = create<UserMainState>()(
           try {
             const res: Response<CreateUserClassification> = await api
               .get("user/w/sign/upsertclassification", {
-                searchParams: enteredWorkplace.siteSeq.toString(),
+                searchParams: { siteSeq: enteredWorkplace.siteSeq.toString() },
               })
               .json();
 
             set({ createUserClassification: res.data });
-          } catch (err) {
-            console.log(err);
-          }
+          } catch (err) {}
         },
       }),
       { name: "user-main-store" }

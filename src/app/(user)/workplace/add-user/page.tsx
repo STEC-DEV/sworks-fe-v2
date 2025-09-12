@@ -41,7 +41,9 @@ const Page = () => {
   const handleSubmit = async (values: UserAddFormType) => {
     updateCreateUser(values);
     const res = await postAddUser();
+    setFormResult(res.data);
     setCurStep((prev) => prev + 1);
+    setOpen(true);
   };
 
   const formsConfig = {
@@ -65,8 +67,8 @@ const Page = () => {
         open={open}
         setOpen={setOpen}
         successUrl={newSeq.toString()}
-        successSubUrl={"/workplace/user"}
-        failedUrl={"/workplace/ user"}
+        successSubUrl={"/workplace"}
+        failedUrl={"/workplace"}
       />
     </>
   );

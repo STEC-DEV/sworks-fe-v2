@@ -1,7 +1,12 @@
+export type ListData<T> = {
+  data: T[];
+  meta: ListMeta;
+};
+
 export type ListState<T> =
   | { type: "loading" }
-  | { type: "error"; error: string }
-  | { type: "data"; data: T[]; meta: ListMeta };
+  | { type: "error"; message: string }
+  | { type: "data"; payload: ListData<T> };
 
 export interface ListMeta {
   totalCount: number;

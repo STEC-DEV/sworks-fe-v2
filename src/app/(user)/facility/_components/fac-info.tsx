@@ -1,8 +1,10 @@
+"use client";
 import CustomCard from "@/components/common/card";
 import IconButton from "@/components/common/icon-button";
 import AppTitle from "@/components/common/label/title";
 import { format } from "date-fns";
 import { Download, DownloadIcon, FileTextIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
 import React from "react";
 import { toast } from "sonner";
 
@@ -12,11 +14,16 @@ interface FacInfoProps {
 }
 
 const FacInfo = ({ data, title }: FacInfoProps) => {
+  const router = useRouter();
+
   return (
     <div className="w-full flex flex-col gap-6">
       <div className="flex justify-between items-center">
         <AppTitle title={title} />
-        <IconButton icon="SquarePen" />
+        <IconButton
+          icon="SquarePen"
+          onClick={() => router.push(`${data.facilitySeq}/edit`)}
+        />
       </div>
 
       <div className="flex flex-col gap-4">
@@ -29,9 +36,11 @@ const FacInfo = ({ data, title }: FacInfoProps) => {
         <KeyValue label="비용" value={data.cost?.toString() ?? ""} />
       </div>
       <span className="text-lg font-bold">보고서</span>
-      {data.attaches.length > 0
-        ? data.attaches.map((f, i) => <FileBox key={i} file={f} />)
-        : null}
+      <div className="space-y-2">
+        {data.attaches.length > 0
+          ? data.attaches.map((f, i) => <FileBox key={i} file={f} />)
+          : null}
+      </div>
     </div>
   );
 };
@@ -48,7 +57,7 @@ const KeyValue = ({ label, value }: { label: string; value: string }) => {
 const FileBox = ({ file }: { file: Attach }) => {
   return (
     <CustomCard
-      className="flex-row items-center justify-between"
+      className="flex-row items-center justify-between hover:cursor-default"
       variant={"list"}
       size={"sm"}
     >
@@ -58,13 +67,14 @@ const FileBox = ({ file }: { file: Attach }) => {
           size={16}
           strokeWidth={1}
         />
-        <span>파일명</span>
+        <span className="text-sm">{file.fileName}</span>
       </div>
 
       <IconButton
+        bgClassName="hover:bg-blue-50"
         icon="Download"
         onClick={() => {
-          downloadFile(file.path, "테스트 다운로드파일");
+          downloadFile(file.path, file.fileName);
         }}
       />
     </CustomCard>

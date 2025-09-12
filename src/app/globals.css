@@ -81,7 +81,7 @@ ol {
 /* 반응형 */
 video,
 img {
-  width: 100%;
+  /* width: 100%; */
 }
 
 :root {
@@ -151,6 +151,15 @@ img {
     box-shadow: 5px 0 12px 0px rgb(156, 156, 156),
       10px 0 15px 0px rgba(156, 156, 156, 0.3);
   }
+}
+
+/* 폼에서 입력항목 레이아웃 */
+.form-layout {
+  @apply xl:grid xl:grid-cols-2 xl:gap-x-24 xl:gap-y-12 flex flex-col gap-6;
+}
+/**/
+.base-flex-col {
+  @apply h-full flex flex-col;
 }
 
 /* --background: oklch(1 0 0);

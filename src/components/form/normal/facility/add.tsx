@@ -16,7 +16,7 @@ import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import z from "zod";
 
-const formSchema = z.object({
+export const facilityAddFormSchema = z.object({
   facilityCodeSeq: z.number("관리 유형을 선택해주세요.").min(1),
   description: z.string("내용을 입력해주세요."),
   fromDt: z.date(),
@@ -25,15 +25,16 @@ const formSchema = z.object({
   tel: z
     .string()
     .min(9, { message: "자릿수를 확인해주세요." })
-    .max(11, { message: "자릿수를 확인해주세요." }),
+    .max(11, { message: "자릿수를 확인해주세요." })
+    .optional(),
   cost: z.string(),
   files: z.array(z.instanceof(File)),
 });
 
-export type basicFormType = z.infer<typeof formSchema>;
+export type FacilityAddFormType = z.infer<typeof facilityAddFormSchema>;
 
 interface RnMAddFormProps {
-  onNext: (values: basicFormType) => void;
+  onNext: (values: FacilityAddFormType) => void;
 }
 
 const RnMAddForm = ({ onNext }: RnMAddFormProps) => {
@@ -42,7 +43,6 @@ const RnMAddForm = ({ onNext }: RnMAddFormProps) => {
   const [code, setCode] = useState<BasicCode[]>();
 
   useEffect(() => {
-    console.log(basicCode);
     switch (decodeValue) {
       case "R&M":
         setCode(basicCode.rnmCodes);
@@ -56,15 +56,15 @@ const RnMAddForm = ({ onNext }: RnMAddFormProps) => {
     }
   }, [decodeValue]);
 
-  const form = useForm<basicFormType>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<FacilityAddFormType>({
+    resolver: zodResolver(facilityAddFormSchema),
     defaultValues: {
       facilityCodeSeq: undefined,
       description: "",
       fromDt: new Date(),
       toDt: null,
       constractor: "",
-      tel: "",
+      tel: undefined,
       cost: "",
       files: [],
     },
@@ -97,7 +97,7 @@ const RnMAddForm = ({ onNext }: RnMAddFormProps) => {
                   label="유형"
                   selectItem={convertSelectOptionType(code ?? [])}
                   onValueChange={handleValue}
-                  defaultValue={field.value?.toString()}
+                  value={field.value?.toString()}
                   required
                 />
               );

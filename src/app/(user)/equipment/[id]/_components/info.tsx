@@ -17,10 +17,12 @@ import {
   TargetIcon,
   UserIcon,
 } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 import React, { useEffect } from "react";
 
 const EquipmentInfoCard = () => {
+  const router = useRouter();
   const { equipmentDetail: data, getEquipmentDetail } =
     useEquipmentDetailStore();
 
@@ -48,7 +50,10 @@ const EquipmentInfoCard = () => {
                 </span>
               </div>
 
-              <IconButton icon="SquarePen" />
+              <IconButton
+                icon="SquarePen"
+                onClick={() => router.push(`${rawValue}/edit`)}
+              />
             </div>
             {/* 바디 */}
             <div className="flex flex-col gap-6 ">

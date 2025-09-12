@@ -8,6 +8,7 @@ import { devtools, persist } from "zustand/middleware";
 interface EquipmentHistoryMainState {
   historyList: ListState<EquipmentHistoryListItem>;
   getHistoryList: (param: URLSearchParams, equipSeq: string) => Promise<void>;
+  postAddHistory: (values: any) => Promise<Response<boolean>>;
 }
 
 export const useEquipmentHistoryMainStore = create<EquipmentHistoryMainState>()(
@@ -33,6 +34,24 @@ export const useEquipmentHistoryMainStore = create<EquipmentHistoryMainState>()(
             set({ historyList: { type: "data", ...response.data } });
           } catch (err) {
             console.log(err);
+          }
+        },
+        postAddHistory: async (values) => {
+          try {
+            const res: Response<boolean> = await api
+              .post(`equipment/w/sign/addequipmenthistory`, {
+                json: values,
+              })
+              .json();
+
+            return res;
+          } catch (err) {
+            const res: Response<boolean> = {
+              data: false,
+              code: 500,
+              message: "에러 발생",
+            };
+            return res;
           }
         },
       }),

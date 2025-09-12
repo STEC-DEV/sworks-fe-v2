@@ -2,7 +2,7 @@
 import { logout } from "@/app/server-action/auth/auth-action";
 import Button from "@/components/common/button";
 import IconButton from "@/components/common/icon-button";
-import { icons, LogOut } from "lucide-react";
+import { icons, LogOut, MenuIcon } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import React, { useEffect } from "react";
 interface MenuItem {
@@ -19,7 +19,7 @@ interface MenuSection {
 const NormalMenu: MenuSection[] = [
   { items: [{ title: "현황", icon: "LayoutDashboard", path: "/status" }] },
   { items: [{ title: "사업장", icon: "Factory", path: "/workplace" }] },
-  { items: [{ title: "일정", icon: "CalendarDays", path: "schedule" }] },
+  { items: [{ title: "일정", icon: "CalendarDays", path: "/schedule" }] },
   {
     items: [
       { title: "업무", isGroup: true },
@@ -102,7 +102,7 @@ interface SideBarProps {
 
 const SideBar = ({ loginMode }: SideBarProps) => {
   return (
-    <div className="flex flex-col w-70 h-full bg-[var(--primary)] side-bar-shadow">
+    <div className="flex flex-col w-70 h-full bg-[var(--primary)] side-bar-shadow relative">
       {/**
        * 헤더
        * 로고, 프로필

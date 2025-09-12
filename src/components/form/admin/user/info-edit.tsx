@@ -5,7 +5,8 @@ import { TextFormItem } from "@/components/common/form-input/text-field";
 import { Form, FormField } from "@/components/ui/form";
 import { useAdminDetailStore } from "@/store/admin/admin/admin-detail";
 import { useDeptStore } from "@/store/admin/dept/dept-store";
-import { convertSelectOptionType } from "@/types/common/select-item";
+import { convertSelectOptionType } from "@/utils/convert";
+
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useParams } from "next/navigation";
 import React, { useEffect } from "react";

@@ -36,3 +36,18 @@ export interface TypeCodeType {
   typeCodeSeq: number;
   typeCodeName: string;
 }
+
+export const VocProcessStatus = [
+  {
+    value: 0,
+    name: "미처리",
+  },
+  {
+    value: 1,
+    name: "처리중",
+  },
+  {
+    value: 2,
+    name: "처리완료",
+  },
+];

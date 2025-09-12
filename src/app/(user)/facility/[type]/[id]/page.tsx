@@ -12,8 +12,10 @@ const Page = () => {
   const { rawValue: id } = useDecodeParam("id");
 
   useEffect(() => {
-    getFacilityDetail(id);
-  }, []);
+    if (id) {
+      getFacilityDetail(id);
+    }
+  }, [id]);
 
   return (
     <div className="w-150">

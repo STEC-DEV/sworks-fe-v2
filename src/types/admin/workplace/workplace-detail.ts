@@ -6,3 +6,14 @@ export interface WorkplaceDetail {
   siteTel: string;
   siteAddress: string;
 }
+
+export interface UserWorkplaceDetail {
+  siteSeq: number;
+  siteName: string;
+  contracts: UserServiceType[];
+}
+
+export interface UserServiceType {
+  userServiceTypeSeq: number;
+  userServiceTypeName: string;
+}

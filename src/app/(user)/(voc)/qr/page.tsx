@@ -1,7 +1,18 @@
+import AppTitle from "@/components/common/label/title";
 import React from "react";
+import QrFilter from "./_components/filter";
+import QrPagination from "./_components/pagination";
+import QrList from "./_components/list";
 
 const Page = () => {
-  return <div>qr 페이지</div>;
+  return (
+    <>
+      <AppTitle title="위치 QR" />
+      <QrFilter />
+      <QrPagination />
+      <QrList />
+    </>
+  );
 };
 
 export default Page;

@@ -25,7 +25,7 @@ const formSchema = z.object({
           chkDetailSeq: z.number(),
           chkDetailTitle: z.string().min(1, "세부항목명을 입력해주세요."),
           chkItem: z.string().min(1, "세부내용을 입력해주세요."),
-          chkPoint: z.string(),
+          chkDetailPoint: z.string(),
         })
       ),
     })
@@ -43,7 +43,7 @@ const subInit = {
       chkDetailSeq: 0,
       chkDetailTitle: "",
       chkItem: "",
-      chkPoint: "0",
+      chkDetailPoint: "0",
     },
   ],
 };
@@ -52,7 +52,7 @@ const detailInit = {
   chkDetailSeq: 0,
   chkDetailTitle: "",
   chkItem: "",
-  chkPoint: "0",
+  chkDetailPoint: "0",
 };
 
 const ChecklistItemEditForm = () => {
@@ -83,7 +83,7 @@ const ChecklistItemEditForm = () => {
                 chkDetailSeq: detail.chkDetailSeq,
                 chkDetailTitle: detail.chkDetailTitle,
                 chkItem: detail.chkItem,
-                chkPoint: detail.chkPoint.toString(),
+                chkPoint: detail.chkDetailPoint.toString(),
               })) || [],
           })) || [],
       });
@@ -186,7 +186,7 @@ const ChecklistItemEditForm = () => {
                     />
                     <FormField
                       control={form.control}
-                      name={`subs.${idx}.details.${i}.chkPoint`}
+                      name={`subs.${idx}.details.${i}.chkDetailPoint`}
                       render={({ field }) => (
                         <TextFormItem
                           label="배점"
@@ -217,7 +217,7 @@ const ChecklistItemEditForm = () => {
         ...sub,
         details: sub.details.map((d) => ({
           ...d,
-          chkPoint: parseInt(d.chkPoint),
+          chkDetailPoint: parseInt(d.chkDetailPoint),
         })),
       })),
     };

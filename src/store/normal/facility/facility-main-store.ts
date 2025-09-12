@@ -27,17 +27,15 @@ export const useFacilityMainStore = create<FacilityMainState>()(
           //사업장 조회
           const { enteredWorkplace } = useAuthStore.getState();
           const checkParam = paramsCheck(params);
+
           if (!enteredWorkplace) return;
 
-          console.log("타입 : ", facilitySeq);
+          checkParam.set("siteSeq", enteredWorkplace?.siteSeq.toString());
+          checkParam.set("facilityType", facilitySeq);
 
           try {
             const res = await api.get(`facility/w/sign/getfacilitylist`, {
-              searchParams: {
-                siteSeq: enteredWorkplace?.siteSeq,
-                facilityType: facilitySeq,
-                ...Object.fromEntries(checkParam),
-              },
+              searchParams: checkParam,
             });
 
             const response = (await res.json()) as Response<{

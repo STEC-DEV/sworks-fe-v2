@@ -1,6 +1,6 @@
 import { FormControl, FormItem, FormMessage } from "@/components/ui/form";
 import { FieldValues } from "react-hook-form";
-import Input, { PasswordInput } from "../input";
+import Input, { PasswordInput, TextArea } from "../input";
 
 interface TextFormItemProps<T extends FieldValues>
   extends React.ComponentProps<"input"> {
@@ -29,6 +29,40 @@ export const TextFormItem = <T extends FieldValues>({
 
       <FormControl>
         <Input {...props} />
+      </FormControl>
+      <FormMessage className="text-xs text-red-500" />
+    </FormItem>
+  );
+};
+
+interface TextAreaFormItemProps<T extends FieldValues>
+  extends React.ComponentProps<"textarea"> {
+  label?: string;
+  required?: boolean;
+}
+
+/**
+ * TextArea 입력 받는 폼 컴포넌트
+ * --
+ * */
+export const TextAreaFormItem = <T extends FieldValues>({
+  label,
+  required = false,
+  ...props
+}: TextAreaFormItemProps<T>) => {
+  return (
+    <FormItem className="flex flex-col gap-2">
+      <div className="flex">
+        {label ? (
+          <span className="text-xs text-[var(--description-light)]">
+            {label}
+          </span>
+        ) : null}
+        {required ? <span className="text-xs text-red-500">*</span> : null}
+      </div>
+
+      <FormControl>
+        <TextArea {...props} />
       </FormControl>
       <FormMessage className="text-xs text-red-500" />
     </FormItem>

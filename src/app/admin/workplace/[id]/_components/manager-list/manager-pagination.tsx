@@ -16,7 +16,7 @@ const ManagerPagination = () => {
   return (
     <>
       {managers.type === "data" ? (
-        <div className="flex gap-4">
+        <div className="flex gap-4 items-center">
           <CommonPagination totalCount={managers.meta.totalCount} />
           <BaseDialog
             triggerChildren={<IconButton icon={"SquarePen"} size={16} />}

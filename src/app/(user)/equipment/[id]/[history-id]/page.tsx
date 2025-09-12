@@ -3,36 +3,57 @@
 import BaseSkeleton from "@/components/common/base-skeleton";
 import IconButton from "@/components/common/icon-button";
 import AppTitle from "@/components/common/label/title";
+import HistoryEdit from "@/components/form/normal/equipment/history-edit";
 import BaseDialog from "@/components/ui/custom/base-dialog";
 import { useDecodeParam } from "@/hooks/params";
 import { cn } from "@/lib/utils";
 import { useEquipmentHistoryDetailStore } from "@/store/normal/equipment/history/detail-store";
 import { useEquipmentHistoryMainStore } from "@/store/normal/equipment/history/list-store";
 import { format } from "date-fns";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 const Page = () => {
+  const [open, setOpen] = useState<boolean>(false);
   const { rawValue } = useDecodeParam("history-id");
   const { historyDetail, getHistoryDetail } = useEquipmentHistoryDetailStore();
 
   useEffect(() => {
     if (rawValue) getHistoryDetail(rawValue);
-  }, []);
+  }, [rawValue]);
 
   return (
-    <div className="w-150">
+    <div className="w-150 base-flex-col">
       <div className="flex justify-between">
         <AppTitle title="관리이력 상세" />
-        <IconButton icon="SquarePen" />
+        <BaseDialog
+          title="수정"
+          triggerChildren={<IconButton icon="SquarePen" />}
+          open={open}
+          setOpen={setOpen}
+        >
+          <HistoryEdit setOpen={setOpen} />
+        </BaseDialog>
       </div>
       {historyDetail ? (
-        <div className="h-full">
+        <div className="base-flex-col">
           <KeyValueItem
+            labelStyle="text-sm"
+            valueStyle="text-md font-normal"
             label={"점검일자"}
-            value={format(historyDetail?.detailDt, "yyyy-MM=dd")}
+            value={format(historyDetail?.detailDt, "yyyy-MM-dd")}
           />
-          <KeyValueItem label={"점검내용"} value={historyDetail?.contents} />
-          <KeyValueItem label={"비고"} value={historyDetail?.remark ?? ""} />
+          <KeyValueItem
+            labelStyle="text-sm"
+            valueStyle="text-md font-normal"
+            label={"비고"}
+            value={historyDetail?.remark ?? ""}
+          />
+          <KeyValueItem
+            labelStyle="text-sm"
+            valueStyle="text-md font-normal"
+            label={"점검내용"}
+            value={historyDetail?.contents}
+          />
         </div>
       ) : (
         <BaseSkeleton className="h-200" />

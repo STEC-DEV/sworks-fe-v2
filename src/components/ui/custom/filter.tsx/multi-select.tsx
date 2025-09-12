@@ -55,7 +55,7 @@ const MultiSelect = <T extends Record<string, string>>({
             text-nowrap text-xs bg-white border  hover:bg-gray-50 ${
               selected.length > 0
                 ? "text-black border-blue-500"
-                : "text-[var(--description-title-color)] "
+                : "text-[var(--description-dark)]"
             }
           focus-visible:outline-none focus-visible:ring-0
           `}

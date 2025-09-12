@@ -70,7 +70,7 @@ const EquipmentAddForm = ({ onNext }: EquipmentAddFormProps) => {
       nextLabel="생성"
       onNext={onNext}
     >
-      <div className="grid grid-cols-2 gap-x-24 gap-y-12">
+      <div className="form-layout">
         {basicCode.contractCodes ? (
           <FormField
             control={form.control}
@@ -86,7 +86,7 @@ const EquipmentAddForm = ({ onNext }: EquipmentAddFormProps) => {
                     basicCode.contractCodes ?? []
                   )}
                   onValueChange={handleValue}
-                  defaultValue={field.value?.toString()}
+                  value={field.value?.toString()}
                   required
                 />
               );

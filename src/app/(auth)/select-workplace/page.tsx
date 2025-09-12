@@ -22,8 +22,8 @@ const Page = () => {
 
   const handleEnter = (workplace: AdminWorkplaceSelectListItem) => {
     setEnter(true);
-    // getWorkplacePermission(workplace.siteSeq.toString());
-    router.replace("/facility/r&m");
+    getWorkplacePermission(workplace.siteSeq.toString());
+    router.replace("/status");
   };
   return (
     <div className="flex items-center justify-center h-full bg-gradient-to-l from-blue-100 via-blue-300 to-blue-500">

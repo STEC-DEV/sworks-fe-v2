@@ -17,7 +17,7 @@ export const DateFormItem = ({
   required = false,
 }: DateFormItemProps) => {
   return (
-    <FormItem className="g-2">
+    <FormItem className="gap-2 ">
       <div className="flex">
         {label ? (
           <span className="text-xs text-[var(--description-light)]">

@@ -18,6 +18,7 @@ export function middleware(req: NextRequest) {
 
   // 로그인 페이지는 검사 대상에서 제외
   if (pathname == "/login") return NextResponse.next();
+  if (pathname.startsWith("/voc/add")) return NextResponse.next();
   if (pathname.startsWith("/facility")) return NextResponse.next();
   if (pathname.startsWith("/equipment")) return NextResponse.next();
 

@@ -1,14 +1,15 @@
 "use client";
 import Input from "@/components/common/input";
 import {
+  useDurationFilter,
   useFilter,
   useSearch,
   useSearchExecution,
 } from "@/hooks/filter/useFilter";
 import { LucideIcon } from "lucide-react";
-import React, { useEffect } from "react";
+import React from "react";
 import MultiSelect from "./multi-select";
-import { useSearchParams } from "next/navigation";
+import DurationItem from "./duration-item";
 
 export interface FilterConfig {
   key: string;
@@ -20,16 +21,23 @@ export interface FilterConfig {
 interface CommonFilterProps {
   filters?: FilterConfig[];
   search?: boolean;
+  startName?: string;
+  endName?: string;
 }
 
-const CommonFilter = ({ filters, search = true }: CommonFilterProps) => {
+const CommonFilter = ({
+  filters,
+  search = true,
+  startName,
+  endName,
+}: CommonFilterProps) => {
   const { filterState, updateFilter } = useFilter({ filters });
   const { searchValue, setSearchValue, clearSearch, handleKeyDown } =
     useSearch();
-
-  useEffect(() => {
-    console.log(filterState);
-  }, [filterState]);
+  const { duration, handleUpdateDuration, handleReset } = useDurationFilter({
+    startName: startName ?? "",
+    endName: endName ?? "",
+  });
 
   const { executeSearch } = useSearchExecution();
 
@@ -52,23 +60,33 @@ const CommonFilter = ({ filters, search = true }: CommonFilterProps) => {
           value={searchValue}
         />
       ) : null}
-
-      {filters ? (
-        <div className="flex gap-4">
-          {filters.map((f, i) => (
-            <MultiSelect
-              key={i}
-              placeholder={f.placeholder}
-              icon={f.icon}
-              data={f.data}
-              selected={filterState[f.key]}
-              onClick={(data) => {
-                updateFilter(f.key, data);
-              }}
-            />
-          ))}
-        </div>
-      ) : null}
+      <div className="flex gap-4">
+        {filters ? (
+          <div className="flex gap-4">
+            {filters.map((f, i) => (
+              <MultiSelect
+                key={i}
+                placeholder={f.placeholder}
+                icon={f.icon}
+                data={f.data}
+                selected={filterState[f.key]}
+                onClick={(data) => {
+                  updateFilter(f.key, data);
+                }}
+              />
+            ))}
+          </div>
+        ) : null}
+        {startName && endName ? (
+          <DurationItem
+            value={duration}
+            startName={startName}
+            endName={endName}
+            onClick={(date, keyName) => handleUpdateDuration(keyName, date)}
+            onReset={handleReset}
+          />
+        ) : null}
+      </div>
     </div>
   );
 };

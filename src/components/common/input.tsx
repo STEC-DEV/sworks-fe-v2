@@ -22,12 +22,51 @@ const Input = ({
   );
 };
 
+const InputSearch = ({
+  className,
+  ...props
+}: React.ComponentProps<"input">) => {
+  return (
+    <div className="flex gap-2 items-center justify-center border-b">
+      <Search size={24} className="text-[var(--icon)]" />
+      <Input
+        className={cn(
+          "flex-1 px-0 border-none focus:ring-0 focus:border-none ",
+          className
+        )}
+        {...props}
+      />
+    </div>
+  );
+};
+
+const TextArea = ({
+  className,
+  ...props
+}: React.ComponentProps<"textarea">) => {
+  return (
+    <textarea
+      className={cn(
+        `text-sm px-3 py-1 h-40 rounded-[4px] border border-[var(--border)] transition-[border,box-shadow] duration-300 bg-white
+        hover:border-[var(--primary)]
+        focus:outline-none focus:ring-1 focus:ring-[var(--primary)] focus:border-[var(--primary)] focus:ring-inset 
+        resize-none
+        
+        `,
+        className
+      )}
+      {...props}
+    />
+  );
+};
+
 import {
   EyeIcon,
   EyeOffIcon,
   FileIcon,
   FileTextIcon,
   ImageIcon,
+  Search,
   Upload,
   XIcon,
 } from "lucide-react";
@@ -96,7 +135,12 @@ interface FileInputProps
   maxSize?: number; // bytes
   value?: File[];
   imageOnly?: boolean;
+  isVertical?: boolean;
+  //수정 시 기존에 존재하는 파일
+  existingFiles?: string[];
   onFilesChange?: (files: File[]) => void;
+  //수정 시 기존에 존재하는 파일 삭제 seq전달
+  onRemoveExistFiles?: (files: string) => void;
   // [key: string]: any;
 }
 
@@ -109,7 +153,10 @@ const DragNDropInput = React.forwardRef<HTMLInputElement, FileInputProps>(
       accept,
       maxSize = 10 * 1024 * 1024,
       imageOnly = false,
+      isVertical = false,
+      existingFiles,
       onFilesChange,
+      onRemoveExistFiles,
       ...rest
     } = props;
     const [isDragOver, setIsDragOver] = useState(false);
@@ -199,7 +246,16 @@ const DragNDropInput = React.forwardRef<HTMLInputElement, FileInputProps>(
 
     //파일 올리는 함수
     const handleFiles = (fileList: FileList | null) => {
-      if (!fileList) return;
+      if (!fileList || fileList?.length === 0) return;
+
+      //단일이면서 이미 파일이 있는경우
+      if (!multiple) {
+        const totalExistingFiles = (existingFiles?.length || 0) + value.length;
+        if (totalExistingFiles >= 1) {
+          toast.error("최대 1개의 파일만 업로드 가능합니다.");
+          return;
+        }
+      }
 
       const newFiles = Array.from(fileList);
 
@@ -221,7 +277,14 @@ const DragNDropInput = React.forwardRef<HTMLInputElement, FileInputProps>(
     };
 
     return (
-      <div className={cn("h-60 w-full flex  gap-6 ", className)}>
+      <div
+        className={cn(
+          ` h-auto  flex flex-col gap-6 md:h-60 md:flex-row  ${
+            isVertical ? "md:flex-col md:h-auto" : null
+          }`,
+          className
+        )}
+      >
         <input
           ref={setRefs}
           type="file"
@@ -232,7 +295,11 @@ const DragNDropInput = React.forwardRef<HTMLInputElement, FileInputProps>(
           {...rest}
         />
         <div
-          className={`flex-1 flex items-center justify-center h-full rounded-[4px] border-2 border-dashed border-[var(--icon)] hover:bg-[var(--background)] hover:cursor-pointer ${
+          className={` ${
+            value.length > 0
+              ? `md:w-1/2 ${isVertical ? "md:w-full" : null}`
+              : ""
+          } flex flex-col items-center justify-center h-60  w-full rounded-[4px] border-2 border-dashed border-[var(--icon)] hover:bg-[var(--background)] hover:cursor-pointer ${
             isDragOver
               ? "border-solid border-[var(--primary)] bg-[var(--background)]"
               : ""
@@ -255,14 +322,26 @@ const DragNDropInput = React.forwardRef<HTMLInputElement, FileInputProps>(
             </span>
           </div>
         </div>
-        {value.length > 0 ? (
-          <div className="flex-1 h-full flex flex-col gap-1 ">
-            <span className="text-sm text-[var(--description-light)]">
+
+        {value.length > 0 || (existingFiles && existingFiles.length > 0) ? (
+          <div
+            className={` w-full md:w-1/2  h-full flex flex-col gap-1 sm:h-auto sm:flex-none
+             ${isVertical ? "md:w-full" : null}
+          `}
+          >
+            {/* <span className="text-sm text-[var(--description-light)]">
               선택된 파일
-            </span>
-            <div className="flex-1 min-h-0">
-              <ScrollArea className="h-full">
-                <div className="flex flex-col gap-2 pr-2">
+            </span> */}
+            <div className="flex-1 min-h-0 ">
+              <ScrollArea className=" h-full sm:h-auto sm:max-h-none [&_[data-radix-scroll-area-viewport]>:first-child]:!block">
+                <div className=" flex flex-col gap-2 pr-2 w-full min-w-0">
+                  {existingFiles?.map((v, i) => (
+                    <ExistFileBox
+                      key={i}
+                      data={v}
+                      onRemove={(data) => onRemoveExistFiles?.(data)}
+                    />
+                  ))}
                   {value.map((v, i) => (
                     <FileBox file={v} key={i} onRemove={handleRemoveFile} />
                   ))}
@@ -311,7 +390,7 @@ const FileBox = ({
           <FileTextIcon className="text-[var(--icon)]" size={20} />
         )}
 
-        <span>{file.name}</span>
+        <span className="text-sm">{file.name}</span>
       </div>
 
       <IconButton icon="X" onClick={() => onRemove(file)} />
@@ -319,6 +398,39 @@ const FileBox = ({
   );
 };
 
-export { PasswordInput, DragNDropInput };
+const ExistFileBox = ({
+  data,
+  onRemove,
+}: {
+  data: any;
+  onRemove: (data: any) => void;
+}) => {
+  return (
+    <CustomCard
+      className="w-full flex-row justify-between px-2 py-1 items-center min-w-0 overflow-hidden"
+      variant={"list"}
+    >
+      <div className="flex items-center gap-2 min-w-0 flex-1">
+        <FileTextIcon className="text-[var(--icon)] flex-shrink-0" size={20} />
+        <span className="text-sm truncate min-w-0 flex-1">{data}</span>
+      </div>
+      <IconButton
+        icon="X"
+        onClick={() => onRemove(data)}
+        className="flex-shrink-0 ml-2"
+      />
+    </CustomCard>
+  );
+};
+
+const CheckBox = ({
+  className,
+  type,
+  ...props
+}: React.ComponentProps<"input">) => {
+  return <input type="checkbox" />;
+};
+
+export { InputSearch, TextArea, PasswordInput, DragNDropInput, CheckBox };
 
 export default Input;

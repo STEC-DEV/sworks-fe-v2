@@ -3,7 +3,7 @@ export interface CreateUser {
   userName: string;
   sabun: string;
   job: string;
-  email: string;
+  email: string | undefined;
   phone: string;
 
   images: Array<File>;
