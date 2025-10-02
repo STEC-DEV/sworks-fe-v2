@@ -37,7 +37,12 @@ export interface TypeCodeType {
   typeCodeName: string;
 }
 
-export const VocProcessStatus = [
+export interface UserServiceType {
+  userServiceTypeSeq: number;
+  userServiceTypeName: string;
+}
+
+export const ProcessStatus = [
   {
     value: 0,
     name: "미처리",

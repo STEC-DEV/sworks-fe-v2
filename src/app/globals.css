@@ -161,6 +161,9 @@ img {
 .base-flex-col {
   @apply h-full flex flex-col;
 }
+.flex-center {
+  @apply flex justify-center items-center;
+}
 
 /* --background: oklch(1 0 0);
   --foreground: oklch(0.141 0.005 285.823);

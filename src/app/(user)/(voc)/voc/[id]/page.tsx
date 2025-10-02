@@ -12,7 +12,7 @@ import { useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import dialogText from "../../../../../../public/dialog-text.json";
 import { format } from "date-fns";
-import { VocProcessBadge } from "../_components/item";
+import { ProcessBadge } from "../_components/item";
 import { AlarmClockIcon, CheckCircleIcon, RotateCwIcon } from "lucide-react";
 import DialogCarousel from "@/components/ui/custom/image/size-carousel";
 import TypeEditForm from "@/components/form/normal/voc/type-edit";
@@ -43,7 +43,6 @@ const Page = () => {
                 triggerChildren={<IconButton icon="SquarePen" />}
                 open={open}
                 setOpen={setOpen}
-                className="h-auto"
               >
                 <TypeEditForm setOpen={setOpen} />
               </BaseDialog>
@@ -98,7 +97,7 @@ const ReplyBox = ({ data }: { data: VocReply }) => {
     switch (data.status) {
       case 0:
         return (
-          <VocProcessBadge
+          <ProcessBadge
             label="미처리"
             icon={AlarmClockIcon}
             style="bg-gray-400 w-fit px-2"
@@ -106,7 +105,7 @@ const ReplyBox = ({ data }: { data: VocReply }) => {
         );
       case 1:
         return (
-          <VocProcessBadge
+          <ProcessBadge
             label="처리중"
             icon={RotateCwIcon}
             style="bg-green-500 w-fit px-2"
@@ -114,7 +113,7 @@ const ReplyBox = ({ data }: { data: VocReply }) => {
         );
       case 2:
         return (
-          <VocProcessBadge
+          <ProcessBadge
             label="처리완료"
             icon={CheckCircleIcon}
             style="bg-blue-500 w-fit px-2"
@@ -159,13 +158,7 @@ const ReplyBox = ({ data }: { data: VocReply }) => {
 
       <div className="w-full overflow-x-auto px-4">
         <div className="flex gap-4 pb-2 min-w-max w-full">
-          {data.attaches.map((a, i) => (
-            <DialogCarousel
-              key={i}
-              currentIndex={i}
-              pathList={data.attaches.map((d, j) => d.path)}
-            />
-          ))}
+          <DialogCarousel pathList={data.attaches.map((d, j) => d.path)} />
         </div>
       </div>
     </CustomCard>

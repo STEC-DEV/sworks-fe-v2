@@ -15,6 +15,13 @@ export const monthSchedules: MonthScheduleListItem[] = [
     date: new Date("2025-08-01"),
   },
   {
+    monthSeq: 40,
+    serviceTypeSeq: 31,
+    serviceTypeName: "보안",
+    title: "야간 순찰 강화11",
+    date: new Date("2025-08-01"),
+  },
+  {
     monthSeq: 2,
     serviceTypeSeq: 32,
     serviceTypeName: "미화",

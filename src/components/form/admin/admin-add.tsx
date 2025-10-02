@@ -108,7 +108,7 @@ const AdminAddForm = ({ onNext, onPrev }: AdminAddFormProps) => {
                   label="부서"
                   selectItem={convertSelectOptionType(departmentList)}
                   onValueChange={handleValue}
-                  defaultValue={field.value?.toString()}
+                  value={field.value?.toString()}
                   required
                 />
               );

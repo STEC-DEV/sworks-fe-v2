@@ -5,13 +5,23 @@ import VocAddForm from "@/components/form/normal/voc/add";
 import BaseDialog from "@/components/ui/custom/base-dialog";
 import CommonPagination from "@/components/ui/custom/pagination/common-pagination";
 import { useVocStore } from "@/store/normal/voc/voc-store";
+import { convertRecordDataToFormData } from "@/utils/convert";
+import { useSearchParams } from "next/navigation";
 import React, { useState } from "react";
+import { toast } from "sonner";
 
 const VocPagination = () => {
   const [open, setOpen] = useState<boolean>(false);
-  const { vocList } = useVocStore();
+  const { vocList, postAddVoc, getVocList } = useVocStore();
+  const searchParams = useSearchParams();
   const handleSubmit = async (values: any) => {
+    console.log(values);
     //결과처리 로직
+    const formData = convertRecordDataToFormData(values);
+    const res = await postAddVoc(formData);
+    res.data ? toast.success("등록") : toast.error("실패");
+    await getVocList(new URLSearchParams(searchParams));
+    setOpen(false);
   };
 
   if (vocList.type === "loading") return <BaseSkeleton className="h-10" />;
@@ -25,7 +35,7 @@ const VocPagination = () => {
         open={open}
         setOpen={setOpen}
       >
-        <VocAddForm setOpen={setOpen} />
+        <VocAddForm onSubmit={handleSubmit} />
       </BaseDialog>
     </div>
   );

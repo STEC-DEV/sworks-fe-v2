@@ -51,7 +51,7 @@ const UserTypeSelectForm = ({ onNext }: UserTypeSelectFormProps) => {
                     createUserClassification.userTypes ?? []
                   )}
                   onValueChange={handleValue}
-                  defaultValue={field.value?.toString()}
+                  value={field.value?.toString()}
                   required
                 />
               );

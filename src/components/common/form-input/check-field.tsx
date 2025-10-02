@@ -20,7 +20,7 @@ const CheckFormItem = <T extends FieldValues>({
   ...props
 }: CheckFormItemProps<T>) => {
   return (
-    <FormItem className="gap-1">
+    <FormItem className="gap-1 w-full">
       <div className="flex items-center gap-4">
         <div className="flex">
           {label ? <span className="text-xs text-black">{label}</span> : null}

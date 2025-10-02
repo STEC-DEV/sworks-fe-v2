@@ -3,10 +3,7 @@ import AppTitle from "@/components/common/label/title";
 import React, { useEffect } from "react";
 import VocFilter from "./_components/filter";
 import VocPagination from "./_components/pagination";
-import DataTable from "@/components/common/data-table";
-import { vocListCol } from "./_components/voc-columns";
 import { useVocStore } from "@/store/normal/voc/voc-store";
-import BaseSkeleton from "@/components/common/base-skeleton";
 import { useSearchParams } from "next/navigation";
 import VocList from "./_components/list";
 

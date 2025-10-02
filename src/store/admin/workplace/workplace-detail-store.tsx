@@ -359,7 +359,7 @@ export const useWorkplaceDetailStore = create<WorkplaceDetailState>()(
             // return ok 200이 아닌경우
             if (!res.ok) {
               set({
-                managers: { type: "error", error: "데이터 조회 실패" },
+                managers: { type: "error", message: "에러" },
               });
             }
 
@@ -369,7 +369,7 @@ export const useWorkplaceDetailStore = create<WorkplaceDetailState>()(
             }>;
 
             set({
-              managers: { type: "data", ...response.data },
+              managers: { type: "data", payload: response.data },
             });
           } catch (err) {
             console.log(err);

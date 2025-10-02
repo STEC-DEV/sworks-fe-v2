@@ -11,8 +11,8 @@ import { SelectProps } from "@radix-ui/react-select";
 import React, { useEffect, useMemo, useState } from "react";
 import { FieldValues } from "react-hook-form";
 import { MultiSelect } from "../select-input";
-import { InputSearch } from "../input";
-import { Check, ChevronsUpDown, Search } from "lucide-react";
+
+import { Check } from "lucide-react";
 import {
   Popover,
   PopoverContent,
@@ -28,7 +28,6 @@ import {
   CommandList,
 } from "@/components/ui/command";
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
 
 interface TextFormItemProps<TField extends FieldValues = FieldValues>
   extends SelectProps {
@@ -47,25 +46,12 @@ const SelectFormItem = <T extends FieldValues>({
   value,
   ...props
 }: TextFormItemProps<T>) => {
-  const [search, setSearch] = useState<string>("");
-  const [open, setOpen] = useState<boolean>(false);
-
-  const filteredItem = useMemo(() => {
-    if (!search.trim()) return selectItem;
-    return selectItem.filter((item) =>
-      item.key.toLowerCase().includes(search.toLowerCase())
-    );
-  }, [search, selectItem]);
-
-  const handleOpenChange = (isOpen: boolean) => {
-    setOpen(isOpen);
-    if (!isOpen) {
-      setSearch("");
-    }
-  };
-
+  // useEffect(() => {
+  //   console.log("값 :", value);
+  //   console.log(selectItem.find((i) => i.value.toString() === value));
+  // }, [value]);
   return (
-    <FormItem className="flex flex-col gap-2">
+    <FormItem className="flex flex-col gap-2 w-full">
       <div className="flex">
         {label ? (
           <span className="text-xs text-[var(--description-light)]">
@@ -76,12 +62,10 @@ const SelectFormItem = <T extends FieldValues>({
       </div>
       <Select
         onValueChange={(value) => {
-          console.log(value);
           onValueChange(value);
         }}
         defaultValue={value}
-        open={open}
-        onOpenChange={handleOpenChange}
+        value={value}
         {...props}
       >
         <FormControl>
@@ -97,16 +81,8 @@ const SelectFormItem = <T extends FieldValues>({
         </FormControl>
         <FormMessage className="text-xs text-red-500" />
         <SelectContent className="rounded-[4px] bg-white">
-          <InputSearch
-            placeholder={label}
-            value={search}
-            onChange={(e) => {
-              setSearch(e.target.value);
-            }}
-          />
-
-          {filteredItem.length > 0 ? (
-            filteredItem.map((v, i) => (
+          {selectItem.length > 0 ? (
+            selectItem.map((v, i) => (
               <SelectItem
                 className={`
                  rounded-[4px]
@@ -185,7 +161,14 @@ export const ComboboxFormItem = ({
   const [open, setOpen] = useState(false);
 
   const selectKey = useMemo(() => {
-    const selectedItem = selectItem.find((i) => i.value === value);
+    // console.log("값 : ", value);
+    const selectedItem = selectItem.find((i) => {
+      // console.log("비교 시작");
+      // console.log(i.value.toString() === value);
+      // console.log("비교 끝");
+      return i.value.toString() === value;
+    });
+    // console.log("객체 : ", selectedItem);
     return {
       value: selectedItem?.key ?? label,
       hasValue: !!selectedItem,
@@ -201,13 +184,13 @@ export const ComboboxFormItem = ({
         ) : null}
         {required ? <span className="text-xs text-red-500">*</span> : null}
       </div>
-      <Popover open={open} onOpenChange={setOpen}>
+      <Popover open={open} onOpenChange={setOpen} modal>
         <PopoverTrigger asChild>
           <FormControl>
             <TriggerButton
               className={`${
-                selectKey.hasValue ? null : "text-[var(--placeholder)]"
-              }`}
+                selectKey.hasValue ? "text-black" : "text-[var(--placeholder)]"
+              } `}
               onMouseDown={(e) => {
                 e.preventDefault(); // 기본 동작 방지
               }}
@@ -218,9 +201,12 @@ export const ComboboxFormItem = ({
         </PopoverTrigger>
         <PopoverContent className="w-full p-0  bg-white ">
           <Command>
-            <CommandInput className="h-9" placeholder={label} />
+            <CommandInput
+              className="h-9 placeholder:text-[var(--placeholder)]"
+              placeholder={label}
+            />
             <CommandList>
-              <CommandEmpty>No framework found.</CommandEmpty>
+              <CommandEmpty>결과 없음</CommandEmpty>
               <CommandGroup>
                 {selectItem.map((item) => (
                   <CommandItem
@@ -229,15 +215,17 @@ export const ComboboxFormItem = ({
                     value={item.key}
                     key={item.key}
                     onSelect={() => {
-                      console.log(item.key);
                       onValueChange(item.value.toString());
+                      setOpen(false);
                     }}
                   >
                     {item.key}
                     <Check
                       className={cn(
                         "ml-auto",
-                        item.value === value ? "opacity-100" : "opacity-0"
+                        item.value.toString() === value
+                          ? "opacity-100"
+                          : "opacity-0"
                       )}
                     />
                   </CommandItem>

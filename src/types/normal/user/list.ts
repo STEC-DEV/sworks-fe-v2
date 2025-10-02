@@ -10,3 +10,7 @@ interface UserServiceType {
   userServiceTypeSeq: string;
   userServiceTypeName: string;
 }
+
+interface UserNameList {
+  userName: string;
+}

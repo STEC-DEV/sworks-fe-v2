@@ -53,13 +53,26 @@ export const convertRecordDataToFormData = (
     } else if (value instanceof File) {
       formData.append(key, value);
     } else if (Array.isArray(value)) {
-      value.forEach((item) => {
-        if (item instanceof File) {
-          formData.append(key, item);
-        } else {
-          formData.append(key, item);
-        }
-      });
+      if (
+        value.length > 0 &&
+        typeof value[0] === "object" &&
+        !(value[0] instanceof File)
+      ) {
+        formData.append(key, JSON.stringify(value));
+      } else {
+        //파일의 경우
+        value.forEach((item) => {
+          if (item instanceof File) {
+            formData.append(key, item);
+          } else {
+            formData.append(key, item);
+          }
+        });
+      }
+    } else if (typeof value === "object" && value !== null) {
+      const isEmpty = Object.keys(value).length === 0;
+      // 단일 객체인 경우 JSON 문자열로 변환
+      if (!isEmpty) formData.append(key, JSON.stringify(value));
     } else {
       formData.append(key, value);
     }

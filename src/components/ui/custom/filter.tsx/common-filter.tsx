@@ -61,20 +61,24 @@ const CommonFilter = ({
         />
       ) : null}
       <div className="flex gap-4">
-        {filters ? (
+        {filters && filters.length > 0 ? (
           <div className="flex gap-4">
-            {filters.map((f, i) => (
-              <MultiSelect
-                key={i}
-                placeholder={f.placeholder}
-                icon={f.icon}
-                data={f.data}
-                selected={filterState[f.key]}
-                onClick={(data) => {
-                  updateFilter(f.key, data);
-                }}
-              />
-            ))}
+            {filters.map((f, i) => {
+              console.log(filterState);
+              console.log(f);
+              return (
+                <MultiSelect
+                  key={i}
+                  placeholder={f.placeholder}
+                  icon={f.icon}
+                  data={f.data}
+                  selected={filterState[f.key] || []}
+                  onClick={(data) => {
+                    updateFilter(f.key, data);
+                  }}
+                />
+              );
+            })}
           </div>
         ) : null}
         {startName && endName ? (

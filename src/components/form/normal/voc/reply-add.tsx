@@ -8,7 +8,7 @@ import {
 } from "@/components/common/form-input/text-field";
 import { Form, FormField } from "@/components/ui/form";
 import { useVocDetailStore } from "@/store/normal/voc/detail-store";
-import { VocProcessStatus } from "@/types/common/basic-code";
+import { ProcessStatus } from "@/types/common/basic-code";
 import {
   convertRecordDataToFormData,
   convertSelectOptionType,
@@ -81,17 +81,15 @@ const ReplyAddForm = () => {
           name="status"
           render={({ field }) => {
             const handleChange = (value: string) => {
-              console.log("실행됨1");
-              console.log(value);
               if (!value) return;
-              console.log("실행됨2");
+
               field.onChange(parseInt(value));
             };
             return (
               <SelectFormItem
-                key={field.value || "empty"}
+                // key={field.value || "empty"}
                 label="처리상태"
-                selectItem={convertSelectOptionType(VocProcessStatus)}
+                selectItem={convertSelectOptionType(ProcessStatus)}
                 onValueChange={handleChange}
                 value={field.value?.toString()}
               />

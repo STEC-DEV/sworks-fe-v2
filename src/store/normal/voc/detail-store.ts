@@ -55,7 +55,7 @@ export const useVocDetailStore = create<VocDetailState>()(
         postAddReply: async (formData) => {
           try {
             const res: Response<boolean> = await api
-              .post(`voc/w/sign/addreplay`, {
+              .post(`voc/w/sign/addreply`, {
                 body: formData,
               })
               .json();

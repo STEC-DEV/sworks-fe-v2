@@ -53,6 +53,7 @@ DataTableProps<TData, TValue>) => {
                   <TableHead
                     className="text-xs bg-[var(--background)]"
                     key={header.id}
+                    style={{ width: header.getSize() }}
                   >
                     {header.isPlaceholder
                       ? null

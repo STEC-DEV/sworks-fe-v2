@@ -17,7 +17,7 @@ const ManagerPagination = () => {
     <>
       {managers.type === "data" ? (
         <div className="flex gap-4 items-center">
-          <CommonPagination totalCount={managers.meta.totalCount} />
+          <CommonPagination totalCount={managers.payload.meta.totalCount} />
           <BaseDialog
             triggerChildren={<IconButton icon={"SquarePen"} size={16} />}
             title="담당 사업장 수정"

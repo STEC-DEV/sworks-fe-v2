@@ -68,6 +68,7 @@ interface KeyValueItemProps {
   mainStyle?: string;
   labelStyle?: string;
   valueStyle?: string;
+  isHorizontal?: boolean;
 }
 
 export const KeyValueItem = ({
@@ -76,9 +77,17 @@ export const KeyValueItem = ({
   mainStyle,
   labelStyle,
   valueStyle,
+  isHorizontal = false,
 }: KeyValueItemProps) => {
   return (
-    <div className={cn("flex flex-col gap-1", mainStyle)}>
+    <div
+      className={cn(
+        `flex flex-col gap-1 ${
+          isHorizontal ? "flex-row justify-between items-center" : ""
+        }`,
+        mainStyle
+      )}
+    >
       <span
         className={cn("text-xs text-[var(--description-light)]", labelStyle)}
       >

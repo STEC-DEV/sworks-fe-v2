@@ -1,6 +1,6 @@
 "use client";
 import { ColumnDef } from "@tanstack/react-table";
-import { VocProcessBadge } from "./item";
+import { ProcessBadge } from "./item";
 import { format } from "date-fns";
 import { AlarmClockIcon, CheckCircleIcon, RotateCwIcon } from "lucide-react";
 
@@ -84,7 +84,7 @@ export const vocListCol: ColumnDef<VocListItem>[] = [
       switch (row.original.status) {
         case 0:
           return (
-            <VocProcessBadge
+            <ProcessBadge
               label="미처리"
               icon={AlarmClockIcon}
               style="bg-gray-400"
@@ -92,7 +92,7 @@ export const vocListCol: ColumnDef<VocListItem>[] = [
           );
         case 1:
           return (
-            <VocProcessBadge
+            <ProcessBadge
               label="처리중"
               icon={RotateCwIcon}
               style="bg-green-500"
@@ -100,7 +100,7 @@ export const vocListCol: ColumnDef<VocListItem>[] = [
           );
         case 2:
           return (
-            <VocProcessBadge
+            <ProcessBadge
               label="처리완료"
               icon={CheckCircleIcon}
               style="bg-blue-500"

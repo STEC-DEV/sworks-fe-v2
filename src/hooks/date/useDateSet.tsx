@@ -1,4 +1,4 @@
-import { isAfter, isBefore } from "date-fns";
+import { format, isAfter, isBefore } from "date-fns";
 
 import { UseFormReturn } from "react-hook-form";
 
@@ -6,12 +6,14 @@ interface useDateValidationProps {
   form: UseFormReturn<any>;
   startFieldName?: string;
   endFieldName?: string;
+  dateOnly?: boolean;
 }
 
 const useDateValidation = ({
   form,
   startFieldName = "startDt",
   endFieldName = "endDt",
+  dateOnly = false,
 }: useDateValidationProps) => {
   const handleDateChange = (
     type: "start" | "end",
@@ -25,20 +27,20 @@ const useDateValidation = ({
         isAfter(date, currentValue[endFieldName]) &&
         currentValue[endFieldName]
       ) {
-        onChange(date);
-        form.setValue("endDt", date);
+        onChange(dateOnly ? format(date, "yyyy-MM-dd") : date);
+        form.setValue("endDt", dateOnly ? format(date, "yyyy-MM-dd") : date);
       } else {
-        onChange(date);
+        onChange(dateOnly ? format(date, "yyyy-MM-dd") : date);
       }
     }
 
     //종료날짜가 시작날짜보다 이전인 경우
     if (type === "end") {
       if (isBefore(date, currentValue[startFieldName])) {
-        onChange(date);
-        form.setValue("startDt", date);
+        onChange(dateOnly ? format(date, "yyyy-MM-dd") : date);
+        form.setValue("startDt", dateOnly ? format(date, "yyyy-MM-dd") : date);
       } else {
-        onChange(date);
+        onChange(dateOnly ? format(date, "yyyy-MM-dd") : date);
       }
     }
 

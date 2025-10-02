@@ -75,8 +75,10 @@ import { Button } from "@/components/ui/button";
 import { file } from "zod";
 import CustomCard from "./card";
 import IconButton from "./icon-button";
-import { ScrollArea } from "../ui/scroll-area";
+import { ScrollArea, ScrollBar } from "../ui/scroll-area";
 import { toast } from "sonner";
+import { useDragAndDrop } from "@/hooks/dnd/darg-drop";
+import ImageBox from "./image-box";
 
 interface PasswordInputProps extends React.ComponentProps<"input"> {}
 
@@ -136,6 +138,7 @@ interface FileInputProps
   value?: File[];
   imageOnly?: boolean;
   isVertical?: boolean;
+  max?: number;
   //수정 시 기존에 존재하는 파일
   existingFiles?: string[];
   onFilesChange?: (files: File[]) => void;
@@ -151,6 +154,7 @@ const DragNDropInput = React.forwardRef<HTMLInputElement, FileInputProps>(
       value = [],
       multiple = true,
       accept,
+      max,
       maxSize = 10 * 1024 * 1024,
       imageOnly = false,
       isVertical = false,
@@ -257,6 +261,19 @@ const DragNDropInput = React.forwardRef<HTMLInputElement, FileInputProps>(
         }
       }
 
+      //전체 파일수 제한
+      if (max && multiple) {
+        console.log("여기옴");
+        const curLen =
+          value.length + (existingFiles?.length || 0) + fileList.length;
+        console.log(max);
+        console.log(curLen);
+        if (max < curLen) {
+          toast.error(`최대 ${max}의 파일만 업로드 가능합니다.`);
+          return;
+        }
+      }
+
       const newFiles = Array.from(fileList);
 
       //파일검증
@@ -279,7 +296,7 @@ const DragNDropInput = React.forwardRef<HTMLInputElement, FileInputProps>(
     return (
       <div
         className={cn(
-          ` h-auto  flex flex-col gap-6 md:h-60 md:flex-row  ${
+          `h-auto  flex flex-col gap-6 md:h-60 md:flex-row  ${
             isVertical ? "md:flex-col md:h-auto" : null
           }`,
           className
@@ -325,13 +342,10 @@ const DragNDropInput = React.forwardRef<HTMLInputElement, FileInputProps>(
 
         {value.length > 0 || (existingFiles && existingFiles.length > 0) ? (
           <div
-            className={` w-full md:w-1/2  h-full flex flex-col gap-1 sm:h-auto sm:flex-none
+            className={`min-w-0 w-full md:w-1/2  h-full flex flex-col gap-1 sm:h-auto sm:flex-none
              ${isVertical ? "md:w-full" : null}
           `}
           >
-            {/* <span className="text-sm text-[var(--description-light)]">
-              선택된 파일
-            </span> */}
             <div className="flex-1 min-h-0 ">
               <ScrollArea className=" h-full sm:h-auto sm:max-h-none [&_[data-radix-scroll-area-viewport]>:first-child]:!block">
                 <div className=" flex flex-col gap-2 pr-2 w-full min-w-0">
@@ -407,20 +421,231 @@ const ExistFileBox = ({
 }) => {
   return (
     <CustomCard
-      className="w-full flex-row justify-between px-2 py-1 items-center min-w-0 overflow-hidden"
+      className="flex flex-row justify-between px-2 py-1 items-center gap-2"
       variant={"list"}
     >
-      <div className="flex items-center gap-2 min-w-0 flex-1">
-        <FileTextIcon className="text-[var(--icon)] flex-shrink-0" size={20} />
-        <span className="text-sm truncate min-w-0 flex-1">{data}</span>
-      </div>
+      <FileTextIcon className="text-[var(--icon)] flex-shrink-0" size={20} />
+      <span className="text-sm truncate flex-1 min-w-0">{data}</span>
       <IconButton
         icon="X"
         onClick={() => onRemove(data)}
-        className="flex-shrink-0 ml-2"
+        className="flex-shrink-0"
       />
     </CustomCard>
   );
+};
+
+/**
+ * 단일 파일(이미지)
+ */
+
+interface SingleImageDndInputProps {
+  multiple?: false;
+  value?: File | null;
+  existingFile?: string | null;
+  isRemove?: boolean;
+  // isVertical?: boolean;
+  onFileChange: (file: File | null) => void;
+  onRemoveExistingFile?: () => void;
+}
+
+interface MultipleImageDndInputProps {
+  multiple: true;
+  value?: File[];
+  existingFiles?: string[];
+  removedExistingFiles?: string[];
+  // isVertical?: boolean;
+  onFilesChange: (file: File[]) => void;
+  onRemoveExistingFile?: (file: string) => void;
+  max?: number;
+}
+
+type UnifiedImageDndInputProps =
+  | SingleImageDndInputProps
+  | MultipleImageDndInputProps;
+export const ImageDndInput = (props: UnifiedImageDndInputProps) => {
+  const { multiple = false } = props;
+  /**
+   * 입력
+   * @param fileList
+   * @returns
+   */
+  const handleFile = (fileList: FileList | null) => {
+    if (!fileList || fileList.length === 0) return;
+
+    console.log(fileList);
+    //단일모드 입력
+    if (!multiple) {
+      console.log("단일");
+      const singleProps = props as SingleImageDndInputProps;
+      if (fileList?.length > 1) {
+        toast.error("최대 1개의 파일만 등록 가능합니다.");
+        return;
+      }
+      singleProps.onFileChange(fileList[0]);
+    } else {
+      console.log("멀티");
+      //다중모드 입력
+      const multiProps = props as MultipleImageDndInputProps;
+      const currentFiles = multiProps.value || [];
+      const existingCount = multiProps.existingFiles?.length || 0;
+      const removedCount = multiProps.removedExistingFiles?.length || 0;
+      const curExistingCount = existingCount - removedCount;
+
+      //최대 개수 체크
+      if (multiProps.max) {
+        const totalCount =
+          currentFiles.length + curExistingCount + fileList.length; // 등록할 값+ 이미 등록된(서버) 값 + 현재 추가한 값
+        if (totalCount > multiProps.max) {
+          toast.error(`최대 ${multiProps.max}개의 파일만 업로드 가능합니다.`);
+          return;
+        }
+        const newFiles = Array.from(fileList);
+        multiProps.onFilesChange([...currentFiles, ...newFiles]);
+      }
+    }
+  };
+
+  const { isDragOver, dragHandlers } = useDragAndDrop({ onDrop: handleFile });
+
+  //단일모드 렌더링
+  if (!multiple) {
+    const singleProps = props as SingleImageDndInputProps;
+    const hasImage =
+      singleProps.value || (singleProps.existingFile && !singleProps.isRemove);
+    const imageSource = singleProps.value
+      ? URL.createObjectURL(singleProps.value)
+      : singleProps.existingFile || "";
+
+    const handleRemoveFile = () => {
+      if (singleProps.value) singleProps.onFileChange(null);
+      else singleProps.onRemoveExistingFile?.();
+    };
+
+    console.log(hasImage);
+
+    return (
+      <div>
+        <input
+          className="hidden"
+          id="input-file-single"
+          type="file"
+          onChange={(e) => handleFile(e.target.files)}
+          multiple={false}
+          accept="image/*"
+        />
+        {hasImage ? (
+          <ImageBox src={imageSource} onRemove={handleRemoveFile} isEdit />
+        ) : (
+          <label htmlFor="input-file-single" className="block cursor-pointer">
+            <DragDropZone isDragOver={isDragOver} dragHandlers={dragHandlers} />
+          </label>
+        )}
+      </div>
+    );
+  }
+
+  //멀티 렌더링
+  const multiProps = props as MultipleImageDndInputProps;
+  const currentFiles = multiProps.value || [];
+  const existingFiles = multiProps.existingFiles || [];
+  const removedFiles = multiProps.removedExistingFiles || [];
+  const displayExistingFiles = existingFiles.filter(
+    (f) => !removedFiles.includes(f)
+  );
+  const hasFiles = currentFiles.length > 0 || displayExistingFiles.length > 0;
+
+  const handleRemoveNewFile = (file: File) => {
+    multiProps.onFilesChange(currentFiles.filter((f) => f !== file));
+  };
+
+  return (
+    <div className="flex flex-col gap-4 min-w-0">
+      <input
+        className="hidden"
+        id="input-file-multiple"
+        type="file"
+        onChange={(e) => handleFile(e.target.files)}
+        multiple={true}
+        accept="image/*"
+      />
+      <label htmlFor="input-file-multiple" className="block cursor-pointer">
+        <DragDropZone isDragOver={isDragOver} dragHandlers={dragHandlers} />
+      </label>
+      {hasFiles ? (
+        <ScrollArea className="w-full">
+          <div className="flex flex-row gap-4">
+            {existingFiles.map((v, i) => (
+              <ImageBox
+                src={v}
+                key={i}
+                isEdit
+                onRemove={() => multiProps.onRemoveExistingFile?.(v)}
+              />
+            ))}
+            {currentFiles.map((file, idx) => {
+              console.log(file);
+              return (
+                <ImageBox
+                  key={`new-${idx}`}
+                  src={URL.createObjectURL(file)}
+                  onRemove={() => handleRemoveNewFile(file)}
+                  isEdit
+                />
+              );
+            })}
+          </div>
+          <ScrollBar orientation="horizontal" />
+        </ScrollArea>
+      ) : null}
+    </div>
+  );
+
+  // const hasImage = value || (existingFile && !isRemove);
+  // const imageSource = value ? URL.createObjectURL(value) : existingFile || "";
+
+  // return (
+  //   <div>
+  //     <input
+  //       className="hidden"
+  //       id="input-file"
+  //       type="file"
+  //       onChange={(e) => handleFile(e.target.files)}
+  //       multiple={false}
+  //       accept="image/*"
+  //     />
+  //     {/* 디스플레이 */}
+  //     {hasImage ? (
+  //       <ImageBox src={imageSource} onRemove={handleRemoveFile} isEdit />
+  //     ) : (
+  //       <label htmlFor="input-file" className="block cursor-pointer">
+  //         <div
+  //           className={`
+  //         flex flex-col items-center justify-center h-32  w-full rounded-[4px] border-2 border-dashed border-[var(--icon)] hover:bg-[var(--background)] hover:cursor-pointer ${
+  //           isDragOver
+  //             ? "border-solid border-[var(--primary)] bg-[var(--background)]"
+  //             : ""
+  //         }`}
+  //           id="input-file"
+  //           onDragEnter={dragHandlers.onDragEnter}
+  //           onDragOver={dragHandlers.onDragOver}
+  //           onDragLeave={dragHandlers.onDragLeave}
+  //           onDrop={dragHandlers.onDrop}
+  //         >
+  //           <div className={`flex flex-col items-center justify-center gap-6 `}>
+  //             <div className="bg-[var(--primary)] rounded-[50px] p-2">
+  //               <Upload className="text-white" size={20} />
+  //             </div>
+  //             <span className="text-md font-semibold">
+  //               파일을 드래그하거나 클릭하세요
+  //             </span>
+  //           </div>
+  //         </div>
+  //       </label>
+  //     )}
+  //     <div></div>
+  //   </div>
+  // );
 };
 
 const CheckBox = ({
@@ -429,6 +654,33 @@ const CheckBox = ({
   ...props
 }: React.ComponentProps<"input">) => {
   return <input type="checkbox" />;
+};
+
+const DragDropZone = ({ isDragOver, dragHandlers }: any) => {
+  return (
+    <div
+      className={`
+          flex flex-col items-center justify-center h-32  w-full rounded-[4px] border-2 border-dashed border-[var(--icon)] hover:bg-[var(--background)] hover:cursor-pointer ${
+            isDragOver
+              ? "border-solid border-[var(--primary)] bg-[var(--background)]"
+              : ""
+          }`}
+      id="input-file"
+      onDragEnter={dragHandlers.onDragEnter}
+      onDragOver={dragHandlers.onDragOver}
+      onDragLeave={dragHandlers.onDragLeave}
+      onDrop={dragHandlers.onDrop}
+    >
+      <div className={`flex flex-col items-center justify-center gap-6 `}>
+        <div className="bg-[var(--primary)] rounded-[50px] p-2">
+          <Upload className="text-white" size={20} />
+        </div>
+        <span className="text-md font-semibold">
+          파일을 드래그하거나 클릭하세요
+        </span>
+      </div>
+    </div>
+  );
 };
 
 export { InputSearch, TextArea, PasswordInput, DragNDropInput, CheckBox };

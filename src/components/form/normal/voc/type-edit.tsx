@@ -29,18 +29,18 @@ const TypeEditForm = ({
   const form = useForm<EditFormType>({
     resolver: zodResolver(editForm),
     defaultValues: {
-      logSeq: 0,
-      serviceTypeSeq: undefined,
+      logSeq: vocDetail?.logs.logSeq,
+      serviceTypeSeq: vocDetail?.logs.serviceTypeSeq,
     },
   });
 
-  useEffect(() => {
-    if (!vocDetail) return;
-    form.reset({
-      logSeq: vocDetail.logs.logSeq,
-      serviceTypeSeq: vocDetail.logs.serviceTypeSeq,
-    });
-  }, [form, vocDetail]);
+  // useEffect(() => {
+  //   if (!vocDetail) return;
+  //   form.reset({
+  //     logSeq: vocDetail.logs.logSeq,
+  //     serviceTypeSeq: vocDetail.logs.serviceTypeSeq,
+  //   });
+  // }, [form, vocDetail]);
 
   const handleSubmit = async (values: EditFormType) => {
     if (!vocDetail) return;
@@ -60,6 +60,7 @@ const TypeEditForm = ({
           name="serviceTypeSeq"
           render={({ field }) => {
             const handleValue = (value: string) => {
+              console.log(value);
               if (!value) return;
               field.onChange(parseInt(value));
             };

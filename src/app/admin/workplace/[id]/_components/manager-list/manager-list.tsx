@@ -28,7 +28,7 @@ const ManagerList = () => {
           <ManagerFilter />
           <ManagerPagination />
           <div className="flex flex-col gap-2">
-            {managers.data.map((w, i) => (
+            {managers.payload.data.map((w, i) => (
               <UserCard key={i} item={w} />
             ))}
           </div>

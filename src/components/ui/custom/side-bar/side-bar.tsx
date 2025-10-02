@@ -23,8 +23,8 @@ const NormalMenu: MenuSection[] = [
   {
     items: [
       { title: "업무", isGroup: true },
-      { title: "업무", icon: "BriefcaseBusiness", path: "/work" },
-      { title: "요청업무", icon: "MessageSquareReply", path: "/req-work" },
+      { title: "일일업무", icon: "BriefcaseBusiness", path: "/daily" },
+      { title: "요청업무", icon: "MessageSquareReply", path: "/req-task" },
       { title: "품질", icon: "BadgeCheck", path: "/qc" },
     ],
   },

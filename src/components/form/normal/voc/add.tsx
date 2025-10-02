@@ -27,42 +27,56 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import z from "zod";
 
-const AddSchema = z.object({
-  createUser: z.string().min(1, "이름을 입력해주세요."),
-  phone: z
-    .string()
-    .min(9, { message: "자릿수를 확인해주세요." })
-    .max(11, { message: "자릿수를 확인해주세요." }),
-  serviceTypeSeq: z.number("유형을 선택해주세요.").min(1).optional(),
-  title: z.string().min(1, "제목을 입력해주세요."),
-  contents: z.string().min(1, "내용을 입력해주세요."),
-  //true -> 모바일, false -> 수기
-  division: z.boolean(),
-  replyYn: z.boolean(),
-  images: z.array(z.instanceof(File)),
-});
+const AddSchema = z
+  .object({
+    vocSeq: z.number("위치를 선택해주세요.").min(1).optional(),
+    createUser: z.string().min(1, "이름을 입력해주세요."),
+
+    phone: z.string().optional(),
+    serviceTypeSeq: z.number("유형을 선택해주세요.").min(1).optional(),
+    title: z.string().min(1, "제목을 입력해주세요."),
+    content: z.string().min(1, "내용을 입력해주세요."),
+    //true -> 모바일, false -> 수기
+    division: z.boolean(),
+    replyYn: z.boolean(),
+    images: z.array(z.instanceof(File)),
+  })
+  .refine(
+    (data) => {
+      if (data.replyYn) {
+        return data.phone && data.phone.length >= 9 && data.phone.length <= 11;
+      }
+      return true;
+    },
+    {
+      message: "전화번호를 올바르게 입력해주세요.",
+      path: ["phone"], // 에러가 phone 필드에 표시됨
+    }
+  );
 
 type AddFormType = z.infer<typeof AddSchema>;
 
 interface VocAddFormProps {
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  onSubmit: (values: any) => void;
 }
-const VocAddForm = ({ setOpen }: VocAddFormProps) => {
+const VocAddForm = ({ onSubmit }: VocAddFormProps) => {
   const { getUserPermission, userPermission } = useVocStore();
   const [vocPoint, setVocPoint] = useState<SelectOption[]>([]);
   const { allQrList, getAllQrList } = useQrStore();
 
   const form = useForm<AddFormType>({
     resolver: zodResolver(AddSchema),
+
     defaultValues: {
+      vocSeq: undefined,
       createUser: "",
       phone: "",
-      division: false, // 추가
+      division: true, // 추가
       replyYn: false, // 추가
       images: [],
       serviceTypeSeq: undefined,
       title: "",
-      contents: "",
+      content: "",
     },
   });
 
@@ -77,35 +91,27 @@ const VocAddForm = ({ setOpen }: VocAddFormProps) => {
     setVocPoint(convertAllVocPoint);
   }, [allQrList]);
 
-  const handleSubmit = async (values: AddFormType) => {
-    const formData = await convertRecordDataToFormData(values);
-    formData ? toast.success("등록") : toast.error("실패");
-    setOpen(false);
-  };
+  // const handleSubmit = async (values: AddFormType) => {
+  //   const formData = convertRecordDataToFormData(values);
+  //   formData ? toast.success("등록") : toast.error("실패");
+  //   setOpen(false);
+  // };
   return (
     <Form {...form}>
       <form
-        onSubmit={form.handleSubmit(handleSubmit)}
+        onSubmit={form.handleSubmit(onSubmit)}
         className=" flex-1  min-h-0 flex flex-col gap-4 "
       >
         <ScrollArea className="flex-1 min-h-0 px-6 ">
           <div className="h-full base-flex-col gap-4">
             <FormField
               control={form.control}
-              name="serviceTypeSeq"
+              name="vocSeq"
               render={({ field }) => {
                 const handleValue = (value: string) => {
-                  console.log(value);
                   field.onChange(Number(value));
                 };
                 return (
-                  // <SelectFormItem
-                  //   label="위치"
-                  //   selectItem={vocPoint}
-                  //   onValueChange={handleValue}
-                  //   value={field.value?.toString()}
-                  //   required
-                  // />
                   <ComboboxFormItem
                     label="위치"
                     selectItem={vocPoint}
@@ -192,7 +198,7 @@ const VocAddForm = ({ setOpen }: VocAddFormProps) => {
             {/* textarea로 변경예정 */}
             <FormField
               control={form.control}
-              name="contents"
+              name="content"
               render={({ field }) => (
                 <TextAreaFormItem
                   label="내용"
