@@ -1,12 +1,13 @@
 import api from "@/lib/api/api-manager";
 import { Response } from "@/types/common/response";
+import { toast } from "sonner";
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 
 interface EquipmentHistoryDetailState {
   historyDetail: EquipmentHistoryDetail | undefined;
   getHistoryDetail: (detailSeq: string) => Promise<void>;
-  patchUpdateHistoryDetail: (values: any) => Promise<Response<boolean>>;
+  patchUpdateHistoryDetail: (values: any) => Promise<void>;
 }
 
 export const useEquipmentHistoryDetailStore =
@@ -37,15 +38,10 @@ export const useEquipmentHistoryDetailStore =
                   json: values,
                 })
                 .json();
-
-              return res;
+              toast.success("저장");
             } catch (err) {
-              const res: Response<boolean> = {
-                data: false,
-                code: 500,
-                message: "수정 에러",
-              };
-              return res;
+              console.error(err);
+              toast.error("문제가 발생하였습니다. 잠시후 다시 시도해주세요.");
             }
           },
         }),

@@ -2,6 +2,7 @@
 import CustomCard from "@/components/common/card";
 import IconButton from "@/components/common/icon-button";
 import AppTitle from "@/components/common/label/title";
+import { Attach, FacilityDetail } from "@/types/normal/facility/fac-detail";
 import { format } from "date-fns";
 import { Download, DownloadIcon, FileTextIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -30,10 +31,13 @@ const FacInfo = ({ data, title }: FacInfoProps) => {
         <KeyValue label="R&M 유형" value={data.facilityCodeName} />
         <KeyValue label="설명" value={data.description} />
         <KeyValue label="시작" value={format(data.fromDt, "yyyy-MM-dd")} />
-        <KeyValue label="종료" value={format(data.toDt ?? "", "yyyy-MM-dd")} />
+        <KeyValue
+          label="종료"
+          value={format(data.toDt || "내용없음", "yyyy-MM-dd")}
+        />
         <KeyValue label="업체" value={data.constractor} />
-        <KeyValue label="연락처" value={data.tel ?? ""} />
-        <KeyValue label="비용" value={data.cost?.toString() ?? ""} />
+        <KeyValue label="연락처" value={data.tel || "내용없음"} />
+        <KeyValue label="비용" value={`${data.cost}원` || "0원"} />
       </div>
       <span className="text-lg font-bold">보고서</span>
       <div className="space-y-2">
@@ -81,7 +85,7 @@ const FileBox = ({ file }: { file: Attach }) => {
   );
 };
 
-const downloadFile = async (url: string, fileName: string) => {
+export const downloadFile = async (url: string, fileName: string) => {
   try {
     const response = await fetch(url);
     const blob = await response.blob();

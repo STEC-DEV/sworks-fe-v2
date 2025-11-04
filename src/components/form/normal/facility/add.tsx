@@ -18,15 +18,16 @@ import z from "zod";
 
 export const facilityAddFormSchema = z.object({
   facilityCodeSeq: z.number("관리 유형을 선택해주세요.").min(1),
-  description: z.string("내용을 입력해주세요."),
+  description: z.string("내용을 입력해주세요.").min(1, "내용을 입력해주세요."),
   fromDt: z.date(),
   toDt: z.date().nullable(),
   constractor: z.string(),
   tel: z
     .string()
-    .min(9, { message: "자릿수를 확인해주세요." })
-    .max(11, { message: "자릿수를 확인해주세요." })
-    .optional(),
+    .refine(
+      (val) => !val || (val.length >= 9 && val.length <= 11),
+      "전화번호를 올바르게 입력해주세요."
+    ),
   cost: z.string(),
   files: z.array(z.instanceof(File)),
 });
@@ -64,7 +65,7 @@ const RnMAddForm = ({ onNext }: RnMAddFormProps) => {
       fromDt: new Date(),
       toDt: null,
       constractor: "",
-      tel: undefined,
+      tel: "",
       cost: "",
       files: [],
     },

@@ -5,13 +5,17 @@ import {
   WorkplaceListItem,
 } from "@/types/admin/workplace/workplace-list";
 import { Response } from "@/types/common/response";
-import { ListMeta, ListState } from "@/types/list-type";
+import { ListData, ListMeta, ListState } from "@/types/list-type";
+import { convertRecordDataToFormData, objectToFormData } from "@/utils/convert";
+import { toast } from "sonner";
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 
 interface AdminDetailState {
   admin: AdminDetail | undefined;
-  getAdminDetail: (id: number) => Promise<void>;
+  getAdminDetail: (id: string) => Promise<void>;
+  deleteAdmin: (id: string) => Promise<boolean>;
+  resetAdmin: () => void;
   adminWorkplaceList: ListState<WorkplaceListItem>;
   getAdminWorkplaceList: (params: URLSearchParams, id: string) => Promise<void>;
 
@@ -36,7 +40,7 @@ export const useAdminDetailStore = create<AdminDetailState>()(
         admin: undefined,
         getAdminDetail: async (id) => {
           try {
-            const res = await api.get(`adminuser/w/sign/adminprofile`, {
+            const res = await api.get(`adminuser/w/sign/getadmindetail`, {
               searchParams: { userSeq: id },
             });
             const response: Response<AdminDetail> = await res.json();
@@ -45,6 +49,24 @@ export const useAdminDetailStore = create<AdminDetailState>()(
           } catch (err) {
             console.log(err);
           }
+        },
+        deleteAdmin: async (id) => {
+          try {
+            const res: Response<boolean> = await api
+              .delete(`adminuser/w/sign/deleteadmin`, {
+                searchParams: { delSeq: id },
+              })
+              .json();
+            toast.success("삭제");
+            return res.data;
+          } catch (err) {
+            console.error(err);
+            toast.error("문제가 발생하였습니다. 잠시후 다시 시도해주세요.");
+            return false;
+          }
+        },
+        resetAdmin: () => {
+          set({ admin: undefined });
         },
         adminWorkplaceList: { type: "loading" },
         getAdminWorkplaceList: async (params, id) => {
@@ -59,36 +81,38 @@ export const useAdminDetailStore = create<AdminDetailState>()(
           params.set("userSeq", id);
 
           try {
-            const res = await api.get(`adminuser/w/sign/adminusersite`, {
-              searchParams: params,
-            });
-            const response = (await res.json()) as Response<{
-              data: WorkplaceListItem[];
-              meta: ListMeta;
-            }>;
+            const res: Response<ListData<WorkplaceListItem>> = await api
+              .get(`adminuser/w/sign/adminusersite`, {
+                searchParams: params,
+              })
+              .json();
 
             set({
-              adminWorkplaceList: { type: "data", ...response.data },
+              adminWorkplaceList: { type: "data", payload: res.data },
             });
           } catch (err) {
             console.log(err);
             set({
-              adminWorkplaceList: { type: "error", error: "데이터 조회 실패" },
+              adminWorkplaceList: {
+                type: "error",
+                message: "데이터 조회 실패",
+              },
             });
           }
         },
         patchAdminInfo: async (admin) => {
-          const formData = new FormData();
-          Object.entries(admin).map(([key, val]) => {
-            formData.append(key, val);
-          });
+          const formData = objectToFormData(admin);
+
           try {
-            const res = await api.patch(`adminuser/w/sign/updateadmin`, {
-              body: formData,
-            });
-            const response = (await res.json()) as Response<number>;
+            const res: Response<number> = await api
+              .patch(`adminuser/w/sign/updateadmin`, {
+                body: formData,
+              })
+              .json();
+            toast.success("저장");
           } catch (err) {
             console.log(err);
+            toast.error("");
           }
         },
         getAllWorkplace: async (id, search) => {
@@ -126,14 +150,18 @@ export const useAdminDetailStore = create<AdminDetailState>()(
           const { selectedWorkplaceList } = get();
 
           try {
-            const res = await api.put(`adminuser/w/sign/updateadminsite`, {
-              json: {
-                userSeq: userId,
-                siteSeq: selectedWorkplaceList,
-              },
-            });
+            const res: Response<boolean> = await api
+              .put(`adminuser/w/sign/updateadminsite`, {
+                json: {
+                  userSeq: userId,
+                  siteSeq: selectedWorkplaceList,
+                },
+              })
+              .json();
+            toast.success("저장");
           } catch (error) {
             console.log(error);
+            toast.error("저장 실패. 다시 시도해주세요.");
           }
         },
       }),

@@ -17,7 +17,6 @@ export const useAdminListStore = create<AdminListState>()(
       (set, get) => ({
         adminList: { type: "loading" },
         getAdminList: async (params) => {
-
           if (
             params.size === 0 ||
             !params.get("pageNumber") ||
@@ -34,7 +33,7 @@ export const useAdminListStore = create<AdminListState>()(
           /**에러 발생 */
           if (!res.ok) {
             set({
-              adminList: { type: "error", error: "데이터 조회 실패" },
+              adminList: { type: "error", message: "데이터 조회 실패" },
             });
             return;
           }

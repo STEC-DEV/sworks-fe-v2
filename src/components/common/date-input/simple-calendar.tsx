@@ -1,17 +1,18 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { useCalendar } from "./useCalendar";
+// import { useCalendar } from "./useCalendar";
 // import dayjs from "dayjs";
-import { useEffect } from "react";
-import { format, isSameMonth } from "date-fns";
+import { useCallback, useEffect } from "react";
+import { addMonths, format, isSameMonth, subMonths } from "date-fns";
+import { useCalendar } from "./useCalendarV2";
 
 interface SimpleCalendarProps {
-  defaultValue?: Date | null;
+  defaultValue?: Date;
   onSelect: (date: Date) => void;
 }
 
 const SimpleCalendar = ({ defaultValue, onSelect }: SimpleCalendarProps) => {
-  const { weeks, curDate, focusDate, onNext, onPrev, onFocusDate } =
-    useCalendar(defaultValue ?? new Date());
+  const { weeks, curDate, focusDate, setCurDate, onFocusDate } =
+    useCalendar(defaultValue);
 
   useEffect(() => {
     if (!defaultValue) return;
@@ -23,14 +24,22 @@ const SimpleCalendar = ({ defaultValue, onSelect }: SimpleCalendarProps) => {
     onSelect(date); // 실제 클릭 시에만 호출
   };
 
+  const handlePrevMonth = useCallback(() => {
+    setCurDate((prev) => subMonths(prev, 1));
+  }, [setCurDate]);
+
+  const handleNextMonth = useCallback(() => {
+    setCurDate((prev) => addMonths(prev, 1));
+  }, [setCurDate]);
+
   return (
     <div className="flex flex-col gap-2 pb-2">
       <div className="flex-shrink-0">
         {/* 헤더는 고정 크기 */}
         <SimpleCalendarHeader
           date={curDate}
-          onNextMonth={onNext}
-          onPrevMonth={onPrev}
+          onNextMonth={handleNextMonth}
+          onPrevMonth={handlePrevMonth}
         />
       </div>
       <div className="flex-1  px-2">

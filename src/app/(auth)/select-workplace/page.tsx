@@ -23,27 +23,49 @@ const Page = () => {
   const handleEnter = (workplace: AdminWorkplaceSelectListItem) => {
     setEnter(true);
     getWorkplacePermission(workplace.siteSeq.toString());
-    router.replace("/status");
+    router.replace("/schedule");
+  };
+
+  const getList = () => {
+    if (!adminWorkplaceList)
+      return (
+        <div>
+          {Array.from({ length: 4 }, (_, i) => (
+            <BaseSkeleton key={i} className="h-[66px]" />
+          ))}
+        </div>
+      );
+    if (adminWorkplaceList.length === 0) {
+      return (
+        <span className="text-[var(--description-light)]">
+          담당 사업장이 존재하지않습니다.
+        </span>
+      );
+    }
+    return adminWorkplaceList.map((v, i) => (
+      <WorkplaceBox key={i} data={v} onClick={handleEnter} />
+    ));
   };
   return (
-    <div className="flex items-center justify-center h-full bg-gradient-to-l from-blue-100 via-blue-300 to-blue-500">
-      <CustomCard className={`w-130`} size={"lg"}>
+    <div className="flex items-center justify-center h-full bg-gradient-to-l from-blue-100 via-blue-300 to-blue-500 ">
+      <CustomCard className={`w-130 h-[80vh]`} size={"lg"}>
         {/* 헤드 */}
-        <div className="flex flex-col gap-2 px-16">
+        <div className="flex flex-col gap-2 px-16 ">
           <span className="text-2xl font-extrabold">사업장 선택</span>
           <span className="text-sm text-[var(--description-light)]">
             관리할 사업장을 선택해주세요
           </span>
         </div>
-        <ScrollArea className="px-16 h-100">
-          <div className="flex flex-col gap-3">
-            {adminWorkplaceList ? (
+        <ScrollArea className="overflow-hidden flex-1">
+          <div className="flex flex-col gap-3 px-16 pb-1">
+            {getList()}
+            {/* {adminWorkplaceList ? (
               adminWorkplaceList.map((v, i) => (
                 <WorkplaceBox key={i} data={v} onClick={handleEnter} />
               ))
             ) : (
               <BaseSkeleton className="w-full h-100" />
-            )}
+            )} */}
           </div>
         </ScrollArea>
 

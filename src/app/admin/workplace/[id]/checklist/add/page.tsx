@@ -41,13 +41,14 @@ const Page = () => {
 
   //최종 생성
   const handleChecklistSubmit = async (values: ChecklistAddFormType) => {
+    console.log(values);
     if (!id) return;
     setCreateChecklist(values);
 
     const res = await postAddChecklist(id?.toString());
     res.code !== 200 ? setFormResult(false) : setFormResult(true);
     setNewUrl(
-      `${id}/checklist/${res.data.serviceTypeSeq}-${res.data.divCodeSeq}-${res.data.divCodeSeq}`
+      `/admin/workplace/${id}/checklist/${res.data.serviceTypeSeq}-${res.data.divCodeSeq}-${res.data.typeCodeSeq}`
     );
     setCurStep((prev) => prev + 1);
     setOpen(true);

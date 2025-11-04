@@ -16,14 +16,25 @@ import z from "zod";
 
 const formSchema = z.object({
   userName: z.string("이름을 입력해주세요.").min(2, "2글자 이상 입력해주세요,"),
-  job: z.string("직책을 입력해주세요.").min(2, "2글자 이상 입력해주세요,"),
+  job: z.string(),
   sabun: z.string("사번을 입력해주세요.").min(2, "2글자 이상 입력해주세요,"),
   deptSeq: z.number("부서를 선택해주세요.").min(0, "부서를 선택해주세요."),
   phone: z
     .string()
     .min(9, { message: "자릿수를 확인해주세요." })
     .max(11, { message: "자릿수를 확인해주세요." }),
-  email: z.email({ message: "이메일 형식을 확인해주세요." }),
+  email: z
+    .string()
+    .refine(
+      (val) => {
+        // 빈 문자열이면 통과
+        if (!val || val.trim() === "") return true;
+        // 값이 있으면 이메일 형식 검증
+        return z.string().email().safeParse(val).success;
+      },
+      { message: "이메일 형식을 확인해주세요." }
+    )
+    .optional(),
 });
 
 export type basicFormType = z.infer<typeof formSchema>;

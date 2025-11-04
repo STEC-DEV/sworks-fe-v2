@@ -2,6 +2,7 @@ import Button from "@/components/common/button";
 import { DateFormItem } from "@/components/common/form-input/date-field";
 import { TextFormItem } from "@/components/common/form-input/text-field";
 import { Form, FormField } from "@/components/ui/form";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import useDateValidation from "@/hooks/date/useDateSet";
 import { useWorkplaceDetailStore } from "@/store/admin/workplace/workplace-detail-store";
 import { Contract } from "@/types/admin/workplace/contract-info";
@@ -72,75 +73,69 @@ const ContractEditForm = ({
   return (
     <Form {...form}>
       <form
-        className="flex flex-col gap-6"
+        className="flex flex-col gap-6 w-full"
         onSubmit={form.handleSubmit(handleSubmit)}
       >
-        <div className="flex flex-col gap-6">
-          <FormField
-            control={form.control}
-            name="contractManager"
-            render={({ field }) => (
-              <TextFormItem
-                label="담당자"
-                placeholder="담당자"
-                required
-                {...field}
-              />
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="startDt"
-            render={({ field }) => (
-              <DateFormItem
-                label="계약일"
-                value={field.value}
-                onChange={(date) =>
-                  handleDateChange("start", date, field.onChange)
-                }
-              />
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="endDt"
-            render={({ field }) => (
-              <DateFormItem
-                label="해약일"
-                value={field.value}
-                onChange={(date) =>
-                  handleDateChange("end", date, field.onChange)
-                }
-              />
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="contractStaff"
-            render={({ field }) => (
-              <TextFormItem
-                label="인원"
-                placeholder="인원"
-                required
-                {...field}
-              />
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="contractAmount"
-            render={({ field }) => (
-              <TextFormItem
-                label="금액"
-                placeholder="금액"
-                type="number"
-                required
-                {...field}
-              />
-            )}
-          />
+        <ScrollArea className="overflow-hidden px-6">
+          <div className="flex flex-col gap-6">
+            <FormField
+              control={form.control}
+              name="contractManager"
+              render={({ field }) => (
+                <TextFormItem label="담당자" placeholder="담당자" {...field} />
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="startDt"
+              render={({ field }) => (
+                <DateFormItem
+                  label="계약일"
+                  value={field.value}
+                  onChange={(date) =>
+                    handleDateChange("start", date, field.onChange)
+                  }
+                  required
+                />
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="endDt"
+              render={({ field }) => (
+                <DateFormItem
+                  label="해약일"
+                  value={field.value}
+                  onChange={(date) =>
+                    handleDateChange("end", date, field.onChange)
+                  }
+                />
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="contractStaff"
+              render={({ field }) => (
+                <TextFormItem label="인원" placeholder="인원" {...field} />
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="contractAmount"
+              render={({ field }) => (
+                <TextFormItem
+                  label="금액"
+                  placeholder="금액"
+                  type="number"
+                  {...field}
+                />
+              )}
+            />
+          </div>
+        </ScrollArea>
+        <div className="px-6 shrink-0">
+          <Button label="저장" type="submit" />
         </div>
-        <Button label="저장" type="submit" />
       </form>
     </Form>
   );

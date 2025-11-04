@@ -14,6 +14,8 @@ interface ReqDetailState {
   getClassificationReqManager: (search?: string | null) => Promise<void>;
   //처리내용 등록
   postAddReply: (data: FormData) => Promise<boolean>;
+  //처리내용 삭제
+  deleteReply: (seq: string) => Promise<void>;
 }
 
 export const useReqDetailStore = create<ReqDetailState>()(
@@ -84,6 +86,20 @@ export const useReqDetailStore = create<ReqDetailState>()(
             console.error(err);
             toast.error("등록 실패");
             return false;
+          }
+        },
+        deleteReply: async (seq) => {
+          try {
+            const res: Response<boolean> = await api
+              .delete(`siterequest/w/sign/delrequestlog`, {
+                searchParams: { delSeq: seq },
+              })
+              .json();
+
+            toast.success("삭제되었습니다.");
+          } catch (err) {
+            console.error(err);
+            toast.error("문제가 발생하였습니다. 잠시후 다시 시도해주세요.");
           }
         },
       }),

@@ -447,6 +447,7 @@ interface SingleImageDndInputProps {
   // isVertical?: boolean;
   onFileChange: (file: File | null) => void;
   onRemoveExistingFile?: () => void;
+  id?: string;
 }
 
 interface MultipleImageDndInputProps {
@@ -458,6 +459,7 @@ interface MultipleImageDndInputProps {
   onFilesChange: (file: File[]) => void;
   onRemoveExistingFile?: (file: string) => void;
   max?: number;
+  id?: string;
 }
 
 type UnifiedImageDndInputProps =
@@ -476,7 +478,6 @@ export const ImageDndInput = (props: UnifiedImageDndInputProps) => {
     console.log(fileList);
     //단일모드 입력
     if (!multiple) {
-      console.log("단일");
       const singleProps = props as SingleImageDndInputProps;
       if (fileList?.length > 1) {
         toast.error("최대 1개의 파일만 등록 가능합니다.");
@@ -484,7 +485,6 @@ export const ImageDndInput = (props: UnifiedImageDndInputProps) => {
       }
       singleProps.onFileChange(fileList[0]);
     } else {
-      console.log("멀티");
       //다중모드 입력
       const multiProps = props as MultipleImageDndInputProps;
       const currentFiles = multiProps.value || [];
@@ -522,13 +522,11 @@ export const ImageDndInput = (props: UnifiedImageDndInputProps) => {
       else singleProps.onRemoveExistingFile?.();
     };
 
-    console.log(hasImage);
-
     return (
       <div>
         <input
           className="hidden"
-          id="input-file-single"
+          id={`input-file-single-${props.id}`}
           type="file"
           onChange={(e) => handleFile(e.target.files)}
           multiple={false}
@@ -537,7 +535,10 @@ export const ImageDndInput = (props: UnifiedImageDndInputProps) => {
         {hasImage ? (
           <ImageBox src={imageSource} onRemove={handleRemoveFile} isEdit />
         ) : (
-          <label htmlFor="input-file-single" className="block cursor-pointer">
+          <label
+            htmlFor={`input-file-single-${props.id}`}
+            className="block cursor-pointer"
+          >
             <DragDropZone isDragOver={isDragOver} dragHandlers={dragHandlers} />
           </label>
         )}
@@ -563,13 +564,16 @@ export const ImageDndInput = (props: UnifiedImageDndInputProps) => {
     <div className="flex flex-col gap-4 min-w-0">
       <input
         className="hidden"
-        id="input-file-multiple"
+        id={`input-file-single-${props.id}`}
         type="file"
         onChange={(e) => handleFile(e.target.files)}
         multiple={true}
         accept="image/*"
       />
-      <label htmlFor="input-file-multiple" className="block cursor-pointer">
+      <label
+        htmlFor={`input-file-single-${props.id}`}
+        className="block cursor-pointer"
+      >
         <DragDropZone isDragOver={isDragOver} dragHandlers={dragHandlers} />
       </label>
       {hasFiles ? (
@@ -653,10 +657,18 @@ const CheckBox = ({
   type,
   ...props
 }: React.ComponentProps<"input">) => {
-  return <input type="checkbox" />;
+  return <input type="checkbox" {...props} />;
 };
 
-const DragDropZone = ({ isDragOver, dragHandlers }: any) => {
+export const DragDropZone = ({
+  isDragOver,
+  dragHandlers,
+  children,
+}: {
+  isDragOver: boolean;
+  dragHandlers: any;
+  children?: React.ReactNode;
+}) => {
   return (
     <div
       className={`
@@ -671,14 +683,55 @@ const DragDropZone = ({ isDragOver, dragHandlers }: any) => {
       onDragLeave={dragHandlers.onDragLeave}
       onDrop={dragHandlers.onDrop}
     >
-      <div className={`flex flex-col items-center justify-center gap-6 `}>
-        <div className="bg-[var(--primary)] rounded-[50px] p-2">
-          <Upload className="text-white" size={20} />
+      {children || (
+        <div className={`flex flex-col items-center justify-center gap-6 `}>
+          <div className="bg-[var(--primary)] rounded-[50px] p-2">
+            <Upload className="text-white" size={20} />
+          </div>
+          <span className="text-md font-semibold">
+            파일을 드래그하거나 클릭하세요
+          </span>
         </div>
-        <span className="text-md font-semibold">
-          파일을 드래그하거나 클릭하세요
-        </span>
-      </div>
+      )}
+    </div>
+  );
+};
+
+export const DragDropZoneChildren = ({
+  isDragOver,
+  dragHandlers,
+  children,
+}: {
+  isDragOver: boolean;
+  dragHandlers: any;
+  children?: React.ReactNode;
+}) => {
+  return (
+    <div
+      className={`
+          flex flex-col items-center justify-center min-h-60  w-full rounded-[4px] ${
+            children ? "" : "border-2 border-dashed "
+          } border-[var(--icon)] hover:bg-[var(--background)] hover:cursor-pointer ${
+        isDragOver
+          ? "border-solid border-[var(--primary)] bg-[var(--background)]"
+          : ""
+      }`}
+      id="input-file"
+      onDragEnter={dragHandlers.onDragEnter}
+      onDragOver={dragHandlers.onDragOver}
+      onDragLeave={dragHandlers.onDragLeave}
+      onDrop={dragHandlers.onDrop}
+    >
+      {children || (
+        <div className={`flex flex-col items-center justify-center gap-6 `}>
+          <div className="bg-[var(--primary)] rounded-[50px] p-2">
+            <Upload className="text-white" size={20} />
+          </div>
+          <span className="text-md font-semibold">
+            파일을 드래그하거나 클릭하세요
+          </span>
+        </div>
+      )}
     </div>
   );
 };

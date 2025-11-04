@@ -16,6 +16,7 @@ import { ProcessBadge } from "../_components/item";
 import { AlarmClockIcon, CheckCircleIcon, RotateCwIcon } from "lucide-react";
 import DialogCarousel from "@/components/ui/custom/image/size-carousel";
 import TypeEditForm from "@/components/form/normal/voc/type-edit";
+import ReplyEditForm from "@/components/form/normal/voc/reply-edit";
 
 const Page = () => {
   const [open, setOpen] = useState<boolean>(false);
@@ -47,10 +48,14 @@ const Page = () => {
                 <TypeEditForm setOpen={setOpen} />
               </BaseDialog>
             </div>
-
+            <KeyValueItem
+              label="민원인"
+              value={vocDetail.logs.createUser || "내용없음"}
+              valueStyle="text-md font-normal"
+            />
             <KeyValueItem
               label="전화번호"
-              value={vocDetail.logs.phone}
+              value={vocDetail.logs.phone || "내용없음"}
               valueStyle="text-md font-normal"
             />
             <KeyValueItem
@@ -58,32 +63,40 @@ const Page = () => {
               value={vocDetail.logs.content}
               valueStyle="text-md font-normal"
             />
-            <div className="w-full overflow-x-auto ">
-              <div className="flex gap-4 pb-2 min-w-max w-full">
-                {vocDetail.logs.attaches.map((a, i) => (
-                  <DialogCarousel
-                    key={i}
-                    currentIndex={i}
-                    pathList={vocDetail.logs.attaches.map((d, j) => d.path)}
-                  />
-                ))}
-              </div>
+            <div>
+              <DialogCarousel
+                pathList={vocDetail.logs.attaches.map((d, j) => d.path)}
+              />
             </div>
           </div>
           <div className="flex-1  flex flex-col gap-6 min-w-0 ">
             <AppTitle title="민원 답변" />
-            <ReplyAddForm />
             <div className="flex flex-col gap-6">
-              {vocDetail.replys.map((r, i) => (
-                <ReplyBox key={i} data={r} />
-              ))}
+              {vocDetail.replys.length > 0 ? (
+                vocDetail.replys.map((r, i) => <ReplyBox key={i} data={r} />)
+              ) : (
+                <span className="text-sm text-[var(--description-light)]">
+                  등록된 답변이 존재하지않습니다.
+                </span>
+              )}
             </div>
+            <ReplyAddForm />
           </div>
         </>
       ) : (
         <>
-          <BaseSkeleton />
-          <BaseSkeleton />
+          <div className="flex-1 flex flex-col gap-6">
+            <BaseSkeleton className="w-50 h-7" />
+            {Array.from({ length: 4 }, (_, i) => (
+              <div className="flex flex-col gap-1" key={i}>
+                <BaseSkeleton className="w-20 h-4" />
+                <BaseSkeleton className={`${i === 3 ? "h-40" : "h-6"}  `} />
+              </div>
+            ))}
+          </div>
+          <div className="flex-1">
+            <BaseSkeleton />
+          </div>
         </>
       )}
     </div>
@@ -133,14 +146,14 @@ const ReplyBox = ({ data }: { data: VocReply }) => {
           </span>
         </div>
 
-        <div className="flex gap-2 justify-end px-4">
+        <div className="flex gap-2 justify-end ">
           <BaseDialog
             title="답변 수정"
             open={open}
             setOpen={setOpen}
             triggerChildren={<IconButton icon="SquarePen" />}
           >
-            <div></div>
+            <ReplyEditForm data={data} onClose={() => setOpen(false)} />
           </BaseDialog>
           <CheckDialog
             title={dialogText.replyItemDelete.title}
@@ -155,11 +168,8 @@ const ReplyBox = ({ data }: { data: VocReply }) => {
       <div className="px-4">{process()}</div>
 
       <div className="text-sm px-4">{data.content}</div>
-
-      <div className="w-full overflow-x-auto px-4">
-        <div className="flex gap-4 pb-2 min-w-max w-full">
-          <DialogCarousel pathList={data.attaches.map((d, j) => d.path)} />
-        </div>
+      <div className="px-4">
+        <DialogCarousel pathList={data.attaches.map((d, j) => d.path)} />
       </div>
     </CustomCard>
   );

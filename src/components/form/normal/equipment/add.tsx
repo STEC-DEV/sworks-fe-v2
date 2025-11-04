@@ -22,9 +22,9 @@ const formSchema = z.object({
 
   usage: z.string().min(1, "용도를 입력해주세요."),
 
-  maker: z.string().min(1, "구매처를 입력해주세요."),
+  maker: z.string().min(1, "제조사를 입력해주세요."),
 
-  buyer: z.string().min(1, "구매자를 입력해주세요."),
+  buyer: z.string().min(1, "구매처를 입력해주세요."),
 
   amount: z.string().min(1, "수량을 입력해주세요."),
 
@@ -56,7 +56,7 @@ const EquipmentAddForm = ({ onNext }: EquipmentAddFormProps) => {
       maker: "",
       buyer: "",
       amount: "1",
-      cost: "0",
+      cost: "",
       buyDt: new Date(),
       manager: "",
       images: [],
@@ -141,8 +141,8 @@ const EquipmentAddForm = ({ onNext }: EquipmentAddFormProps) => {
           name="maker"
           render={({ field }) => (
             <TextFormItem
-              label="구매처"
-              placeholder="구매처"
+              label="제조사"
+              placeholder="제조사"
               {...field}
               required
             />
@@ -153,8 +153,8 @@ const EquipmentAddForm = ({ onNext }: EquipmentAddFormProps) => {
           name="buyer"
           render={({ field }) => (
             <TextFormItem
-              label="구매자"
-              placeholder="구매자"
+              label="구매처"
+              placeholder="구매처"
               {...field}
               required
             />

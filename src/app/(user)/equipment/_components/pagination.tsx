@@ -8,25 +8,22 @@ import React, { useEffect } from "react";
 
 const EquipmentPagination = () => {
   const router = useRouter();
-  const { equipmentList } = useEquipmentMainStore.getState();
+  const { equipmentList } = useEquipmentMainStore();
 
-  useEffect(() => {
-    console.log(equipmentList);
-  }, [equipmentList]);
+  //데이터 에러, 로딩인경우
+  if (equipmentList.type === "loading") {
+    return <BaseSkeleton className="h-9" />;
+  }
+  if (equipmentList.type === "error") {
+    return <BaseSkeleton className="h-9" />;
+  }
 
   return (
     <>
-      {equipmentList.type === "data" ? (
-        <div className="flex gap-4">
-          <CommonPagination totalCount={equipmentList.meta.totalCount} />
-          <IconButton
-            icon="Plus"
-            onClick={() => router.push("equipment/add")}
-          />
-        </div>
-      ) : (
-        <BaseSkeleton className="w-full h-10" />
-      )}
+      <div className="flex gap-4">
+        <CommonPagination totalCount={equipmentList.payload.meta.totalCount} />
+        <IconButton icon="Plus" onClick={() => router.push("equipment/add")} />
+      </div>
     </>
   );
 };

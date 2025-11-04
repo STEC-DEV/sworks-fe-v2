@@ -1,11 +1,15 @@
 "use client";
 import BaseSkeleton from "@/components/common/base-skeleton";
 import CustomCard from "@/components/common/card";
+import IconButton from "@/components/common/icon-button";
 import AppTitle from "@/components/common/label/title";
+import BaseDialog from "@/components/ui/custom/base-dialog";
+import EmptyBox from "@/components/ui/custom/empty";
 import DialogCarousel from "@/components/ui/custom/image/size-carousel";
 import { useDecodeParam } from "@/hooks/params";
 import { useDailyTaskDetailStore } from "@/store/normal/task/detail-daily";
 import { Log, Worker } from "@/types/normal/task/detail-daily";
+import { format } from "date-fns";
 
 import React, { useEffect, useState } from "react";
 
@@ -31,28 +35,36 @@ const Page = () => {
       {dailyTask ? (
         <div className="flex-1 flex flex-col gap-6">
           <AppTitle title={dailyTask.taskTitle} />
-          <div className="flex flex-col gap-4">
-            {dailyTask.users.map((v, i) => (
-              <WorkerBox
-                key={i}
-                data={v}
-                totalCount={dailyTask.totalCount}
-                isSelect={
-                  selectWorker ? v.userSeq === selectWorker?.userSeq : false
-                }
-                onClick={handleSelectWorker}
-              />
-            ))}
-          </div>
+          {dailyTask.users.length > 0 ? (
+            <div className="flex flex-col gap-4">
+              {dailyTask.users.map((v, i) => (
+                <WorkerBox
+                  key={i}
+                  data={v}
+                  totalCount={dailyTask.totalCount}
+                  isSelect={
+                    selectWorker ? v.userSeq === selectWorker?.userSeq : false
+                  }
+                  onClick={handleSelectWorker}
+                />
+              ))}
+            </div>
+          ) : (
+            <EmptyBox message="근무자 없음" />
+          )}
         </div>
       ) : (
         <BaseSkeleton />
       )}
-      <div className="flex-1">
+      <div className="flex-1 flex flex-col gap-6">
         <AppTitle title="업무이력" />
-        {selectWorker
-          ? selectWorker.logs.map((v, i) => <LogBox key={i} data={v} />)
-          : null}
+        {selectWorker && selectWorker?.logs.length > 0 ? (
+          selectWorker.logs.map((v, i) => {
+            return <LogBox key={i} data={v} />;
+          })
+        ) : (
+          <EmptyBox message="업무이력 없음" />
+        )}
       </div>
     </div>
   );
@@ -88,18 +100,29 @@ const WorkerBox = ({
 };
 
 const LogBox = ({ data }: { data: Log }) => {
+  const [open, setOpen] = useState<boolean>(false);
   return (
-    <CustomCard>
-      <span>{data.issue}</span>
-      {data.attach.map((v, i) => (
-        <DialogCarousel
-          key={i}
-          currentIndex={i}
-          pathList={data.attach
-            .map((a, j) => a.images)
-            .filter((image): image is string => image !== undefined)}
-        />
-      ))}
+    <CustomCard className="" size={"sm"}>
+      <div className="flex items-center justify-between">
+        <span className="text-xs text-[var(--description-light)]">
+          {format(data.workDt, "yyyy-MM-dd HH:mm:ss")}
+        </span>
+        {/* <BaseDialog
+          title="업무이력 수정"
+          triggerChildren={<IconButton icon="SquarePen" />}
+          open={open}
+          setOpen={setOpen}
+        >
+          <div></div>
+        </BaseDialog> */}
+      </div>
+
+      <span className="text-sm">{data.issue}</span>
+      <DialogCarousel
+        pathList={data.attach
+          .map((a, j) => a.images)
+          .filter((image): image is string => image !== undefined)}
+      />
     </CustomCard>
   );
 };

@@ -2,18 +2,20 @@ import api from "@/lib/api/api-manager";
 import { AdminListItem, SelectAdminList } from "@/types/admin/admin/user-list";
 import { ChecklistMultiType } from "@/types/admin/workplace/chk-types";
 import { Contract } from "@/types/admin/workplace/contract-info";
+import { Workplace } from "@/types/admin/workplace/v2/workplace";
 import { WorkplaceDetail } from "@/types/admin/workplace/workplace-detail";
 import { ContractType } from "@/types/common/basic-code";
 import { Response } from "@/types/common/response";
 import { ListMeta, ListState } from "@/types/list-type";
+import { toast } from "sonner";
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 
 interface WorkplaceDetailState {
   //사업장
-  workplace: WorkplaceDetail | undefined;
+  workplace: Workplace | undefined;
   getWorkplaceDetail: (id: number) => Promise<void>;
-  patchWorkplaceInfo: (updateWorkplace: WorkplaceDetail) => Promise<void>;
+  patchWorkplaceInfo: (updateWorkplace: Workplace) => Promise<void>;
   ////계약정보
   //조회
   contractList: Contract[] | undefined;
@@ -69,12 +71,9 @@ interface WorkplaceDetailState {
   //--담당관리자 관련--
   getManagers: (params: URLSearchParams) => Promise<void>;
   getAllManagerList: (id: string, search?: string) => Promise<void>;
-  allManagerList: AdminListItem[] | undefined;
-  selectedManagerList: number[];
-  //선택 리스트 수정
-  updateSelectedManagerList: (listId: number) => void;
+  allManagerList: SelectAdminList[] | undefined;
   //담당 관리자 수정 put
-  putManagerList: (workplaceId: string) => Promise<void>;
+  putManagerList: (workplaceId: string, manager: number[]) => Promise<void>;
 }
 
 const initialCreateChecklist: CreateChecklist = {
@@ -113,8 +112,10 @@ export const useWorkplaceDetailStore = create<WorkplaceDetailState>()(
               })
               .json();
             console.log(res);
+            toast.success("저장");
           } catch (err) {
             console.log(err);
+            toast.success("저장실패");
           }
         },
         // -------------------------계약정보-------------------------
@@ -161,8 +162,10 @@ export const useWorkplaceDetailStore = create<WorkplaceDetailState>()(
                 json: { ...updateContract },
               })
               .json();
+            toast.success("저장");
           } catch (err) {
             console.log(err);
+            toast.error("저장 실패. 다시 시도해주세요.");
           }
         },
         workplaceContractTypeList: undefined,
@@ -173,8 +176,8 @@ export const useWorkplaceDetailStore = create<WorkplaceDetailState>()(
                 searchParams: { siteSeq: workplaceId },
               })
               .json();
-
-            const data = await res.data;
+            console.log(res.data);
+            const data = res.data;
 
             set({ workplaceContractTypeList: data });
           } catch (err) {
@@ -284,7 +287,6 @@ export const useWorkplaceDetailStore = create<WorkplaceDetailState>()(
           set({ selectedAvailableChecklistItem: [] });
         },
         updateSelectedAvailableChecklistItem: (checklist) => {
-          console.log(checklist);
           set({ selectedAvailableChecklistItem: checklist });
         },
         createChecklist: initialCreateChecklist,
@@ -385,36 +387,19 @@ export const useWorkplaceDetailStore = create<WorkplaceDetailState>()(
 
             const data = res.data;
 
-            set({ allManagerList: data as AdminListItem[] });
-            set({
-              selectedManagerList: (data as SelectAdminList[])
-                .filter((v, i) => v.isAdminSite === true)
-                .map((v) => v.userSeq),
-            });
+            set({ allManagerList: data as SelectAdminList[] });
           } catch (err) {
             console.log(err);
           }
         },
         allManagerList: undefined,
-        selectedManagerList: [],
-        updateSelectedManagerList: async (listId) => {
-          console.log(listId);
-          set((prev) => {
-            const managers = prev.selectedManagerList;
-            return {
-              selectedManagerList: managers.includes(listId)
-                ? managers.filter((v) => v !== listId)
-                : [...managers, listId],
-            };
-          });
-        },
-        putManagerList: async (workplaceId) => {
-          const { selectedManagerList } = get();
+
+        putManagerList: async (workplaceId, manager) => {
           try {
             const res = await api.put(`site/w/sign/updatesitemanager`, {
               json: {
                 siteSeq: workplaceId,
-                userSeq: selectedManagerList,
+                userSeq: manager,
               },
             });
           } catch (err) {

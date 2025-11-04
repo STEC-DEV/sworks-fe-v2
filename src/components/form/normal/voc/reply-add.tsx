@@ -100,7 +100,12 @@ const ReplyAddForm = () => {
           control={form.control}
           name="content"
           render={({ field }) => (
-            <TextAreaFormItem placeholder="내용" label="내용" {...field} />
+            <TextAreaFormItem
+              className="h-20"
+              placeholder="내용"
+              label="내용"
+              {...field}
+            />
           )}
         />
         {vocDetail && vocDetail.logs.replyYn ? (

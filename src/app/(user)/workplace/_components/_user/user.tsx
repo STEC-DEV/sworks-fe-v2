@@ -6,12 +6,12 @@ import UserList from "./list";
 
 const User = () => {
   return (
-    <>
+    <div className="flex-1 flex flex-col gap-6">
       <AppTitle title="근무자" />
       <UserFilter />
       <UserPagination />
       <UserList />
-    </>
+    </div>
   );
 };
 

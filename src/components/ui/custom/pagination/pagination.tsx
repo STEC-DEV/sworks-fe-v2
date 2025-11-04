@@ -45,10 +45,10 @@ const Pagination = ({
       ? 1
       : Math.min(startPage + pageRangeDisplayed - 1, allDisplayedPage);
 
-  useEffect(() => {
-    console.log(startPage);
-    console.log(endPage);
-  }, [startPage, endPage]);
+  // useEffect(() => {
+  //   console.log(startPage);
+  //   console.log(endPage);
+  // }, [startPage, endPage]);
 
   const pageHandler = ({ pageNumber }: { pageNumber: number }) => {
     //데이터조회
@@ -134,7 +134,7 @@ const PageItemButton = ({
 }) => {
   return (
     <div
-      className={`border border-[var(--border)] text-xs px-2 py-2 rounded-[4px] w-9 h-9 flex items-center justify-center hover:bg-accent cursor-pointer  ${
+      className={`border border-[var(--border)] text-xs px-2 py-2 rounded-[4px] w-9 h-9 flex items-center justify-center hover:bg-background cursor-pointer  ${
         isActive ? "bg-[var(--background)] font-bold" : "bg-white"
       }`}
       onClick={onClick}

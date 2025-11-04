@@ -1,15 +1,18 @@
 "use client";
 import BaseSkeleton from "@/components/common/base-skeleton";
 import CustomCard from "@/components/common/card";
+import CheckDialog from "@/components/common/check-dialog";
 import IconButton from "@/components/common/icon-button";
 
 import QrEditForm, { QREditFormType } from "@/components/form/normal/qr/edit";
 import BaseDialog from "@/components/ui/custom/base-dialog";
-import LoadingOverlay from "@/components/ui/custom/overlay/loading";
 import { useQrStore } from "@/store/normal/qr/qr-store";
 import { downloadQRCodeSVG } from "@/utils/qr";
 import { useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
+import { dialogText } from "../../../../../../public/text";
+import { Package, PackageOpenIcon } from "lucide-react";
+import EmptyBox from "@/components/ui/custom/empty";
 
 const QrList = () => {
   const { qrList, getQrList } = useQrStore();
@@ -26,19 +29,21 @@ const QrList = () => {
   if (qrList.type === "loading") return <BaseSkeleton />;
   if (qrList.type === "error") return;
 
-  return (
+  return qrList.payload.data.length > 0 ? (
     <div className="grid grid-cols-5 gap-x-4 gap-y-6">
       {qrList.payload.data.map((v, i) => (
         <QrItemBox key={i} data={v} />
       ))}
     </div>
+  ) : (
+    <EmptyBox />
   );
 };
 
 const QrItemBox = ({ data }: { data: QRListItem }) => {
   const [open, setOpen] = useState<boolean>(false);
   const searchParams = useSearchParams();
-  const { getQrList, patchUpdateQr } = useQrStore();
+  const { getQrList, patchUpdateQr, deleteQr } = useQrStore();
 
   const handleSubmit = async (values: QREditFormType) => {
     const res = await patchUpdateQr(values);
@@ -57,21 +62,33 @@ const QrItemBox = ({ data }: { data: QRListItem }) => {
     );
   };
 
+  const handleDelete = async () => {
+    await deleteQr(data.vocSeq.toString());
+    await getQrList(new URLSearchParams(searchParams));
+  };
+
   return (
-    <CustomCard size={"sm"} className="gap-2 ">
+    <CustomCard size={"sm"} className="gap-2 pl-4 ">
       <div className="flex justify-between items-center">
         <span className="text-xs text-blue-500">{data.serviceTypeName}</span>
-        <BaseDialog
-          triggerChildren={<IconButton icon="SquarePen" />}
-          title={`${data.name} QR 수정`}
-          open={open}
-          setOpen={setOpen}
-        >
-          <QrEditForm data={data} onSubmit={handleSubmit} />
-        </BaseDialog>
-        {/* <div className="flex gap-2 items-center">
-          
-        </div> */}
+        <div className="flex gap-2 items-center">
+          <BaseDialog
+            triggerChildren={<IconButton icon="SquarePen" />}
+            title={`${data.name} QR 수정`}
+            open={open}
+            setOpen={setOpen}
+          >
+            <QrEditForm data={data} onSubmit={handleSubmit} />
+          </BaseDialog>
+          <CheckDialog
+            title={dialogText.defaultDelete.title}
+            description={dialogText.defaultDelete.description}
+            actionLabel={dialogText.defaultDelete.actionLabel}
+            onClick={handleDelete}
+          >
+            <IconButton icon="Trash2" />
+          </CheckDialog>
+        </div>
       </div>
       <div className="flex justify-between items-center">
         <div className="flex flex-col gap-1">
@@ -94,31 +111,3 @@ const QrItemBox = ({ data }: { data: QRListItem }) => {
 };
 
 export default QrList;
-
-// const qrList: QRListItem[] = [
-//   {
-//     vocSeq: 1,
-//     name: "고객만족 설문 QR",
-//     comments: "설문조사 참여를 위한 QR 코드",
-//   },
-//   {
-//     vocSeq: 2,
-//     name: "안전교육 이수 QR",
-//     comments: "사내 안전 교육 완료 확인용",
-//   },
-//   {
-//     vocSeq: 3,
-//     name: "출입등록 QR",
-//     comments: "외부 방문객 출입 등록용",
-//   },
-//   {
-//     vocSeq: 4,
-//     name: "A동 회의실 예약 QR",
-//     comments: "회의실 예약 현황 확인",
-//   },
-//   {
-//     vocSeq: 5,
-//     name: "시설 점검 요청 QR",
-//     comments: "고장 접수 및 점검 요청용",
-//   },
-// ];

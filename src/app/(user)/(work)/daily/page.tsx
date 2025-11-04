@@ -8,14 +8,28 @@ import { TaskBox } from "./_components/item";
 import BaseSkeleton from "@/components/common/base-skeleton";
 import { ChevronRight } from "lucide-react";
 import Link from "next/link";
+import EmptyBox from "@/components/ui/custom/empty";
 
 const Page = () => {
   const { dailyTaskList, getDailyTaskList } = useDailyTaskStore();
   const searchParams = useSearchParams();
   useEffect(() => {
-    if (!searchParams) return;
+    // if (!searchParams) return;
     getDailyTaskList(new URLSearchParams(searchParams));
   }, [searchParams]);
+
+  const getList = () => {
+    if (!dailyTaskList) return <BaseSkeleton />;
+    return dailyTaskList.length > 0 ? (
+      <div className="flex flex-col gap-4 xl:grid xl:grid-cols-4 xl:gap-6">
+        {dailyTaskList.map((d, i) => (
+          <TaskBox key={i} data={d} />
+        ))}
+      </div>
+    ) : (
+      <EmptyBox />
+    );
+  };
 
   return (
     <>
@@ -29,15 +43,7 @@ const Page = () => {
 
       <TaskFilter />
 
-      {dailyTaskList ? (
-        <div className="flex flex-col gap-4 xl:grid xl:grid-cols-4 xl:gap-6">
-          {dailyTaskList.map((d, i) => (
-            <TaskBox key={i} data={d} />
-          ))}
-        </div>
-      ) : (
-        <BaseSkeleton />
-      )}
+      {getList()}
     </>
   );
 };

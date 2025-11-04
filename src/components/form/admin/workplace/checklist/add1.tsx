@@ -108,7 +108,7 @@ const ChecklistTypeAddForm = ({
                     checklistMultiType as ServiceType[]
                   )}
                   onValueChange={handleValue}
-                  defaultValue={field.value?.toString()}
+                  value={field.value?.toString()}
                   required
                 />
               );
@@ -141,7 +141,7 @@ const ChecklistTypeAddForm = ({
                       (selectedService?.divs as DivCodeType[]) ?? []
                     )}
                     onValueChange={handleValue}
-                    defaultValue={currentDivValue?.toString() || ""}
+                    value={currentDivValue?.toString() || ""}
                     required
                   />
                 );
@@ -167,7 +167,7 @@ const ChecklistTypeAddForm = ({
                       (selectedDiv?.types as TypeCodeType[]) ?? []
                     )}
                     onValueChange={handleValue}
-                    defaultValue={currentTypeValue?.toString()}
+                    value={currentTypeValue?.toString()}
                     required
                   />
                 );

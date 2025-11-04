@@ -82,7 +82,7 @@ const InfoCard = () => {
 interface IconLabelProps {
   icon: LucideIcon;
   label: string;
-  value: string;
+  value: string | null;
   type: number;
 }
 
@@ -118,7 +118,9 @@ const IconLabel = ({ icon, label, value, type }: IconLabelProps) => {
       </div>
       <div className="flex flex-col">
         <span className="text-sm text-[var(--description-light)]">{label}</span>
-        <span className="text-sm text-[var(--description-dark)]">{value}</span>
+        <span className="text-sm text-[var(--description-dark)]">
+          {value || "내용 없음"}
+        </span>
       </div>
     </div>
   );

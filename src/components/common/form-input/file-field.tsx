@@ -116,6 +116,7 @@ interface SingleImageFormItemProps<T extends FieldValues>
   value: File | null;
   existingFile?: string | null;
   isRemove?: boolean;
+  id?: string;
   onChange: () => void;
   onRemoveExistingFile: () => void;
 }
@@ -127,6 +128,7 @@ interface MultiImageFormItemProps<T extends FieldValues>
   value: File[];
   existingFiles?: string[];
   removedExistingFiles?: string[];
+  id?: string;
   onChange: (files: File[]) => void;
   onRemoveExistingFile?: (file: string) => void;
   max?: number;
@@ -154,6 +156,7 @@ export const ImageFormItem = <T extends FieldValues>(
       <FormControl>
         {!multiple ? (
           <ImageDndInput
+            id={props.id}
             value={(props as SingleImageFormItemProps<T>).value}
             existingFile={(props as SingleImageFormItemProps<T>).existingFile}
             isRemove={(props as SingleImageFormItemProps<T>).isRemove}
@@ -165,6 +168,7 @@ export const ImageFormItem = <T extends FieldValues>(
         ) : (
           <ImageDndInput
             multiple
+            id={props.id}
             value={(props as MultiImageFormItemProps<T>).value}
             existingFiles={(props as MultiImageFormItemProps<T>).existingFiles}
             removedExistingFiles={

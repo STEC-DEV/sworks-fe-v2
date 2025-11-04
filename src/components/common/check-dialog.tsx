@@ -10,12 +10,14 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "../ui/alert-dialog";
+import { cn } from "@/lib/utils";
 
 interface CheckDialogProps {
   title: string;
   description: string;
   actionLabel: string;
   children: React.ReactNode;
+  buttonColor?: string;
   onClick: () => void;
 }
 
@@ -24,6 +26,7 @@ const CheckDialog = ({
   description,
   actionLabel,
   onClick,
+  buttonColor,
   children,
 }: CheckDialogProps) => {
   return (
@@ -45,7 +48,10 @@ const CheckDialog = ({
             취소
           </AlertDialogCancel>
           <AlertDialogAction
-            className="rounded-[4px] bg-red-600 hover:bg-red-500 text-white hover:cursor-pointer"
+            className={cn(
+              `rounded-[4px] bg-red-600 hover:bg-red-500 text-white hover:cursor-pointer`,
+              buttonColor
+            )}
             onClick={onClick}
           >
             {actionLabel}

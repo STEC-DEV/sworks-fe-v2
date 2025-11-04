@@ -1,7 +1,9 @@
 "use client";
 import { logout } from "@/app/server-action/auth/auth-action";
+import BaseSkeleton from "@/components/common/base-skeleton";
 import Button from "@/components/common/button";
 import IconButton from "@/components/common/icon-button";
+import { useAuthStore } from "@/store/auth/auth-store";
 import { icons, LogOut, MenuIcon } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import React, { useEffect } from "react";
@@ -101,6 +103,33 @@ interface SideBarProps {
 }
 
 const SideBar = ({ loginMode }: SideBarProps) => {
+  const { adminProfile, normalModeProfile, enteredWorkplace } = useAuthStore();
+
+  const returnProfile = () => {
+    if (loginMode === "ADMIN") {
+      return adminProfile ? (
+        <Profile
+          loginMode={loginMode}
+          name={adminProfile.userName ?? "관리자"}
+          permission="MASTER"
+        />
+      ) : (
+        <div className="flex flex-col gap-1 px-6 py-4">
+          <BaseSkeleton className="h-5" />
+          <BaseSkeleton className="h-5" />
+        </div>
+      );
+    } else {
+      return (
+        <Profile
+          loginMode={loginMode}
+          workplace={enteredWorkplace?.siteName}
+          name={normalModeProfile?.userName || ""}
+          permission={normalModeProfile?.role || ""}
+        />
+      );
+    }
+  };
   return (
     <div className="flex flex-col w-70 h-full bg-[var(--primary)] side-bar-shadow relative">
       {/**
@@ -109,12 +138,7 @@ const SideBar = ({ loginMode }: SideBarProps) => {
        */}
       <div className="text-2xl font-bold text-white px-6 py-6">S-Works</div>
 
-      <Profile
-        loginMode={loginMode}
-        workplace="강남우체국"
-        name="이동희"
-        permission="MASTER"
-      />
+      {returnProfile()}
 
       {/**
        * 바디
@@ -149,7 +173,7 @@ const SideBar = ({ loginMode }: SideBarProps) => {
  */
 interface ProfileProps {
   loginMode: "ADMIN" | "NORMAL";
-  workplace?: string;
+  workplace?: string | null;
   name: string;
   permission: string;
 }
@@ -161,7 +185,11 @@ const Profile = ({ loginMode, workplace, name, permission }: ProfileProps) => {
           <span className="text-sm text-[var(--primary)] font-bold">
             {workplace}
           </span>
-          <IconButton icon={"RefreshCcw"} />
+          {permission === "마스터" ||
+          permission === "시스템관리자" ||
+          permission === "매니저" ? (
+            <IconButton icon={"RefreshCcw"} />
+          ) : null}
         </div>
       ) : null}
       <div className="flex flex-col gap-1 ">

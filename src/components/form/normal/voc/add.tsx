@@ -11,29 +11,24 @@ import {
 } from "@/components/common/form-input/text-field";
 import { Form, FormField } from "@/components/ui/form";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { useDecodeParam } from "@/hooks/params";
-import { useAuthStore } from "@/store/auth/auth-store";
-import { useBasicStore } from "@/store/basic-store";
 import { useQrStore } from "@/store/normal/qr/qr-store";
 import { useVocStore } from "@/store/normal/voc/voc-store";
 import { SelectOption } from "@/types/common/select-item";
-import {
-  convertRecordDataToFormData,
-  convertSelectOptionType,
-} from "@/utils/convert";
+import { convertSelectOptionType } from "@/utils/convert";
 import { zodResolver } from "@hookform/resolvers/zod";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { toast } from "sonner";
+
 import z from "zod";
 
 const AddSchema = z
   .object({
-    vocSeq: z.number("위치를 선택해주세요.").min(1).optional(),
+    vocSeq: z.number("위치를 선택해주세요.").min(1),
+    // vocSeq: z.number("위치를 선택해주세요.").optional(),
     createUser: z.string().min(1, "이름을 입력해주세요."),
 
     phone: z.string().optional(),
-    serviceTypeSeq: z.number("유형을 선택해주세요.").min(1).optional(),
+    serviceTypeSeq: z.number("유형을 선택해주세요."),
     title: z.string().min(1, "제목을 입력해주세요."),
     content: z.string().min(1, "내용을 입력해주세요."),
     //true -> 모바일, false -> 수기
@@ -53,7 +48,6 @@ const AddSchema = z
       path: ["phone"], // 에러가 phone 필드에 표시됨
     }
   );
-
 type AddFormType = z.infer<typeof AddSchema>;
 
 interface VocAddFormProps {
@@ -74,7 +68,7 @@ const VocAddForm = ({ onSubmit }: VocAddFormProps) => {
       division: true, // 추가
       replyYn: false, // 추가
       images: [],
-      serviceTypeSeq: undefined,
+      serviceTypeSeq: 0,
       title: "",
       content: "",
     },
@@ -103,7 +97,7 @@ const VocAddForm = ({ onSubmit }: VocAddFormProps) => {
         className=" flex-1  min-h-0 flex flex-col gap-4 "
       >
         <ScrollArea className="flex-1 min-h-0 px-6 ">
-          <div className="h-full base-flex-col gap-4">
+          <div className="h-full base-flex-col gap-4 pb-1">
             <FormField
               control={form.control}
               name="vocSeq"
@@ -147,8 +141,8 @@ const VocAddForm = ({ onSubmit }: VocAddFormProps) => {
               name="createUser"
               render={({ field }) => (
                 <TextFormItem
-                  label="작성자"
-                  placeholder="작성자"
+                  label="민원인"
+                  placeholder="민원인"
                   {...field}
                   required
                 />
@@ -178,6 +172,7 @@ const VocAddForm = ({ onSubmit }: VocAddFormProps) => {
                     label="전화번호"
                     placeholder="전화번호"
                     {...field}
+                    required
                   />
                 )}
               />

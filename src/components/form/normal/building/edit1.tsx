@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useBuildingDetailStore } from "@/store/normal/building/detail";
 import FileFormItem, {
-  UnitImageFormItem,
+  ImageFormItem,
 } from "@/components/common/form-input/file-field";
 import { TextFormItem } from "@/components/common/form-input/text-field";
 import { DateFormItem } from "@/components/common/form-input/date-field";
@@ -234,10 +234,10 @@ const BuildingEditForm = ({
                 form.setValue("removeImage", true);
               };
               return (
-                <UnitImageFormItem
+                <ImageFormItem
                   {...field}
                   label="첨부파일"
-                  value={field.value}
+                  value={field.value ?? null}
                   existingFile={existingFile}
                   isRemove={isRemove}
                   onChange={field.onChange}

@@ -15,6 +15,7 @@ import { useRequestTaskStore } from "@/store/normal/req/main";
 import {
   convertRecordDataToFormData,
   convertSelectOptionType,
+  objectToFormData,
 } from "@/utils/convert";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useSearchParams } from "next/navigation";
@@ -26,8 +27,8 @@ const formSchema = z.object({
   requestSeq: z.number(),
   title: z.string("제목을 입력해주세요.").min(1, "제목을 입력해주세요."),
   description: z.string("내용을 입력해주세요.").min(1, "내용을 입력해주세요."),
-  removeImage: z.array(z.number().nullable()),
-  insertImage: z.array(z.instanceof(File)),
+  deleteImages: z.array(z.number().nullable()),
+  insertImages: z.array(z.instanceof(File)),
 });
 
 type FormType = z.infer<typeof formSchema>;
@@ -45,8 +46,8 @@ const RequestEditForm = ({ onClose }: { onClose: () => void }) => {
       requestSeq: undefined,
       title: "",
       description: "",
-      removeImage: [],
-      insertImage: [],
+      deleteImages: [],
+      insertImages: [],
     },
   });
 
@@ -65,14 +66,14 @@ const RequestEditForm = ({ onClose }: { onClose: () => void }) => {
       requestSeq: request.requestSeq,
       title: request.title,
       description: request.description,
-      removeImage: [],
-      insertImage: [],
+      deleteImages: [],
+      insertImages: [],
     });
     setExistingFiles(request.attaches.map((v, i) => v.path));
   }, [form, request]);
   const handleSubmit = async (values: FormType) => {
-    const formData = convertRecordDataToFormData(values);
-    console.log(values);
+    const formData = objectToFormData(values);
+
     const res = await patchUpdateRequestDetail(formData);
 
     res && request ? getRequestDetail(request.requestSeq.toString()) : null;
@@ -113,7 +114,7 @@ const RequestEditForm = ({ onClose }: { onClose: () => void }) => {
               />
               <FormField
                 control={form.control}
-                name="insertImage"
+                name="insertImages"
                 render={({ field }) => {
                   //기존 존재하는 파일 삭제
                   const handleRemoveExistingImage = (file: string) => {
@@ -122,8 +123,8 @@ const RequestEditForm = ({ onClose }: { onClose: () => void }) => {
                       (f) => f.path === file
                     );
                     if (!removeFile) return;
-                    const removeImageValue = form.getValues("removeImage");
-                    form.setValue("removeImage", [
+                    const removeImageValue = form.getValues("deleteImages");
+                    form.setValue("deleteImages", [
                       ...removeImageValue,
                       removeFile?.attachSeq,
                     ]);
@@ -133,6 +134,7 @@ const RequestEditForm = ({ onClose }: { onClose: () => void }) => {
                   return (
                     <ImageFormItem
                       label="이미지"
+                      id="req-edit"
                       multiple={true}
                       {...field}
                       value={field.value}

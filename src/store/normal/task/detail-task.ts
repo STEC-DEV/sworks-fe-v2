@@ -10,7 +10,7 @@ interface TaskDetailState {
   getTaskDetail: (taskSeq: string) => Promise<void>;
   patchUpdateTaskDetail: (values: Record<string, any>) => Promise<void>;
   classificationTaskWorker: ClassificationTaskWorker[] | undefined;
-  getTaskUserList: (serviceTypeSeq: string) => Promise<void>;
+  getTaskUserList: (taskSeq: string) => Promise<void>;
   putUpdateTaskWorker: (workers: number[]) => Promise<void>;
 }
 
@@ -50,24 +50,21 @@ export const useTaskDetailStore = create<TaskDetailState>()(
           }
         },
         classificationTaskWorker: undefined,
-        getTaskUserList: async (serviceTypeSeq) => {
+        getTaskUserList: async (taskSeq) => {
           const searchParams = new URLSearchParams();
-          const { enteredWorkplace } = useAuthStore.getState();
-          //에러
-          if (!enteredWorkplace) return;
 
-          searchParams.set("siteSeq", enteredWorkplace.siteSeq.toString());
-          searchParams.set("serviceTypeSeq", serviceTypeSeq);
+          searchParams.set("taskSeq", taskSeq);
 
           try {
             const res: Response<ClassificationTaskWorker[]> = await api
-              .get(`sitetask/w/sign/insertuserclassification`, {
+              .get(`sitetask/w/sign/updateuserclassification`, {
                 searchParams: searchParams,
               })
               .json();
             set({ classificationTaskWorker: res.data });
           } catch (err) {
             console.error(err);
+            toast.error("근무자 조회 실패");
           }
         },
         putUpdateTaskWorker: async (workers) => {

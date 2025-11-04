@@ -79,7 +79,10 @@ const CustomDatetimePicker = ({
       </PopoverTrigger>
       <PopoverContent className="w-fit p-0 overflow-y-hidden h-full bg-white">
         <div className="flex h-full">
-          <SimpleCalendar defaultValue={value} onSelect={handleDateSelect} />
+          <SimpleCalendar
+            defaultValue={value === null ? undefined : value}
+            onSelect={handleDateSelect}
+          />
           {setHour === true ? (
             <div className="flex flex-col sm:flex-row sm:h-[300px] divide-y sm:divide-y-0 sm:divide-x">
               <ScrollArea className="w-64 sm:w-auto">

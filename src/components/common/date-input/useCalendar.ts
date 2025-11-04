@@ -39,8 +39,8 @@ export const useCalendar = (data: Date) => {
 
   //월에 속한 주 생성
   const generateWeekForMonth = useMemo(() => {
-    console.log("월에 속한 월생성");
-    console.log(curDate);
+    // console.log("월에 속한 월생성");
+    // console.log(curDate);
     //해당 월
     const month = getMonth(curDate);
 

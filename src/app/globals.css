@@ -93,6 +93,7 @@ img {
   --success-hover: #3182ce;
   --failed: #ef4444;
   --background: #f5f5f4;
+  --background-dark: #d0d1d4;
   --skeleton: #e2e2e2;
   --placeholder: oklch(0.552 0.016 285.938);
   --border: #e7e5e4;
@@ -100,6 +101,27 @@ img {
   --default-font: #000000;
   --description-light: #4e5968;
   --description-dark: #333d4b;
+
+  /* 일정 */
+  --sch-red: #d32f2f;
+  --sch-orange600: #e64a19;
+  --sch-orange700: #f57c00;
+  --sch-amber800: #f9a825;
+  --sch-amber700: #fbc02d;
+  --sch-lime700: #c0ca33;
+  --sch-green600: #388e3c;
+  --sch-green800: #2e7d32;
+  --sch-teal600: #00897b;
+  --sch-cyan: #00acc1;
+  --sch-lightBlue: #039be5;
+  --sch-blue700: #1976d2;
+  --sch-indigo600: #3949ab;
+  --sch-deppPurple600: #5e35b1;
+  --sch-purple600: #8e24aa;
+  --sch-pink600: #d81b60;
+  --sch-pink800: #ad1457;
+  --sch-brown: #6d4c41;
+  --sch-blueGrey600: #546e7a;
 }
 
 .dark {

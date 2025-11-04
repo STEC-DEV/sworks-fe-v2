@@ -44,13 +44,22 @@ export async function LoginAction(
     const result: Response<ReturnToken> = await res.json();
     console.log(result);
 
+    //최초 로그인 시 패스워드 변경
+    if (result.code === 199) {
+      returnData.message = "비빌변호 변경";
+      returnData.result = true;
+      returnData.url = "/login";
+      returnData.code = 199;
+      return returnData;
+    }
+
     //일반모드
     if (!adminMode) {
       //일반모드 일반사용자 -> 메인화면 접속
-      if (result.code === 201) {
+      if (result.code === 200 || result.code === 201 || result.code === 202) {
         returnData.message = "로그인 성공";
         returnData.result = true;
-        returnData.url = "/facility/r&m";
+        returnData.url = "/schedule";
         returnData.code = result.code;
       }
       //일반모드 관리자 -> 사업장 선택화면 이동
@@ -58,11 +67,11 @@ export async function LoginAction(
         returnData.message = "로그인 성공";
         returnData.result = true;
         returnData.url = "/select-workplace";
-        returnData.code = result.code;
+        returnData.code = 101;
       }
     } else {
       //일반 근무자가 관리모드 접속하는 경우
-      if (result.code === 201) {
+      if (result.code === 200 || result.code === 201 || result.code === 202) {
         returnData.message = "접근권한 없음";
         returnData.code = result.code;
       }

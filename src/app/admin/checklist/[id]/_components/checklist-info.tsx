@@ -8,7 +8,7 @@ import { useChecklistDetailStore } from "@/store/admin/checklist/checklist-detai
 const ChecklistInfo = () => {
   const { checklistDetail } = useChecklistDetailStore();
   return (
-    <div className="w-125 flex flex-col gap-4">
+    <div className="w-150 flex flex-col gap-4">
       <AppTitle title="체크리스트 기본정보" />
       {checklistDetail ? (
         <div className="flex flex-col gap-2">

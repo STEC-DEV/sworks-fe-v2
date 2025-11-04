@@ -8,9 +8,15 @@ import { useSearchParams } from "next/navigation";
 import CustomCard from "@/components/common/card";
 import { format } from "date-fns";
 import BaseSkeleton from "@/components/common/base-skeleton";
-import { ChevronRight, ChevronRightIcon, ClockIcon } from "lucide-react";
+import {
+  ChevronRight,
+  ChevronRightIcon,
+  ClockIcon,
+  PackageOpenIcon,
+} from "lucide-react";
 import HistoryPagination from "./paginaion";
 import Link from "next/link";
+import EmptyBox from "@/components/ui/custom/empty";
 
 const EquipmentHistory = () => {
   const { historyList, getHistoryList } = useEquipmentHistoryMainStore();
@@ -29,17 +35,23 @@ const EquipmentHistory = () => {
     console.log(historyList);
   }, [historyList]);
 
+  const getList = () => {
+    if (historyList.type === "loading") return <BaseSkeleton />;
+    if (historyList.type === "error") return <BaseSkeleton />;
+    return historyList.payload.data.length > 0 ? (
+      historyList.payload.data.map((h, i) => <HistoryCard key={i} data={h} />)
+    ) : (
+      <EmptyBox />
+    );
+  };
+
   return (
     <>
       <AppTitle title="관리이력" />
       <HistoryFilter />
 
       <HistoryPagination />
-      {historyList.type === "data" ? (
-        historyList.data.map((h, i) => <HistoryCard key={i} data={h} />)
-      ) : (
-        <BaseSkeleton />
-      )}
+      {getList()}
     </>
   );
 };

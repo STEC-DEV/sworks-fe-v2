@@ -7,6 +7,14 @@ import {
 } from "../ui/dropdown-menu";
 import { Check, ChevronDownIcon } from "lucide-react";
 import { ScrollArea } from "../ui/scroll-area";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
+import { SelectProps } from "@radix-ui/react-select";
 
 /**
  *
@@ -85,7 +93,7 @@ export const MultiSelect = ({
         align="start"
         style={{ width: "var(--radix-dropdown-menu-trigger-width)" }}
       >
-        <ScrollArea className="h-80">
+        <ScrollArea className="max-h-80">
           <div
             className="flex gap-2 items-center justify-between px-4 py-2 hover:cursor-pointer hover:bg-gray-50 rounded-[4px]"
             onClick={() => handleAllCheck()}
@@ -112,5 +120,51 @@ export const MultiSelect = ({
         </ScrollArea>
       </DropdownMenuContent>
     </DropdownMenu>
+  );
+};
+
+interface SelectItemProps extends SelectProps {
+  value: string | undefined;
+  onValueChange: (value: string) => void;
+  selectItem: SelectOption[];
+}
+
+export const BaseSelect = ({
+  value,
+  onValueChange,
+  selectItem,
+}: SelectItemProps) => {
+  return (
+    <Select onValueChange={(value) => onValueChange(value)} value={value}>
+      <SelectTrigger
+        className={`w-full text-sm  rounded-[4px] border border-[var(--border)] shadow-none transition duration-300
+                      focus-visible:border-[var(--primary)] focus-visible:border-1 focus-visible:ring-1 focus-visible:ring-[var(--primary)]
+                      hover:border-[var(--primary)] hover:cursor-pointer
+                      data-[placeholder]:text-[var(--placeholder)] data-[state=open]:ring-[var(--primary)] data-[state=open]:border-[var(--primary)] data-[state=open]:ring-1 data-[state=open]:ring-inset
+                      `}
+      >
+        <SelectValue placeholder={"값을 선택해주세요."} />
+      </SelectTrigger>
+      <SelectContent className="bg-white">
+        {selectItem.length > 0 ? (
+          selectItem.map((v, i) => (
+            <SelectItem
+              className={`
+                 rounded-[4px]
+                hover:cursor-pointer hover:hover:bg-[var(--background)]
+                `}
+              key={v.value}
+              value={v.value.toString()}
+            >
+              {v.key}
+            </SelectItem>
+          ))
+        ) : (
+          <span className="px-2 py-1.5 text-sm text-[var(--placeholder)] ">
+            no result
+          </span>
+        )}
+      </SelectContent>
+    </Select>
   );
 };

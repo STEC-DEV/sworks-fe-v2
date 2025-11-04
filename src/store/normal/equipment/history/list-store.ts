@@ -1,7 +1,8 @@
 import api from "@/lib/api/api-manager";
 import { Response } from "@/types/common/response";
-import { ListMeta, ListState } from "@/types/list-type";
+import { ListData, ListMeta, ListState } from "@/types/list-type";
 import { paramsCheck } from "@/utils/param";
+import { toast } from "sonner";
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 
@@ -22,18 +23,16 @@ export const useEquipmentHistoryMainStore = create<EquipmentHistoryMainState>()(
           params.set("equipSeq", equipSeq);
 
           try {
-            const res = await api.get("equipment/w/sign/getequipmenthistory", {
-              searchParams: params,
-            });
+            const res: Response<ListData<EquipmentHistoryListItem>> = await api
+              .get("equipment/w/sign/getequipmenthistory", {
+                searchParams: params,
+              })
+              .json();
 
-            const response = (await res.json()) as Response<{
-              data: EquipmentHistoryListItem[];
-              meta: ListMeta;
-            }>;
-
-            set({ historyList: { type: "data", ...response.data } });
+            set({ historyList: { type: "data", payload: res.data } });
           } catch (err) {
             console.log(err);
+            toast.error("관리이력 조회 실패");
           }
         },
         postAddHistory: async (values) => {

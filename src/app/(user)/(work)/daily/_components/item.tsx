@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useRef, useState } from "react";
 
 interface TaskBoxProps {
-  data: DailyTaskListItem;
+  data: Task;
 }
 
 export const TaskBox = ({ data }: TaskBoxProps) => {
@@ -76,17 +76,23 @@ export const TaskBox = ({ data }: TaskBoxProps) => {
           } ${showLeft ? "right-full mr-2" : "left-full ml-2"}`}
           variant={"list"}
         >
-          {data.users.map((u, i) => {
-            return (
-              <KeyValueItem
-                key={i}
-                label={u.userName}
-                value={`${u.counts.toString()}/${u.repeats.toString()}`}
-                valueStyle="text-xs font-normal text-blue-500"
-                isHorizontal
-              />
-            );
-          })}
+          {data.users.length > 0 ? (
+            data.users.map((u, i) => {
+              return (
+                <KeyValueItem
+                  key={i}
+                  label={u.userName}
+                  value={`${u.counts.toString()}/${u.repeats.toString()}`}
+                  valueStyle="text-xs font-normal text-blue-500"
+                  isHorizontal
+                />
+              );
+            })
+          ) : (
+            <span className="text-xs text-[var(--description-light)]">
+              근무자 없음
+            </span>
+          )}
         </CustomCard>
       </CustomCard>
     </Link>

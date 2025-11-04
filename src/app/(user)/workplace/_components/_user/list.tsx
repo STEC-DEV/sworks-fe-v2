@@ -1,6 +1,7 @@
 "use client";
 import BaseSkeleton from "@/components/common/base-skeleton";
 import CustomCard from "@/components/common/card";
+import EmptyBox from "@/components/ui/custom/empty";
 import { useUserMainStore } from "@/store/normal/user/main-store";
 import { useSearchParams } from "next/navigation";
 import React, { useCallback, useEffect } from "react";
@@ -18,16 +19,19 @@ const UserList = () => {
     fetchData();
   }, [fetchData]);
 
+  if (userList.type === "loading") return <BaseSkeleton />;
+  if (userList.type === "error") return <BaseSkeleton />;
+
   return (
     <>
-      {userList.type === "data" ? (
+      {userList.payload.data.length > 0 ? (
         <div className="flex flex-col gap-2">
-          {userList.data.map((v, i) => (
+          {userList.payload.data.map((v, i) => (
             <UserListCard key={i} data={v} />
           ))}
         </div>
       ) : (
-        <BaseSkeleton className="h-200" />
+        <EmptyBox message="근무자 없음" />
       )}
     </>
   );

@@ -1,7 +1,9 @@
 import { cn } from "@/lib/utils";
 import { cva, VariantProps } from "class-variance-authority";
 import { ChevronDown, icons, LucideIcon } from "lucide-react";
-import React from "react";
+import React, { useState } from "react";
+import BaseDialog from "../ui/custom/base-dialog";
+import CustomCard from "./card";
 
 const buttonVariants = cva(
   "flex items-center justify-center gap-4 text-xs text-white rounded-[4px] hover:bg-blue-600 hover:cursor-pointer",
@@ -15,6 +17,7 @@ const buttonVariants = cva(
         prev: "border border-[var(--border)] bg-[var(--background)] text-[var(--description-light)] hover:bg-[var(--border)]",
         login: `border bg-white text-[var(--description-dark)] hover:border-red-500 hover:bg-white 
           hover:ring-1 hover:ring-red-500 hover:ring-inset duration-300 group`,
+        delete: `bg-red-500 `,
       },
       size: {
         default: "w-full py-2",
@@ -89,3 +92,24 @@ export const TriggerButton = ({
 };
 
 export default Button;
+
+export const DeleteButton = () => {
+  const [open, setOpen] = useState<boolean>(false);
+  return (
+    <BaseDialog
+      title="삭제"
+      triggerChildren={
+        <Button
+          className="hover:text-red-500 hover:border-red-500 hover:bg-red-50"
+          label="삭제"
+          variant={"prev"}
+          size={"sm"}
+        />
+      }
+      open={open}
+      setOpen={setOpen}
+    >
+      <CustomCard></CustomCard>
+    </BaseDialog>
+  );
+};

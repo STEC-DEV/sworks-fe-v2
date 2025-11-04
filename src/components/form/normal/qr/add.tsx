@@ -41,7 +41,7 @@ const QrAddForm = ({
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(handleSubmit)}
-        className="flex flex-col gap-4 px-6"
+        className="flex flex-col gap-4 px-6 w-full"
       >
         <FormField
           control={form.control}

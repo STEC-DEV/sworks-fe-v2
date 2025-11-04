@@ -1,13 +1,14 @@
 import api from "@/lib/api/api-manager";
 import { useAuthStore } from "@/store/auth/auth-store";
 import { Response } from "@/types/common/response";
-import { ListMeta, ListState } from "@/types/list-type";
+import { ListData, ListMeta, ListState } from "@/types/list-type";
 import {
   CreateUser,
   CreateUserClassification,
 } from "@/types/normal/user/create";
 import { convertRecordDataToFormData } from "@/utils/convert";
 import { paramsCheck } from "@/utils/param";
+import { toast } from "sonner";
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 
@@ -29,7 +30,7 @@ const initialCreateUser: CreateUser = {
   userName: "",
   sabun: "",
   job: "",
-  email: undefined,
+  email: "",
   phone: "",
   images: [],
 };
@@ -50,18 +51,16 @@ export const useUserMainStore = create<UserMainState>()(
           params.set("siteSeq", enteredWorkplace.siteSeq.toString());
 
           try {
-            const res = await api.get(`user/w/sign/userlist`, {
-              searchParams: params,
-            });
+            const res: Response<ListData<UserListItem>> = await api
+              .get(`user/w/sign/userlist`, {
+                searchParams: params,
+              })
+              .json();
 
-            const response = (await res.json()) as Response<{
-              data: UserListItem[];
-              meta: ListMeta;
-            }>;
-
-            set({ userList: { type: "data", ...response.data } });
+            set({ userList: { type: "data", payload: res.data } });
           } catch (err) {
             console.log(err);
+            toast.error("근무자 조회 실패");
           }
         },
         createUser: initialCreateUser,
@@ -71,10 +70,12 @@ export const useUserMainStore = create<UserMainState>()(
           }));
         },
         resetCreateUser: () => {
+          console.log("리셋이야");
           set({ createUser: initialCreateUser });
         },
         postAddUser: async () => {
           const { createUser } = get();
+          console.log(createUser);
           const formData = convertRecordDataToFormData(createUser);
 
           try {
@@ -85,6 +86,13 @@ export const useUserMainStore = create<UserMainState>()(
               .json();
 
             return res;
+            // const response: Response<boolean> = {
+            //   code: 500,
+            //   message: "요청 중 오류가 발생했습니다.",
+            //   data: false,
+            // };
+
+            // return response;
           } catch (err) {
             const response: Response<boolean> = {
               code: 500,

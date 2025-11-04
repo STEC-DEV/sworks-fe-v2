@@ -17,6 +17,7 @@ export interface Worker {
 export interface Log {
   logSeq: number;
   issue?: string;
+  workDt: Date;
   attach: Attach[];
 }
 

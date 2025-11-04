@@ -26,6 +26,7 @@ const Page = () => {
     getCreateUserClassification();
     return () => {
       resetCreateUser();
+      console.log("실행");
     };
   }, []);
 
@@ -44,6 +45,7 @@ const Page = () => {
     setFormResult(res.data);
     setCurStep((prev) => prev + 1);
     setOpen(true);
+    resetCreateUser();
   };
 
   const formsConfig = {

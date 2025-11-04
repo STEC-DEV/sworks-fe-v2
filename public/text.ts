@@ -1,0 +1,29 @@
+export const dialogText = {
+  contractItemDelete: {
+    title: "삭제하시겠습니까?",
+    description:
+      "해당 계약정보를 삭제하면 사업장에서 해당 계약정보가 삭제됩니다. 이 작업은 되돌릴 수 없습니다.",
+    actionLabel: "삭제",
+  },
+  checklistItemDelete: {
+    title: "삭제하시겠습니까?",
+    description:
+      "해당 평가항목을 삭제하면 사업장 체크리스트 항목에서도 평가항목이 삭제됩니다. 이 작업은 되돌릴 수 없습니다.",
+    actionLabel: "삭제",
+  },
+  passwordReset: {
+    title: "비밀번호를 초기화하시겠습니까??",
+    description: "이 작업은 되돌릴 수 없습니다.",
+    actionLabel: "확인",
+  },
+  replyItemDelete: {
+    title: "삭제하시겠습니까?",
+    description: "이 작업은 되돌릴 수 없습니다.",
+    actionLabel: "삭제",
+  },
+  defaultDelete: {
+    title: "삭제하시겠습니까?",
+    description: "이 작업은 되돌릴 수 없습니다.",
+    actionLabel: "삭제",
+  },
+} as const;

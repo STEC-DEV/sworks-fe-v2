@@ -15,7 +15,7 @@ import z from "zod";
 const EditSchema = z.object({
   vocSeq: z.number(),
   name: z.string().min(2, "2글자 이상 입력해주세요."),
-  serviceTypeSeq: z.number(),
+  serviceTypeSeq: z.number().optional(),
   comments: z.string(),
   tel: z.string(),
 });
@@ -46,7 +46,7 @@ const QrEditForm = ({
     form.reset({
       vocSeq: data.vocSeq,
       name: data.name,
-      serviceTypeSeq: data.serviceTypeSeq,
+      serviceTypeSeq: data.serviceTypeSeq ?? undefined,
       comments: data.comments,
       tel: data.tel,
     });
@@ -59,7 +59,7 @@ const QrEditForm = ({
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="flex flex-col gap-4 px-6"
+        className="flex flex-col gap-4 px-6 w-full"
       >
         <FormField
           control={form.control}

@@ -1,5 +1,6 @@
 import api from "@/lib/api/api-manager";
 import { Response } from "@/types/common/response";
+import { FacilityDetail } from "@/types/normal/facility/fac-detail";
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 

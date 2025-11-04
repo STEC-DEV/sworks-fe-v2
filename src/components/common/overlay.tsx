@@ -1,5 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 
 interface BaseOverlayProps {
   isOpen: boolean;
@@ -44,7 +45,7 @@ const BaseOverlay = ({
 
   if (!shouldRender) return null;
 
-  return (
+  return createPortal(
     <div
       className={`
         fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4
@@ -62,7 +63,8 @@ const BaseOverlay = ({
       >
         {children}
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };
 

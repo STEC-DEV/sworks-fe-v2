@@ -63,7 +63,12 @@ const WorkplaceAddForm = ({ onNext, onPrev }: WorkplaceAddFormProps) => {
           control={form.control}
           name="siteTel"
           render={({ field }) => (
-            <TextFormItem label="전화번호" placeholder="전화번호" {...field} />
+            <TextFormItem
+              label="전화번호"
+              placeholder="전화번호"
+              {...field}
+              required
+            />
           )}
         />
         <FormField
@@ -87,7 +92,7 @@ const WorkplaceAddForm = ({ onNext, onPrev }: WorkplaceAddFormProps) => {
                   label="사업장 유형"
                   selectItem={convertSelectOptionType(basicCode.typeCodes!)}
                   onValueChange={handleValue}
-                  defaultValue={field.value?.toString()}
+                  value={field.value?.toString()}
                   required
                 />
               );

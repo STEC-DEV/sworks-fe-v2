@@ -6,6 +6,7 @@ import {
   TextFormItem,
 } from "@/components/common/form-input/text-field";
 import { Form, FormField } from "@/components/ui/form";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { useDecodeParam } from "@/hooks/params";
 import { useEquipmentHistoryDetailStore } from "@/store/normal/equipment/history/detail-store";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -34,7 +35,7 @@ interface HistoryEditProps {
 }
 
 const HistoryEdit = ({ setOpen }: HistoryEditProps) => {
-  const { historyDetail, patchUpdateHistoryDetail } =
+  const { historyDetail, patchUpdateHistoryDetail, getHistoryDetail } =
     useEquipmentHistoryDetailStore();
   const form = useForm<HistoryEditInputType>({
     resolver: zodResolver(formInputSchema),
@@ -61,48 +62,54 @@ const HistoryEdit = ({ setOpen }: HistoryEditProps) => {
       ...values,
       detailDt: format(values.detailDt, "yyyy-MM-dd"),
     };
-    const res = await patchUpdateHistoryDetail(submitData);
-    res.data ? toast.success("저장") : toast.error("수정 실패");
+    await patchUpdateHistoryDetail(submitData);
+    await getHistoryDetail(values.detailSeq.toString());
     setOpen(false);
   };
   return (
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(handleSubmit)}
-        className="flex flex-col gap-6"
+        className="flex flex-col gap-6 w-full"
       >
-        <FormField
-          name="detailDt"
-          control={form.control}
-          render={({ field }) => (
-            <DateFormItem
-              label="관리일"
-              value={field.value}
-              onChange={(date) => field.onChange(date)}
-              required
+        <ScrollArea className="overflow-hidden">
+          <div className="flex flex-col gap-6 px-6 pb-1">
+            <FormField
+              name="detailDt"
+              control={form.control}
+              render={({ field }) => (
+                <DateFormItem
+                  label="관리일"
+                  value={field.value}
+                  onChange={(date) => field.onChange(date)}
+                  required
+                />
+              )}
             />
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="remark"
-          render={({ field }) => (
-            <TextFormItem label="비고" placeholder="비고" {...field} />
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="contents"
-          render={({ field }) => (
-            <TextAreaFormItem
-              label="내용"
-              placeholder="내용"
-              {...field}
-              required
+            <FormField
+              control={form.control}
+              name="remark"
+              render={({ field }) => (
+                <TextFormItem label="비고" placeholder="비고" {...field} />
+              )}
             />
-          )}
-        />
-        <Button label="저장" />
+            <FormField
+              control={form.control}
+              name="contents"
+              render={({ field }) => (
+                <TextAreaFormItem
+                  label="내용"
+                  placeholder="내용"
+                  {...field}
+                  required
+                />
+              )}
+            />
+          </div>
+        </ScrollArea>
+        <div className="px-6 shrink-0">
+          <Button label="저장" />
+        </div>
       </form>
     </Form>
   );

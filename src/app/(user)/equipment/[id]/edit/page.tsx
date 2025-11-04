@@ -31,9 +31,9 @@ const formSchema = z.object({
 
   usage: z.string().min(1, "용도를 입력해주세요."),
 
-  maker: z.string().min(1, "구매처를 입력해주세요."),
+  maker: z.string().min(1, "제조사를 입력해주세요."),
 
-  buyer: z.string().min(1, "구매자를 입력해주세요."),
+  buyer: z.string().min(1, "구매처를 입력해주세요."),
 
   amount: z.string().min(1, "수량을 입력해주세요."),
 
@@ -111,10 +111,8 @@ const Page = () => {
 
   const handleSubmit = async (values: UpdateFormType) => {
     const formData = convertRecordDataToFormData(values, true);
-    const res = await patchUpdateEquipmentDetail(formData);
-    if (res.data) toast.success("수정 완료");
-    else toast.error(res.message);
-    router.replace(window.location.pathname.replace("/edit", ""));
+    await patchUpdateEquipmentDetail(formData);
+    router.replace(`/equipment/${values.equipSeq}`);
   };
 
   return (
@@ -203,8 +201,8 @@ const Page = () => {
             name="maker"
             render={({ field }) => (
               <TextFormItem
-                label="구매처"
-                placeholder="구매처"
+                label="제조사"
+                placeholder="제조사"
                 {...field}
                 required
               />
@@ -215,8 +213,8 @@ const Page = () => {
             name="buyer"
             render={({ field }) => (
               <TextFormItem
-                label="구매자"
-                placeholder="구매자"
+                label="구매처"
+                placeholder="구매처"
                 {...field}
                 required
               />
@@ -281,7 +279,6 @@ const Page = () => {
             const handleRemoveExistFiles = (data: string) => {
               form.setValue("removeImage", true);
               setExistedFile(null);
-
             };
 
             return (

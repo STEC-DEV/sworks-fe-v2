@@ -7,39 +7,48 @@ import {
   DragOverlay,
   DragStartEvent,
 } from "@dnd-kit/core";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import MonthSchedule, { MonthScheduleItem } from "./_components/month";
-import {
-  MonthScheduleListItem,
-  monthSchedules,
-} from "@/types/normal/schedule/month";
+import { monthSchedules } from "@/types/normal/schedule/month";
 import { format } from "date-fns";
+import { useScheduleStore } from "@/store/normal/schedule/shcedule-store";
+import { useSearchParams } from "next/navigation";
 
 const Page = () => {
+  const { getDaySchedule } = useScheduleStore();
   const [activeId, setActiveId] = useState<number | null>(null);
-  const activeItem = monthSchedules.find((item) => item.monthSeq === activeId);
+  const activeItem = monthSchedules.find((item) => item.planSeq === activeId);
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    const year = searchParams.get("year");
+    const month = searchParams.get("month");
+    if (!year || !month) {
+      const date = new Date();
+      getDaySchedule(`${format(date, "yyyy")}-${format(date, "MM")}`);
+    } else {
+      getDaySchedule(`${year}-${month}`);
+    }
+  }, [searchParams]);
 
   /**
    * 드래그 종료
    */
   const handleDragEnd = (e: DragEndEvent) => {
-    console.log("드롭!");
-    console.log(e);
-    console.log(e.over === null);
-    if (e.over === null || !e.active) return;
-    //월간일정 -> 일간일정 등록요청 로직
-    console.log("전송 데이터");
-    console.log("월간일정 시퀀스 : ", e.active.data.current?.id);
-    console.log(
-      "월간일정 데이터 : ",
-      monthSchedules.find((item) => item.monthSeq === e.active.data.current?.id)
-    );
-    console.log(
-      "변경날짜 : ",
-      e.over?.data.current
-        ? format(new Date(e.over?.data.current as Date), "yyyy-MM-dd")
-        : null
-    );
+    // if (e.over === null || !e.active) return;
+    // //월간일정 -> 일간일정 등록요청 로직
+    // console.log("전송 데이터");
+    // console.log("월간일정 시퀀스 : ", e.active.data.current?.id);
+    // console.log(
+    //   "월간일정 데이터 : ",
+    //   monthSchedules.find((item) => item.monthSeq === e.active.data.current?.id)
+    // );
+    // console.log(
+    //   "변경날짜 : ",
+    //   e.over?.data.current
+    //     ? format(new Date(e.over?.data.current as Date), "yyyy-MM-dd")
+    //     : null
+    // );
   };
   /**
    * 드래그 시작

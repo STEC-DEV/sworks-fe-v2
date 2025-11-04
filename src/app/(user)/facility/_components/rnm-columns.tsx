@@ -326,7 +326,9 @@ export const facilityColumns: ColumnDef<FacilityListItem>[] = [
     accessorKey: "toDt",
     header: "종료",
     cell: ({ row }) => {
-      const value = format(row.original.toDt ?? "", "yyyy-MM-dd");
+      const value = row.original.toDt
+        ? format(row.original.toDt, "yyyy-MM-dd")
+        : "";
       return value;
     },
   },

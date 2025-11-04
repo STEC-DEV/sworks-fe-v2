@@ -7,6 +7,7 @@ interface LogInfo {
   logSeq: number;
   serviceTypeName: string;
   serviceTypeSeq: number;
+  createUser: string;
   title: string;
   content: string;
   phone: string;

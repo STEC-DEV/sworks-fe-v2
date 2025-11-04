@@ -65,6 +65,10 @@ const ChecklistAddForm = ({ onPrev, onNext }: ChecklistAddFormProps) => {
 
   useEffect(() => {
     setItems(selectedAvailableChecklistItem);
+    form.setValue(
+      "chkMainSeq",
+      selectedAvailableChecklistItem.map((v) => v.chkMainSeq)
+    );
   }, [selectedAvailableChecklistItem]);
 
   const sensors = useSensors(

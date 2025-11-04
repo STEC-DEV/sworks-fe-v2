@@ -1,5 +1,6 @@
 import api from "@/lib/api/api-manager";
 import { Response } from "@/types/common/response";
+import { toast } from "sonner";
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 
@@ -9,6 +10,7 @@ interface VocDetailState {
   resetVocDetail: () => void;
   putUpdateServiceType: (values: any) => Promise<Response<boolean>>;
   postAddReply: (formData: FormData) => Promise<Response<boolean>>;
+  patchUpdateReply: (formData: FormData) => Promise<void>;
 }
 
 export const useVocDetailStore = create<VocDetailState>()(
@@ -67,6 +69,20 @@ export const useVocDetailStore = create<VocDetailState>()(
               message: "등록 에러",
             };
             return res;
+          }
+        },
+        patchUpdateReply: async (formData) => {
+          try {
+            const res: Response<boolean> = await api
+              .patch(`voc/w/sign/updateReply`, {
+                body: formData,
+              })
+              .json();
+
+            toast.success("저장");
+          } catch (err) {
+            console.error(err);
+            toast.error("문제가 발생하였습니다. 잠시후 다시 시도해주세요.");
           }
         },
       }),

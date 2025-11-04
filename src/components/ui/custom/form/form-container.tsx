@@ -30,7 +30,16 @@ const CommonFormContainer = <T extends FieldValues, TSubmit>({
       </div>
       <form
         className="flex flex-col gap-6"
-        onSubmit={form.handleSubmit((value) => onNext(value))}
+        onSubmit={form.handleSubmit(
+          (value) => {
+            console.log("현재 모든 값:", form.getValues());
+            onNext(value);
+          },
+          (err) => {
+            console.log(err);
+            console.log("현재 값 (에러 상태):", form.getValues());
+          }
+        )}
       >
         {children}
         <div className={`flex ${onPrev ? "justify-between" : "justify-end"} `}>

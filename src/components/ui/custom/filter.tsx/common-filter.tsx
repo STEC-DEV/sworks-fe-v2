@@ -64,8 +64,6 @@ const CommonFilter = ({
         {filters && filters.length > 0 ? (
           <div className="flex gap-4">
             {filters.map((f, i) => {
-              console.log(filterState);
-              console.log(f);
               return (
                 <MultiSelect
                   key={i}

@@ -10,6 +10,7 @@ import Input from "@/components/common/input";
 import AppTitle from "@/components/common/label/title";
 import TaskInfoEditForm from "@/components/form/normal/task/info-edit";
 import BaseDialog from "@/components/ui/custom/base-dialog";
+import EmptyBox from "@/components/ui/custom/empty";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useDecodeParam } from "@/hooks/params";
 import { useTaskDetailStore } from "@/store/normal/task/detail-task";
@@ -96,13 +97,17 @@ const Page = () => {
                 valueStyle="text-sm font-normal"
               />
               {duration()}
-              <div className="flex justify-between items-center">
-                <AppTitle title={"체크리스트"} />
-                <IconButton icon="SquarePen" />
+              <div className="flex flex-col gap-6">
+                <div className="flex justify-between items-center">
+                  <AppTitle title={"체크리스트"} />
+                  <IconButton icon="SquarePen" />
+                </div>
+                <div className="flex flex-col gap-4">
+                  {taskDetail.mains.map((c, i) => (
+                    <ChecklistAccordion key={i} data={c} />
+                  ))}
+                </div>
               </div>
-              {taskDetail.mains.map((c, i) => (
-                <ChecklistAccordion key={i} data={c} />
-              ))}
             </div>
           </>
         ) : null}
@@ -124,11 +129,12 @@ const Page = () => {
               />
             </BaseDialog>
           </div>
-
           <div className="flex flex-col gap-2">
-            {taskDetail?.users.map((u, i) => (
-              <Worker key={i} data={u} />
-            ))}
+            {taskDetail.users.length > 0 ? (
+              taskDetail?.users.map((u, i) => <Worker key={i} data={u} />)
+            ) : (
+              <EmptyBox />
+            )}
           </div>
         </div>
       ) : null}
@@ -161,6 +167,7 @@ const WorkerEditContents = ({
 }) => {
   const [search, setSearch] = useState<string>("");
   const [selectedWorker, setSelectedWorker] = useState<number[]>([]);
+  const { rawValue } = useDecodeParam("id");
   const {
     taskDetail,
     classificationTaskWorker,
@@ -175,8 +182,9 @@ const WorkerEditContents = ({
   }, [taskDetail]);
 
   useEffect(() => {
-    getTaskUserList(serviceType.toString());
-  }, [serviceType]);
+    if (!rawValue) return;
+    getTaskUserList(rawValue);
+  }, [rawValue]);
 
   const handleCheck = async (item: ClassificationTaskWorker) => {
     setSelectedWorker((prev) => {
@@ -196,33 +204,43 @@ const WorkerEditContents = ({
   };
 
   return (
-    <div className="flex flex-col gap-6 px-6 xl:h-[80vh]">
-      <Input
-        className="w-full"
-        placeholder="근무자명"
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-      />
-      <ScrollArea className="flex-1">
-        <div className="h-full flex flex-col gap-2">
-          {classificationTaskWorker?.map((v, i) => (
-            <CustomCard
-              key={i}
-              variant={"list"}
-              className={`flex-row justify-between ${
-                selectedWorker.includes(v.userSeq)
-                  ? "bg-blue-50 border-blue-500"
-                  : null
-              }`}
-              onClick={() => handleCheck(v)}
-            >
-              <span className="text-sm">{v.userName}</span>
-              <span className="text-sm text-blue-500">{v.serviceTypeName}</span>
-            </CustomCard>
-          ))}
-        </div>
-      </ScrollArea>
-      <Button label="저장" onClick={handleSubmit} />
+    <div className="w-full flex flex-col gap-6 ">
+      <div className="px-6">
+        <Input
+          className="w-full"
+          placeholder="근무자명"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+      </div>
+
+      <div className="flex-1 overflow-hidden">
+        <ScrollArea className="h-full px-6">
+          <div className="h-full flex flex-col gap-2">
+            {classificationTaskWorker?.map((v, i) => (
+              <CustomCard
+                key={i}
+                variant={"list"}
+                className={`flex-row justify-between ${
+                  selectedWorker.includes(v.userSeq)
+                    ? "bg-blue-50 border-blue-500"
+                    : null
+                }`}
+                onClick={() => handleCheck(v)}
+              >
+                <span className="text-sm">{v.userName}</span>
+                <span className="text-sm text-blue-500">
+                  {v.serviceTypeName}
+                </span>
+              </CustomCard>
+            ))}
+          </div>
+        </ScrollArea>
+      </div>
+
+      <div className="shrink-0 px-6">
+        <Button label="저장" onClick={handleSubmit} />
+      </div>
     </div>
   );
 };

@@ -28,6 +28,7 @@ import {
   CommandList,
 } from "@/components/ui/command";
 import { cn } from "@/lib/utils";
+import ColorPicker from "../color-picker";
 
 interface TextFormItemProps<TField extends FieldValues = FieldValues>
   extends SelectProps {
@@ -199,7 +200,7 @@ export const ComboboxFormItem = ({
             </TriggerButton>
           </FormControl>
         </PopoverTrigger>
-        <PopoverContent className="w-full p-0  bg-white ">
+        <PopoverContent className="w-full p-0   bg-white ">
           <Command>
             <CommandInput
               className="h-9 placeholder:text-[var(--placeholder)]"
@@ -235,8 +236,40 @@ export const ComboboxFormItem = ({
           </Command>
         </PopoverContent>
       </Popover>
+      <FormMessage className="text-xs text-red-500" />
     </FormItem>
   );
 };
 
 export default SelectFormItem;
+
+interface SelectColorFormItemProps extends SelectProps {
+  label?: string;
+  required?: boolean;
+  onChange: (value: string) => void;
+  value: string | undefined;
+}
+
+export const SelectColorFormItem = ({
+  label,
+  required,
+  onChange,
+  value,
+}: SelectColorFormItemProps) => {
+  return (
+    <FormItem>
+      <div className="flex">
+        {label ? (
+          <span className="text-xs text-[var(--description-light)]">
+            {label}
+          </span>
+        ) : null}
+        {required ? <span className="text-xs text-red-500">*</span> : null}
+      </div>
+      <FormControl>
+        <ColorPicker value={value} onChange={onChange} />
+      </FormControl>
+      <FormMessage className="text-xs text-red-500" />
+    </FormItem>
+  );
+};

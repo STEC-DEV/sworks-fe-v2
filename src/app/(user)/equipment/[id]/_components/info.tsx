@@ -7,8 +7,8 @@ import { useEquipmentDetailStore } from "@/store/normal/equipment/equip-detail-s
 import { format } from "date-fns";
 import {
   CalendarDaysIcon,
-  CalendarIcon,
   DollarSignIcon,
+  FactoryIcon,
   GaugeIcon,
   HashIcon,
   ImageIcon,
@@ -34,10 +34,17 @@ const EquipmentInfoCard = () => {
   return (
     <>
       {data ? (
-        <CustomCard className="flex-row p-0 gap-0">
-          <div className="w-80 bg-[var(--background)] flex items-center justify-center">
-            <ImageIcon size={24} className="text-[var(--icon)]" />
-          </div>
+        <CustomCard className="xl:flex-row p-0 gap-0 ">
+          {data.images ? (
+            <div className="h-40 xl:w-80 xl:h-59 overflow-hidden">
+              <img src={data.images} className="w-full h-full object-cover" />
+            </div>
+          ) : (
+            <div className="w-80 bg-[var(--background)] flex items-center justify-center">
+              <ImageIcon size={24} className="text-[var(--icon)]" />
+            </div>
+          )}
+
           <div className="flex-1 flex flex-col px-6 py-6">
             {/* 헤더 */}
             <div className="flex justify-between items-center">
@@ -58,7 +65,7 @@ const EquipmentInfoCard = () => {
             {/* 바디 */}
             <div className="flex flex-col gap-6 ">
               <span className="text-lg">{data.name}</span>
-              <div className="grid grid-cols-4 gap-4">
+              <div className="grid grid-cols-2 xl:grid-cols-4 gap-4">
                 <IconKeyValue
                   icon={CalendarDaysIcon}
                   label="구매일"
@@ -67,8 +74,8 @@ const EquipmentInfoCard = () => {
                   mainColor="text-blue-600"
                 />
                 <IconKeyValue
-                  icon={UserIcon}
-                  label="구매자"
+                  icon={StoreIcon}
+                  label="구매처"
                   value={data.buyer}
                   bgColor="bg-orange-50"
                   mainColor="text-orange-600"
@@ -88,8 +95,8 @@ const EquipmentInfoCard = () => {
                   mainColor="text-green-600"
                 />
                 <IconKeyValue
-                  icon={StoreIcon}
-                  label="구매처"
+                  icon={FactoryIcon}
+                  label="제조사"
                   value={data.maker}
                   bgColor="bg-indigo-50"
                   mainColor="text-indigo-600"

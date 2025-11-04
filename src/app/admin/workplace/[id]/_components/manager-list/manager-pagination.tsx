@@ -6,7 +6,9 @@ import IconButton from "@/components/common/icon-button";
 import Input from "@/components/common/input";
 import BaseDialog from "@/components/ui/custom/base-dialog";
 import CommonPagination from "@/components/ui/custom/pagination/common-pagination";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { useWorkplaceDetailStore } from "@/store/admin/workplace/workplace-detail-store";
+import { AdminListItem, SelectAdminList } from "@/types/admin/admin/user-list";
 import { useParams, useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
@@ -44,55 +46,73 @@ const EditManagerContents = ({
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
   const [search, setSearch] = useState<string>("");
+  const [select, setSelect] = useState<SelectAdminList[]>([]);
   const { id } = useParams();
   const searchParams = useSearchParams();
-  const {
-    getAllManagerList,
-    allManagerList,
-    selectedManagerList,
-    updateSelectedManagerList,
-    getManagers,
-    putManagerList,
-  } = useWorkplaceDetailStore();
+  const { getAllManagerList, allManagerList, getManagers, putManagerList } =
+    useWorkplaceDetailStore();
 
+  //담당관리자 조회
   useEffect(() => {
     if (!id) return;
     getAllManagerList(id?.toString(), search);
   }, []);
 
-  const handleCheck = (item: any) => {
-    updateSelectedManagerList(item.userSeq);
+  useEffect(() => {
+    if (!allManagerList) return;
+    setSelect(allManagerList.filter((v) => v.isAdminSite === true));
+  }, [allManagerList]);
+
+  const handleCheck = (item: AdminListItem) => {
+    // updateSelectedManagerList(item.userSeq);
+    setSelect((prev) => {
+      const exist = prev.find((v) => v.userSeq === item.userSeq);
+
+      return exist
+        ? prev.filter((v) => v.userSeq !== item.userSeq)
+        : [...prev, item as SelectAdminList];
+    });
   };
   const handleSubmit = async () => {
     if (!id) return;
-    await putManagerList(id?.toString());
+    await putManagerList(
+      id?.toString(),
+      select.map((v) => v.userSeq)
+    );
     await getManagers(new URLSearchParams(searchParams));
     setOpen(false);
   };
   return (
-    <div className="flex flex-col gap-6 ">
-      <Input
-        className="w-full"
-        placeholder="사업장명"
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-      />
-      <div className="flex flex-col gap-2 h-120 overflow-auto">
-        {allManagerList ? (
-          allManagerList.map((v, i) => (
-            <AdminCardWrapper
-              key={i}
-              item={v}
-              checkOption
-              isCheck={selectedManagerList.includes(v.userSeq)}
-              onClick={handleCheck}
-            />
-          ))
-        ) : (
-          <BaseSkeleton />
-        )}
+    <div className="flex flex-col gap-6 w-full ">
+      <div className="px-6 shrink-0">
+        <Input
+          className="w-full"
+          placeholder="사업장명"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
       </div>
-      <Button label="저장" onClick={handleSubmit} />
+
+      <ScrollArea className="overflow-hidden px-6">
+        <div className="flex flex-col gap-2 pb-1">
+          {allManagerList ? (
+            allManagerList.map((v, i) => (
+              <AdminCardWrapper
+                key={i}
+                item={v}
+                checkOption
+                isCheck={select.includes(v)}
+                onClick={handleCheck}
+              />
+            ))
+          ) : (
+            <BaseSkeleton />
+          )}
+        </div>
+      </ScrollArea>
+      <div className="shrink-6 px-6">
+        <Button label="저장" onClick={handleSubmit} />
+      </div>
     </div>
   );
 };

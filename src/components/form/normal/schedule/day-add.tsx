@@ -1,37 +1,43 @@
 "use client";
 import Button from "@/components/common/button";
-import { DateFormItem } from "@/components/common/form-input/date-field";
-import FileFormItem from "@/components/common/form-input/file-field";
-import SelectFormItem from "@/components/common/form-input/select-field";
-import { TextFormItem } from "@/components/common/form-input/text-field";
+import {
+  AlarmTimeFormItem,
+  DateFormItem,
+} from "@/components/common/form-input/date-field";
+import SelectFormItem, {
+  SelectColorFormItem,
+} from "@/components/common/form-input/select-field";
+import {
+  TextAreaFormItem,
+  TextFormItem,
+} from "@/components/common/form-input/text-field";
 import { Form, FormField } from "@/components/ui/form";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { Switch } from "@/components/ui/switch";
 import useDateValidation from "@/hooks/date/useDateSet";
 import { useAuthStore } from "@/store/auth/auth-store";
-import { useBasicStore } from "@/store/basic-store";
-import {
-  convertKeyValueArrayToRecord,
-  convertSelectOptionType,
-} from "@/utils/convert";
+import { useScheduleStore } from "@/store/normal/schedule/shcedule-store";
+import { convertSelectOptionType } from "@/utils/convert";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { format } from "date-fns";
 import { useRouter } from "next/navigation";
-import React, { useActionState, useCallback } from "react";
+import React from "react";
 import { useForm } from "react-hook-form";
-import z, { iso } from "zod";
+import z from "zod";
 
 const AddSchema = z.object({
   serviceTypeSeq: z.number("업무 유형을 선택해주세요.").min(1),
-  schTitle: z.string().min(1, "제목을 입력하세요."),
+  title: z.string().min(1, "제목을 입력하세요."),
   description: z.string(),
   isAllDay: z.boolean(),
-  startDt: z.date().nullable(),
-  endDt: z.date().nullable(),
+  startDt: z.date(),
+  endDt: z.date(),
   alarmYn: z.boolean(),
   alarmDt: z.string().nullable(),
   alarmMin: z.number().nullable(),
   alarmOffSetDays: z.number(),
-  viewColor: z.string(),
-  files: z.array(z.instanceof(File)),
+  viewColor: z.string().min(1, "색상을 선택해주세요."),
+  // files: z.array(z.instanceof(File)),
 });
 
 type AddFormType = z.infer<typeof AddSchema>;
@@ -39,29 +45,32 @@ type AddFormType = z.infer<typeof AddSchema>;
 interface DayAddFormProps {
   focusDate?: Date;
   isOption?: boolean;
+  onClose: () => void;
 }
 
 const DayScheduleAddForm = ({
   focusDate,
   isOption = false,
+  onClose,
 }: DayAddFormProps) => {
+  const { postAddSchedule } = useScheduleStore();
   const router = useRouter();
   const { enteredWorkplace } = useAuthStore();
   const form = useForm<AddFormType>({
     resolver: zodResolver(AddSchema),
     defaultValues: {
       serviceTypeSeq: undefined,
-      schTitle: "",
+      title: "",
       description: "",
       isAllDay: false,
       startDt: focusDate ?? new Date(),
-      endDt: null,
+      endDt: focusDate ?? new Date(),
       alarmYn: false,
-      alarmDt: "",
+      alarmDt: null,
       alarmMin: 0,
       alarmOffSetDays: 0,
       viewColor: "",
-      files: [],
+      // files: [],
     },
   });
 
@@ -85,8 +94,15 @@ const DayScheduleAddForm = ({
     },
   ];
 
-  const handleSubmit = (values: AddFormType) => {
+  const handleSubmit = async (values: AddFormType) => {
+    const payload = {
+      ...values,
+      startDt: format(values.startDt, "yyyy-MM-dd'T'HH:mm:ss"), // "2025-11-05 09:00:00"
+      endDt: format(values.endDt, "yyyy-MM-dd'T'HH:mm:ss"),
+    };
     console.log(values);
+    await postAddSchedule(payload);
+    onClose();
   };
 
   const { handleDateChange } = useDateValidation({
@@ -101,152 +117,174 @@ const DayScheduleAddForm = ({
         className="flex flex-col gap-4 w-full"
         onSubmit={form.handleSubmit(handleSubmit)}
       >
-        {enteredWorkplace?.contracts ? (
-          <FormField
-            control={form.control}
-            name="serviceTypeSeq"
-            render={({ field }) => {
-              const handleValue = (value: string) => {
-                field.onChange(Number(value));
-              };
+        <div className="flex-1 overflow-hidden">
+          <ScrollArea className="px-6 h-full">
+            <div className="flex flex-col gap-4 h-full pb-1">
+              {enteredWorkplace?.contracts ? (
+                <FormField
+                  control={form.control}
+                  name="serviceTypeSeq"
+                  render={({ field }) => {
+                    const handleValue = (value: string) => {
+                      field.onChange(Number(value));
+                    };
 
-              return (
-                <SelectFormItem
-                  label="업무 유형"
-                  selectItem={convertSelectOptionType(
-                    enteredWorkplace.contracts ?? []
-                  )}
-                  onValueChange={handleValue}
-                  defaultValue={field.value?.toString()}
-                  required
+                    return (
+                      <SelectFormItem
+                        label="업무 유형"
+                        selectItem={convertSelectOptionType(
+                          enteredWorkplace.contracts ?? []
+                        )}
+                        onValueChange={handleValue}
+                        value={field.value?.toString()}
+                        required
+                      />
+                    );
+                  }}
                 />
-              );
-            }}
-          />
-        ) : null}
-        <FormField
-          control={form.control}
-          name="schTitle"
-          render={({ field }) => (
-            <TextFormItem label="제목" placeholder="제목" {...field} required />
-          )}
-        />
-        {isOption ? (
-          <>
-            <FormField
-              control={form.control}
-              name="description"
-              render={({ field }) => (
-                <TextFormItem label="설명" placeholder="설명" {...field} />
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="isAllDay"
-              render={({ field }) => {
-                //종일선택 시 날짜 값 초기화
-                const handleAllDay = (values: boolean) => {
-                  if (values) {
-                    form.setValue("startDt", new Date());
-                    form.setValue("endDt", null);
-                  }
+              ) : null}
+              <FormField
+                control={form.control}
+                name="title"
+                render={({ field }) => (
+                  <TextFormItem
+                    label="제목"
+                    placeholder="제목"
+                    {...field}
+                    required
+                  />
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="description"
+                render={({ field }) => (
+                  <TextAreaFormItem
+                    label="설명"
+                    className="h-20"
+                    placeholder="설명"
+                    {...field}
+                  />
+                )}
+              />
 
-                  field.onChange(values);
-                };
+              <div className="flex gap-6">
+                <FormField
+                  control={form.control}
+                  name="isAllDay"
+                  render={({ field }) => {
+                    //종일선택 시 날짜 값 초기화
+                    const handleAllDay = (values: boolean) => {
+                      if (values) {
+                        form.setValue("startDt", new Date());
+                        form.setValue("endDt", new Date());
+                      }
 
-                return (
-                  <div className="flex flex-col gap-2">
-                    <span className="text-xs text-[var(--description-light)]">
-                      종일
-                    </span>
-                    <Switch
-                      className="ring ring-[var(--border)]  hover:cursor-pointer data-[state=checked]:bg-blue-500 data-[state=unchecked]:bg-[var(--background)] [&_[data-slot=switch-thumb]]:bg-white focus-visible:ring-0 focus-visible:outline-none"
-                      checked={field.value}
-                      onCheckedChange={handleAllDay}
-                    />
-                  </div>
-                );
-              }}
-            />
-            {!form.watch("isAllDay") ? (
-              <>
+                      field.onChange(values);
+                    };
+
+                    return (
+                      <div className="flex flex-col gap-2">
+                        <span className="text-xs text-[var(--description-light)]">
+                          종일
+                        </span>
+                        <div className="flex-1 flex items-center">
+                          <Switch
+                            className="ring ring-[var(--border)]  hover:cursor-pointer data-[state=checked]:bg-blue-500 data-[state=unchecked]:bg-[var(--background)] [&_[data-slot=switch-thumb]]:bg-white focus-visible:ring-0 focus-visible:outline-none"
+                            checked={field.value}
+                            onCheckedChange={handleAllDay}
+                          />
+                        </div>
+                      </div>
+                    );
+                  }}
+                />
                 <FormField
                   control={form.control}
                   name="startDt"
-                  render={({ field }) => (
-                    <DateFormItem
-                      label="시작"
-                      value={field.value}
-                      onChange={(date) =>
-                        handleDateChange("start", date, field.onChange)
-                      }
-                      setHour
-                    />
-                  )}
+                  render={({ field }) => {
+                    const allDay = !form.watch("isAllDay");
+                    return (
+                      <DateFormItem
+                        label="시작"
+                        value={field.value}
+                        onChange={(date) => {
+                          console.log(date);
+                          handleDateChange("start", date, field.onChange);
+                        }}
+                        setHour={allDay}
+                        required
+                      />
+                    );
+                  }}
                 />
                 <FormField
                   control={form.control}
                   name="endDt"
-                  render={({ field }) => (
-                    <DateFormItem
-                      label="종료"
+                  render={({ field }) => {
+                    const allDay = !form.watch("isAllDay");
+                    return (
+                      <DateFormItem
+                        label="종료"
+                        value={field.value}
+                        onChange={(date) =>
+                          handleDateChange("end", date, field.onChange)
+                        }
+                        setHour={allDay}
+                      />
+                    );
+                  }}
+                />
+              </div>
+
+              <FormField
+                control={form.control}
+                name="alarmDt"
+                render={({ field }) => {
+                  const handleValue = (value: string) => {
+                    field.onChange(Number(value));
+                  };
+
+                  return (
+                    <AlarmTimeFormItem
+                      label="알람"
                       value={field.value}
-                      onChange={(date) =>
-                        handleDateChange("end", date, field.onChange)
+                      onChange={field.onChange}
+                      isAlarm={form.watch("alarmYn")}
+                      onAlarmChange={(alarm) => {
+                        form.setValue("alarmYn", alarm);
+                        if (!alarm) field.onChange(null);
+                        else {
+                          field.onChange("08:00:00");
+                        }
+                      }}
+                      offsetDay={form.watch("alarmOffSetDays")}
+                      onOffsetDayChange={(day) =>
+                        form.setValue("alarmOffSetDays", day)
                       }
-                      setHour
                     />
-                  )}
-                />
-              </>
-            ) : null}
-            <FormField
-              control={form.control}
-              name="alarmMin"
-              render={({ field }) => {
-                const handleValue = (value: string) => {
-                  field.onChange(Number(value));
-                };
-
-                return (
-                  <SelectFormItem
-                    label="알람"
-                    selectItem={convertSelectOptionType(alarmTime)}
-                    onValueChange={handleValue}
-                    defaultValue={field.value?.toString()}
+                  );
+                }}
+              />
+              <FormField
+                control={form.control}
+                name="viewColor"
+                render={({ field }) => (
+                  <SelectColorFormItem
+                    label="색상"
+                    value={field.value}
+                    onChange={field.onChange}
+                    required
                   />
-                );
-              }}
-            />
-            <FormField
-              control={form.control}
-              name="files"
-              render={({ field }) => (
-                <FileFormItem
-                  label="첨부파일"
-                  accept="accept"
-                  multiple={true}
-                  {...field}
-                  value={field.value}
-                  onChange={field.onChange}
-                  isVertical={true}
-                />
-              )}
-            />
-          </>
-        ) : null}
+                )}
+              />
+            </div>
+          </ScrollArea>
+        </div>
 
-        {isOption ? null : (
-          <Button
-            label="More options"
-            variant={"secondary"}
-            size={"sm"}
-            type="button"
-            onClick={() => router.push("/schedule/add")}
-          />
-        )}
-
-        <Button label="생성" />
+        <div className="shrink-0 px-6">
+          <Button label="생성" />
+        </div>
       </form>
     </Form>
   );

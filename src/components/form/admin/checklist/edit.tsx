@@ -25,7 +25,7 @@ const formSchema = z.object({
           chkDetailSeq: z.number(),
           chkDetailTitle: z.string().min(1, "세부항목명을 입력해주세요."),
           chkItem: z.string().min(1, "세부내용을 입력해주세요."),
-          chkDetailPoint: z.string(),
+          chkDetailPoint: z.number().min(0, "0점 이상 입력해주세요."),
         })
       ),
     })
@@ -43,7 +43,7 @@ const subInit = {
       chkDetailSeq: 0,
       chkDetailTitle: "",
       chkItem: "",
-      chkDetailPoint: "0",
+      chkDetailPoint: 0,
     },
   ],
 };
@@ -52,7 +52,7 @@ const detailInit = {
   chkDetailSeq: 0,
   chkDetailTitle: "",
   chkItem: "",
-  chkDetailPoint: "0",
+  chkDetailPoint: 0,
 };
 
 const ChecklistItemEditForm = () => {
@@ -66,6 +66,10 @@ const ChecklistItemEditForm = () => {
       subs: [subInit],
     },
   });
+
+  useEffect(() => {
+    console.log(editChecklistItem);
+  }, [editChecklistItem]);
 
   // 데이터 로드 후 폼 값 업데이트
   useEffect(() => {
@@ -83,7 +87,7 @@ const ChecklistItemEditForm = () => {
                 chkDetailSeq: detail.chkDetailSeq,
                 chkDetailTitle: detail.chkDetailTitle,
                 chkItem: detail.chkItem,
-                chkPoint: detail.chkDetailPoint.toString(),
+                chkDetailPoint: detail.chkDetailPoint,
               })) || [],
           })) || [],
       });
@@ -164,7 +168,6 @@ const ChecklistItemEditForm = () => {
                       name={`subs.${idx}.details.${i}.chkDetailTitle`}
                       render={({ field }) => (
                         <TextFormItem
-                          className=""
                           label="세부항목"
                           placeholder="세부항목"
                           required
@@ -187,16 +190,26 @@ const ChecklistItemEditForm = () => {
                     <FormField
                       control={form.control}
                       name={`subs.${idx}.details.${i}.chkDetailPoint`}
-                      render={({ field }) => (
-                        <TextFormItem
-                          label="배점"
-                          placeholder="배점"
-                          type="number"
-                          min={0}
-                          required
-                          {...field}
-                        />
-                      )}
+                      render={({ field }) => {
+                        return (
+                          <TextFormItem
+                            label="배점"
+                            placeholder="배점"
+                            type="number"
+                            min={0}
+                            required
+                            {...field}
+                            value={field.value || ""}
+                            onChange={(e) => {
+                              const value =
+                                e.target.value === ""
+                                  ? 0
+                                  : parseInt(e.target.value);
+                              field.onChange(value);
+                            }}
+                          />
+                        );
+                      }}
                     />
                   </div>
                 </div>
@@ -217,7 +230,7 @@ const ChecklistItemEditForm = () => {
         ...sub,
         details: sub.details.map((d) => ({
           ...d,
-          chkDetailPoint: parseInt(d.chkDetailPoint),
+          chkDetailPoint: d.chkDetailPoint,
         })),
       })),
     };

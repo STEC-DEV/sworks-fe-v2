@@ -10,20 +10,17 @@ const UserPagination = () => {
   const { userList } = useUserMainStore();
   const router = useRouter();
 
+  if (userList.type === "loading") return <BaseSkeleton className="h-9" />;
+  if (userList.type === "error") return <BaseSkeleton className="h-9" />;
+
   return (
-    <>
-      {userList.type === "data" ? (
-        <div className="flex gap-4">
-          <CommonPagination totalCount={userList.meta.totalCount} />
-          <IconButton
-            icon={"Plus"}
-            onClick={() => router.push("/workplace/add-user")}
-          />
-        </div>
-      ) : (
-        <BaseSkeleton className="h-10" />
-      )}
-    </>
+    <div className="flex gap-4">
+      <CommonPagination totalCount={userList.payload.meta.totalCount} />
+      <IconButton
+        icon={"Plus"}
+        onClick={() => router.push("/workplace/add-user")}
+      />
+    </div>
   );
 };
 

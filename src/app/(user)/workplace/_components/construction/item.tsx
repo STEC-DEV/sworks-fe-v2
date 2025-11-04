@@ -21,64 +21,64 @@ const Building = () => {
     getConstruction();
   }, []);
 
-  // useEffect(() => {
-  //   console.log(construction);
-  //   console.log(construction?.dongs?.map((b, i) => console.log(b)));
-  // }, [construction]);
-
   return (
     <>
       <AppTitle title="건물" />
-      {construction && construction.dongs !== undefined ? (
-        <Tab
-          configs={[
-            {
-              tabTitle: "건물",
-              options: (
+
+      <Tab
+        configs={[
+          {
+            tabTitle: "건물",
+            options: !construction ? null : (
+              <IconButton
+                icon="Plus"
+                onClick={() => router.push("/workplace/building/add")}
+              />
+            ),
+
+            render: (
+              <ScrollArea className="w-full whitespace-nowrap ">
+                {!construction ? (
+                  <span className="text-[var(--description-light)]">
+                    정보를 먼저 생성해주세요.
+                  </span>
+                ) : (
+                  <div className="flex gap-6 w-max">
+                    {construction.dongs?.map((b, i) => {
+                      return <BuildingBox key={i} data={b} />;
+                    })}
+                  </div>
+                )}
+
+                <ScrollBar orientation="horizontal" />
+              </ScrollArea>
+            ),
+          },
+          {
+            tabTitle: "정보",
+            options:
+              construction === null ? (
                 <IconButton
                   icon="Plus"
-                  onClick={() => router.push("/workplace/building/add")}
+                  onClick={() => router.push("/workplace/construction/add")}
+                />
+              ) : (
+                <IconButton
+                  icon="SquarePen"
+                  onClick={() => router.push("/workplace/construction/edit")}
                 />
               ),
-              render: (
-                <ScrollArea className="w-full whitespace-nowrap pb-2">
-                  {construction === null ? (
-                    <span className="text-red-500">
-                      정보를 먼저 생성해주세요.
-                    </span>
-                  ) : (
-                    <div className="flex gap-6 w-max">
-                      {construction.dongs.map((b, i) => {
-                        return <BuildingBox key={i} data={b} />;
-                      })}
-                    </div>
-                  )}
-
-                  <ScrollBar orientation="horizontal" />
-                </ScrollArea>
-              ),
-            },
-            {
-              tabTitle: "정보",
-              options:
-                construction === null ? (
-                  <IconButton
-                    icon="Plus"
-                    onClick={() => router.push("/workplace/construction/add")}
-                  />
-                ) : (
-                  <IconButton
-                    icon="SquarePen"
-                    onClick={() => router.push("/workplace/construction/edit")}
-                  />
-                ),
-              render: <ConstructionBox data={construction} />,
-            },
-          ]}
-        />
-      ) : (
-        <BaseSkeleton />
-      )}
+            render: construction ? (
+              <ConstructionBox data={construction} />
+            ) : (
+              <span className="text-[var(--description-light)]">
+                {" "}
+                건물정보를 생성해주세요.
+              </span>
+            ),
+          },
+        ]}
+      />
     </>
   );
 };

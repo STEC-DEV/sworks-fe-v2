@@ -1,14 +1,13 @@
 import api from "@/lib/api/api-manager";
 import { Response } from "@/types/common/response";
+import { toast } from "sonner";
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 
 interface EquipmentDetailState {
   equipmentDetail: EquipmentDetail | undefined;
   getEquipmentDetail: (equipSeq: string) => Promise<void>;
-  patchUpdateEquipmentDetail: (
-    formData: FormData
-  ) => Promise<Response<boolean>>;
+  patchUpdateEquipmentDetail: (formData: FormData) => Promise<void>;
 }
 
 export const useEquipmentDetailStore = create<EquipmentDetailState>()(
@@ -38,14 +37,10 @@ export const useEquipmentDetailStore = create<EquipmentDetailState>()(
               })
               .json();
 
-            return res;
+            toast.success("저장");
           } catch (err) {
-            const res: Response<boolean> = {
-              data: false,
-              code: 500,
-              message: "수정 실패. 에러가 발생하였습니다.",
-            };
-            return res;
+            console.error(err);
+            toast.error("문제가 발생하였습니다. 잠시후 다시 시도해주세요.");
           }
         },
       }),

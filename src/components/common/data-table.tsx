@@ -42,9 +42,8 @@ DataTableProps<TData, TValue>) => {
   const router = useRouter();
 
   return (
-    // overflow-hidden
     <div className="rounded-[4px]  bg-white ">
-      <Table className="border">
+      <Table className="border ">
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>

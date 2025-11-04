@@ -1,9 +1,10 @@
 import api from "@/lib/api/api-manager";
 import { useAuthStore } from "@/store/auth/auth-store";
 import { Response } from "@/types/common/response";
-import { ListMeta, ListState } from "@/types/list-type";
-import { convertRecordDataToFormData } from "@/utils/convert";
+import { ListData, ListMeta, ListState } from "@/types/list-type";
+import { convertRecordDataToFormData, objectToFormData } from "@/utils/convert";
 import { paramsCheck } from "@/utils/param";
+import { toast } from "sonner";
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 
@@ -34,22 +35,21 @@ export const useFacilityMainStore = create<FacilityMainState>()(
           checkParam.set("facilityType", facilitySeq);
 
           try {
-            const res = await api.get(`facility/w/sign/getfacilitylist`, {
-              searchParams: checkParam,
-            });
+            const res: Response<ListData<FacilityListItem>> = await api
+              .get(`facility/w/sign/getfacilitylist`, {
+                searchParams: checkParam,
+              })
+              .json();
 
-            const response = (await res.json()) as Response<{
-              data: FacilityListItem[];
-              meta: ListMeta;
-            }>;
-
-            set({ facilityList: { type: "data", ...response.data } });
+            set({ facilityList: { type: "data", payload: res.data } });
           } catch (err) {
             console.log(err);
+            toast.error("조회 실패");
           }
         },
         postAddFacility: async (value) => {
-          const formData = convertRecordDataToFormData(value);
+          // const formData = convertRecordDataToFormData(value);
+          const formData = objectToFormData(value);
 
           try {
             const res: Response<number> = await api

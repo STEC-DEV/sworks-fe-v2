@@ -6,6 +6,7 @@ import IconButton from "@/components/common/icon-button";
 import Input from "@/components/common/input";
 import BaseDialog from "@/components/ui/custom/base-dialog";
 import CommonPagination from "@/components/ui/custom/pagination/common-pagination";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAdminDetailStore } from "@/store/admin/admin/admin-detail";
 import { useParams, usePathname, useSearchParams } from "next/navigation";
@@ -19,7 +20,9 @@ const AdminWorkplacePagination = () => {
     <>
       {adminWorkplaceList.type === "data" ? (
         <div className="flex gap-4">
-          <CommonPagination totalCount={adminWorkplaceList.meta.totalCount} />
+          <CommonPagination
+            totalCount={adminWorkplaceList.payload.meta.totalCount}
+          />
           <BaseDialog
             triggerChildren={<IconButton icon={"SquarePen"} size={16} />}
             title="담당 사업장 수정"
@@ -75,29 +78,36 @@ const EditAdminWorkplaceContents = ({
     setOpen(false);
   };
   return (
-    <div className="flex flex-col gap-6 ">
-      <Input
-        className="w-full"
-        placeholder="사업장명"
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-      />
-      <div className="flex flex-col gap-2 h-120 overflow-auto">
-        {allWorkplace ? (
-          allWorkplace.map((v, i) => (
-            <WorkplaceCard
-              key={i}
-              item={v}
-              checkOption
-              isCheck={selectedWorkplaceList.includes(v.siteSeq)}
-              onClick={handleCheck}
-            />
-          ))
-        ) : (
-          <BaseSkeleton />
-        )}
+    <div className="flex flex-col gap-6 w-full">
+      <div className="px-6">
+        <Input
+          className="w-full"
+          placeholder="사업장명"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
       </div>
-      <Button label="저장" onClick={handleSubmit} />
+
+      <ScrollArea className="overflow-hidden">
+        <div className="flex flex-col gap-2 px-6 pb-1">
+          {allWorkplace ? (
+            allWorkplace.map((v, i) => (
+              <WorkplaceCard
+                key={i}
+                item={v}
+                checkOption
+                isCheck={selectedWorkplaceList.includes(v.siteSeq)}
+                onClick={handleCheck}
+              />
+            ))
+          ) : (
+            <BaseSkeleton />
+          )}
+        </div>
+      </ScrollArea>
+      <div className="shrink-0 px-6">
+        <Button label="저장" onClick={handleSubmit} />
+      </div>
     </div>
   );
 };

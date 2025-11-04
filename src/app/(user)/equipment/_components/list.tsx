@@ -1,15 +1,17 @@
 "use client";
 import { KeyValue } from "@/app/admin/checklist/[id]/_components/checklist-info";
 import BaseSkeleton from "@/components/common/base-skeleton";
+import EmptyBox from "@/components/ui/custom/empty";
 import { useEquipmentMainStore } from "@/store/normal/equipment/equip-main-store";
 import { format } from "date-fns";
-import { ImageIcon } from "lucide-react";
+import { ImageIcon, PackageOpenIcon } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import React, { useEffect } from "react";
 
 const EquipmentList = () => {
   const { equipmentList, getEquipmentList } = useEquipmentMainStore();
   const searchParams = useSearchParams();
+
   useEffect(() => {
     getEquipmentList(new URLSearchParams(searchParams));
   }, []);
@@ -17,19 +19,24 @@ const EquipmentList = () => {
     getEquipmentList(new URLSearchParams(searchParams));
   }, [searchParams]);
 
+  //데이터 에러, 로딩인경우
+  if (equipmentList.type === "loading") {
+    return <BaseSkeleton />;
+  }
+  if (equipmentList.type === "error") {
+    return <BaseSkeleton />;
+  }
+
   return (
     <>
-      {equipmentList.type === "data" ? (
+      {equipmentList.payload.data.length > 0 ? (
         <div className="grid grid-cols-5 gap-6">
-          {equipmentList.data.map((e, i) => (
+          {equipmentList.payload.data.map((e, i) => (
             <EquipmentBox key={i} item={e} />
           ))}
-          {/* {mockEquipmentList.map((e, i) => (
-            <EquipmentBox key={i} item={e} />
-          ))} */}
         </div>
       ) : (
-        <BaseSkeleton className="h-100" />
+        <EmptyBox />
       )}
     </>
   );
@@ -45,9 +52,16 @@ const EquipmentBox = ({ item }: { item: EquipmentListItem }) => {
       className="flex flex-col border border-[var(--border)] rounded-[4px] hover:cursor-pointer hover:border-blue-500 overflow-hidden"
       onClick={handleOnClick}
     >
-      <div className="flex items-center justify-center h-25 bg-[var(--background)]">
-        <ImageIcon className="text-[var(--icon)]" size={24} />
-      </div>
+      {item.images ? (
+        <div className="w-full h-25 overflow-hidden">
+          <img src={item.images} className="w-full h-full object-cover" />
+        </div>
+      ) : (
+        <div className="flex items-center justify-center h-25 bg-[var(--background)]">
+          <ImageIcon className="text-[var(--icon)]" size={24} />
+        </div>
+      )}
+
       <div className="flex flex-col gap-2 px-4 py-2">
         <div className="flex justify-between">
           <span className="text-xs text-[var(--description-light)] ">
@@ -84,7 +98,7 @@ const EquipmentBox = ({ item }: { item: EquipmentListItem }) => {
           />
           <KeyValue
             label="구매단가"
-            value={item.cost?.toString() ?? ""}
+            value={`${item.cost?.toString() ?? "0"}원`}
             valueSize="text-xs font-semibold"
           />
           <KeyValue

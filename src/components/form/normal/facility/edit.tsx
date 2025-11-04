@@ -32,18 +32,12 @@ export const facilityEditFormSchema = z.object({
   constractor: z.string(),
   tel: z
     .string()
-    .min(9, { message: "자릿수를 확인해주세요." })
-    .max(11, { message: "자릿수를 확인해주세요." })
-    .optional(),
+    .refine(
+      (val) => !val || (val.length >= 9 && val.length <= 11),
+      "전화번호를 올바르게 입력해주세요."
+    ),
   cost: z.string(),
-  // files: z
-  //   .array(
-  //     z.object({
-  //       attachSeq: z.number(),
-  //       path: z.string(),
-  //     })
-  //   )
-  //   .optional(),
+
   removeAttaches: z.array(z.number()),
   insertAttaches: z.array(z.instanceof(File)),
 });
@@ -52,7 +46,7 @@ export type FacilityEditFormType = z.infer<typeof facilityEditFormSchema>;
 
 const FacilityDetailEditForm = () => {
   const router = useRouter();
-  const [existFiles, setExistFiles] = useState<Attach[]>([]);
+
   const { decodeValue } = useDecodeParam("type");
   const { rawValue: id } = useDecodeParam("id");
   const { basicCode } = useBasicStore();
@@ -92,7 +86,6 @@ const FacilityDetailEditForm = () => {
   });
   useEffect(() => {
     if (facilityDetail) {
-      setExistFiles(facilityDetail.attaches || []);
       form.reset({
         facilitySeq: facilityDetail.facilitySeq,
         facilityCodeSeq: facilityDetail.facilityCodeSeq,
@@ -244,10 +237,14 @@ const FacilityDetailEditForm = () => {
                 ...curRemoveFiles,
                 parseInt(data),
               ]);
+            };
 
-              setExistFiles((prev) =>
-                prev.filter((v, i) => v.attachSeq !== parseInt(data))
-              );
+            const existedFiles = () => {
+              const removeFiles = form.watch("removeAttaches");
+              if (!facilityDetail) return;
+              return facilityDetail?.attaches
+                .filter((v) => !removeFiles.includes(v.attachSeq))
+                .map((v) => v.attachSeq.toString());
             };
 
             return (
@@ -257,9 +254,7 @@ const FacilityDetailEditForm = () => {
                 multiple={true}
                 {...field}
                 value={field.value}
-                existingFiles={existFiles?.map((v, i) =>
-                  v.attachSeq.toString()
-                )}
+                existingFiles={existedFiles()}
                 onChange={field.onChange}
                 onRemoveExitedFiles={handleRemoveExistFiles}
               />

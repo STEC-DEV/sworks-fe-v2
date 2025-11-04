@@ -6,7 +6,8 @@ import CommonFormContainer from "@/components/ui/custom/form/form-container";
 import { FormField } from "@/components/ui/form";
 import useDateValidation from "@/hooks/date/useDateSet";
 import { useWorkplaceDetailStore } from "@/store/admin/workplace/workplace-detail-store";
-import { convertSelectOptionType } from "@/types/common/select-item";
+import { convertSelectOptionType } from "@/utils/convert";
+
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useParams } from "next/navigation";
 import React, { useEffect } from "react";
@@ -15,11 +16,11 @@ import z from "zod";
 
 const formSchema = z.object({
   contractTypeSeq: z.number("계약유형을 선택해주세요."),
-  contractManager: z.string().min(2, "2글자 이상 입력해주세요."),
+  contractManager: z.string(),
   contractStaff: z.string(),
   startDt: z.date(),
   endDt: z.date().nullable(),
-  contractAmount: z.string(),
+  contractAmount: z.number(),
   comments: z.string(),
 });
 
@@ -39,10 +40,10 @@ const ContractAddForm = ({ onNext }: ContractAddFormProps) => {
     defaultValues: {
       contractTypeSeq: undefined,
       contractManager: "",
-      contractStaff: "0",
+      contractStaff: "",
       startDt: new Date(),
       endDt: null,
-      contractAmount: "",
+      contractAmount: 0,
       comments: "",
     },
   });
@@ -51,6 +52,10 @@ const ContractAddForm = ({ onNext }: ContractAddFormProps) => {
     if (!id) return;
     getWorkplaceServiceType(id?.toString());
   }, []);
+
+  useEffect(() => {
+    console.log(workplaceContractTypeList);
+  }, [workplaceContractTypeList]);
 
   const { handleDateChange } = useDateValidation({
     form,
@@ -80,7 +85,7 @@ const ContractAddForm = ({ onNext }: ContractAddFormProps) => {
                     workplaceContractTypeList
                   )}
                   onValueChange={handleValue}
-                  defaultValue={field.value?.toString()}
+                  value={field.value?.toString()}
                   required
                 />
               );
@@ -91,12 +96,7 @@ const ContractAddForm = ({ onNext }: ContractAddFormProps) => {
           control={form.control}
           name="contractManager"
           render={({ field }) => (
-            <TextFormItem
-              label="담당자"
-              placeholder="담당자"
-              required
-              {...field}
-            />
+            <TextFormItem label="담당자" placeholder="담당자" {...field} />
           )}
         />
         <FormField
@@ -109,6 +109,7 @@ const ContractAddForm = ({ onNext }: ContractAddFormProps) => {
               onChange={(date) =>
                 handleDateChange("start", date, field.onChange)
               }
+              required
             />
           )}
         />
@@ -127,20 +128,19 @@ const ContractAddForm = ({ onNext }: ContractAddFormProps) => {
           control={form.control}
           name="contractStaff"
           render={({ field }) => (
-            <TextFormItem
-              label="인원"
-              placeholder="인원"
-              required
-              {...field}
-              type="number"
-            />
+            <TextFormItem label="인원" placeholder="인원" {...field} />
           )}
         />
         <FormField
           control={form.control}
           name="contractAmount"
           render={({ field }) => (
-            <TextFormItem label="금액" placeholder="금액" required {...field} />
+            <TextFormItem
+              label="금액"
+              placeholder="금액"
+              type="number"
+              {...field}
+            />
           )}
         />
       </div>

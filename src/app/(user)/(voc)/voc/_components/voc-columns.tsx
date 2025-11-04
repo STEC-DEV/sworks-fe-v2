@@ -31,7 +31,7 @@ export const vocListCol: ColumnDef<VocListItem>[] = [
   },
   {
     accessorKey: "createUser",
-    header: "작성자",
+    header: "민원인",
     cell: ({ row }) => {
       const value = row.original.createUser;
       return value;

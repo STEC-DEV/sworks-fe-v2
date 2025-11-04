@@ -1,44 +1,59 @@
 "use client";
-import {
-  DndContext,
-  DragEndEvent,
-  useDraggable,
-  useDroppable,
-} from "@dnd-kit/core";
-import {
-  format,
-  isEqual,
-  isSameDay,
-  isSameMonth,
-  isWithinInterval,
-} from "date-fns";
+import { DragEndEvent, useDroppable } from "@dnd-kit/core";
+import { format, isSameDay, isSameMonth } from "date-fns";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { useCalendar } from "../date-input/useCalendar";
+// import { useCalendar } from "../date-input/useCalendar";
 import IconButton from "../icon-button";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import BaseDialog from "@/components/ui/custom/base-dialog";
 import DayScheduleAddForm from "@/components/form/normal/schedule/day-add";
-import ScheduleItem from "./schedule-item";
-import { daySchedules } from "@/types/normal/schedule/day-schedule";
-import { geistMono } from "@/app/layout";
+import ScheduleItem, { ExtendedSchedule } from "./schedule-item";
+import { DaySchedule } from "@/types/normal/schedule/day-schedule";
+import { useDecodeParam } from "@/hooks/params";
+import {
+  useCalendar,
+  useCalendarNavigation,
+} from "../date-input/useCalendarV2";
+import { useScheduleStore } from "@/store/normal/schedule/shcedule-store";
 
 interface DroppableCalendarProps {}
 
 export const DroppableCalendar = ({}: DroppableCalendarProps) => {
+  const { getDaySchedule } = useScheduleStore();
   const searchParams = useSearchParams();
-  const initialDate = useMemo(() => {
+
+  const calendarParams = useMemo(() => {
     const year = searchParams.get("year");
     const month = searchParams.get("month");
+    const newDate =
+      year && month
+        ? new Date(parseInt(year), parseInt(month) - 1)
+        : new Date();
 
-    if (!year || !month) return new Date();
-    return new Date(parseInt(year), parseInt(month) - 1);
+    return newDate;
   }, [searchParams]);
-  const { weeks, curDate, focusDate, onNextMonth, onPrevMonth, onFocusDate } =
-    useCalendar(initialDate);
+
+  const { weeks, curDate, focusDate, onFocusDate } =
+    useCalendar(calendarParams);
+  const { onNext, onPrev } = useCalendarNavigation(curDate);
 
   const handleDate = useCallback((date: Date) => {
     onFocusDate(date);
   }, []);
+
+  const getData = useCallback(() => {
+    const year = searchParams.get("year");
+    const month = searchParams.get("month");
+    if (!year || !month) {
+      const date = new Date();
+      getDaySchedule(`${format(date, "yyyy")}-${format(date, "MM")}`);
+    } else {
+      getDaySchedule(`${year}-${month}`);
+    }
+  }, [searchParams, getDaySchedule]);
+  useEffect(() => {
+    getData();
+  }, [getData]);
 
   const handleDragEnd = (e: DragEndEvent) => {
     console.log(e);
@@ -48,11 +63,13 @@ export const DroppableCalendar = ({}: DroppableCalendarProps) => {
   };
 
   return (
-    <div className="w-full h-auto xl:h-full flex flex-col gap-2 ">
+    <div className="w-full h-auto xl:h-full flex flex-col gap-2  min-w-0">
       <CalendarHeader
         date={curDate}
-        onNextMonth={onNextMonth}
-        onPrevMonth={onPrevMonth}
+        focusDate={focusDate}
+        onNextMonth={onNext}
+        onPrevMonth={onPrev}
+        onGetData={getData}
       />
       <div className="w-full h-full border-y border-[var(--border)] rounded-[4px]">
         <CalendarContent
@@ -69,16 +86,25 @@ export const DroppableCalendar = ({}: DroppableCalendarProps) => {
 interface CalendarHeaderProps {
   //현재 보이는 월
   date: Date;
+  focusDate: Date;
   onPrevMonth: () => void;
   onNextMonth: () => void;
+  onGetData: () => void;
 }
 
 const CalendarHeader = ({
   date,
+  focusDate,
   onNextMonth,
   onPrevMonth,
+  onGetData,
 }: CalendarHeaderProps) => {
   const [open, setOpen] = useState<boolean>(false);
+
+  const handleData = () => {
+    setOpen(false);
+    onGetData();
+  };
   return (
     <div className="flex items-center justify-between">
       <CalendarRemote
@@ -93,7 +119,7 @@ const CalendarHeader = ({
           open={open}
           setOpen={setOpen}
         >
-          <DayScheduleAddForm />
+          <DayScheduleAddForm focusDate={focusDate} onClose={handleData} />
         </BaseDialog>
       </div>
     </div>
@@ -107,6 +133,7 @@ interface CalendarRemoteProps {
 }
 const CalendarRemote = ({
   date,
+
   onNextMonth,
   onPrevMonth,
 }: CalendarRemoteProps) => {
@@ -116,14 +143,14 @@ const CalendarRemote = ({
         icon="ChevronLeft"
         size={24}
         onClick={onPrevMonth}
-        className="text-black stroke-[1.5]"
+        className=" stroke-[1.5]"
       />
-      <span className="text-lg tabular-nums">{format(date, "yyyy/MM")}</span>
+      <span className="text-lg tabular-nums">{format(date, "yyyy / MM")}</span>
       <IconButton
         icon="ChevronRight"
         size={24}
         onClick={onNextMonth}
-        className="text-black stroke-[1.5]"
+        className=" stroke-[1.5]"
       />
     </div>
   );
@@ -142,7 +169,22 @@ const CalendarContent = ({
   focusDate,
   onClickDay,
 }: CalendarContentProps) => {
+  const { schedules } = useScheduleStore();
   const labels = ["일", "월", "화", "수", "목", "금", "토"];
+
+  //날짜별로 그룹화
+  const schedulesByDate = useMemo(() => {
+    if (!schedules) return {};
+    return schedules.reduce((acc, schedule) => {
+      const dateKey = format(new Date(schedule.dates), "yyyy-MM-dd");
+      if (!acc[dateKey]) {
+        acc[dateKey] = [];
+      }
+      acc[dateKey].push(schedule);
+      return acc;
+    }, {} as Record<string, typeof schedules>);
+  }, [schedules]);
+
   return (
     <div className="flex flex-col  w-full h-[60vh] xl:h-full">
       <div className="flex border-b border-x border-[var(--border)]">
@@ -156,10 +198,11 @@ const CalendarContent = ({
         ))}
       </div>
       {weeks.map((w, i) => (
-        <div key={i} className="flex-1 flex border-b last:border-none">
+        <div key={i} className="flex-1 flex border-b last:border-none min-w-0">
           {w.map((d, j) => (
             <DayBox
               date={d}
+              schedules={schedulesByDate[format(d, "yyyy-MM-dd")]}
               key={j}
               curDate={curDate}
               focusDate={focusDate}
@@ -174,6 +217,7 @@ const CalendarContent = ({
 
 interface DayBoxProps extends Omit<React.HTMLProps<HTMLDivElement>, "onClick"> {
   date: Date;
+  schedules: DaySchedule[];
   focusDate: Date;
   curDate: Date;
   onClick: (date: Date) => void;
@@ -186,10 +230,12 @@ interface DayBoxProps extends Omit<React.HTMLProps<HTMLDivElement>, "onClick"> {
 export const DayBox = ({
   date,
   focusDate,
+  schedules,
   curDate,
   onClick,
   ...props
 }: DayBoxProps) => {
+  // const { schedules } = useScheduleStore();
   //   useEffect(() => {
   //     console.log("컴포넌트 날짜 : ", format(date, "yyyy-MM-dd"), date);
   //     console.log("현재 날짜 : ", format(curDate, "yyyy-MM-dd"), curDate);
@@ -203,7 +249,7 @@ export const DayBox = ({
 
   return (
     <div
-      className={`flex-1   h-full p-1 overflow-hidden
+      className={`flex-1   h-full p-1 overflow-hidden min-w-0
          border-r border--[var(--border)] first:border-l
          
   
@@ -230,10 +276,20 @@ export const DayBox = ({
       </span>
 
       {/* 일정 영역 */}
-      <div onClick={(e) => e.stopPropagation()}>
-        {daySchedules.map((s, i) =>
+      <div onClick={(e) => e.stopPropagation()} className="flex flex-col gap-1">
+        {/* {daySchedules.map((s, i) =>
           isSameDay(date, s.dates) ? <ScheduleItem key={i} data={s} /> : null
-        )}
+        )} */}
+        {schedules
+          ? schedules.map((s, i) =>
+              isSameDay(date, s.dates) && i < 3 ? (
+                <ScheduleItem key={i} data={s} />
+              ) : null
+            )
+          : null}
+        {schedules && schedules.length > 3 ? (
+          <ExtendedSchedule schedules={schedules} day={format(date, "dd")} />
+        ) : null}
       </div>
     </div>
   );

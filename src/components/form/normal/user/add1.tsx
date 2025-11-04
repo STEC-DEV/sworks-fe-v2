@@ -12,6 +12,7 @@ import z from "zod";
 const formSchema = z.object({
   codeSeq: z.number("사용자 유형을 선택해주세요.").min(1),
 });
+// 6-소장 /7-근무자 / 8-계약담당자
 
 export type UserTypeSelectFormType = z.infer<typeof formSchema>;
 

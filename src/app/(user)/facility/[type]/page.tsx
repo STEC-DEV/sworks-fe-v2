@@ -51,22 +51,31 @@ const Page = () => {
 
     getFacilityList(new URLSearchParams(searchParams), facilitySeq.toString());
   }, [searchParams, decodeValue]);
+
+  const getList = () => {
+    if (facilityList.type === "loading") {
+      return <BaseSkeleton />;
+    }
+    if (facilityList.type === "error") {
+      return <BaseSkeleton />;
+    }
+    return (
+      <DataTable
+        columns={facilityColumns}
+        data={facilityList.payload.data}
+        idName={"facilitySeq"}
+        baseUrl={decodeValue.toLowerCase()}
+        emptyMessage={`${decodeValue} 데이터를 추가해주세요`}
+      />
+    );
+  };
+
   return (
     <>
       <AppTitle title={decodeValue} />
       <FacilityFilter />
       <FacilityPagination />
-      {facilityList.type === "data" ? (
-        <DataTable
-          columns={facilityColumns}
-          data={facilityList.data}
-          idName={"facilitySeq"}
-          baseUrl={decodeValue.toLowerCase()}
-          emptyMessage={`${decodeValue} 데이터를 추가해주세요`}
-        />
-      ) : (
-        <BaseSkeleton className="h-full" />
-      )}
+      {getList()}
     </>
   );
 };

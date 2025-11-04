@@ -2,6 +2,7 @@ import Button from "@/components/common/button";
 import { TextFormItem } from "@/components/common/form-input/text-field";
 import { Form, FormField } from "@/components/ui/form";
 import { useWorkplaceDetailStore } from "@/store/admin/workplace/workplace-detail-store";
+import { Workplace } from "@/types/admin/workplace/v2/workplace";
 import { WorkplaceDetail } from "@/types/admin/workplace/workplace-detail";
 import { zodResolver } from "@hookform/resolvers/zod";
 import React from "react";
@@ -23,7 +24,7 @@ const WorkplaceInfoEditForm = ({
   data,
   setOpen,
 }: {
-  data: WorkplaceDetail;
+  data: Workplace;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
   const { getWorkplaceDetail, patchWorkplaceInfo } = useWorkplaceDetailStore();
@@ -32,7 +33,7 @@ const WorkplaceInfoEditForm = ({
     defaultValues: {
       siteName: data.siteName,
       siteTel: data.siteTel,
-      siteAddress: data.siteAddress,
+      siteAddress: data.siteAddress ?? "",
     },
   });
 
@@ -45,10 +46,10 @@ const WorkplaceInfoEditForm = ({
   return (
     <Form {...form}>
       <form
-        className="flex flex-col gap-6"
+        className="flex flex-col gap-6 w-full"
         onSubmit={form.handleSubmit(handleSubmit)}
       >
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-6 px-6">
           <FormField
             control={form.control}
             name="siteName"
@@ -78,16 +79,13 @@ const WorkplaceInfoEditForm = ({
             control={form.control}
             name="siteAddress"
             render={({ field }) => (
-              <TextFormItem
-                label="주소"
-                placeholder="주소"
-                required
-                {...field}
-              />
+              <TextFormItem label="주소" placeholder="주소" {...field} />
             )}
           />
         </div>
-        <Button label="저장" type="submit" />
+        <div className="shrink-0 px-6">
+          <Button label="저장" type="submit" />
+        </div>
       </form>
     </Form>
   );

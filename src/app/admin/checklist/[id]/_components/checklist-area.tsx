@@ -12,7 +12,7 @@ const ChecklistArea = () => {
   const router = useRouter();
   return (
     <>
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center w-150">
         <AppTitle title="평가항목" />
         <IconButton
           icon="Plus"
@@ -20,9 +20,11 @@ const ChecklistArea = () => {
           onClick={() => router.push(`${id}/add`)}
         />
       </div>
-      {checklistDetail?.mains.map((v, i) => (
-        <ChkAccordion key={i} data={v} />
-      ))}
+      <div className="w-150 flex flex-col gap-4">
+        {checklistDetail?.mains.map((v, i) => (
+          <ChkAccordion key={i} data={v} />
+        ))}
+      </div>
     </>
   );
 };

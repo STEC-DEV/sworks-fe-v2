@@ -3,6 +3,7 @@ import { KeyValueItem } from "@/app/(user)/equipment/[id]/[history-id]/page";
 import { ProcessBadge } from "@/components/common/badge";
 import BaseSkeleton from "@/components/common/base-skeleton";
 import CustomCard from "@/components/common/card";
+import CheckDialog from "@/components/common/check-dialog";
 import IconButton from "@/components/common/icon-button";
 import AppTitle from "@/components/common/label/title";
 import RequestEditForm from "@/components/form/normal/request/edit";
@@ -13,6 +14,7 @@ import { useDecodeParam } from "@/hooks/params";
 import { useReqDetailStore } from "@/store/normal/req/detail";
 import { format } from "date-fns";
 import React, { useEffect, useState } from "react";
+import { dialogText } from "../../../../../../public/text";
 
 const Page = () => {
   const { getRequestDetail } = useReqDetailStore();
@@ -96,7 +98,14 @@ const Info = () => {
 };
 
 const Reply = () => {
-  const { request: data } = useReqDetailStore();
+  const { request: data, deleteReply, getRequestDetail } = useReqDetailStore();
+  const [open, setOpen] = useState<boolean>(false);
+
+  const handleRemove = async (seq: string) => {
+    if (!data) return;
+    await deleteReply(seq);
+    await getRequestDetail(data?.requestSeq.toString());
+  };
 
   return (
     <div className="flex-1 flex flex-col gap-6">
@@ -109,8 +118,22 @@ const Reply = () => {
               <div className="flex justify-between items-center">
                 <ProcessBadge value={v.logStatus} />
                 <div className="flex justify-end gap-2">
-                  <IconButton icon="SquarePen" />
-                  <IconButton icon="Trash2" />
+                  <BaseDialog
+                    title="처리내용 수정"
+                    triggerChildren={<IconButton icon="SquarePen" />}
+                    open={open}
+                    setOpen={setOpen}
+                  >
+                    <div></div>
+                  </BaseDialog>
+                  <CheckDialog
+                    title={dialogText.defaultDelete.title}
+                    description={dialogText.defaultDelete.description}
+                    actionLabel={dialogText.defaultDelete.actionLabel}
+                    onClick={() => handleRemove(v.logSeq.toString())}
+                  >
+                    <IconButton icon="Trash2" />
+                  </CheckDialog>
                 </div>
               </div>
 
@@ -128,7 +151,7 @@ const Reply = () => {
                 {v.users.map((v, i) => (
                   <span
                     key={i}
-                    className="px-2 rounded-xl bg-background text-sm text-[var(--description-dark)]"
+                    className="px-2 rounded-xl text-sm bg-blue-500 text-white"
                   >
                     {v.managerName}
                   </span>
@@ -137,6 +160,7 @@ const Reply = () => {
               <div>
                 <span>{v.logContents}</span>
               </div>
+              <DialogCarousel pathList={v.attaches.map((a) => a.path)} />
             </CustomCard>
           ))}
         </div>

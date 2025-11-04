@@ -13,6 +13,7 @@ interface QrState {
   allQrList: QRListItem[] | undefined;
   getAllQrList: () => Promise<void>;
   postAddQr: (values: Record<string, any>) => Promise<Response<boolean>>;
+  deleteQr: (seq: string) => Promise<void>;
   patchUpdateQr: (values: any) => Promise<Response<boolean>>;
 }
 
@@ -69,6 +70,20 @@ export const useQrStore = create<QrState>()(
             };
             toast.error("에러 발생");
             return response;
+          }
+        },
+        deleteQr: async (seq) => {
+          try {
+            const res: Response<boolean> = await api
+              .delete(`vocpoint/w/sign/delvocpoint`, {
+                searchParams: { delSeq: seq },
+              })
+              .json();
+
+            toast.success("삭제");
+          } catch (err) {
+            console.error(err);
+            toast.error("문제가 발생하였습니다. 잠시후 다시 시도해주세요.");
           }
         },
         patchUpdateQr: async (values) => {

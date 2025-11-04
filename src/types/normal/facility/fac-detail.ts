@@ -1,4 +1,4 @@
-interface FacilityDetail {
+export interface FacilityDetail {
   facilitySeq: number;
   facilityCodeSeq: number;
   facilityCodeName: string;

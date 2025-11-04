@@ -1,7 +1,7 @@
 import api from "@/lib/api/api-manager";
 import { useAuthStore } from "@/store/auth/auth-store";
 import { Response } from "@/types/common/response";
-import { ListMeta, ListState } from "@/types/list-type";
+import { ListData, ListMeta, ListState } from "@/types/list-type";
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 
@@ -29,19 +29,16 @@ export const useEquipmentMainStore = create<EquipmentMainState>()(
           const { enteredWorkplace } = useAuthStore.getState();
           if (!enteredWorkplace) return;
           try {
-            const res = await api.get(`equipment/w/sign/getequipmentlist`, {
-              searchParams: {
-                siteSeq: enteredWorkplace?.siteSeq,
-                ...Object.fromEntries(params),
-              },
-            });
+            const res: Response<ListData<EquipmentListItem>> = await api
+              .get(`equipment/w/sign/getequipmentlist`, {
+                searchParams: {
+                  siteSeq: enteredWorkplace?.siteSeq,
+                  ...Object.fromEntries(params),
+                },
+              })
+              .json();
 
-            const response = (await res.json()) as Response<{
-              data: EquipmentListItem[];
-              meta: ListMeta;
-            }>;
-            set({ equipmentList: { type: "data", ...response.data } });
-            console.log(response);
+            set({ equipmentList: { type: "data", payload: res.data } });
           } catch (err) {
             console.log(err);
           }

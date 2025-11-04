@@ -34,8 +34,26 @@ const UserInput = ({ value, onChange }: UserInputProps) => {
   useEffect(() => {
     if (!reqWorker || selected.length > 0) return;
     const managers = reqWorker.filter((worker) => worker.isManager === true);
+
     setSelected(managers);
   }, [reqWorker]);
+
+  // ✅ value prop이 변경되면 selected 동기화 (form.reset() 시 빈 배열로 초기화)
+  useEffect(() => {
+    if (!reqWorker) return;
+
+    // value가 빈 배열이면 selected도 비우기
+    if (value.length === 0) {
+      setSelected([]);
+      return;
+    }
+
+    // value에 해당하는 worker들로 selected 설정
+    const selectedWorkers = reqWorker.filter((worker) =>
+      value.includes(worker.userSeq)
+    );
+    setSelected(selectedWorkers);
+  }, [value, reqWorker]);
 
   // ✅ 다이얼로그 열 때마다 curSelect를 selected로 초기화
   useEffect(() => {
@@ -69,9 +87,14 @@ const UserInput = ({ value, onChange }: UserInputProps) => {
     <div className="flex flex-row justify-between items-center">
       <ScrollArea>
         <div className="flex flex-row gap-2">
+          {selected.length === 0 ? (
+            <span className="text-sm text-[var(--placeholder)]">
+              담당자 없음
+            </span>
+          ) : null}
           {selected.map((v, i) => (
             <span
-              className="bg-background text-[var(--description-light)] px-2 rounded-2xl text-sm"
+              className="500 bg-blue-500   text-white px-2 rounded-2xl text-sm"
               key={i}
             >
               {v.userName}

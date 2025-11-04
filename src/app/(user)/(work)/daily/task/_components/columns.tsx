@@ -59,7 +59,11 @@ export const taskCol: ColumnDef<Task>[] = [
       const users = row.original.users;
       const value = users.map((user) => user.userName);
 
-      return <UserList data={value} />;
+      return (
+        <div className="relative overflow-visible">
+          <UserList data={value} />
+        </div>
+      );
     },
   },
 ];

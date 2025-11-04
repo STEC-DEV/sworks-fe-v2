@@ -73,10 +73,13 @@ const ContractCard = ({ data }: { data: Contract }) => {
       <div className="flex flex-col gap-4 w-full px-4">
         <span className="text-sm text-blue-500">{data.contractTypeName}</span>
         <div className="flex flex-col gap-2 justify-center">
-          <KeyValue label={"담당자"} value={data.contractManager ?? ""} />
+          <KeyValue
+            label={"담당자"}
+            value={data.contractManager || "내용없음"}
+          />
           <KeyValue
             label={"계약인원"}
-            value={data.contractStaff?.toString() ?? ""}
+            value={data.contractStaff?.toString() || "내용없음"}
           />
           <KeyValue
             label={"계약일"}
@@ -84,11 +87,11 @@ const ContractCard = ({ data }: { data: Contract }) => {
           />
           <KeyValue
             label={"해약일"}
-            value={data.endDt ? format(data.endDt, "yyyy-MM-dd") : ""}
+            value={data.endDt ? format(data.endDt, "yyyy-MM-dd") : "내용없음"}
           />
           <KeyValue
             label={"계약금액"}
-            value={data.contractAmount?.toString() ?? ""}
+            value={`${data.contractAmount?.toString()} 원` || "내용없음"}
           />
         </div>
       </div>

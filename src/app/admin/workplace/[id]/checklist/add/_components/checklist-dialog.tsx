@@ -78,13 +78,13 @@ const ChecklistDialog = ({
   };
 
   return (
-    <div className="flex flex-col gap-6">
-      <Input
+    <div className="flex flex-col gap-6 w-full px-6">
+      {/* <Input
         className="w-full"
         placeholder="사업장명"
         value={search}
         onChange={(e) => setSearch(e.target.value)}
-      />
+      /> */}
       <div className="flex flex-col gap-2 h-120 overflow-auto">
         {availableChecklistItem ? (
           availableChecklistItem.map((c, i) => (

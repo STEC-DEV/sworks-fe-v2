@@ -17,7 +17,7 @@ const FacilityFilter = () => {
   const [filterConfig, setFilterConfig] = useState<FilterConfig[]>([
     {
       key: "searchFacilityType",
-      placeholder: "권한",
+      placeholder: "유형",
       data: {},
       icon: ReceiptText,
     },

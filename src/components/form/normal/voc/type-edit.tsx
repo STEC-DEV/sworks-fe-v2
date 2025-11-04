@@ -53,7 +53,7 @@ const TypeEditForm = ({
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(handleSubmit)}
-        className="px-6 base-flex-col gap-6"
+        className="px-6 base-flex-col gap-6 w-full"
       >
         <FormField
           control={form.control}

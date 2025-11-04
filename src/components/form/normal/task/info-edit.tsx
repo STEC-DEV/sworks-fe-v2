@@ -1,12 +1,15 @@
 "use client";
 import Button from "@/components/common/button";
-import CheckFormItem from "@/components/common/form-input/check-field";
+import CheckFormItem, {
+  MultiCheckBoxFormItem,
+} from "@/components/common/form-input/check-field";
 import { DateFormItem } from "@/components/common/form-input/date-field";
 import { TextFormItem } from "@/components/common/form-input/text-field";
 import { Form, FormField } from "@/components/ui/form";
 import useDateValidation from "@/hooks/date/useDateSet";
 import { useDecodeParam } from "@/hooks/params";
 import { useTaskDetailStore } from "@/store/normal/task/detail-task";
+import { SelectOption } from "@/types/common/select-item";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { isSameDay } from "date-fns";
@@ -18,7 +21,7 @@ const formSchema = z.object({
   title: z.string("업무명을 입력해주세요."),
   termType: z.number(),
   startDt: z.string(),
-  endDt: z.string(),
+  endDt: z.string().nullable(),
   repeat: z.string(),
 });
 
@@ -29,7 +32,6 @@ const TaskInfoEditForm = ({
 }: {
   onSubmit: (values: TaskInfoEditType) => void;
 }) => {
-  const [everyDay, setEveryDay] = useState<boolean>(false);
   const { taskDetail, getTaskDetail } = useTaskDetailStore();
   const { rawValue } = useDecodeParam("id");
   useEffect(() => {
@@ -62,20 +64,21 @@ const TaskInfoEditForm = ({
 
       repeat: taskDetail.repeats.toString(),
     });
-    if (taskDetail.termType === 0) setEveryDay(true);
+    // if (taskDetail.termType === 0) setEveryDay(true);
   }, [taskDetail]);
 
   const { handleDateChange } = useDateValidation({
     form,
     startFieldName: "startDt",
     endFieldName: "endDt",
+    dateOnly: true,
   });
 
   return (
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="px-6 flex flex-col gap-6"
+        className="px-6 flex flex-col gap-6 w-full"
       >
         <FormField
           control={form.control}
@@ -107,84 +110,94 @@ const TaskInfoEditForm = ({
           control={form.control}
           name="termType"
           render={({ field }) => {
-            const handleChange = (value: boolean) => {
-              setEveryDay(value);
-              if (value) {
-                field.onChange(0);
-              } else {
-                const startDt = form.getValues("startDt");
-                const endDt = form.getValues("endDt");
-
-                if (endDt && isSameDay(startDt, endDt)) {
-                  field.onChange(1);
-                } else {
-                  field.onChange(2);
-                }
+            const checklist: SelectOption[] = [
+              {
+                key: "매일",
+                value: 0,
+              },
+              {
+                key: "특정일",
+                value: 1,
+              },
+              {
+                key: "기간",
+                value: 2,
+              },
+            ];
+            const handleChange = (value: number) => {
+              field.onChange(value);
+              if (value !== 2) {
+                form.setValue("endDt", null);
+                return;
+              }
+              if (value === 2) {
+                form.setValue("endDt", form.getValues("startDt"));
               }
             };
             return (
-              <CheckFormItem
-                label="매일"
-                checked={everyDay}
-                onChange={(e) => handleChange(e.target.checked)}
+              <MultiCheckBoxFormItem
+                label="업무주기"
+                data={checklist}
+                {...field}
+                value={field.value.toString()}
+                onChange={(e) => handleChange(parseInt(e.target.value))}
+                required
               />
             );
           }}
         />
-        {!everyDay ? (
-          <>
-            <FormField
-              name="startDt"
-              control={form.control}
-              render={({ field }) => {
-                const handleChange = (date: Date) => {
-                  handleDateChange("start", date, field.onChange);
-                  const endDt = form.getValues("endDt");
+        <FormField
+          name="startDt"
+          control={form.control}
+          render={({ field }) => {
+            const handleChange = (date: Date) => {
+              handleDateChange("start", date, field.onChange);
+              const endDt = form.getValues("endDt");
 
-                  if (!endDt) return;
+              if (!endDt) return;
 
-                  if (isSameDay(date, endDt)) {
-                    form.setValue("termType", 1);
-                    return;
-                  }
+              if (isSameDay(date, endDt)) {
+                form.setValue("termType", 1);
+                return;
+              }
 
-                  form.setValue("termType", 2);
-                };
-                return (
-                  <DateFormItem
-                    label="시작일"
-                    value={new Date(field.value)}
-                    onChange={handleChange}
-                    required
-                  />
-                );
-              }}
-            />
-            <FormField
-              name="endDt"
-              control={form.control}
-              render={({ field }) => {
-                const handleChange = (date: Date) => {
-                  handleDateChange("end", date, field.onChange);
-                  const startDt = form.getValues("startDt");
+              form.setValue("termType", 2);
+            };
+            return (
+              <DateFormItem
+                label="시작일"
+                value={new Date(field.value)}
+                onChange={handleChange}
+                required
+              />
+            );
+          }}
+        />
+        {form.watch("termType") === 2 ? (
+          <FormField
+            name="endDt"
+            control={form.control}
+            render={({ field }) => {
+              const handleChange = (date: Date) => {
+                handleDateChange("end", date, field.onChange);
+                const startDt = form.getValues("startDt");
 
-                  if (isSameDay(date, startDt)) {
-                    form.setValue("termType", 1);
-                    return;
-                  }
-                  form.setValue("termType", 2);
-                };
-                return (
-                  <DateFormItem
-                    label="종료일"
-                    value={new Date(field.value)}
-                    onChange={handleChange}
-                    required
-                  />
-                );
-              }}
-            />
-          </>
+                if (isSameDay(date, startDt)) {
+                  form.setValue("termType", 1);
+                  return;
+                }
+                form.setValue("termType", 2);
+              };
+              return (
+                <DateFormItem
+                  label="종료일"
+                  value={field.value ? new Date(field.value) : new Date()}
+                  onChange={handleChange}
+                  required
+                />
+              );
+            }}
+          />
         ) : null}
         <Button label="저장" />
       </form>
