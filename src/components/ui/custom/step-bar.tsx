@@ -9,7 +9,7 @@ interface StepBarProps {
 const StepBar = ({ steps, curStep }: StepBarProps) => {
   return (
     <div className="flex justify-center w-full">
-      <div className="flex gap-24">
+      <div className="flex flex-wrap justify-center gap-x-12 gap-y-6 xl:gap-x-24">
         {steps.map((v, i) => (
           <Step key={i} stepNum={i + 1} label={v} curStep={curStep} />
         ))}

@@ -14,6 +14,7 @@ import {
   ScheduleFormAttach,
 } from "@/types/normal/schedule/day-schedule";
 import { PlusIcon } from "lucide-react";
+import Image from "next/image";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -260,11 +261,9 @@ export const ImageFileItem = ({
 
   return (
     <CustomCard className="w-50 gap-4 relative" size={"sm"}>
-      <img
-        className="w-full h-32 rounded-[4px] object-cover border"
-        src={imageUrl}
-        alt="이미지"
-      />
+      <div className="relative w-full h-32 overflow-hidden rounded-[4px] border">
+        <Image fill className="object-cover" src={imageUrl} alt="이미지" />
+      </div>
       <div className="flex flex-col gap-2">
         <span className="text-xs text-[var(--description-light)]">설명</span>
         <Input
@@ -279,16 +278,6 @@ export const ImageFileItem = ({
           }}
         />
       </div>
-
-      <div className="flex items-center gap-2">
-        <span className="text-xs text-[var(--description-light)]">비공개</span>
-        <Switch
-          name="viewYn"
-          className="ring ring-[var(--border)]  hover:cursor-pointer data-[state=checked]:bg-blue-500 data-[state=unchecked]:bg-[var(--background)] [&_[data-slot=switch-thumb]]:bg-white focus-visible:ring-0 focus-visible:outline-none"
-          checked={!data.viewYn}
-          onCheckedChange={onSecretChange}
-        />
-      </div>
       <IconButton
         icon="X"
         bgClassName="absolute right-0 top-0 hover:bg-red-50"
@@ -300,3 +289,15 @@ export const ImageFileItem = ({
     </CustomCard>
   );
 };
+
+{
+  /* <div className="flex items-center gap-2">
+        <span className="text-xs text-[var(--description-light)]">비공개</span>
+        <Switch
+          name="viewYn"
+          className="ring ring-[var(--border)]  hover:cursor-pointer data-[state=checked]:bg-blue-500 data-[state=unchecked]:bg-[var(--background)] [&_[data-slot=switch-thumb]]:bg-white focus-visible:ring-0 focus-visible:outline-none"
+          checked={!data.viewYn}
+          onCheckedChange={onSecretChange}
+        />
+      </div> */
+}

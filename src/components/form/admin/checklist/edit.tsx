@@ -161,8 +161,7 @@ const ChecklistItemEditForm = () => {
                       />
                     ) : null}
                   </div>
-
-                  <div className="grid grid-cols-3 gap-4">
+                  <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
                     <FormField
                       control={form.control}
                       name={`subs.${idx}.details.${i}.chkDetailTitle`}

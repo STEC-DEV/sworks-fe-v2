@@ -1,4 +1,5 @@
 import api from "@/lib/api/api-manager";
+import { useUIStore } from "@/store/common/ui-store";
 import { AdminListItem } from "@/types/admin/admin/user-list";
 import {
   SelectWorkplaceList,
@@ -7,16 +8,23 @@ import {
 import { Response } from "@/types/common/response";
 import { ListData, ListMeta, ListState } from "@/types/list-type";
 import { convertRecordDataToFormData, objectToFormData } from "@/utils/convert";
+import { paramsCheck } from "@/utils/param";
 import { toast } from "sonner";
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 
+export const ADMIN_DETAIL_LOADING_KEYS = {
+  INFO: "admin_detail_info",
+  WORKPLACE: "admin_detail_workplace_list",
+} as const;
+
 interface AdminDetailState {
-  admin: AdminDetail | undefined;
+  loadingKeys: typeof ADMIN_DETAIL_LOADING_KEYS;
+  admin: AdminDetail | null;
   getAdminDetail: (id: string) => Promise<void>;
   deleteAdmin: (id: string) => Promise<boolean>;
   resetAdmin: () => void;
-  adminWorkplaceList: ListState<WorkplaceListItem>;
+  adminWorkplaceList: ListData<WorkplaceListItem> | null;
   getAdminWorkplaceList: (params: URLSearchParams, id: string) => Promise<void>;
 
   //--관리자 정보 수정--
@@ -37,8 +45,11 @@ export const useAdminDetailStore = create<AdminDetailState>()(
   devtools(
     persist<AdminDetailState>(
       (set, get) => ({
-        admin: undefined,
+        loadingKeys: ADMIN_DETAIL_LOADING_KEYS,
+        admin: null,
         getAdminDetail: async (id) => {
+          const { setLoading, setError } = useUIStore.getState();
+          setLoading(ADMIN_DETAIL_LOADING_KEYS.INFO, true);
           try {
             const res = await api.get(`adminuser/w/sign/getadmindetail`, {
               searchParams: { userSeq: id },
@@ -48,6 +59,14 @@ export const useAdminDetailStore = create<AdminDetailState>()(
             set({ admin: response.data });
           } catch (err) {
             console.log(err);
+            const errMessage =
+              err instanceof Error
+                ? err.message
+                : "관리자 정보 조회 문제가 발생하였습니다. 잠시후 다시 시도해주세요.";
+            setError(ADMIN_DETAIL_LOADING_KEYS.INFO, errMessage);
+            toast.error(errMessage);
+          } finally {
+            setLoading(ADMIN_DETAIL_LOADING_KEYS.INFO, false);
           }
         },
         deleteAdmin: async (id) => {
@@ -68,17 +87,12 @@ export const useAdminDetailStore = create<AdminDetailState>()(
         resetAdmin: () => {
           set({ admin: undefined });
         },
-        adminWorkplaceList: { type: "loading" },
+        adminWorkplaceList: null,
         getAdminWorkplaceList: async (params, id) => {
-          if (
-            params.size === 0 ||
-            !params.get("pageNumber") ||
-            !params.get("pageSize")
-          ) {
-            params.set("pageNumber", "1");
-            params.set("pageSize", "20");
-          }
-          params.set("userSeq", id);
+          const checkParams = paramsCheck(params);
+          checkParams.set("userSeq", id);
+          const { setLoading, setError } = useUIStore.getState();
+          setLoading(ADMIN_DETAIL_LOADING_KEYS.WORKPLACE, true);
 
           try {
             const res: Response<ListData<WorkplaceListItem>> = await api
@@ -88,16 +102,18 @@ export const useAdminDetailStore = create<AdminDetailState>()(
               .json();
 
             set({
-              adminWorkplaceList: { type: "data", payload: res.data },
+              adminWorkplaceList: res.data,
             });
           } catch (err) {
             console.log(err);
-            set({
-              adminWorkplaceList: {
-                type: "error",
-                message: "데이터 조회 실패",
-              },
-            });
+            const errMessage =
+              err instanceof Error
+                ? err.message
+                : "담당 사업장 조회 문제가 발생하였습니다. 잠시후 다시시도해주세요.";
+            setError(ADMIN_DETAIL_LOADING_KEYS.WORKPLACE, errMessage);
+            toast.error(errMessage);
+          } finally {
+            setLoading(ADMIN_DETAIL_LOADING_KEYS.WORKPLACE, false);
           }
         },
         patchAdminInfo: async (admin) => {
@@ -117,7 +133,7 @@ export const useAdminDetailStore = create<AdminDetailState>()(
         },
         getAllWorkplace: async (id, search) => {
           try {
-            const res: Response<Object[]> = await api
+            const res: Response<object[]> = await api
               .get(`adminuser/w/sign/adminsiteclassification`, {
                 searchParams: { userSeq: id, searchKey: search ?? "" },
               })

@@ -3,25 +3,39 @@ import BaseSkeleton from "@/components/common/base-skeleton";
 import AppTitle from "@/components/common/label/title";
 import { cn } from "@/lib/utils";
 import { useChecklistDetailStore } from "@/store/admin/checklist/checklist-detail-store";
+import { useUIStore } from "@/store/common/ui-store";
 
 //체크리스트 기본정보
 const ChecklistInfo = () => {
-  const { checklistDetail } = useChecklistDetailStore();
-  return (
-    <div className="w-150 flex flex-col gap-4">
-      <AppTitle title="체크리스트 기본정보" />
-      {checklistDetail ? (
+  const { checklistDetail, loadingKeys } = useChecklistDetailStore();
+  const { isLoading, hasError } = useUIStore();
+
+  const getData = () => {
+    if (isLoading(loadingKeys.INFO) || !checklistDetail)
+      return (
         <div className="flex flex-col gap-2">
-          <KeyValue
-            label={"업무 분야"}
-            value={checklistDetail?.serviceTypeName}
-          />
-          <KeyValue label={"관리 부문"} value={checklistDetail?.divCodeName} />
-          <KeyValue label={"관리 유형"} value={checklistDetail?.typeCodeName} />
+          {Array.from({ length: 3 }, (_, i) => (
+            <BaseSkeleton className="w-full h-5" key={i} />
+          ))}
         </div>
-      ) : (
-        <BaseSkeleton className="w-full h-50" />
-      )}
+      );
+    if (hasError(loadingKeys.INFO)) return <div>에러 발생</div>;
+    return (
+      <div className="flex flex-col gap-2">
+        <KeyValue
+          label={"업무 분야"}
+          value={checklistDetail?.serviceTypeName}
+        />
+        <KeyValue label={"관리 부문"} value={checklistDetail?.divCodeName} />
+        <KeyValue label={"관리 유형"} value={checklistDetail?.typeCodeName} />
+      </div>
+    );
+  };
+
+  return (
+    <div className="w-full xl:w-150 flex flex-col gap-4">
+      <AppTitle title="체크리스트 기본정보" />
+      {getData()}
     </div>
   );
 };

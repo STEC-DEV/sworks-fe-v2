@@ -1,7 +1,9 @@
 "use client";
 import Button from "@/components/common/button";
 import CheckFormItem from "@/components/common/form-input/check-field";
-import FileFormItem from "@/components/common/form-input/file-field";
+import FileFormItem, {
+  ImageFormItem,
+} from "@/components/common/form-input/file-field";
 import SelectFormItem, {
   ComboboxFormItem,
 } from "@/components/common/form-input/select-field";
@@ -96,38 +98,20 @@ const VocAddForm = ({ onSubmit }: VocAddFormProps) => {
         onSubmit={form.handleSubmit(onSubmit)}
         className=" flex-1  min-h-0 flex flex-col gap-4 "
       >
-        <ScrollArea className="flex-1 min-h-0 px-6 ">
-          <div className="h-full base-flex-col gap-4 pb-1">
-            <FormField
-              control={form.control}
-              name="vocSeq"
-              render={({ field }) => {
-                const handleValue = (value: string) => {
-                  field.onChange(Number(value));
-                };
-                return (
-                  <ComboboxFormItem
-                    label="위치"
-                    selectItem={vocPoint}
-                    onValueChange={handleValue}
-                    value={field.value?.toString()}
-                    required
-                  />
-                );
-              }}
-            />
-            {userPermission ? (
+        <ScrollArea className="flex-1  overflow-hidden ">
+          <div className="px-6 pb-1 ">
+            <div className="flex flex-col gap-4 ">
               <FormField
                 control={form.control}
-                name="serviceTypeSeq"
+                name="vocSeq"
                 render={({ field }) => {
                   const handleValue = (value: string) => {
                     field.onChange(Number(value));
                   };
                   return (
-                    <SelectFormItem
-                      label="업무 유형"
-                      selectItem={convertSelectOptionType(userPermission ?? [])}
+                    <ComboboxFormItem
+                      label="위치"
+                      selectItem={vocPoint}
                       onValueChange={handleValue}
                       value={field.value?.toString()}
                       required
@@ -135,90 +119,112 @@ const VocAddForm = ({ onSubmit }: VocAddFormProps) => {
                   );
                 }}
               />
-            ) : null}
-            <FormField
-              control={form.control}
-              name="createUser"
-              render={({ field }) => (
-                <TextFormItem
-                  label="민원인"
-                  placeholder="민원인"
-                  {...field}
-                  required
+              {userPermission ? (
+                <FormField
+                  control={form.control}
+                  name="serviceTypeSeq"
+                  render={({ field }) => {
+                    const handleValue = (value: string) => {
+                      field.onChange(Number(value));
+                    };
+                    return (
+                      <SelectFormItem
+                        label="업무 유형"
+                        selectItem={convertSelectOptionType(
+                          userPermission ?? []
+                        )}
+                        onValueChange={handleValue}
+                        value={field.value?.toString()}
+                        required
+                      />
+                    );
+                  }}
                 />
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="replyYn"
-              render={({ field }) => (
-                <CheckFormItem
-                  label="회신여부"
-                  description="전화번호를 입력하시면 처리내용을 회신받을 수 있습니다."
-                  checked={field.value}
-                  onChange={field.onChange}
-                  onBlur={field.onBlur}
-                  name={field.name}
-                  ref={field.ref}
-                />
-              )}
-            />
-            {form.watch("replyYn") ? (
+              ) : null}
               <FormField
                 control={form.control}
-                name="phone"
+                name="createUser"
                 render={({ field }) => (
                   <TextFormItem
-                    label="전화번호"
-                    placeholder="전화번호"
+                    label="민원인"
+                    placeholder="민원인"
                     {...field}
                     required
                   />
                 )}
               />
-            ) : null}
+              <FormField
+                control={form.control}
+                name="replyYn"
+                render={({ field }) => (
+                  <CheckFormItem
+                    label="회신여부"
+                    description="전화번호를 입력하시면 처리내용을 회신받을 수 있습니다."
+                    checked={field.value}
+                    onChange={field.onChange}
+                    onBlur={field.onBlur}
+                    name={field.name}
+                    ref={field.ref}
+                  />
+                )}
+              />
+              {form.watch("replyYn") ? (
+                <FormField
+                  control={form.control}
+                  name="phone"
+                  render={({ field }) => (
+                    <TextFormItem
+                      label="전화번호"
+                      placeholder="전화번호"
+                      {...field}
+                      required
+                    />
+                  )}
+                />
+              ) : null}
 
-            <FormField
-              control={form.control}
-              name="title"
-              render={({ field }) => (
-                <TextFormItem
-                  label="제목"
-                  placeholder="제목"
-                  {...field}
-                  required
-                />
-              )}
-            />
-            {/* textarea로 변경예정 */}
-            <FormField
-              control={form.control}
-              name="content"
-              render={({ field }) => (
-                <TextAreaFormItem
-                  label="내용"
-                  placeholder="내용"
-                  {...field}
-                  required
-                />
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="images"
-              render={({ field }) => (
-                <FileFormItem
-                  label="첨부파일"
-                  accept="accept"
-                  multiple={true}
-                  {...field}
-                  value={field.value}
-                  onChange={field.onChange}
-                  imageOnly
-                  isVertical
-                />
-              )}
-            />
+              <FormField
+                control={form.control}
+                name="title"
+                render={({ field }) => (
+                  <TextFormItem
+                    label="제목"
+                    placeholder="제목"
+                    {...field}
+                    required
+                  />
+                )}
+              />
+              {/* textarea로 변경예정 */}
+              <FormField
+                control={form.control}
+                name="content"
+                render={({ field }) => (
+                  <TextAreaFormItem
+                    label="내용"
+                    placeholder="내용"
+                    {...field}
+                    required
+                  />
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="images"
+                render={({ field }) => {
+                  return (
+                    <ImageFormItem
+                      label="이미지"
+                      {...field}
+                      value={field.value}
+                      onChange={field.onChange}
+                      multiple
+                      max={3}
+                    />
+                  );
+                }}
+              />
+            </div>
           </div>
         </ScrollArea>
         <div className="px-6 flex-shrink-0">

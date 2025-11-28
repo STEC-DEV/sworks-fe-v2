@@ -1,5 +1,5 @@
 "use client";
-import { KeyValueItem } from "@/app/(user)/equipment/[id]/[history-id]/page";
+
 import BaseSkeleton from "@/components/common/base-skeleton";
 import CustomCard from "@/components/common/card";
 import CheckDialog from "@/components/common/check-dialog";
@@ -8,7 +8,7 @@ import AppTitle from "@/components/common/label/title";
 import ReplyAddForm from "@/components/form/normal/voc/reply-add";
 import BaseDialog from "@/components/ui/custom/base-dialog";
 import { useVocDetailStore } from "@/store/normal/voc/detail-store";
-import { useParams } from "next/navigation";
+import { notFound, useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import dialogText from "../../../../../../public/dialog-text.json";
 import { format } from "date-fns";
@@ -17,88 +17,96 @@ import { AlarmClockIcon, CheckCircleIcon, RotateCwIcon } from "lucide-react";
 import DialogCarousel from "@/components/ui/custom/image/size-carousel";
 import TypeEditForm from "@/components/form/normal/voc/type-edit";
 import ReplyEditForm from "@/components/form/normal/voc/reply-edit";
+import { KeyValueItem } from "@/components/ui/custom/key-value";
+import { useUIStore } from "@/store/common/ui-store";
+import EmptyBox from "@/components/ui/custom/empty";
 
 const Page = () => {
   const [open, setOpen] = useState<boolean>(false);
   const { id } = useParams();
-  const { vocDetail, getVocDetail } = useVocDetailStore();
+  const { vocDetail, getVocDetail, loadingKeys } = useVocDetailStore();
+  const { isLoading, hasError } = useUIStore();
   useEffect(() => {
     if (!id) return;
-    getVocDetail(id.toString());
-  }, [id]);
+    getVocDetail(id.toString()).catch((err: Error) => {
+      if (err.message === "NOT_FOUND") return notFound();
+    });
+  }, [id, getVocDetail]);
+
+  const getInfo = () => {
+    if (isLoading(loadingKeys.INFO) || !vocDetail) return <VocInfoSkeleton />;
+    if (hasError(loadingKeys.INFO)) return <div>에러발생</div>;
+    return (
+      <div className="flex-1  flex flex-col gap-6 min-w-0">
+        <AppTitle title={vocDetail?.logs.title} isBorder />
+        <div className="flex justify-between items-center">
+          <KeyValueItem
+            label="유형"
+            value={vocDetail.logs.serviceTypeName}
+            valueStyle="text-md text-blue-500 font-normal"
+          />
+          <BaseDialog
+            title="담당 유형"
+            triggerChildren={<IconButton icon="SquarePen" />}
+            open={open}
+            setOpen={setOpen}
+          >
+            <TypeEditForm setOpen={setOpen} />
+          </BaseDialog>
+        </div>
+        <KeyValueItem
+          label="민원인"
+          value={vocDetail.logs.createUser || "내용없음"}
+          valueStyle="text-md font-normal"
+        />
+        <KeyValueItem
+          label="전화번호"
+          value={vocDetail.logs.phone || "내용없음"}
+          valueStyle="text-md font-normal"
+        />
+        <KeyValueItem
+          label="내용"
+          value={vocDetail.logs.content}
+          valueStyle="text-md font-normal"
+        />
+        <div>
+          <DialogCarousel
+            pathList={vocDetail.logs.attaches.map((d) => d.path)}
+          />
+        </div>
+      </div>
+    );
+  };
+
+  const getReply = () => {
+    if (isLoading(loadingKeys.INFO) || !vocDetail)
+      return Array.from({ length: 3 }, (_, i) => (
+        <BaseSkeleton key={i} className="h-28.5" />
+      ));
+    if (hasError(loadingKeys.INFO)) return <div>에러 발생</div>;
+    return (
+      <>
+        {vocDetail.replys.length > 0 ? (
+          vocDetail.replys.map((r, i) => <ReplyBox key={i} data={r} />)
+        ) : (
+          <>
+            <span className="text-sm text-[var(--description-light)]">
+              등록된 답변이 존재하지않습니다.
+            </span>
+          </>
+        )}
+        <ReplyAddForm />
+      </>
+    );
+  };
 
   return (
-    <div className="flex gap-12">
-      {vocDetail ? (
-        <>
-          <div className="flex-1  flex flex-col gap-6 min-w-0">
-            <AppTitle title={vocDetail?.logs.title} />
-            <div className="flex justify-between items-center">
-              <KeyValueItem
-                label="유형"
-                value={vocDetail.logs.serviceTypeName}
-                valueStyle="text-md text-blue-500 font-normal"
-              />
-              <BaseDialog
-                title="담당 유형"
-                triggerChildren={<IconButton icon="SquarePen" />}
-                open={open}
-                setOpen={setOpen}
-              >
-                <TypeEditForm setOpen={setOpen} />
-              </BaseDialog>
-            </div>
-            <KeyValueItem
-              label="민원인"
-              value={vocDetail.logs.createUser || "내용없음"}
-              valueStyle="text-md font-normal"
-            />
-            <KeyValueItem
-              label="전화번호"
-              value={vocDetail.logs.phone || "내용없음"}
-              valueStyle="text-md font-normal"
-            />
-            <KeyValueItem
-              label="내용"
-              value={vocDetail.logs.content}
-              valueStyle="text-md font-normal"
-            />
-            <div>
-              <DialogCarousel
-                pathList={vocDetail.logs.attaches.map((d, j) => d.path)}
-              />
-            </div>
-          </div>
-          <div className="flex-1  flex flex-col gap-6 min-w-0 ">
-            <AppTitle title="민원 답변" />
-            <div className="flex flex-col gap-6">
-              {vocDetail.replys.length > 0 ? (
-                vocDetail.replys.map((r, i) => <ReplyBox key={i} data={r} />)
-              ) : (
-                <span className="text-sm text-[var(--description-light)]">
-                  등록된 답변이 존재하지않습니다.
-                </span>
-              )}
-            </div>
-            <ReplyAddForm />
-          </div>
-        </>
-      ) : (
-        <>
-          <div className="flex-1 flex flex-col gap-6">
-            <BaseSkeleton className="w-50 h-7" />
-            {Array.from({ length: 4 }, (_, i) => (
-              <div className="flex flex-col gap-1" key={i}>
-                <BaseSkeleton className="w-20 h-4" />
-                <BaseSkeleton className={`${i === 3 ? "h-40" : "h-6"}  `} />
-              </div>
-            ))}
-          </div>
-          <div className="flex-1">
-            <BaseSkeleton />
-          </div>
-        </>
-      )}
+    <div className="flex flex-col gap-6  xl:flex-row xl:gap-12">
+      <div className="flex-1  flex flex-col gap-6 min-w-0">{getInfo()}</div>
+      <div className="flex-1  flex flex-col gap-6 min-w-0 ">
+        <AppTitle title="민원 답변" isBorder />
+        <div className="flex flex-col gap-6">{getReply()}</div>
+      </div>
     </div>
   );
 };
@@ -169,10 +177,36 @@ const ReplyBox = ({ data }: { data: VocReply }) => {
 
       <div className="text-sm px-4">{data.content}</div>
       <div className="px-4">
-        <DialogCarousel pathList={data.attaches.map((d, j) => d.path)} />
+        <DialogCarousel pathList={data.attaches.map((d) => d.path)} />
       </div>
     </CustomCard>
   );
 };
 
 export default Page;
+
+const VocInfoSkeleton = () => {
+  return (
+    <>
+      <BaseSkeleton className="h-7 " />
+      {Array.from({ length: 3 }, (_, i) => (
+        <div key={i} className="flex flex-col gap-1">
+          <BaseSkeleton className="w-20 h-4" />
+          <BaseSkeleton className="w-full h-6" />
+        </div>
+      ))}
+      <div className="flex flex-col gap-1">
+        <BaseSkeleton className="w-20 h-4" />
+        <BaseSkeleton className="w-full h-30" />
+      </div>
+      <div className="flex flex-col gap-1 ">
+        <BaseSkeleton className="w-20 h-4" />
+        <div className=" flex gap-4 overflow-hidden">
+          {Array.from({ length: 2 }, (_, i) => (
+            <BaseSkeleton key={i} className="w-48 h-32" />
+          ))}
+        </div>
+      </div>
+    </>
+  );
+};

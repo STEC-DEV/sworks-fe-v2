@@ -8,7 +8,6 @@ import React, { useState } from "react";
 
 const Page = () => {
   const [formResult, setFormResult] = useState<boolean>(false);
-  const [newSeq, setNewSeq] = useState<number>(-1);
   const [curStep, setCurStep] = useState<number>(1);
   const [open, setOpen] = useState<boolean>(false);
   const { postAddEquipment } = useEquipmentMainStore();
@@ -16,14 +15,14 @@ const Page = () => {
   const handleSubmit = async (values: any) => {
     const formData = convertRecordDataToFormData(values, true);
     const result = await postAddEquipment(formData);
-    result.code !== 200 ? setFormResult(false) : setFormResult(true);
+    setFormResult(result.code === 200);
     setCurStep((prev) => prev + 1);
     setOpen(true);
   };
 
   const formsConfig = {
     titles: ["기본정보"],
-    forms: [<EquipmentAddForm onNext={handleSubmit} />],
+    forms: [<EquipmentAddForm onNext={handleSubmit} key={1} />],
   };
 
   return (

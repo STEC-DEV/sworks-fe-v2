@@ -1,5 +1,6 @@
 import api from "@/lib/api/api-manager";
 import { useAuthStore } from "@/store/auth/auth-store";
+import { useUIStore } from "@/store/common/ui-store";
 import { Response } from "@/types/common/response";
 import { ListData, ListState } from "@/types/list-type";
 import { paramsCheck } from "@/utils/param";
@@ -7,8 +8,13 @@ import { toast } from "sonner";
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 
+export const QR_LOADING_KEYS = {
+  LIST: "qr_list",
+} as const;
+
 interface QrState {
-  qrList: ListState<QRListItem>;
+  loadingKeys: typeof QR_LOADING_KEYS;
+  qrList: ListData<QRListItem> | null;
   getQrList: (searchParams: URLSearchParams) => Promise<void>;
   allQrList: QRListItem[] | undefined;
   getAllQrList: () => Promise<void>;
@@ -21,13 +27,15 @@ export const useQrStore = create<QrState>()(
   devtools(
     persist<QrState>(
       (set, get) => ({
-        qrList: { type: "loading" },
+        loadingKeys: QR_LOADING_KEYS,
+        qrList: null,
         allQrList: undefined,
         getQrList: async (searchParams) => {
           const { enteredWorkplace } = useAuthStore.getState();
           if (!enteredWorkplace) return;
           const checkParams = paramsCheck(searchParams);
-
+          const { setLoading, setError } = useUIStore.getState();
+          setLoading(QR_LOADING_KEYS.LIST, true);
           try {
             const res: Response<ListData<QRListItem>> = await api
               .get("vocpoint/w/sign/getvocpointlist", {
@@ -35,10 +43,17 @@ export const useQrStore = create<QrState>()(
               })
               .json();
 
-            set({ qrList: { type: "data", payload: res.data } });
+            set({ qrList: res.data });
           } catch (err) {
-            console.log(err);
-            set({ qrList: { type: "error", message: "에러 발생" } });
+            console.error(err);
+            const errMessage =
+              err instanceof Error
+                ? err.message
+                : "위치QR 조회 문제가 발생하였습니다. 잠시후 다시 시도해주세요.";
+            setError(QR_LOADING_KEYS.LIST, errMessage);
+            toast.error(errMessage);
+          } finally {
+            setLoading(QR_LOADING_KEYS.LIST, false);
           }
         },
         getAllQrList: async () => {

@@ -14,6 +14,7 @@ interface CustomAccordionProps {
   label: string;
   optionChildren?: React.ReactNode;
   children: React.ReactNode;
+  isPaddingBottom?: boolean;
 }
 
 const CustomAccordion = ({
@@ -21,6 +22,7 @@ const CustomAccordion = ({
   label,
   children,
   optionChildren,
+  isPaddingBottom = true,
 }: CustomAccordionProps) => {
   const Icon = icon;
   return (
@@ -30,7 +32,11 @@ const CustomAccordion = ({
       className="border border-[var(--border)] rounded-[4px] shadow-sm bg-white w-full"
     >
       <AccordionItem value="item-1">
-        <AccordionTrigger className=" px-4 py-2 hover:no-underline items-center focus-visible:ring-0 focus-visible:outline-none">
+        <AccordionTrigger
+          className={`px-6 py-2 hover:no-underline items-center focus-visible:ring-0 focus-visible:outline-none ${
+            !optionChildren && "py-4"
+          }`}
+        >
           <div className="flex justify-between items-center w-full">
             <div className="flex gap-4">
               {Icon ? (
@@ -42,7 +48,9 @@ const CustomAccordion = ({
             <div onClick={(e) => e.stopPropagation()}>{optionChildren}</div>
           </div>
         </AccordionTrigger>
-        <AccordionContent>{children}</AccordionContent>
+        <AccordionContent className={`${isPaddingBottom ? "pb-6" : "pb-0"} `}>
+          {children}
+        </AccordionContent>
       </AccordionItem>
     </Accordion>
   );

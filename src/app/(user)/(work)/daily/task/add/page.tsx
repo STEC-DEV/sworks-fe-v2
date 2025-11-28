@@ -10,7 +10,6 @@ import React, { useEffect, useState } from "react";
 
 const Page = () => {
   const [formResult, setFormResult] = useState<boolean>(false);
-  const [newSeq, setNewSeq] = useState<number>(-1);
   const [curStep, setCurStep] = useState<number>(1);
   const [open, setOpen] = useState<boolean>(false);
 
@@ -20,13 +19,13 @@ const Page = () => {
   useEffect(() => {
     if (!workplaceId) return;
     getWorkplacePermission(workplaceId?.toString());
-  }, []);
+  }, [getWorkplacePermission, workplaceId]);
 
   useEffect(() => {
     return () => {
       resetCreateTask();
     };
-  }, []);
+  }, [resetCreateTask]);
 
   const handleNext = (values: Record<string, any>) => {
     setCurStep((prev) => prev + 1);
@@ -47,9 +46,9 @@ const Page = () => {
   const formConfigs = {
     titles: ["유형정보", "평가항목", "업무내용"],
     forms: [
-      <DailyTaskAddForm onNext={handleNext} />,
-      <ChecklistAddForm onNext={handleNext} onPrev={handlePrev} />,
-      <TaskInfoAddForm onNext={handleSubmit} onPrev={handlePrev} />,
+      <DailyTaskAddForm onNext={handleNext} key={1} />,
+      <ChecklistAddForm onNext={handleNext} onPrev={handlePrev} key={2} />,
+      <TaskInfoAddForm onNext={handleSubmit} onPrev={handlePrev} key={3} />,
     ],
   };
 

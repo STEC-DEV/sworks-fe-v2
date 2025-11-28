@@ -3,6 +3,7 @@ export interface DaySchedule {
   serviceTypeSeq: number;
   serviceTypeName: string;
   dates: Date;
+  viewYn: boolean;
   title: string;
   description?: string | null;
   isAllday: boolean;
@@ -42,7 +43,6 @@ export interface NewScheduleAttach {
   photoType: number; // 0 - 일반(파일인경우), 1 - 이전, 2 - 이후
   attaches: File | null;
   comments: string;
-  viewYn: boolean;
 }
 
 export type ScheduleFormAttach = NewScheduleAttach | ScheduleAttach;

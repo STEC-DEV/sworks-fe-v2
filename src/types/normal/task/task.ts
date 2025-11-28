@@ -21,6 +21,7 @@ interface TaskDetail {
   startDt: Date;
   endDt?: Date;
   mains: Checklist[];
+
   users: Worker[];
 }
 

@@ -72,7 +72,7 @@ const TaskInfoAddForm = ({
       onPrev={onPrev}
       onNext={handleSubmit}
     >
-      <div className="grid grid-cols-2 gap-x-24 gap-y-12">
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-x-24 gap-y-12">
         <FormField
           control={form.control}
           name="title"
@@ -181,7 +181,12 @@ const TaskInfoAddForm = ({
               placeholder="반복횟수"
               type="number"
               {...field}
-              onChange={(e) => field.onChange(parseInt(e.target.value))}
+              value={field.value === 0 ? "" : field.value}
+              onChange={(e) => {
+                const value =
+                  e.target.value === "" ? 0 : parseInt(e.target.value) || 0;
+                field.onChange(value);
+              }}
               required
             />
           )}

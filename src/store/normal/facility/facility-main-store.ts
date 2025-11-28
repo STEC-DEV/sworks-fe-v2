@@ -1,5 +1,6 @@
 import api from "@/lib/api/api-manager";
 import { useAuthStore } from "@/store/auth/auth-store";
+import { useUIStore } from "@/store/common/ui-store";
 import { Response } from "@/types/common/response";
 import { ListData, ListMeta, ListState } from "@/types/list-type";
 import { convertRecordDataToFormData, objectToFormData } from "@/utils/convert";
@@ -8,8 +9,13 @@ import { toast } from "sonner";
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 
+export const FACILITY_LOADING_KEYS = {
+  LIST: "facility_list",
+} as const;
+
 interface FacilityMainState {
-  facilityList: ListState<FacilityListItem>;
+  loadingKeys: typeof FACILITY_LOADING_KEYS;
+  facilityList: ListData<FacilityListItem> | null;
   getFacilityList: (
     params: URLSearchParams,
     facilitySeq: string
@@ -21,9 +27,8 @@ export const useFacilityMainStore = create<FacilityMainState>()(
   devtools(
     persist<FacilityMainState>(
       (set, get) => ({
-        facilityList: {
-          type: "loading",
-        },
+        loadingKeys: FACILITY_LOADING_KEYS,
+        facilityList: null,
         getFacilityList: async (params, facilitySeq) => {
           //사업장 조회
           const { enteredWorkplace } = useAuthStore.getState();
@@ -33,6 +38,8 @@ export const useFacilityMainStore = create<FacilityMainState>()(
 
           checkParam.set("siteSeq", enteredWorkplace?.siteSeq.toString());
           checkParam.set("facilityType", facilitySeq);
+          const { setLoading, setError } = useUIStore.getState();
+          setLoading(FACILITY_LOADING_KEYS.LIST, true);
 
           try {
             const res: Response<ListData<FacilityListItem>> = await api
@@ -41,10 +48,17 @@ export const useFacilityMainStore = create<FacilityMainState>()(
               })
               .json();
 
-            set({ facilityList: { type: "data", payload: res.data } });
+            set({ facilityList: res.data });
           } catch (err) {
-            console.log(err);
-            toast.error("조회 실패");
+            console.error(err);
+            const errMessage =
+              err instanceof Error
+                ? err.message
+                : "목록 조회 문제가 발생하였습니다. 잠시후 다시 시도해주세요.";
+            setError(FACILITY_LOADING_KEYS.LIST, errMessage);
+            toast.error(errMessage);
+          } finally {
+            setLoading(FACILITY_LOADING_KEYS.LIST, false);
           }
         },
         postAddFacility: async (value) => {

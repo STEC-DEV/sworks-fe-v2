@@ -1,12 +1,17 @@
 import api from "@/lib/api/api-manager";
-import { useAuthStore } from "@/store/auth/auth-store";
+import { useUIStore } from "@/store/common/ui-store";
 import { Response } from "@/types/common/response";
 import { toast } from "sonner";
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 
+export const TASK_DETAIL_LOADING_KEYS = {
+  DETAIL: "task_detail",
+} as const;
+
 interface TaskDetailState {
-  taskDetail: TaskDetail | undefined;
+  loadingKeys: typeof TASK_DETAIL_LOADING_KEYS;
+  taskDetail: TaskDetail | null;
   getTaskDetail: (taskSeq: string) => Promise<void>;
   patchUpdateTaskDetail: (values: Record<string, any>) => Promise<void>;
   classificationTaskWorker: ClassificationTaskWorker[] | undefined;
@@ -18,8 +23,11 @@ export const useTaskDetailStore = create<TaskDetailState>()(
   devtools(
     persist<TaskDetailState>(
       (set, get) => ({
-        taskDetail: undefined,
+        loadingKeys: TASK_DETAIL_LOADING_KEYS,
+        taskDetail: null,
         getTaskDetail: async (taskSeq) => {
+          const { setError, setLoading } = useUIStore.getState();
+          setLoading(TASK_DETAIL_LOADING_KEYS.DETAIL, true);
           try {
             const res: Response<TaskDetail> = await api
               .get(`sitetask/w/sign/detailsitetask`, {
@@ -30,6 +38,14 @@ export const useTaskDetailStore = create<TaskDetailState>()(
             set({ taskDetail: res.data });
           } catch (err) {
             console.error(err);
+            const errMessage =
+              err instanceof Error
+                ? err.message
+                : "업무상세 조회 문제가 발생하였습니다. 잠시후 다시 시도해주세요.";
+            setError(TASK_DETAIL_LOADING_KEYS.DETAIL, errMessage);
+            toast.error(errMessage);
+          } finally {
+            setLoading(TASK_DETAIL_LOADING_KEYS.DETAIL, false);
           }
         },
         patchUpdateTaskDetail: async (values) => {

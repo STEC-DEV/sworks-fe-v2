@@ -1,20 +1,24 @@
 "use client";
 import AppTitle from "@/components/common/label/title";
 import { useFacilityMainStore } from "@/store/normal/facility/facility-main-store";
-import { useSearchParams } from "next/navigation";
-import React, { useEffect } from "react";
-import DataTable from "@/components/common/data-table";
+import { useRouter, useSearchParams } from "next/navigation";
+import React, { Suspense, useEffect } from "react";
 import { facilityColumns } from "../_components/rnm-columns";
 import BaseSkeleton from "@/components/common/base-skeleton";
 import { useDecodeParam } from "@/hooks/params";
 import FacilityFilter from "../_components/filter";
 import FacilityPagination from "../_components/pagination";
+import { mroColumns } from "../_components/mro-columns";
+import BaseTable from "@/components/common/base-table";
+import { useUIStore } from "@/store/common/ui-store";
 
 const Page = () => {
-  const { facilityList, getFacilityList } = useFacilityMainStore();
+  const { facilityList, getFacilityList, loadingKeys } = useFacilityMainStore();
+  const { isLoading, hasError } = useUIStore();
   const searchParams = useSearchParams();
+  const router = useRouter();
 
-  const { decodeValue } = useDecodeParam("type");
+  const { decodeValue, rawValue } = useDecodeParam("type");
 
   useEffect(() => {
     if (!decodeValue) return;
@@ -32,7 +36,7 @@ const Page = () => {
         break;
     }
     getFacilityList(new URLSearchParams(searchParams), facilitySeq.toString());
-  }, [decodeValue]);
+  }, [decodeValue, getFacilityList]);
 
   useEffect(() => {
     if (!decodeValue) return;
@@ -50,22 +54,23 @@ const Page = () => {
     }
 
     getFacilityList(new URLSearchParams(searchParams), facilitySeq.toString());
-  }, [searchParams, decodeValue]);
+  }, [searchParams, decodeValue, getFacilityList]);
 
   const getList = () => {
-    if (facilityList.type === "loading") {
-      return <BaseSkeleton />;
+    if (isLoading(loadingKeys.LIST) || !facilityList) {
+      return <BaseSkeleton className="flex-1" />;
     }
-    if (facilityList.type === "error") {
-      return <BaseSkeleton />;
+    if (hasError(loadingKeys.LIST)) {
+      return <div>에러 발생</div>;
     }
+
     return (
-      <DataTable
-        columns={facilityColumns}
-        data={facilityList.payload.data}
-        idName={"facilitySeq"}
-        baseUrl={decodeValue.toLowerCase()}
-        emptyMessage={`${decodeValue} 데이터를 추가해주세요`}
+      <BaseTable
+        columns={decodeValue === "MRO" ? mroColumns : facilityColumns}
+        data={facilityList.data}
+        onRowClick={(data) =>
+          router.push(`/facility/${rawValue}/${data.facilitySeq}`)
+        }
       />
     );
   };

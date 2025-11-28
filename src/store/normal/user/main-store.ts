@@ -1,5 +1,6 @@
 import api from "@/lib/api/api-manager";
 import { useAuthStore } from "@/store/auth/auth-store";
+import { useUIStore } from "@/store/common/ui-store";
 import { Response } from "@/types/common/response";
 import { ListData, ListMeta, ListState } from "@/types/list-type";
 import {
@@ -12,8 +13,13 @@ import { toast } from "sonner";
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 
+export const USER_LOADING_KEYS = {
+  LIST: "user_list",
+} as const;
+
 interface UserMainState {
-  userList: ListState<UserListItem>;
+  loadingKeys: typeof USER_LOADING_KEYS;
+  userList: ListData<UserListItem> | null;
   getUserList: (param: URLSearchParams) => Promise<void>;
   /* 사용자 관련 */
   createUser: CreateUser;
@@ -39,16 +45,18 @@ export const useUserMainStore = create<UserMainState>()(
   devtools(
     persist<UserMainState>(
       (set, get) => ({
-        userList: { type: "loading" },
+        loadingKeys: USER_LOADING_KEYS,
+        userList: null,
         getUserList: async (param) => {
           if (!param) return;
           const params = paramsCheck(param);
           //임시 사업장 정보
           const { enteredWorkplace } = useAuthStore.getState();
-
+          const { setLoading, setError } = useUIStore.getState();
           if (!enteredWorkplace) return;
 
           params.set("siteSeq", enteredWorkplace.siteSeq.toString());
+          setLoading(USER_LOADING_KEYS.LIST, true);
 
           try {
             const res: Response<ListData<UserListItem>> = await api
@@ -57,10 +65,17 @@ export const useUserMainStore = create<UserMainState>()(
               })
               .json();
 
-            set({ userList: { type: "data", payload: res.data } });
+            set({ userList: res.data });
           } catch (err) {
             console.log(err);
-            toast.error("근무자 조회 실패");
+            const errMessage =
+              err instanceof Error
+                ? err.message
+                : "근무자 조회 문제가 발생하였습니다. 잠시후 다시 시도해주세요.";
+            setError(USER_LOADING_KEYS.LIST, errMessage);
+            toast.error(errMessage);
+          } finally {
+            setLoading(USER_LOADING_KEYS.LIST, false);
           }
         },
         createUser: initialCreateUser,

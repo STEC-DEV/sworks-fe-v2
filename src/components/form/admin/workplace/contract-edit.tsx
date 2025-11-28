@@ -4,10 +4,11 @@ import { TextFormItem } from "@/components/common/form-input/text-field";
 import { Form, FormField } from "@/components/ui/form";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import useDateValidation from "@/hooks/date/useDateSet";
-import { useWorkplaceDetailStore } from "@/store/admin/workplace/workplace-detail-store";
+import { useWorkplaceDetailContractStore } from "@/store/admin/workplace/contract-store";
+
 import { Contract } from "@/types/admin/workplace/contract-info";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { format } from "date-fns";
+
 import { useParams } from "next/navigation";
 import React from "react";
 import { useForm } from "react-hook-form";
@@ -33,7 +34,7 @@ const ContractEditForm = ({
   data: Contract;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
-  const { patchContract, getContractList } = useWorkplaceDetailStore();
+  const { patchContract, getContractList } = useWorkplaceDetailContractStore();
   const { id } = useParams();
   const form = useForm<basicFormType>({
     resolver: zodResolver(formSchema),

@@ -1,15 +1,14 @@
-
 import NormalLayout from "@/components/layout/normal-layout";
-
+import { Suspense } from "react";
 
 export default function Layout({
-    children,
+  children,
 }: Readonly<{
-    children: React.ReactNode;
+  children: React.ReactNode;
 }>) {
-    return (
-        <>
-            <NormalLayout children={children} />
-        </>
-    );
+  return (
+    <Suspense>
+      <NormalLayout>{children}</NormalLayout>
+    </Suspense>
+  );
 }

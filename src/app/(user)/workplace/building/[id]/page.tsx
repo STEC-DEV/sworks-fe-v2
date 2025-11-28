@@ -7,49 +7,44 @@ import { useBuildingDetailStore } from "@/store/normal/building/detail";
 import { Building2 } from "lucide-react";
 import React, { useEffect } from "react";
 import { BuildingInfo, FacilityInfo, FireInfo } from "./_components/info-item";
-import IconButton from "@/components/common/icon-button";
+import Image from "next/image";
+import { useUIStore } from "@/store/common/ui-store";
 
 const Page = () => {
   const { rawValue } = useDecodeParam("id");
-  const { building, getBuildingDetail } = useBuildingDetailStore();
+  const { building, getBuildingDetail, loadingKeys } = useBuildingDetailStore();
+  const { isLoading, hasError } = useUIStore();
 
   useEffect(() => {
     if (!rawValue) return;
     getBuildingDetail(rawValue);
   }, [rawValue]);
 
-  useEffect(() => {
-    console.log(building);
-  }, [building]);
+  if (isLoading(loadingKeys.DETAIL) || !building)
+    return <BuildingDetailSkeleton />;
+  if (hasError(loadingKeys.DETAIL)) return <div>에러 발생</div>;
 
   return (
     <>
-      {building ? (
-        <AppTitle title={building?.dongName} />
-      ) : (
-        <BaseSkeleton className="h-7 flex-shrink-0" />
-      )}
-
-      {building ? (
-        <div className="w-full h-60 border rounded-[4px] flex-shrink-0">
-          {building.images ? (
-            <img
-              className="w-full h-full object-cover"
-              src={building?.images}
+      <AppTitle title={building?.dongName} />
+      <div className="w-full h-60 border rounded-[4px] shrink-0 relative">
+        {building.images ? (
+          <Image
+            fill
+            className="w-full h-full object-cover"
+            src={building?.images}
+            alt="이미지"
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center bg-background">
+            <Building2
+              size={24}
+              className="text-[var(--icon)] "
+              strokeWidth={1.5}
             />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center bg-background">
-              <Building2
-                size={24}
-                className="text-[var(--icon)] "
-                strokeWidth={1.5}
-              />
-            </div>
-          )}
-        </div>
-      ) : (
-        <BaseSkeleton className="h-60 flex-shrink-0" />
-      )}
+          </div>
+        )}
+      </div>
       <BuildingInfo />
       <FacilityInfo />
       <FireInfo />
@@ -58,3 +53,15 @@ const Page = () => {
 };
 
 export default Page;
+
+const BuildingDetailSkeleton = () => {
+  return (
+    <div className="flex flex-col gap-6 overflow-hidden">
+      <BaseSkeleton className="h-7" />
+      <BaseSkeleton className="h-60" />
+      <BaseSkeleton className="h-75" />
+      <BaseSkeleton className="h-75" />
+      <BaseSkeleton className="h-75" />
+    </div>
+  );
+};

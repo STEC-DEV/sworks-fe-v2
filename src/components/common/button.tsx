@@ -6,7 +6,7 @@ import BaseDialog from "../ui/custom/base-dialog";
 import CustomCard from "./card";
 
 const buttonVariants = cva(
-  "flex items-center justify-center gap-4 text-xs text-white rounded-[4px] hover:bg-blue-600 hover:cursor-pointer",
+  "flex items-center justify-center gap-4 text-xs text-white rounded-[4px] hover:bg-blue-600 cursor-pointer whitespace-nowrap",
   {
     variants: {
       /**색상변경 */
@@ -17,7 +17,9 @@ const buttonVariants = cva(
         prev: "border border-[var(--border)] bg-[var(--background)] text-[var(--description-light)] hover:bg-[var(--border)]",
         login: `border bg-white text-[var(--description-dark)] hover:border-red-500 hover:bg-white 
           hover:ring-1 hover:ring-red-500 hover:ring-inset duration-300 group`,
-        delete: `bg-red-500 `,
+        disabled:
+          "border border-[var(--border)] bg-[var(--background)] text-[var(--description-light)] hover:bg-[var(--background)] cursor-not-allowed ",
+        delete: `bg-red-500 hover:bg-red-600 `,
       },
       size: {
         default: "w-full py-2",

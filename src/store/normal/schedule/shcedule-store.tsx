@@ -6,6 +6,7 @@ import {
   MonthScheduleListItem,
   monthSchedules,
 } from "@/types/normal/schedule/month";
+import { format } from "date-fns";
 import { toast } from "sonner";
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
@@ -23,6 +24,8 @@ interface ScheduleState {
   getMonthSchedule: (date: URLSearchParams) => Promise<void>;
   postAddMonthSchedule: (data: Record<string, any>) => Promise<void>;
   patchUpdateMonthSchedule: (data: Record<string, any>) => Promise<void>;
+  //Month to Day
+  postMonthToDay: (data: MonthScheduleListItem, date: Date) => Promise<void>;
 }
 
 export const useScheduleStore = create<ScheduleState>()(
@@ -33,6 +36,7 @@ export const useScheduleStore = create<ScheduleState>()(
         schedule: undefined,
         getDaySchedule: async (date) => {
           try {
+            set({ schedules: undefined });
             const res: Response<DaySchedule[]> = await api
               .get(`sch/w/sign/getschlist`, {
                 searchParams: { targetDt: date },
@@ -139,6 +143,37 @@ export const useScheduleStore = create<ScheduleState>()(
           } catch (err) {
             console.error(err);
             toast.error("저장 실패");
+          }
+        },
+        postMonthToDay: async (data, date) => {
+          try {
+            console.log("일별 to 일별");
+            console.log(data);
+            console.log(date);
+
+            const convertData = {
+              planSeq: data.planSeq,
+              serviceTypeSeq: data.serviceTypeSeq,
+              schTitle: data.planTitle,
+              description: data.description,
+              isAllDay: true,
+              startDt: format(date, "yyyy-MM-dd"),
+              endDt: format(date, "yyyy-MM-dd"),
+              alarmYn: false,
+              alarmDt: null,
+              alarmMin: 0,
+              alarmOffsetDays: 0,
+              viewColor: "d32f2f",
+            };
+
+            const res: Response<boolean> = await api
+              .post(`plan/w/sign/changeplansch`, {
+                json: convertData,
+              })
+              .json();
+          } catch (err) {
+            console.error(err);
+            toast.error("문제가 발생하였습니다. 잠시후 다시 시도해주세요.");
           }
         },
       }),

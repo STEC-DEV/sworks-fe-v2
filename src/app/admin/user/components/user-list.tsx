@@ -1,13 +1,19 @@
 "use client";
-import { Skeleton } from "@/components/ui/skeleton";
+
 import { useAdminListStore } from "@/store/admin/admin/admin-list-store";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import React, { useEffect } from "react";
-import AdminCard from "./user-card";
+
+import BaseSkeleton from "@/components/common/base-skeleton";
+import BaseTable from "@/components/common/base-table";
+import { userColumns } from "./user-columns";
+import { useUIStore } from "@/store/common/ui-store";
 
 const AdminList = () => {
-  const { adminList, getAdminList } = useAdminListStore();
+  const { adminList, getAdminList, loadingKeys } = useAdminListStore();
+  const { isLoading, hasError } = useUIStore();
   const searchParams = useSearchParams();
+  const router = useRouter();
   useEffect(() => {
     getAdminList(new URLSearchParams(searchParams));
   }, []);
@@ -16,18 +22,16 @@ const AdminList = () => {
     getAdminList(new URLSearchParams(searchParams));
   }, [searchParams]);
 
+  if (isLoading(loadingKeys.LIST) || !adminList) return <BaseSkeleton />;
+  if (hasError(loadingKeys.LIST)) return <div>에러 발생</div>;
+
   return (
-    <>
-      {adminList.type === "data" ? (
-        <div className="flex flex-col gap-2 flex-1">
-          {adminList.data.map((a, i) => (
-            <AdminCard key={i} item={a} link />
-          ))}
-        </div>
-      ) : (
-        <Skeleton className="w-full flex-1 bg-[var(--skeleton)] rounded-[4px]" />
-      )}
-    </>
+    <BaseTable
+      padding="py-3"
+      columns={userColumns}
+      data={adminList.data}
+      onRowClick={(data) => router.push(`/admin/user/${data.userSeq}`)}
+    />
   );
 };
 

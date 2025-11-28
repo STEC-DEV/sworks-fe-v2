@@ -1,5 +1,5 @@
 "use client";
-import { KeyValueItem } from "@/app/(user)/equipment/[id]/[history-id]/page";
+
 import { ProcessBadge } from "@/components/common/badge";
 import BaseSkeleton from "@/components/common/base-skeleton";
 import CustomCard from "@/components/common/card";
@@ -15,39 +15,50 @@ import { useReqDetailStore } from "@/store/normal/req/detail";
 import { format } from "date-fns";
 import React, { useEffect, useState } from "react";
 import { dialogText } from "../../../../../../public/text";
+import { KeyValueItem } from "@/components/ui/custom/key-value";
+import { usePermission } from "@/hooks/usePermission";
+import { useUIStore } from "@/store/common/ui-store";
+import { Request } from "@/types/normal/request/req-detail";
 
 const Page = () => {
-  const { getRequestDetail } = useReqDetailStore();
+  const { getRequestDetail, loadingKeys, request } = useReqDetailStore();
+  const { isLoading, hasError } = useUIStore();
   const { rawValue } = useDecodeParam("id");
   useEffect(() => {
     if (!rawValue) return;
     getRequestDetail(rawValue);
-  }, [rawValue]);
+  }, [rawValue, getRequestDetail]);
+
+  if (isLoading(loadingKeys.INFO) || !request) return <RequestDetailSkeleton />;
+  if (hasError(loadingKeys.INFO)) return <div>에러 발생</div>;
+
   return (
-    <div className="flex xl:flex-row xl:gap-12">
-      <Info />
-      <Reply />
+    <div className="flex flex-col gap-12 xl:flex-row xl:gap-12">
+      <Info data={request} />
+      <Reply data={request} />
     </div>
   );
 };
 
-const Info = () => {
-  const { request: data } = useReqDetailStore();
+const Info = ({ data }: { data: Request }) => {
+  const { canWorkerEdit } = usePermission();
   const [open, setOpen] = useState<boolean>(false);
   return (
     <>
       {data ? (
         <div className="flex-1 flex flex-col gap-6">
-          <div className="flex justify-between items-center">
+          <div className="flex justify-between items-center pb-4 border-b-2 border-border">
             <AppTitle title={data.title} />
-            <BaseDialog
-              title="수정"
-              triggerChildren={<IconButton icon="SquarePen" />}
-              open={open}
-              setOpen={setOpen}
-            >
-              <RequestEditForm onClose={() => setOpen(false)} />
-            </BaseDialog>
+            {canWorkerEdit && (
+              <BaseDialog
+                title="수정"
+                triggerChildren={<IconButton icon="SquarePen" />}
+                open={open}
+                setOpen={setOpen}
+              >
+                <RequestEditForm onClose={() => setOpen(false)} />
+              </BaseDialog>
+            )}
           </div>
 
           <div className="flex flex-col gap-6">
@@ -70,7 +81,7 @@ const Info = () => {
               value={data.userName}
             />
 
-            <DialogCarousel pathList={data.attaches.map((a, j) => a.path)} />
+            <DialogCarousel pathList={data.attaches.map((a) => a.path)} />
           </div>
         </div>
       ) : (
@@ -97,8 +108,9 @@ const Info = () => {
   );
 };
 
-const Reply = () => {
-  const { request: data, deleteReply, getRequestDetail } = useReqDetailStore();
+const Reply = ({ data }: { data: Request }) => {
+  const { deleteReply, getRequestDetail } = useReqDetailStore();
+  const { canWorkerEdit } = usePermission();
   const [open, setOpen] = useState<boolean>(false);
 
   const handleRemove = async (seq: string) => {
@@ -109,7 +121,7 @@ const Reply = () => {
 
   return (
     <div className="flex-1 flex flex-col gap-6">
-      <AppTitle title="처리내용" />
+      <AppTitle title="처리내용" isBorder />
 
       {data ? (
         <div className="flex flex-col gap-6">
@@ -117,24 +129,26 @@ const Reply = () => {
             <CustomCard className="gap-2" key={i} size={"sm"}>
               <div className="flex justify-between items-center">
                 <ProcessBadge value={v.logStatus} />
-                <div className="flex justify-end gap-2">
-                  <BaseDialog
-                    title="처리내용 수정"
-                    triggerChildren={<IconButton icon="SquarePen" />}
-                    open={open}
-                    setOpen={setOpen}
-                  >
-                    <div></div>
-                  </BaseDialog>
-                  <CheckDialog
-                    title={dialogText.defaultDelete.title}
-                    description={dialogText.defaultDelete.description}
-                    actionLabel={dialogText.defaultDelete.actionLabel}
-                    onClick={() => handleRemove(v.logSeq.toString())}
-                  >
-                    <IconButton icon="Trash2" />
-                  </CheckDialog>
-                </div>
+                {canWorkerEdit && (
+                  <div className="flex justify-end gap-2">
+                    <BaseDialog
+                      title="처리내용 수정"
+                      triggerChildren={<IconButton icon="SquarePen" />}
+                      open={open}
+                      setOpen={setOpen}
+                    >
+                      <div></div>
+                    </BaseDialog>
+                    <CheckDialog
+                      title={dialogText.defaultDelete.title}
+                      description={dialogText.defaultDelete.description}
+                      actionLabel={dialogText.defaultDelete.actionLabel}
+                      onClick={() => handleRemove(v.logSeq.toString())}
+                    >
+                      <IconButton icon="Trash2" />
+                    </CheckDialog>
+                  </div>
+                )}
               </div>
 
               <div className="flex justify-between">
@@ -167,9 +181,36 @@ const Reply = () => {
       ) : (
         <BaseSkeleton />
       )}
-      <ReplyAddForm />
+      {canWorkerEdit && <ReplyAddForm />}
     </div>
   );
 };
 
 export default Page;
+
+const RequestDetailSkeleton = () => {
+  return (
+    <div className="flex xl:flex-row xl:gap-12 overflow-hidden">
+      <div className="flex-1 flex flex-col gap-6">
+        <BaseSkeleton className="h-8" />
+        {Array.from({ length: 3 }, (_, i) => (
+          <div key={i} className="flex flex-col gap-1">
+            <BaseSkeleton className="h-5 w-15" />
+            <BaseSkeleton className="h-5" />
+          </div>
+        ))}
+        <div className="flex gap-4 overflow-hidden">
+          {Array.from({ length: 3 }, (_, i) => (
+            <BaseSkeleton key={i} className="h-32 w-48" />
+          ))}
+        </div>
+      </div>
+      <div className="flex-1 flex flex-col gap-6">
+        <BaseSkeleton className="h-8" />
+        {Array.from({ length: 3 }, (_, i) => (
+          <BaseSkeleton className="h-50" key={i} />
+        ))}
+      </div>
+    </div>
+  );
+};

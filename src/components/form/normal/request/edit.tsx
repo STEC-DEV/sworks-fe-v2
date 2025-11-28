@@ -1,8 +1,6 @@
 import Button from "@/components/common/button";
-import FileFormItem, {
-  ImageFormItem,
-} from "@/components/common/form-input/file-field";
-import SelectFormItem from "@/components/common/form-input/select-field";
+import { ImageFormItem } from "@/components/common/form-input/file-field";
+
 import {
   TextAreaFormItem,
   TextFormItem,
@@ -12,13 +10,9 @@ import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { useDecodeParam } from "@/hooks/params";
 import { useReqDetailStore } from "@/store/normal/req/detail";
 import { useRequestTaskStore } from "@/store/normal/req/main";
-import {
-  convertRecordDataToFormData,
-  convertSelectOptionType,
-  objectToFormData,
-} from "@/utils/convert";
+import { objectToFormData } from "@/utils/convert";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useSearchParams } from "next/navigation";
+
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import z from "zod";
@@ -51,10 +45,10 @@ const RequestEditForm = ({ onClose }: { onClose: () => void }) => {
     },
   });
 
-  useEffect(() => {
-    if (!id) return;
-    getRequestDetail(id);
-  }, [id]);
+  // useEffect(() => {
+  //   if (!id) return;
+  //   getRequestDetail(id);
+  // }, [id]);
 
   useEffect(() => {
     getServiceType();
@@ -118,7 +112,6 @@ const RequestEditForm = ({ onClose }: { onClose: () => void }) => {
                 render={({ field }) => {
                   //기존 존재하는 파일 삭제
                   const handleRemoveExistingImage = (file: string) => {
-                    console.log("실행");
                     const removeFile = request?.attaches.find(
                       (f) => f.path === file
                     );

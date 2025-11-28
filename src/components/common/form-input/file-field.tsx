@@ -115,10 +115,10 @@ interface SingleImageFormItemProps<T extends FieldValues>
   multiple?: false;
   value: File | null;
   existingFile?: string | null;
-  isRemove?: boolean;
+  isRemove?: boolean; // 삭제여부
   id?: string;
   onChange: () => void;
-  onRemoveExistingFile: () => void;
+  onRemoveExistingFile?: () => void;
 }
 
 //멀티Props

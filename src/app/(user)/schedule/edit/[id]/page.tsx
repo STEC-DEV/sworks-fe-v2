@@ -12,11 +12,11 @@ const Page = () => {
   useEffect(() => {
     if (!rawValue) return;
     getDayScheduleDetail(rawValue);
-  }, [rawValue]);
+  }, [rawValue, getDayScheduleDetail]);
 
   return (
-    <div className="flex flex-col gap-6 w-150">
-      <AppTitle title="일정 수정" />
+    <div className="flex flex-col gap-6 w-full xl:w-150">
+      <AppTitle title="일정 수정" isBorder />
       <DayScheduleEditForm />
     </div>
   );

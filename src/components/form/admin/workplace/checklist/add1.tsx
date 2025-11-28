@@ -2,6 +2,7 @@ import SelectFormItem from "@/components/common/form-input/select-field";
 import CommonFormContainer from "@/components/ui/custom/form/form-container";
 import { FormField } from "@/components/ui/form";
 import { useCheckMultiTypeSelect } from "@/hooks/select/casecading-select";
+import { useWorkplaceDetailChecklistStore } from "@/store/admin/workplace/checklist-store";
 import { useWorkplaceDetailStore } from "@/store/admin/workplace/workplace-detail-store";
 import {
   DivCodeType,
@@ -52,9 +53,10 @@ const ChecklistTypeAddForm = ({
   onPrev,
   onNext,
 }: ChecklistTypeAddFormProps) => {
-  const { checklistMultiType, getCheckMultiType } = useWorkplaceDetailStore();
+  const { checklistMultiType, getCheckMultiType } =
+    useWorkplaceDetailChecklistStore();
   const { id } = useParams();
-  const { createChecklist } = useWorkplaceDetailStore();
+  const { createChecklist } = useWorkplaceDetailChecklistStore();
   const form = useForm<TypeAddFormType>({
     resolver: zodResolver(formSchema),
     defaultValues: {

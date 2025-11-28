@@ -1,13 +1,17 @@
 "use client";
 import BaseSkeleton from "@/components/common/base-skeleton";
+import BaseTable from "@/components/common/base-table";
 import CustomCard from "@/components/common/card";
 import EmptyBox from "@/components/ui/custom/empty";
 import { useUserMainStore } from "@/store/normal/user/main-store";
 import { useSearchParams } from "next/navigation";
-import React, { useCallback, useEffect } from "react";
+import React, { Suspense, useCallback, useEffect } from "react";
+import { userColumns } from "./user-column";
+import { useUIStore } from "@/store/common/ui-store";
 
 const UserList = () => {
-  const { userList, getUserList } = useUserMainStore();
+  const { userList, getUserList, loadingKeys } = useUserMainStore();
+  const { isLoading, hasError } = useUIStore();
   const searchParams = useSearchParams();
 
   const fetchData = useCallback(() => {
@@ -19,21 +23,12 @@ const UserList = () => {
     fetchData();
   }, [fetchData]);
 
-  if (userList.type === "loading") return <BaseSkeleton />;
-  if (userList.type === "error") return <BaseSkeleton />;
+  if (isLoading(loadingKeys.LIST) || !userList)
+    return <BaseSkeleton className="flex-1" />;
+  if (hasError(loadingKeys.LIST)) return <div>에러 발생</div>;
 
   return (
-    <>
-      {userList.payload.data.length > 0 ? (
-        <div className="flex flex-col gap-2">
-          {userList.payload.data.map((v, i) => (
-            <UserListCard key={i} data={v} />
-          ))}
-        </div>
-      ) : (
-        <EmptyBox message="근무자 없음" />
-      )}
-    </>
+    <BaseTable padding="py-3" columns={userColumns} data={userList.data} />
   );
 };
 

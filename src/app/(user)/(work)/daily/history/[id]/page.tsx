@@ -2,17 +2,22 @@
 import BaseSkeleton from "@/components/common/base-skeleton";
 import CustomCard from "@/components/common/card";
 import AppTitle from "@/components/common/label/title";
+import EmptyBox from "@/components/ui/custom/empty";
 import DialogCarousel from "@/components/ui/custom/image/size-carousel";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useDecodeParam } from "@/hooks/params";
-import { useTaskHistoryStore } from "@/store/normal/task/task-history-sotre";
+import { cn } from "@/lib/utils";
+import { useUIStore } from "@/store/common/ui-store";
+import { useTaskHistoryStore } from "@/store/normal/task/task-history-store";
 import { TaskHistoryWorker } from "@/types/normal/task/task-history-detail";
-import { ScrollAreaScrollbar } from "@radix-ui/react-scroll-area";
-import { format, formatISO } from "date-fns";
+
+import { format } from "date-fns";
 import React, { useEffect, useState } from "react";
 
 const Page = () => {
-  const { taskHistoryDetail, getTaskHistoryDetail } = useTaskHistoryStore();
+  const { taskHistoryDetail, getTaskHistoryDetail, loadingKeys } =
+    useTaskHistoryStore();
+  const { isLoading, hasError } = useUIStore();
   const { rawValue } = useDecodeParam("id");
   const [selectWorker, setSelectWorker] = useState<TaskHistoryWorker | null>(
     null
@@ -20,47 +25,54 @@ const Page = () => {
   useEffect(() => {
     if (!rawValue) return;
     getTaskHistoryDetail(rawValue);
-  }, [rawValue]);
+  }, [rawValue, getTaskHistoryDetail]);
 
   const handleSelect = (data: TaskHistoryWorker) => {
     setSelectWorker((prev) => (prev?.userSeq === data.userSeq ? null : data));
   };
 
+  if (isLoading(loadingKeys.DETAIL) || !taskHistoryDetail)
+    return <TaskHistoryDetailSkeleton />;
+  if (hasError(loadingKeys.DETAIL)) return <div> 에러발생</div>;
+
   return (
-    <div className="flex flex-col xl:flex-row gap-12">
-      {taskHistoryDetail ? (
-        <div className="flex-1 flex flex-col gap-6">
+    <div className="flex flex-col  xl:flex-row gap-12">
+      <div className="xl:flex-1 flex flex-col gap-6">
+        <div className="flex gap-2 items-end pb-4 border-b-2 border-border">
           <AppTitle title={taskHistoryDetail.title} />
-          <div className="space-y-4">
-            {taskHistoryDetail.users.map((user, i) => (
-              <CustomCard
-                key={i}
-                variant={"list"}
-                className={`flex-row justify-between cursor-pointer items-center  ${
-                  selectWorker?.userSeq === user.userSeq
-                    ? "bg-blue-50 border-blue-500"
-                    : null
-                }`}
-                onClick={() => handleSelect(user)}
-              >
-                <span>{user.userName}</span>
-                <span className="text-blue-500 text-sm">{`${user.logs.length}/${taskHistoryDetail.repeat}`}</span>
-              </CustomCard>
-            ))}
-          </div>
+          <span className="text-md font-medium text-blue-500">
+            {taskHistoryDetail.serviceTypeName}
+          </span>
         </div>
-      ) : (
-        <div>
-          <BaseSkeleton className="h-9" />
-          <div className="mt-6 flex flex-col gap-4">
-            <BaseSkeleton className="w-[54px]" />
-            <BaseSkeleton className="w-[54px]" />
-            <BaseSkeleton className="w-[54px]" />
-          </div>
-        </div>
-      )}
-      <div className="flex-1 clear-start flex flex-col gap-6 overflow-hidden">
-        <AppTitle title="업무이력" />
+
+        <ScrollArea className="max-h-80 xl:flex-1 overflow-hidden">
+          {taskHistoryDetail.users?.length > 0 ? (
+            <div className="flex flex-col gap-4">
+              {taskHistoryDetail.users.map((user, i) => (
+                <CustomCard
+                  key={i}
+                  variant="list"
+                  className={cn(
+                    "flex-row justify-between cursor-pointer items-center",
+                    selectWorker?.userSeq === user.userSeq &&
+                      "bg-blue-50 border-blue-500"
+                  )}
+                  onClick={() => handleSelect(user)}
+                >
+                  <span className="text-sm">{user.userName}</span>
+                  <span className="text-blue-500 text-sm">
+                    {user.logs.length}/{taskHistoryDetail.repeat}
+                  </span>
+                </CustomCard>
+              ))}
+            </div>
+          ) : (
+            <EmptyBox message="담당자가 존재하지않습니다." />
+          )}
+        </ScrollArea>
+      </div>
+      <div className="xl:flex-1 clear-start flex flex-col gap-6 overflow-hidden">
+        <AppTitle title="업무이력" isBorder />
         {selectWorker ? (
           selectWorker.logs.length > 0 ? (
             selectWorker.logs.map((v, i) => {
@@ -69,7 +81,9 @@ const Page = () => {
                   <span className="text-xs text-[var(--description-light)] relative">
                     {format(v.userWorkDt, "yyyy-MM-dd HH:mm:ss")}
                   </span>
-                  <span className="text-sm">{v.issue}</span>
+                  <span className="text-sm">
+                    {v.issue || "업무를 수행햐였습니다."}
+                  </span>
 
                   {v.attaches.length > 0 && (
                     <DialogCarousel
@@ -82,16 +96,35 @@ const Page = () => {
               );
             })
           ) : (
-            <div>
-              <span className="text-sm text-[var(--description-dark)]">
-                업무이력이 존재하지 않습니다.
-              </span>
-            </div>
+            <EmptyBox message="업무이력이 존재하지않습니다." />
           )
-        ) : null}
+        ) : (
+          <EmptyBox message="근무자를 선택해주세요." />
+        )}
       </div>
     </div>
   );
 };
 
 export default Page;
+
+const TaskHistoryDetailSkeleton = () => {
+  return (
+    <div className="flex flex-col xl:flex-row gap-12 overflow-hidden">
+      <div className="flex flex-col gap-6 flex-1">
+        <BaseSkeleton className="h-7" />
+        <div className="flex flex-col gap-4">
+          {Array.from({ length: 12 }, (_, i) => (
+            <BaseSkeleton key={i} className="h-13.5" />
+          ))}
+        </div>
+      </div>
+      <div className="flex flex-col gap-6 flex-1">
+        <BaseSkeleton className="h-7" />
+        {Array.from({ length: 3 }, (_, i) => (
+          <BaseSkeleton key={i} className="h-40" />
+        ))}
+      </div>
+    </div>
+  );
+};

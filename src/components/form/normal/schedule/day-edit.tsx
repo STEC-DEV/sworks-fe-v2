@@ -42,6 +42,7 @@ const EditSchema = z.object({
   schSeq: z.number(),
   serviceTypeSeq: z.number("업무 유형을 선택해주세요.").min(1),
   title: z.string().min(1, "제목을 입력하세요."),
+  viewYn: z.boolean(),
   description: z.string(),
   isAllDay: z.boolean(),
   startDt: z.date(),
@@ -60,7 +61,14 @@ const EditSchema = z.object({
         photoType: z.number(),
         attaches: z.instanceof(File).nullable(),
         comments: z.string(),
-        viewYn: z.boolean(),
+      })
+    ),
+    fileAttaches: z.array(
+      z.object({
+        attachSeq: z.number().nullable(),
+        photoType: z.number(),
+        attaches: z.instanceof(File).nullable(),
+        comments: z.string(),
       })
     ),
   }),
@@ -85,6 +93,7 @@ const DayScheduleEditForm = ({
     defaultValues: {
       schSeq: undefined,
       serviceTypeSeq: undefined,
+      viewYn: false,
       title: "",
       description: "",
       isAllDay: false,
@@ -99,6 +108,7 @@ const DayScheduleEditForm = ({
         logComments: "",
         deleteAttaches: [],
         imageAttaches: [],
+        fileAttaches: [],
       },
     },
   });
@@ -109,6 +119,7 @@ const DayScheduleEditForm = ({
 
     form.reset({
       schSeq: schedule.schSeq,
+      viewYn: schedule.viewYn,
       serviceTypeSeq: schedule.serviceTypeSeq,
       title: schedule.title,
       description: schedule.description ?? "",
@@ -124,6 +135,7 @@ const DayScheduleEditForm = ({
         logComments: schedule.logs?.logComments ?? "",
         deleteAttaches: [],
         imageAttaches: [],
+        fileAttaches: [],
       },
     });
   }, [schedule, form]);
@@ -134,31 +146,8 @@ const DayScheduleEditForm = ({
     };
   }, []);
 
-  //알람 상수
-  const alarmTime = [
-    {
-      value: 10,
-      label: "10분 전",
-    },
-    {
-      value: 30,
-      label: "30분 전",
-    },
-    {
-      value: 60,
-      label: "1시간 전",
-    },
-    {
-      value: 1,
-      label: "하루 전",
-    },
-  ];
-
   const handleSubmit = async (values: EditFormType) => {
-    console.log("=========================");
     console.log(values);
-    console.log("=========================");
-
     const payload = {
       ...values,
       startDt: format(values.startDt, "yyyy-MM-dd'T'HH:mm:ss"), // "2025-11-05 09:00:00"
@@ -232,7 +221,7 @@ const DayScheduleEditForm = ({
             )}
           />
 
-          <div className="flex gap-6">
+          <div className="flex flex-col xl:flex-row gap-6">
             <FormField
               control={form.control}
               name="isAllDay"
@@ -354,6 +343,60 @@ const DayScheduleEditForm = ({
               />
             )}
           />
+          <FormField
+            name="logs.fileAttaches"
+            control={form.control}
+            render={({ field }) => {
+              const handleRemoveExistFiles = (data: string) => {
+                const curRemoveFiles =
+                  form.getValues("logs.deleteAttaches") || [];
+
+                form.setValue("logs.deleteAttaches", [
+                  ...curRemoveFiles,
+                  parseInt(data),
+                ]);
+              };
+
+              const existedFiles = () => {
+                const removeFiles = form.watch("logs.deleteAttaches") || [];
+                if (!schedule?.logs?.files) return [];
+                return schedule?.logs.files
+                  .filter((v) => !removeFiles.includes(v.attachSeq))
+                  .map((v) => v.attachSeq.toString());
+              };
+
+              const fileValue = useMemo(() => {
+                if (!field.value) return [];
+                return field.value
+                  .map((v) => v.attaches)
+                  .filter((file): file is File => file !== null);
+              }, [field.value]);
+
+              const handleFileChange = (files: File[]) => {
+                const newValue = files.map((file) => ({
+                  attachSeq: null,
+                  photoType: 3, // 기본값 설정
+                  attaches: file,
+                  comments: "",
+                }));
+                field.onChange(newValue);
+              };
+
+              return (
+                <FileFormItem
+                  label="첨부파일"
+                  accept="accept"
+                  multiple={true}
+                  {...field}
+                  value={fileValue}
+                  existingFiles={existedFiles()}
+                  onChange={handleFileChange}
+                  onRemoveExitedFiles={handleRemoveExistFiles}
+                  isVertical
+                />
+              );
+            }}
+          />
 
           <FormField
             control={form.control}
@@ -412,7 +455,7 @@ const DayScheduleEditForm = ({
 
               return (
                 <ScheduleImageFileFormItem
-                  label="이전"
+                  label="작업 전 이미지"
                   photoType={1}
                   value={field.value.filter((v) => v.photoType === 1)}
                   onChange={handleValue}
@@ -435,17 +478,8 @@ const DayScheduleEditForm = ({
                   (v) => v.photoType !== 2
                 );
 
-                // 새 이미지들의 photoType을 2로 보장
-                const afterImages = value
-                  .filter((v) => v.photoType === 0)
-                  .map((v) => ({
-                    ...v,
-                    photoType: 2,
-                    attachSeq: null,
-                  }));
-
                 // 합치기
-                field.onChange([...otherImages, ...afterImages]);
+                field.onChange([...otherImages, ...value]);
               };
 
               //신규 등록파일 삭제
@@ -489,7 +523,7 @@ const DayScheduleEditForm = ({
 
               return (
                 <ScheduleImageFileFormItem
-                  label="이후"
+                  label="작업 후 이미지"
                   key={"일까"}
                   photoType={2}
                   value={field.value.filter((v) => v.photoType === 2)}
@@ -505,7 +539,7 @@ const DayScheduleEditForm = ({
         </div>
 
         <div className="shrink-0 ">
-          <Button label="생성" />
+          <Button label="저장" />
         </div>
       </form>
     </Form>

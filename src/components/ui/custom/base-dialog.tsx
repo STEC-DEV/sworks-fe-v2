@@ -2,6 +2,7 @@ import React from "react";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -11,6 +12,7 @@ import { cn } from "@/lib/utils";
 
 interface BaseDialogProps {
   className?: string;
+  description?: string;
   title: string;
   triggerChildren: React.ReactNode;
   children: React.ReactNode;
@@ -21,6 +23,7 @@ interface BaseDialogProps {
 const BaseDialog = ({
   className,
   title,
+  description,
   triggerChildren,
   children,
   open,
@@ -37,6 +40,7 @@ const BaseDialog = ({
       >
         <DialogHeader className="px-6 flex-shrink-0">
           <DialogTitle>{title}</DialogTitle>
+          <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
         <div className="flex-1 min-h-0 flex">{children}</div>
       </DialogContent>

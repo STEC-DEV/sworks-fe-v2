@@ -3,7 +3,6 @@ import CustomCard from "@/components/common/card";
 import { useHoverTooltip } from "@/hooks/useHoverToolTip";
 import { ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
-import { useState } from "react";
 
 export const taskCol: ColumnDef<Task>[] = [
   {
@@ -12,7 +11,7 @@ export const taskCol: ColumnDef<Task>[] = [
     cell: ({ row }) => {
       const startDt = row.original.startDt;
       const endDt = row.original.endDt;
-      var value = "";
+      let value = "";
       //추후 처리
       if (row.original.termType === 0) {
         value = "매일";
@@ -24,7 +23,7 @@ export const taskCol: ColumnDef<Task>[] = [
           "yyyy/MM/dd"
         )}`;
 
-      return value;
+      return <span className="text-xs font-medium ">{value}</span>;
     },
   },
   {
@@ -32,7 +31,11 @@ export const taskCol: ColumnDef<Task>[] = [
     header: "유형",
     cell: ({ row }) => {
       const value = row.original.serviceTypeName;
-      return value;
+      return (
+        <span className="text-xs text-[var(--description-dark)] font-medium">
+          {value}
+        </span>
+      );
     },
   },
   {
@@ -40,7 +43,7 @@ export const taskCol: ColumnDef<Task>[] = [
     header: "제목",
     cell: ({ row }) => {
       const value = row.original.title;
-      return value;
+      return <span className="text-xs">{value}</span>;
     },
   },
   {
@@ -48,7 +51,7 @@ export const taskCol: ColumnDef<Task>[] = [
     header: "반복횟수",
     cell: ({ row }) => {
       const value = row.original.repeat;
-      return `${value.toString()}회`;
+      return <span className="text-xs">{`${value.toString()}회`}</span>;
     },
   },
   {
@@ -69,31 +72,15 @@ export const taskCol: ColumnDef<Task>[] = [
 ];
 
 const UserList = ({ data }: { data: string[] }) => {
-  const { isHover, showLeft, ref, handleMouseEnter, handleMouseLeave } =
-    useHoverTooltip();
   const value = () => {
     if (data.length < 3) return data.join(", ");
-    return `${data.slice(0, 2).join(", ")} ...`;
+    return `${data.slice(0, 2).join(", ")} ${
+      data.length - 2 !== 0 && `... 외 ${data.length - 2}명`
+    } `;
   };
   return (
-    <div
-      className="relative"
-      ref={ref}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-    >
-      <span className="text-[var(--description-light)]">{value()}</span>
-      <CustomCard
-        className={`xl:w-50 flex-col gap-2 absolute top-0  shadow-lg z-10 ${
-          isHover ? "flex" : "hidden"
-        } ${showLeft ? "right-full mr-2" : "left-full ml-2"}`}
-        variant={"list"}
-      >
-        <span className="text-lg font-semibold">근무자</span>
-        {data.map((v, i) => (
-          <span key={i}>{v}</span>
-        ))}
-      </CustomCard>
+    <div>
+      <span className="text-xs text-[var(--description-dark)]">{value()}</span>
     </div>
   );
 };

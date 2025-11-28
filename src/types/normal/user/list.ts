@@ -2,6 +2,7 @@ interface UserListItem {
   userSeq: number;
   userName: string;
   role: string;
+  job: string;
   phone: string;
   serviceTypes: UserServiceType[];
 }

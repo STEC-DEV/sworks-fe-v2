@@ -1,7 +1,9 @@
 "use client";
 import Button from "@/components/common/button";
 import { DateFormItem } from "@/components/common/form-input/date-field";
-import FileFormItem from "@/components/common/form-input/file-field";
+import FileFormItem, {
+  ImageFormItem,
+} from "@/components/common/form-input/file-field";
 import SelectFormItem from "@/components/common/form-input/select-field";
 import { TextFormItem } from "@/components/common/form-input/text-field";
 import AppTitle from "@/components/common/label/title";
@@ -16,7 +18,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { toast } from "sonner";
+
 import z from "zod";
 
 const formSchema = z.object({
@@ -47,7 +49,7 @@ const formSchema = z.object({
   removeImage: z.boolean(),
   // updateFiles: z.array(z.instanceof(File)),
   // images: z.string,
-  images: z.array(z.instanceof(File)).max(1),
+  images: z.instanceof(File).nullable(),
 });
 
 type UpdateFormType = z.infer<typeof formSchema>;
@@ -74,7 +76,7 @@ const Page = () => {
       cost: "",
       buyDt: undefined,
       removeImage: false,
-      images: [],
+      images: null,
     },
   });
 
@@ -95,11 +97,11 @@ const Page = () => {
       cost: equipmentDetail.cost?.toString() || "",
       buyDt: new Date(equipmentDetail.buyDt),
       removeImage: false,
-      images: [],
+      images: null,
     });
 
     setExistedFile(equipmentDetail.images);
-  }, [equipmentDetail]);
+  }, [equipmentDetail, form]);
 
   useEffect(() => {
     console.log("basicCode.contractCodes 변화:", basicCode.contractCodes);
@@ -121,8 +123,8 @@ const Page = () => {
         onSubmit={form.handleSubmit(handleSubmit)}
         className="flex flex-col gap-12"
       >
-        <AppTitle title="장비 수정" />
-        <div className="grid grid-cols-2 gap-x-24 gap-y-12">
+        <AppTitle title="장비 수정" isBorder />
+        <div className="grid xl:grid-cols-2 gap-x-24 gap-y-12">
           <FormField
             control={form.control}
             name="serviceTypeSeq"
@@ -276,21 +278,29 @@ const Page = () => {
           control={form.control}
           name="images"
           render={({ field }) => {
-            const handleRemoveExistFiles = (data: string) => {
+            const handleRemove = () => {
               form.setValue("removeImage", true);
-              setExistedFile(null);
+            };
+
+            const existingFiles = () => {
+              if (!equipmentDetail) return;
+              const isRemove = form.watch("removeImage");
+              console.log("삭제 여부 : ", isRemove);
+              console.log(isRemove ? null : equipmentDetail.images);
+
+              return isRemove ? null : equipmentDetail.images;
             };
 
             return (
-              <FileFormItem
-                label="첨부파일"
-                accept="accept"
+              <ImageFormItem
+                label="이미지"
                 multiple={false}
                 {...field}
                 value={field.value}
-                existingFiles={existedFile ? [existedFile] : []}
+                isRemove={form.watch("removeImage")}
                 onChange={field.onChange}
-                onRemoveExitedFiles={handleRemoveExistFiles}
+                existingFile={existingFiles()}
+                onRemoveExistingFile={handleRemove}
               />
             );
           }}

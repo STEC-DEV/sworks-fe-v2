@@ -9,9 +9,9 @@ const page = () => {
       <CustomCard className={`w-130`} size={"lg"}>
         {/* 헤드 */}
         <div className="flex flex-col gap-2 px-16">
-          <span className="text-2xl font-extrabold">Welcome S-Works</span>
+          <span className="text-2xl font-extrabold">Welcome S-Agent</span>
           <span className="text-sm text-[var(--description-light)]">
-            에스텍시스템 사업장관리 플랫폼
+            에스텍시스템 용역업무관리 플랫폼
           </span>
         </div>
         {/* 바디 */}

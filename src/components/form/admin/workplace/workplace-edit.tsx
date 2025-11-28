@@ -39,9 +39,10 @@ const WorkplaceInfoEditForm = ({
 
   const handleSubmit = async (values: FormType) => {
     const updateData: WorkplaceDetail = { ...data, ...values };
+
     await patchWorkplaceInfo(updateData);
-    await getWorkplaceDetail(data.siteSeq);
     setOpen(false);
+    await getWorkplaceDetail(data.siteSeq);
   };
   return (
     <Form {...form}>

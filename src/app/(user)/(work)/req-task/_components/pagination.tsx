@@ -3,28 +3,34 @@ import IconButton from "@/components/common/icon-button";
 import RequestAddForm from "@/components/form/normal/request/add";
 import BaseDialog from "@/components/ui/custom/base-dialog";
 import CommonPagination from "@/components/ui/custom/pagination/common-pagination";
+import { usePermission } from "@/hooks/usePermission";
+import { useUIStore } from "@/store/common/ui-store";
 import { useRequestTaskStore } from "@/store/normal/req/main";
 import React, { useState } from "react";
 
 const ReqPagination = () => {
   const [open, setOpen] = useState<boolean>(false);
-  const { reqTaskList } = useRequestTaskStore();
+  const { reqTaskList, loadingKeys } = useRequestTaskStore();
+  const { isLoading, hasError } = useUIStore();
+  const { canWorkerEdit } = usePermission();
 
-  if (reqTaskList.type === "loading") return <BaseSkeleton />;
-  if (reqTaskList.type === "error") return <BaseSkeleton />;
+  if (isLoading(loadingKeys.LIST) || !reqTaskList)
+    return <BaseSkeleton className="h-9" />;
+  if (hasError(loadingKeys.LIST)) return <div>에러 발생</div>;
 
   return (
-    <div className="flex gap-4">
-      <CommonPagination totalCount={reqTaskList.payload.meta.totalCount} />
-      <BaseDialog
-        title="업무요청"
-        open={open}
-        setOpen={setOpen}
-        triggerChildren={<IconButton icon="Plus" />}
-      >
-        <RequestAddForm onClose={() => setOpen(false)} />
-      </BaseDialog>
-    </div>
+    <CommonPagination totalCount={reqTaskList.meta.totalCount}>
+      {canWorkerEdit && (
+        <BaseDialog
+          title="업무요청"
+          open={open}
+          setOpen={setOpen}
+          triggerChildren={<IconButton icon="Plus" />}
+        >
+          <RequestAddForm onClose={() => setOpen(false)} />
+        </BaseDialog>
+      )}
+    </CommonPagination>
   );
 };
 

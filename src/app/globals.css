@@ -84,6 +84,12 @@ img {
   /* width: 100%; */
 }
 
+/*shadcn scrollarea 영역 하위 div 높이 설정*/
+[data-radix-scroll-area-viewport] > div {
+  height: 100%;
+  display: block !important; /* 또는 display: flex */
+}
+
 :root {
   --radius: 0.625rem;
   --primary: #223377;
@@ -97,6 +103,7 @@ img {
   --skeleton: #e2e2e2;
   --placeholder: oklch(0.552 0.016 285.938);
   --border: #e7e5e4;
+  --read: #e5e8e9;
   --icon: #8c978d;
   --default-font: #000000;
   --description-light: #4e5968;

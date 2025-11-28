@@ -1,8 +1,7 @@
 "use client";
-import { KeyValueItem } from "@/app/(user)/equipment/[id]/[history-id]/page";
-import UserList from "@/app/(user)/workplace/_components/_user/list";
+
 import { ChecklistAccordion } from "@/app/admin/checklist/[id]/_components/chk-accordion";
-import BaseSkeleton from "@/components/common/base-skeleton";
+import BaseTable from "@/components/common/base-table";
 import Button from "@/components/common/button";
 import CustomCard from "@/components/common/card";
 import IconButton from "@/components/common/icon-button";
@@ -10,18 +9,24 @@ import Input from "@/components/common/input";
 import AppTitle from "@/components/common/label/title";
 import TaskInfoEditForm from "@/components/form/normal/task/info-edit";
 import BaseDialog from "@/components/ui/custom/base-dialog";
-import EmptyBox from "@/components/ui/custom/empty";
+
+import { KeyValueItem } from "@/components/ui/custom/key-value";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useDecodeParam } from "@/hooks/params";
 import { useTaskDetailStore } from "@/store/normal/task/detail-task";
 
 import { format } from "date-fns";
 import React, { useEffect, useState } from "react";
+import { WorkerColumns } from "./_components/worker-columns";
+import { useUIStore } from "@/store/common/ui-store";
+import BaseSkeleton from "@/components/common/base-skeleton";
 
 const Page = () => {
-  const { taskDetail, getTaskDetail, patchUpdateTaskDetail } =
+  const { taskDetail, getTaskDetail, patchUpdateTaskDetail, loadingKeys } =
     useTaskDetailStore();
+  const { isLoading, hasError } = useUIStore();
   const { rawValue } = useDecodeParam("id");
+
   const [infoEditOpen, setInfoEditOpen] = useState<boolean>(false);
   const [workerEditOpen, setWorkerEditOpen] = useState<boolean>(false);
 
@@ -32,7 +37,7 @@ const Page = () => {
 
   const duration = () => {
     if (!taskDetail) return;
-    var value = "";
+    let value = "";
 
     switch (taskDetail.termType) {
       case 0:
@@ -42,11 +47,11 @@ const Page = () => {
         value = format(taskDetail.startDt, "yyyy/MM/dd");
         break;
       case 2:
-        taskDetail.endDt
-          ? (value = `${format(taskDetail.startDt, "yyyy/MM/dd")} ~ ${format(
+        value = taskDetail.endDt
+          ? `${format(taskDetail.startDt, "yyyy/MM/dd")} ~ ${format(
               taskDetail.endDt,
               "yyyy/MM/dd"
-            )}`)
+            )}`
           : "";
         break;
     }
@@ -62,104 +67,82 @@ const Page = () => {
   };
 
   const handleUpdate = async (values: Record<string, any>) => {
+    if (!rawValue) return;
     await patchUpdateTaskDetail(values);
-    await getTaskDetail(rawValue);
     setInfoEditOpen(false);
+    await getTaskDetail(rawValue);
   };
+
+  if (isLoading(loadingKeys.DETAIL) || !taskDetail)
+    return <TaskDetailSkeleton />;
+  if (hasError(loadingKeys.DETAIL)) return <div>에러 발생</div>;
   return (
-    <div className="flex flex-col gap-6 xl:flex-row xl:gap-12">
-      {/* 정보 */}
-      <div className="flex-1 flex flex-col gap-6">
-        {taskDetail ? (
-          <>
-            <div className="flex justify-between items-center">
-              <AppTitle title={taskDetail.title} />
-              <BaseDialog
-                title="업무정보 수정"
-                open={infoEditOpen}
-                setOpen={setInfoEditOpen}
-                triggerChildren={<IconButton icon="SquarePen" />}
-              >
-                <TaskInfoEditForm onSubmit={handleUpdate} />
-              </BaseDialog>
-            </div>
-            <div className="flex flex-col gap-4">
-              <KeyValueItem
-                label="업무유형"
-                labelStyle="text-sm"
-                value={taskDetail?.serviceTypeName}
-                valueStyle="text-blue-500 text-sm font-normal"
-              />
-              <KeyValueItem
-                label="반복횟수"
-                value={`${taskDetail?.repeats.toString()}회`}
-                labelStyle="text-sm"
-                valueStyle="text-sm font-normal"
-              />
-              {duration()}
-              <div className="flex flex-col gap-6">
-                <div className="flex justify-between items-center">
-                  <AppTitle title={"체크리스트"} />
-                  <IconButton icon="SquarePen" />
-                </div>
-                <div className="flex flex-col gap-4">
-                  {taskDetail.mains.map((c, i) => (
-                    <ChecklistAccordion key={i} data={c} />
-                  ))}
-                </div>
-              </div>
-            </div>
-          </>
-        ) : null}
-      </div>
-      {/* 근무자 */}
-      {taskDetail ? (
-        <div className="flex-1 flex flex-col gap-6">
-          <div className="flex justify-between items-center">
-            <AppTitle title={"근무자"} />
+    <div className="flex flex-col gap-12 xl:flex-row xl:gap-12 ">
+      <div className="flex-1  flex flex-col gap-12">
+        <div className="flex flex-col gap-6">
+          <div className="flex justify-between items-center pb-4 border-b-2 border-border">
+            <AppTitle title={taskDetail.title} />
+
             <BaseDialog
-              triggerChildren={<IconButton icon={"SquarePen"} size={16} />}
-              title="근무자 수정"
-              open={workerEditOpen}
-              setOpen={setWorkerEditOpen}
+              title="업무정보 수정"
+              open={infoEditOpen}
+              setOpen={setInfoEditOpen}
+              triggerChildren={<IconButton icon="SquarePen" />}
             >
-              <WorkerEditContents
-                serviceType={taskDetail?.serviceTypeSeq}
-                onClose={() => setWorkerEditOpen(false)}
-              />
+              <TaskInfoEditForm onSubmit={handleUpdate} />
             </BaseDialog>
           </div>
-          <div className="flex flex-col gap-2">
-            {taskDetail.users.length > 0 ? (
-              taskDetail?.users.map((u, i) => <Worker key={i} data={u} />)
-            ) : (
-              <EmptyBox />
-            )}
+          <div className="flex flex-col gap-4">
+            <KeyValueItem
+              label="업무유형"
+              labelStyle="text-sm"
+              value={taskDetail?.serviceTypeName}
+              valueStyle="text-blue-500 text-sm font-normal"
+            />
+            <KeyValueItem
+              label="반복횟수"
+              value={`${taskDetail?.repeats.toString()}회`}
+              labelStyle="text-sm"
+              valueStyle="text-sm font-normal"
+            />
+            {duration()}
           </div>
         </div>
-      ) : null}
+        <div className="flex flex-col gap-6">
+          <div className="flex justify-between items-center pb-4 border-b-2 border-border">
+            <AppTitle title={"체크리스트"} />
+            <IconButton icon="SquarePen" />
+          </div>
+          <div className="flex flex-col gap-4">
+            {taskDetail.mains.map((c, i) => (
+              <ChecklistAccordion key={i} data={c} />
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div className="flex-1 flex flex-col gap-6">
+        <div className="flex justify-between items-center pb-4 border-b-2 border-border">
+          <AppTitle title={"근무자"} />
+          <BaseDialog
+            triggerChildren={<IconButton icon={"SquarePen"} size={16} />}
+            title="근무자 수정"
+            open={workerEditOpen}
+            setOpen={setWorkerEditOpen}
+          >
+            <WorkerEditContents
+              serviceType={taskDetail.serviceTypeSeq}
+              onClose={() => setWorkerEditOpen(false)}
+            />
+          </BaseDialog>
+        </div>
+        <BaseTable columns={WorkerColumns} data={taskDetail.users} />
+      </div>
     </div>
   );
 };
 
-const Worker = ({ data }: { data: Worker }) => {
-  return (
-    <CustomCard
-      variant={"list"}
-      size={"sm"}
-      className="flex-row justify-between items-center"
-    >
-      <div className="flex gap-6">
-        <span className="text-sm">{data.userName}</span>
-        <span className="text-sm">{data.phone}</span>
-      </div>
-      <span className="text-sm text-blue-500">{data.serviceTypeName}</span>
-    </CustomCard>
-  );
-};
-
 const WorkerEditContents = ({
-  serviceType,
   onClose,
 }: {
   serviceType: number;
@@ -184,7 +167,7 @@ const WorkerEditContents = ({
   useEffect(() => {
     if (!rawValue) return;
     getTaskUserList(rawValue);
-  }, [rawValue]);
+  }, [rawValue, getTaskUserList]);
 
   const handleCheck = async (item: ClassificationTaskWorker) => {
     setSelectedWorker((prev) => {
@@ -199,8 +182,8 @@ const WorkerEditContents = ({
   const handleSubmit = async () => {
     if (!taskDetail) return;
     await putUpdateTaskWorker(selectedWorker);
-    await getTaskDetail(taskDetail.taskSeq.toString());
     onClose();
+    await getTaskDetail(taskDetail.taskSeq.toString());
   };
 
   return (
@@ -246,3 +229,47 @@ const WorkerEditContents = ({
 };
 
 export default Page;
+
+const TaskDetailSkeleton = () => {
+  return (
+    <div className="flex flex-col gap-6 xl:flex-row xl:gap-12 overflow-hidden ">
+      <div className="flex-1 flex flex-col gap-6">
+        <BaseSkeleton className="h-8" />
+        <div className="flex flex-col gap-4">
+          {Array.from({ length: 3 }, (_, i) => (
+            <div key={i} className="flex flex-col gap-1">
+              <BaseSkeleton className="w-15 h-5" />
+              <BaseSkeleton className="h-5" />
+            </div>
+          ))}
+        </div>
+        <BaseSkeleton className="h-8" />
+        <div className="flex flex-col gap-4 overflow-hidden ">
+          {Array.from({ length: 8 }, (_, i) => (
+            <BaseSkeleton className="h-13" key={i} />
+          ))}
+        </div>
+      </div>
+      <div className="flex-1 flex flex-col gap-6">
+        <BaseSkeleton className="h-8" />
+        <BaseSkeleton className="flex-1" />
+      </div>
+    </div>
+  );
+};
+
+// const Worker = ({ data }: { data: Worker }) => {
+//   return (
+//     <CustomCard
+//       variant={"list"}
+//       size={"sm"}
+//       className="flex-row justify-between items-center"
+//     >
+//       <div className="flex gap-6">
+//         <span className="text-sm">{data.userName}</span>
+//         <span className="text-sm">{data.phone}</span>
+//       </div>
+//       <span className="text-sm text-blue-500">{data.serviceTypeName}</span>
+//     </CustomCard>
+//   );
+// };

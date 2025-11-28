@@ -4,34 +4,43 @@ import React, { useEffect } from "react";
 import ReqFilter from "./_components/filter";
 import ReqPagination from "./_components/pagination";
 import { useRequestTaskStore } from "@/store/normal/req/main";
-import { useSearchParams } from "next/navigation";
-import DataTable from "@/components/common/data-table";
+import { useRouter, useSearchParams } from "next/navigation";
 import { reqCol } from "./_components/columns";
 import BaseSkeleton from "@/components/common/base-skeleton";
+import BaseTable from "@/components/common/base-table";
+import { useUIStore } from "@/store/common/ui-store";
+import { MessageSquareReply } from "lucide-react";
 
 const Page = () => {
-  const { reqTaskList, getRequestTask } = useRequestTaskStore();
+  const { reqTaskList, getRequestTask, loadingKeys } = useRequestTaskStore();
+  const { isLoading, hasError } = useUIStore();
+  const router = useRouter();
   const searchParams = useSearchParams();
 
   useEffect(() => {
     if (!searchParams) return;
     getRequestTask(new URLSearchParams(searchParams));
-  }, [searchParams]);
+  }, [searchParams, getRequestTask]);
+
+  const getList = () => {
+    if (isLoading(loadingKeys.LIST) || !reqTaskList)
+      return <BaseSkeleton className="flex-1" />;
+    if (hasError(loadingKeys.LIST)) return <div>에러 발생</div>;
+
+    return (
+      <BaseTable
+        columns={reqCol}
+        data={reqTaskList.data}
+        onRowClick={(data) => router.push(`/req-task/${data.requestSeq}`)}
+      />
+    );
+  };
   return (
     <>
-      <AppTitle title="업무요청" />
+      <AppTitle title="업무요청" icon={MessageSquareReply} />
       <ReqFilter />
       <ReqPagination />
-      {reqTaskList.type === "data" ? (
-        <DataTable
-          columns={reqCol}
-          data={reqTaskList.payload.data}
-          idName="requestSeq"
-          baseUrl="req-task"
-        />
-      ) : (
-        <BaseSkeleton />
-      )}
+      {getList()}
     </>
   );
 };

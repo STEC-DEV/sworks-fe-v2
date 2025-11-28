@@ -34,14 +34,9 @@ const VocFilter = () => {
 
   useEffect(() => {
     getUserPermission();
-  }, []);
+  }, [getUserPermission]);
 
   useEffect(() => {
-    convertPerm();
-    console.log(filterConfig);
-  }, [userPermission]);
-
-  const convertPerm = () => {
     if (!userPermission) return;
     const data = convertSelectOptionType(userPermission);
     const convertData = convertKeyValueArrayToRecord(data);
@@ -50,7 +45,7 @@ const VocFilter = () => {
         item.key === "serviceTypeSeq" ? { ...item, data: convertData } : item
       )
     );
-  };
+  }, [userPermission]);
 
   return (
     <>

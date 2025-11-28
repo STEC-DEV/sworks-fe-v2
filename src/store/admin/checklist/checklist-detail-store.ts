@@ -1,11 +1,18 @@
 import api from "@/lib/api/api-manager";
+import { useUIStore } from "@/store/common/ui-store";
 import { Response } from "@/types/common/response";
+import { toast } from "sonner";
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 
+export const COMMON_CHECKLIST_DETAIL_LOADING_KEYS = {
+  INFO: "checklist_info",
+} as const;
+
 interface ChecklistDetailState {
+  loadingKeys: typeof COMMON_CHECKLIST_DETAIL_LOADING_KEYS;
   //상세정보
-  checklistDetail: ChecklistDetail | undefined;
+  checklistDetail: ChecklistDetail | null;
   getChecklistDetail: (chkSeq: string) => Promise<void>;
 
   //항목 생성
@@ -14,7 +21,7 @@ interface ChecklistDetailState {
   ) => Promise<Response<number>>;
 
   //편집
-  editChecklistItem: Checklist | undefined;
+  editChecklistItem: Checklist | null;
   setEditChecklistItem: (id: number) => void;
   resetEditChecklistItem: () => void;
   putEditChecklistItem: (item: Checklist) => Promise<void>;
@@ -24,20 +31,28 @@ export const useChecklistDetailStore = create<ChecklistDetailState>()(
   devtools(
     persist<ChecklistDetailState>(
       (set, get) => ({
-        checklistDetail: undefined,
+        loadingKeys: COMMON_CHECKLIST_DETAIL_LOADING_KEYS,
+        checklistDetail: null,
         getChecklistDetail: async (chkSeq) => {
+          const { setLoading, setError } = useUIStore.getState();
+          setLoading(COMMON_CHECKLIST_DETAIL_LOADING_KEYS.INFO, true);
           try {
             const res: Response<ChecklistDetail> = await api
               .get(`checklist/w/sign/commdetail`, {
                 searchParams: { chkSeq },
               })
               .json();
-
-            const data = res.data;
-
-            set({ checklistDetail: data });
+            set({ checklistDetail: res.data });
           } catch (err) {
             console.log(err);
+            const errMessage =
+              err instanceof Error
+                ? err.message
+                : "체크리스트 정보 조회 문제가 발생하였습니다. 잠시후 다시 시도해주세요.";
+            setError(COMMON_CHECKLIST_DETAIL_LOADING_KEYS.INFO, errMessage);
+            toast.error(errMessage);
+          } finally {
+            setLoading(COMMON_CHECKLIST_DETAIL_LOADING_KEYS.INFO, false);
           }
         },
 
@@ -67,7 +82,7 @@ export const useChecklistDetailStore = create<ChecklistDetailState>()(
           }
         },
 
-        editChecklistItem: undefined,
+        editChecklistItem: null,
         setEditChecklistItem: (id) => {
           const { checklistDetail } = get();
           const editChecklistItem = checklistDetail?.mains.find(

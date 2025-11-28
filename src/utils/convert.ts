@@ -90,9 +90,11 @@ export const convertRecordDataToFormData = (
  */
 export const objectToFormData = (
   data: any,
+  dateOnly?: boolean,
   formData: FormData = new FormData(),
   parentKey: string = ""
 ): FormData => {
+  const useDateOnly = dateOnly ?? false;
   if (data === null || data === undefined) {
     return formData;
   }
@@ -109,27 +111,16 @@ export const objectToFormData = (
 
   // Date 객체 처리
   if (data instanceof Date) {
-    formData.append(parentKey, data.toISOString());
+    useDateOnly
+      ? formData.append(parentKey, format(data, "yyyy-MM-dd"))
+      : formData.append(parentKey, data.toISOString());
+    // formData.append(parentKey, data.toISOString());
     return formData;
   }
 
-  // File 객체 처리
-  // if (data instanceof File) {
-  //   formData.append(parentKey, data);
-  //   return formData;
-  // }
-  // 배열 체크를 먼저!
-  if (Array.isArray(data)) {
-    console.log("배열이야");
-    data.forEach((item, i) => {
-      if (item instanceof File) {
-        console.log(item);
-        formData.append(`${parentKey}`, item);
-        // 또는 formData.append(parentKey, item);
-      } else {
-        formData.append(`${parentKey}[${i}]`, item);
-      }
-    });
+  // File 객체 처리 (Blob보다 먼저 체크)
+  if (data instanceof File) {
+    formData.append(parentKey, data);
     return formData;
   }
 
@@ -140,15 +131,27 @@ export const objectToFormData = (
     return formData;
   }
 
-  // 배열 처리
+  // 배열 체리
   if (Array.isArray(data)) {
     if (data.length === 0) {
       // 빈 배열 처리 (선택적)
-      // formData.append(parentKey, "null");
+      // formData.append(parentKey, "[]");
     } else {
       data.forEach((item, index) => {
         const key = `${parentKey}[${index}]`;
-        objectToFormData(item, formData, key);
+
+        // 배열 아이템이 File인 경우
+        if (item instanceof File) {
+          formData.append(parentKey, item); // 또는 key 사용
+        }
+        // 배열 아이템이 객체인 경우 재귀 호출
+        else if (typeof item === "object" && item !== null) {
+          objectToFormData(item, useDateOnly, formData, key);
+        }
+        // 원시값인 경우
+        else {
+          formData.append(key, String(item ?? ""));
+        }
       });
     }
     return formData;
@@ -159,12 +162,28 @@ export const objectToFormData = (
     Object.keys(data).forEach((key) => {
       const value = data[key];
       const formKey = parentKey ? `${parentKey}.${key}` : key;
-      objectToFormData(value, formData, formKey);
+      objectToFormData(value, useDateOnly, formData, formKey);
     });
     return formData;
   }
 
   // 원시 타입 처리 (string, number, boolean)
-  formData.append(parentKey, String(data));
+  if (parentKey) {
+    formData.append(parentKey, String(data));
+  }
   return formData;
 };
+
+// 배열 처리
+// if (Array.isArray(data)) {
+//   if (data.length === 0) {
+//     // 빈 배열 처리 (선택적)
+//     // formData.append(parentKey, "null");
+//   } else {
+//     data.forEach((item, index) => {
+//       const key = `${parentKey}[${index}]`;
+//       objectToFormData(item, useDateOnly, formData, key);
+//     });
+//   }
+//   return formData;
+// }

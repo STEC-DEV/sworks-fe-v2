@@ -69,7 +69,7 @@ export interface EditBuildingInfo {
   gasExtYn: boolean;
   removeImage: boolean;
   images: string | null;
-  detail: DynamicDetail[]; // 조회할때는 details 이고 수정 또는 추가할떄는 json 직렬화문제로 detail사용함
+  details: DynamicDetail[]; // 조회할때는 details 이고 수정 또는 추가할떄는 json 직렬화문제로 detail사용함
 }
 
 export interface UiBuildingInfo {
@@ -106,7 +106,7 @@ export interface UiBuildingInfo {
 interface DynamicDetail {
   detailSeq: number;
   typeGubun: boolean; //true - 냉난방 , false- pump
-  typeSeq: number;
+  typeSeq: number; // 구분값
   typeName: string;
   capacity?: number; //냉난방 only - 냉난방용량
   flowRate?: number; // 펌프 only - 토출량

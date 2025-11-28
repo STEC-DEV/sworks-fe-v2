@@ -71,7 +71,7 @@ const AdminAddForm = ({ onNext, onPrev }: AdminAddFormProps) => {
       onNext={onNext}
       onPrev={onPrev}
     >
-      <div className="grid grid-cols-2 gap-x-24 gap-y-12">
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-x-24 gap-y-12">
         <FormField
           control={form.control}
           name="userName"

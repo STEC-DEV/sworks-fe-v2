@@ -14,7 +14,7 @@ const Tab = ({ configs }: { configs: TabConfig[] }) => {
   const [curIdx, setCurIdx] = useState<number>(0);
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex justify-between items-center border-b">
+      <div className="flex justify-between items-center border-b-2">
         <div className="flex gap-4  ">
           {configs.map((c, i) => (
             <TabBox

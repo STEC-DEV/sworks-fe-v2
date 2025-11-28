@@ -1,9 +1,9 @@
-import { KeyValueItem } from "@/app/(user)/equipment/[id]/[history-id]/page";
 import BaseSkeleton from "@/components/common/base-skeleton";
 import CustomCard from "@/components/common/card";
+import { KeyValueItem } from "@/components/ui/custom/key-value";
 import { format } from "date-fns";
 import Link from "next/link";
-import { useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 
 interface TaskBoxProps {
   data: Task;
@@ -36,19 +36,36 @@ export const TaskBox = ({ data }: TaskBoxProps) => {
     }
   };
 
+  const statusData = useMemo(() => {
+    if (!data || data.users.length < 1) return { total: 0, done: 0, active: 0 };
+
+    const total = data.users.length;
+    const done = data.users.filter(
+      (user) => user.repeats === user.counts
+    ).length;
+    const active = data.users.filter(
+      (user) => user.repeats !== user.counts
+    ).length;
+
+    return { total, done, active };
+  }, [data]);
+
+  const isComplete =
+    statusData.total > 0 && statusData.total === statusData.done;
+
   const status = () => {
-    var total = 0;
-    var done = 0;
-    var active = 0;
+    let total = 0;
+    let done = 0;
+    let active = 0;
     if (!data) return <BaseSkeleton />;
-    console.log(1);
+
     if (data.users.length < 1)
       return <StatusBox total={total} done={done} active={active} />;
-    console.log(3);
 
     total = data.users.length;
     done = data.users.filter((user) => user.repeats === user.counts).length;
     active = data.users.filter((user) => user.repeats !== user.counts).length;
+
     return <StatusBox total={total} done={done} active={active} />;
   };
 
@@ -56,7 +73,7 @@ export const TaskBox = ({ data }: TaskBoxProps) => {
     <Link href={`/daily/${data.taskSeq}/${data.workDt}`}>
       <CustomCard
         ref={cardRef}
-        className="relative"
+        className={`relative ${isComplete && "border-blue-500 bg-blue-50"}`}
         variant={"list"}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={() => setIsHover(false)}
@@ -68,12 +85,20 @@ export const TaskBox = ({ data }: TaskBoxProps) => {
             {taskDuration()}
           </span>
         </div>
-        {status()}
+        {!data ? (
+          <BaseSkeleton />
+        ) : (
+          <StatusBox
+            total={statusData.total}
+            done={statusData.done}
+            active={statusData.active}
+          />
+        )}
 
         <CustomCard
-          className={`xl:w-50 flex-col gap-2 absolute top-0 bg-blue-50 shadow-lg z-10 ${
-            isHover ? "flex" : "hidden"
-          } ${showLeft ? "right-full mr-2" : "left-full ml-2"}`}
+          className={` md:w-50 flex-col gap-2 absolute top-0 bg-blue-50 shadow-lg z-10 ${
+            isHover ? "hidden md:flex" : "hidden"
+          } ${showLeft ? "right-full mr-2" : "left-full ml-2"} `}
           variant={"list"}
         >
           {data.users.length > 0 ? (

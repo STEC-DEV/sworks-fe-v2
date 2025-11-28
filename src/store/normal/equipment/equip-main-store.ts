@@ -1,12 +1,20 @@
 import api from "@/lib/api/api-manager";
 import { useAuthStore } from "@/store/auth/auth-store";
+import { useUIStore } from "@/store/common/ui-store";
 import { Response } from "@/types/common/response";
 import { ListData, ListMeta, ListState } from "@/types/list-type";
+import { paramsCheck } from "@/utils/param";
+import { toast } from "sonner";
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 
+export const EQUIPMENT_LOADING_KEYS = {
+  LIST: "equipment_list",
+} as const;
+
 interface EquipmentMainState {
-  equipmentList: ListState<EquipmentListItem>;
+  loadingKeys: typeof EQUIPMENT_LOADING_KEYS;
+  equipmentList: ListData<EquipmentListItem> | null;
   getEquipmentList: (params: URLSearchParams) => Promise<void>;
   postAddEquipment: (value: FormData) => Promise<Response<number>>;
 }
@@ -15,32 +23,34 @@ export const useEquipmentMainStore = create<EquipmentMainState>()(
   devtools(
     persist<EquipmentMainState>(
       (set, get) => ({
-        equipmentList: { type: "loading" },
+        loadingKeys: EQUIPMENT_LOADING_KEYS,
+        equipmentList: null,
         getEquipmentList: async (params) => {
-          if (
-            params.size === 0 ||
-            !params.get("pageNumber") ||
-            !params.get("pageSize")
-          ) {
-            params.set("pageNumber", "1");
-            params.set("pageSize", "20");
-          }
+          const checkParams = paramsCheck(params);
           //사업장 조회
           const { enteredWorkplace } = useAuthStore.getState();
           if (!enteredWorkplace) return;
+          const { setLoading, setError } = useUIStore.getState();
+          setLoading(EQUIPMENT_LOADING_KEYS.LIST, true);
+          checkParams.set("siteSeq", enteredWorkplace?.siteSeq.toString());
           try {
             const res: Response<ListData<EquipmentListItem>> = await api
               .get(`equipment/w/sign/getequipmentlist`, {
-                searchParams: {
-                  siteSeq: enteredWorkplace?.siteSeq,
-                  ...Object.fromEntries(params),
-                },
+                searchParams: checkParams,
               })
               .json();
 
-            set({ equipmentList: { type: "data", payload: res.data } });
+            set({ equipmentList: res.data });
           } catch (err) {
-            console.log(err);
+            console.error(err);
+            const errMessage =
+              err instanceof Error
+                ? err.message
+                : "장비 조회 문제가 발생하였습니다. 잠시후 다시 시도해주세요.";
+            setError(EQUIPMENT_LOADING_KEYS.LIST, errMessage);
+            toast.error(errMessage);
+          } finally {
+            setLoading(EQUIPMENT_LOADING_KEYS.LIST, false);
           }
         },
         postAddEquipment: async (value) => {

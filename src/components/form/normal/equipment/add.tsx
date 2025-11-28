@@ -1,5 +1,7 @@
 import { DateFormItem } from "@/components/common/form-input/date-field";
-import FileFormItem from "@/components/common/form-input/file-field";
+import FileFormItem, {
+  ImageFormItem,
+} from "@/components/common/form-input/file-field";
 import SelectFormItem from "@/components/common/form-input/select-field";
 import { TextFormItem } from "@/components/common/form-input/text-field";
 import CommonFormContainer from "@/components/ui/custom/form/form-container";
@@ -33,7 +35,7 @@ const formSchema = z.object({
   buyDt: z.date(),
 
   manager: z.string().min(1, "관리 부서를 입력해주세요."),
-  images: z.array(z.instanceof(File)),
+  images: z.instanceof(File).nullable(),
 });
 
 export type BasicFormType = z.infer<typeof formSchema>;
@@ -59,7 +61,7 @@ const EquipmentAddForm = ({ onNext }: EquipmentAddFormProps) => {
       cost: "",
       buyDt: new Date(),
       manager: "",
-      images: [],
+      images: null,
     },
   });
 
@@ -216,14 +218,13 @@ const EquipmentAddForm = ({ onNext }: EquipmentAddFormProps) => {
         control={form.control}
         name="images"
         render={({ field }) => (
-          <FileFormItem
-            label="첨부파일"
-            accept="accept"
+          <ImageFormItem
+            label="이미지"
             multiple={false}
             {...field}
             value={field.value}
+            isRemove
             onChange={field.onChange}
-            imageOnly
           />
         )}
       />

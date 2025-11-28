@@ -25,13 +25,13 @@ interface CreateBuilding {
   firePanelType: number | undefined;
   sprinklerYn: boolean;
   gasExtYn: boolean;
-  images: File[];
+  images: File | null;
   hvacDetails: DynamicDetail[];
   pumpDetails: DynamicDetail[];
 }
 
 interface DynamicDetail {
-  typeSeq: number; //
+  typeSeq: number; //8 냉난방, 9 펌프
   capacity?: number; //냉난방 only - 냉난방용량
   flowRate?: number; // 펌프 only - 토출량
   totalHead?: number; // 펌프 only - 전양정

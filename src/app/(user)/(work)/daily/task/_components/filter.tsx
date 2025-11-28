@@ -1,4 +1,3 @@
-import IconButton from "@/components/common/icon-button";
 import CommonFilter, {
   FilterConfig,
 } from "@/components/ui/custom/filter.tsx/common-filter";
@@ -15,10 +14,6 @@ const TaskFilter = () => {
   const [filterConfig, setFilterConfig] = useState<FilterConfig[]>([]);
 
   useEffect(() => {
-    handleFilterConfig();
-  }, [basicCode]);
-
-  const handleFilterConfig = () => {
     if (!basicCode || !basicCode.contractCodes) return;
     const data = convertSelectOptionType(basicCode.contractCodes);
     const convertData = convertKeyValueArrayToRecord(data);
@@ -32,7 +27,23 @@ const TaskFilter = () => {
         data: convertData, // 중괄호 제거
       },
     ]);
-  };
+  }, [basicCode, setFilterConfig]);
+
+  // const handleFilterConfig = () => {
+  //   if (!basicCode || !basicCode.contractCodes) return;
+  //   const data = convertSelectOptionType(basicCode.contractCodes);
+  //   const convertData = convertKeyValueArrayToRecord(data);
+
+  //   setFilterConfig((prev) => [
+  //     ...prev,
+  //     {
+  //       key: "serviceTypeSeq",
+  //       placeholder: "유형",
+  //       icon: ReceiptTextIcon,
+  //       data: convertData, // 중괄호 제거
+  //     },
+  //   ]);
+  // };
 
   return <CommonFilter filters={filterConfig} />;
 };

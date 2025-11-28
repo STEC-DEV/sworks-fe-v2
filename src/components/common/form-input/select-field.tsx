@@ -71,7 +71,7 @@ const SelectFormItem = <T extends FieldValues>({
       >
         <FormControl>
           <SelectTrigger
-            className={`w-full text-sm  rounded-[4px] border border-[var(--border)] shadow-none transition duration-300
+            className={`bg-white w-full text-sm  rounded-[4px] border border-[var(--border)] shadow-none transition duration-300
                 focus-visible:border-[var(--primary)] focus-visible:border-1 focus-visible:ring-1 focus-visible:ring-[var(--primary)]
                 hover:border-[var(--primary)] hover:cursor-pointer
                 data-[placeholder]:text-[var(--placeholder)] data-[state=open]:ring-[var(--primary)] data-[state=open]:border-[var(--primary)] data-[state=open]:ring-1 data-[state=open]:ring-inset

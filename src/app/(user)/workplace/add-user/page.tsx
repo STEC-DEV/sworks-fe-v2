@@ -12,7 +12,7 @@ import React, { useEffect, useState } from "react";
 
 const Page = () => {
   const [formResult, setFormResult] = useState<boolean>(false);
-  const [newSeq, setNewSeq] = useState<number>(-1);
+  // const [newSeq, setNewSeq] = useState<number>(-1);
   const [curStep, setCurStep] = useState<number>(1);
   const [open, setOpen] = useState<boolean>(false);
   const {
@@ -26,9 +26,8 @@ const Page = () => {
     getCreateUserClassification();
     return () => {
       resetCreateUser();
-      console.log("실행");
     };
-  }, []);
+  }, [getCreateUserClassification, resetCreateUser]);
 
   const handleNext = (values: UserTypeSelectFormType) => {
     updateCreateUser(values);
@@ -51,8 +50,8 @@ const Page = () => {
   const formsConfig = {
     titles: ["사용자유형", "기본정보"],
     forms: [
-      <UserTypeSelectForm onNext={handleNext} />,
-      <UserAddForm onPrev={handlePrev} onNext={handleSubmit} />,
+      <UserTypeSelectForm onNext={handleNext} key={1} />,
+      <UserAddForm onPrev={handlePrev} onNext={handleSubmit} key={2} />,
     ],
   };
 
@@ -68,8 +67,8 @@ const Page = () => {
         result={formResult}
         open={open}
         setOpen={setOpen}
-        successUrl={newSeq.toString()}
-        successSubUrl={"/workplace"}
+        successUrl={"/workplace"}
+        // successSubUrl={"/workplace"}
         failedUrl={"/workplace"}
       />
     </>

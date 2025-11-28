@@ -5,7 +5,8 @@ import { TextFormItem } from "@/components/common/form-input/text-field";
 import CommonFormContainer from "@/components/ui/custom/form/form-container";
 import { FormField } from "@/components/ui/form";
 import useDateValidation from "@/hooks/date/useDateSet";
-import { useWorkplaceDetailStore } from "@/store/admin/workplace/workplace-detail-store";
+import { useWorkplaceDetailContractStore } from "@/store/admin/workplace/contract-store";
+
 import { convertSelectOptionType } from "@/utils/convert";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -33,7 +34,7 @@ interface ContractAddFormProps {
 
 const ContractAddForm = ({ onNext }: ContractAddFormProps) => {
   const { workplaceContractTypeList, getWorkplaceServiceType } =
-    useWorkplaceDetailStore();
+    useWorkplaceDetailContractStore();
   const { id } = useParams();
   const form = useForm<basicFormType>({
     resolver: zodResolver(formSchema),
@@ -69,7 +70,7 @@ const ContractAddForm = ({ onNext }: ContractAddFormProps) => {
       nextLabel="생성"
       onNext={onNext}
     >
-      <div className="grid grid-cols-2 gap-x-24 gap-y-12">
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-x-24 gap-y-12">
         {workplaceContractTypeList ? (
           <FormField
             control={form.control}
@@ -134,14 +135,21 @@ const ContractAddForm = ({ onNext }: ContractAddFormProps) => {
         <FormField
           control={form.control}
           name="contractAmount"
-          render={({ field }) => (
-            <TextFormItem
-              label="금액"
-              placeholder="금액"
-              type="number"
-              {...field}
-            />
-          )}
+          render={({ field }) => {
+            const handleValue = (value: string) => {
+              console.log(value);
+              field.onChange(Number(value));
+            };
+            return (
+              <TextFormItem
+                label="금액"
+                placeholder="금액"
+                type="number"
+                {...field}
+                onChange={(e) => handleValue(e.target.value)}
+              />
+            );
+          }}
         />
       </div>
     </CommonFormContainer>

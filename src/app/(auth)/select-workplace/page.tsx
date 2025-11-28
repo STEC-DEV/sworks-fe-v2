@@ -18,7 +18,7 @@ const Page = () => {
 
   useEffect(() => {
     getAdminWorkplaceList();
-  }, []);
+  }, [getAdminWorkplaceList]);
 
   const handleEnter = (workplace: AdminWorkplaceSelectListItem) => {
     setEnter(true);
@@ -78,7 +78,7 @@ const Page = () => {
   );
 };
 
-const WorkplaceBox = ({
+export const WorkplaceBox = ({
   data,
   onClick,
 }: {

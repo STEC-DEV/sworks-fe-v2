@@ -10,6 +10,7 @@ import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 
 interface AuthState {
+  loginProfile: LoginProfile | undefined;
   normalModeProfile: LoginProfile | undefined;
   adminProfile: Admin | undefined;
   //접속 사이트 아이디
@@ -38,6 +39,7 @@ export const useAuthStore = create<AuthState>()(
   devtools(
     persist(
       (set, get) => ({
+        loginProfile: undefined,
         normalModeProfile: undefined,
         adminProfile: undefined,
         workplaceId: undefined,
@@ -81,6 +83,7 @@ export const useAuthStore = create<AuthState>()(
               .json();
 
             set({ adminProfile: res.data });
+            set({ loginProfile: res.data });
           } catch (err) {
             console.error(err);
             toast.error("관리자 프로필 조회 실패");
@@ -94,6 +97,7 @@ export const useAuthStore = create<AuthState>()(
               .json();
 
             set({ normalModeProfile: res.data });
+            set({ loginProfile: res.data });
           } catch (err) {
             console.error(err);
             toast.error("계정정보 조회 실패");

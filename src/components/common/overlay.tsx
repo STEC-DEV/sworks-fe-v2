@@ -21,23 +21,37 @@ const BaseOverlay = ({
   useEffect(() => {
     if (isOpen) {
       setShouldRender(true);
-      // 브라우저가 렌더링을 완료한 후 애니메이션 시작
-      const timer = setTimeout(() => {
-        setIsVisible(true);
-      }, 10); // 약간의 지연
+      // body 스크롤 방지
+      document.body.style.overflow = "hidden";
+
+      const timer = setTimeout(() => setIsVisible(true), 10);
       return () => clearTimeout(timer);
     } else {
       setIsVisible(false);
-      // 애니메이션 지속시간보다 약간 더 길게 설정
+      // 애니메이션 후 언마운트
       const timer = setTimeout(() => {
         setShouldRender(false);
-      }, 200); // 150ms + 여유시간
+        document.body.style.overflow = "";
+      }, 200);
       return () => clearTimeout(timer);
     }
   }, [isOpen]);
 
-  const handleBackdropClick = (e: any) => {
-    console.log("클릭");
+  // ESC 키 처리
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        onBackClick();
+      }
+    };
+
+    document.addEventListener("keydown", handleEscape);
+    return () => document.removeEventListener("keydown", handleEscape);
+  }, [isOpen, onBackClick]);
+
+  const handleBackdropClick = (e: React.MouseEvent) => {
     if (closeOnOutsideClick && e.target === e.currentTarget) {
       onBackClick();
     }
@@ -47,18 +61,23 @@ const BaseOverlay = ({
 
   return createPortal(
     <div
-      className={`
-        fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4
-        transition-all duration-150 ease-in-out
-        ${isVisible ? "opacity-100" : "opacity-0"}
-      `}
+      role="dialog"
+      aria-modal="true"
+      className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 transition-all duration-150 ease-in-out"
+      style={{
+        opacity: isVisible ? 1 : 0,
+        // zIndex: 2147483647,
+        zIndex: 51,
+        pointerEvents: "auto",
+      }}
       onClick={handleBackdropClick}
     >
       <div
-        className={`
-          transition-all duration-150 ease-in-out
-          ${isVisible ? "scale-100 opacity-100" : "scale-95 opacity-0"}
-        `}
+        className="transition-all duration-150 ease-in-out"
+        style={{
+          transform: isVisible ? "scale(1)" : "scale(0.95)",
+          opacity: isVisible ? 1 : 0,
+        }}
         onClick={(e) => e.stopPropagation()}
       >
         {children}

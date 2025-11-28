@@ -1,3 +1,4 @@
+import Button from "@/components/common/button";
 import CheckFormItem from "@/components/common/form-input/check-field";
 import SelectFormItem from "@/components/common/form-input/select-field";
 import { TextFormItem } from "@/components/common/form-input/text-field";
@@ -24,7 +25,7 @@ export const facilitySchema = z.object({
       typeSeq: z.number().optional(),
       capacity: z.number(),
       qty: z.number(),
-      comments: z.string(),
+      comments: z.string().nullable(),
     })
   ),
 });
@@ -92,7 +93,7 @@ const FacilityAddForm = ({ onNext, onPrev }: FacilityAddFormProps) => {
     >
       <div className="base-flex-col gap-6 !h-auto">
         <span className="text-md font-bold">승강기</span>
-        <div className="flex gap-12">
+        <div className="flex flex-col xl:flex-row gap-12">
           <FormField
             control={form.control}
             name="elvPassenger"
@@ -148,7 +149,7 @@ const FacilityAddForm = ({ onNext, onPrev }: FacilityAddFormProps) => {
       </div>
       <div className="base-flex-col gap-6 !h-auto">
         <span className="text-md font-bold">전기</span>
-        <div className="flex gap-12">
+        <div className="flex flex-col xl:flex-row  gap-12">
           <FormField
             control={form.control}
             name="subsCapacity"
@@ -207,8 +208,11 @@ const FacilityAddForm = ({ onNext, onPrev }: FacilityAddFormProps) => {
         </div>
         <div className="flex flex-col gap-6">
           {subFields.map((d, i) => (
-            <div className="flex items-center gap-12" key={i + d.id}>
-              {basicCode.hcCodes ? (
+            <div
+              className="flex border border-border rounded-[4px] bg-background p-6 flex-col xl:flex-row  items-center gap-12"
+              key={i + d.id}
+            >
+              {basicCode.hcCodes && (
                 <FormField
                   control={form.control}
                   name={`hvacDetails.${i}.typeSeq`}
@@ -229,7 +233,7 @@ const FacilityAddForm = ({ onNext, onPrev }: FacilityAddFormProps) => {
                     );
                   }}
                 />
-              ) : null}
+              )}
               <FormField
                 control={form.control}
                 name={`hvacDetails.${i}.capacity`}
@@ -268,13 +272,24 @@ const FacilityAddForm = ({ onNext, onPrev }: FacilityAddFormProps) => {
                 control={form.control}
                 name={`hvacDetails.${i}.comments`}
                 render={({ field }) => (
-                  <TextFormItem label="비고" placeholder="비고" {...field} />
+                  <TextFormItem
+                    label="비고"
+                    placeholder="비고"
+                    {...field}
+                    value={field.value ?? ""}
+                  />
                 )}
               />
               <IconButton
-                bgClassName="hover:bg-red-50"
+                bgClassName=" hover:bg-red-50 hidden xl:flex shrink-0"
                 className="text-red-500 "
                 icon="Trash2"
+                onClick={() => removeSub(i)}
+              />
+              <Button
+                className="xl:hidden"
+                label="삭제"
+                variant={"delete"}
                 onClick={() => removeSub(i)}
               />
             </div>

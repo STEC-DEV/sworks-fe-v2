@@ -1,4 +1,5 @@
 import api from "@/lib/api/api-manager";
+import { useUIStore } from "@/store/common/ui-store";
 import { UserServiceType } from "@/types/common/basic-code";
 import { Response } from "@/types/common/response";
 import { ListData, ListState } from "@/types/list-type";
@@ -7,8 +8,13 @@ import { toast } from "sonner";
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 
+export const REQUEST_TASK_KEYS = {
+  LIST: "request_task_list",
+} as const;
+
 interface RequestState {
-  reqTaskList: ListState<RequestListItem>;
+  loadingKeys: typeof REQUEST_TASK_KEYS;
+  reqTaskList: ListData<RequestListItem> | null;
   getRequestTask: (searchParams: URLSearchParams) => Promise<void>;
   //업무요청가능 업무유형 조회
   addServiceType: UserServiceType[] | undefined;
@@ -21,19 +27,29 @@ export const useRequestTaskStore = create<RequestState>()(
   devtools(
     persist<RequestState>(
       (set, get) => ({
-        reqTaskList: { type: "loading" },
+        loadingKeys: REQUEST_TASK_KEYS,
+        reqTaskList: null,
         getRequestTask: async (searchParams) => {
           const check = paramsCheck(searchParams);
+          const { setError, setLoading } = useUIStore.getState();
+          setLoading(REQUEST_TASK_KEYS.LIST, true);
           try {
             const res: Response<ListData<RequestListItem>> = await api
               .get(`siteRequest/w/sign/getsiterequestlist`, {
                 searchParams: check,
               })
               .json();
-            set({ reqTaskList: { type: "data", payload: res.data } });
+            set({ reqTaskList: res.data });
           } catch (err) {
             console.error(err);
-            toast.error("조회 실패");
+            const errMessage =
+              err instanceof Error
+                ? err.message
+                : "업무요청 조회 문제가 발생하였습니다. 잠시후 다시 시도해주세요.";
+            setError(REQUEST_TASK_KEYS.LIST, errMessage);
+            toast.error(errMessage);
+          } finally {
+            setLoading(REQUEST_TASK_KEYS.LIST, false);
           }
         },
         addServiceType: undefined,

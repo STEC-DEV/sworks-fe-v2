@@ -1,5 +1,7 @@
 import Button from "@/components/common/button";
-import FileFormItem from "@/components/common/form-input/file-field";
+import FileFormItem, {
+  ImageFormItem,
+} from "@/components/common/form-input/file-field";
 import SelectFormItem from "@/components/common/form-input/select-field";
 import { TextAreaFormItem } from "@/components/common/form-input/text-field";
 import { Form, FormField } from "@/components/ui/form";
@@ -11,6 +13,7 @@ import { convertSelectOptionType, objectToFormData } from "@/utils/convert";
 import { zodResolver } from "@hookform/resolvers/zod";
 import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import z from "zod";
 
 const formSchema = z.object({
@@ -54,7 +57,6 @@ const ReplyEditForm = ({ data, onClose }: ReplyEditFormProps) => {
   }, [form, data]);
 
   const handleSubmit = async (values: ReplyEditFormType) => {
-    console.log("여기옴");
     const formData = objectToFormData(values);
     await patchUpdateReply(formData);
     await getVocDetail(rawValue);
@@ -98,12 +100,20 @@ const ReplyEditForm = ({ data, onClose }: ReplyEditFormProps) => {
               control={form.control}
               name="insertAttaches"
               render={({ field }) => {
-                const handleRemove = (data: string) => {
+                const handleRemove = (file: string) => {
                   const curRemoveFiles = form.getValues("deleteAttaches") || [];
+                  const exitedFiles = data.attaches.filter(
+                    (v) => !curRemoveFiles.includes(v.attachSeq)
+                  );
+                  const removeFile = exitedFiles.find(
+                    (v) => v.path === file
+                  )?.attachSeq;
+                  if (!removeFile)
+                    return toast.error("삭제할 이미지가 존재하지 않습니다.");
 
                   form.setValue("deleteAttaches", [
                     ...curRemoveFiles,
-                    parseInt(data),
+                    removeFile,
                   ]);
                 };
 
@@ -111,19 +121,20 @@ const ReplyEditForm = ({ data, onClose }: ReplyEditFormProps) => {
                   const curRemoveFiles = form.watch("deleteAttaches") || [];
                   return data.attaches
                     .filter((v, i) => !curRemoveFiles.includes(v.attachSeq))
-                    .map((v) => v.attachSeq.toString());
+                    .map((v) => v.path);
                 };
-                const handleValue = () => {};
+
                 return (
-                  <FileFormItem
-                    label="첨부파일"
+                  <ImageFormItem
+                    label="이미지"
+                    id="req-edit"
+                    multiple={true}
+                    {...field}
                     value={field.value}
-                    existingFiles={existingFiles()}
                     onChange={field.onChange}
-                    onRemoveExitedFiles={handleRemove}
-                    multiple
-                    imageOnly
-                    isVertical
+                    max={3}
+                    existingFiles={existingFiles()}
+                    onRemoveExistingFile={handleRemove}
                   />
                 );
               }}

@@ -27,6 +27,7 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui/form";
+import { useWorkplaceDetailChecklistStore } from "@/store/admin/workplace/checklist-store";
 
 const formSchema = z.object({
   chkMainSeq: z
@@ -46,11 +47,11 @@ const ChecklistAddForm = ({ onPrev, onNext }: ChecklistAddFormProps) => {
   const {
     selectedAvailableChecklistItem,
     updateSelectedAvailableChecklistItem,
-  } = useWorkplaceDetailStore();
+  } = useWorkplaceDetailChecklistStore();
   const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
   // 로컬 상태로 드래그 가능한 아이템들 관리
   const [items, setItems] = useState(selectedAvailableChecklistItem || []);
-  const { createChecklist } = useWorkplaceDetailStore();
+  const { createChecklist } = useWorkplaceDetailChecklistStore();
 
   const form = useForm<ChecklistAddFormType>({
     resolver: zodResolver(formSchema),

@@ -7,38 +7,52 @@ import {
   DragOverlay,
   DragStartEvent,
 } from "@dnd-kit/core";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import MonthSchedule, { MonthScheduleItem } from "./_components/month";
-import { monthSchedules } from "@/types/normal/schedule/month";
+
 import { format } from "date-fns";
 import { useScheduleStore } from "@/store/normal/schedule/shcedule-store";
 import { useSearchParams } from "next/navigation";
+import { CalendarDays } from "lucide-react";
 
 const Page = () => {
-  const { getDaySchedule } = useScheduleStore();
+  const { monthSchedules, getDaySchedule, postMonthToDay } = useScheduleStore();
   const [activeId, setActiveId] = useState<number | null>(null);
-  const activeItem = monthSchedules.find((item) => item.planSeq === activeId);
+  const activeItem = monthSchedules?.find((item) => item.planSeq === activeId);
   const searchParams = useSearchParams();
 
-  useEffect(() => {
+  const currentYearMonth = useMemo(() => {
     const year = searchParams.get("year");
     const month = searchParams.get("month");
-    if (!year || !month) {
-      const date = new Date();
-      getDaySchedule(`${format(date, "yyyy")}-${format(date, "MM")}`);
-    } else {
-      getDaySchedule(`${year}-${month}`);
-    }
+    return year && month
+      ? `${year}-${month}`
+      : `${format(new Date(), "yyyy")}-${format(new Date(), "MM")}`;
   }, [searchParams]);
+
+  useEffect(() => {
+    getDaySchedule(currentYearMonth);
+  }, [searchParams, getDaySchedule]);
 
   /**
    * 드래그 종료
    */
-  const handleDragEnd = (e: DragEndEvent) => {
-    // if (e.over === null || !e.active) return;
+  const handleDragEnd = async (e: DragEndEvent) => {
+    console.log(e);
+    if (e.over === null || !e.active) return;
     // //월간일정 -> 일간일정 등록요청 로직
     // console.log("전송 데이터");
-    // console.log("월간일정 시퀀스 : ", e.active.data.current?.id);
+    console.log("월간일정 시퀀스 : ", e.active.data.current?.id);
+    const monthSeq = e.active.data.current?.id;
+    const date = e.over.data.current as Date;
+    console.log(date);
+    if (!monthSeq || !date) return;
+    const schedule = monthSchedules?.find((item) => item.planSeq === monthSeq);
+
+    if (!schedule) return;
+
+    await postMonthToDay(schedule, date);
+    await getDaySchedule(currentYearMonth);
+
     // console.log(
     //   "월간일정 데이터 : ",
     //   monthSchedules.find((item) => item.monthSeq === e.active.data.current?.id)
@@ -60,14 +74,14 @@ const Page = () => {
     setActiveId(e.active.data.current?.id);
   };
   return (
-    <>
-      <AppTitle title="일정" />
+    <div className="flex flex-col gap-4 xl:h-full">
+      <AppTitle title="일정" icon={CalendarDays} />
       <DndContext
         onDragEnd={handleDragEnd}
         onDragStart={handleDragStart}
         // autoScroll={false} 반응형 시 스크롤이 필요함
       >
-        <div className="flex flex-col xl:flex-row gap-12 h-screen min-h-0">
+        <div className="flex flex-col  xl:flex-row gap-12  xl:h-full">
           <DroppableCalendar />
           <MonthSchedule />
         </div>
@@ -77,7 +91,7 @@ const Page = () => {
           ) : null}
         </DragOverlay>
       </DndContext>
-    </>
+    </div>
   );
 };
 

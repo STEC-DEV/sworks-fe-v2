@@ -9,7 +9,6 @@ import React, { useEffect, useState } from "react";
 
 const Page = () => {
   const [formResult, setFormResult] = useState<boolean>(false);
-  const [newSeq, setNewSeq] = useState<number>(-1);
   const [curStep, setCurStep] = useState<number>(1);
   const [open, setOpen] = useState<boolean>(false);
   const {
@@ -25,7 +24,7 @@ const Page = () => {
     return () => {
       resetCreateBuilding();
     };
-  }, []);
+  }, [getConstruction, resetCreateBuilding]);
 
   const handleBuildingNext = (values: Record<string, any>) => {
     setCreateBuilding(values);
@@ -42,7 +41,7 @@ const Page = () => {
     const updateData = { ...values, buildingSeq: construction.buildingSeq };
     setCreateBuilding(updateData);
     const res = await postAddBuilding();
-    res.data ? setFormResult(true) : setFormResult(false);
+    setFormResult(res.data);
     nextPage();
     setOpen(true);
   };

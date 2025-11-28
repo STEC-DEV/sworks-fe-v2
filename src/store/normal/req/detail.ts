@@ -1,12 +1,18 @@
 import api from "@/lib/api/api-manager";
+import { useUIStore } from "@/store/common/ui-store";
 import { Response } from "@/types/common/response";
 import { Request, RequestWorker } from "@/types/normal/request/req-detail";
 import { toast } from "sonner";
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 
+export const REQUEST_TASK_DETAIL_LOADING_KEYS = {
+  INFO: "request_task_detail",
+} as const;
+
 interface ReqDetailState {
-  request: Request | undefined;
+  loadingKeys: typeof REQUEST_TASK_DETAIL_LOADING_KEYS;
+  request: Request | null;
   getRequestDetail: (id: string) => Promise<void>;
   patchUpdateRequestDetail: (formData: FormData) => Promise<boolean>;
   //업무요청 처리 담당자 조회
@@ -22,8 +28,11 @@ export const useReqDetailStore = create<ReqDetailState>()(
   devtools(
     persist<ReqDetailState>(
       (set, get) => ({
-        request: undefined,
+        loadingKeys: REQUEST_TASK_DETAIL_LOADING_KEYS,
+        request: null,
         getRequestDetail: async (id) => {
+          const { setError, setLoading } = useUIStore.getState();
+          setLoading(REQUEST_TASK_DETAIL_LOADING_KEYS.INFO, true);
           try {
             const res: Response<Request> = await api
               .get("siterequest/w/sign/getdetailrequestinfo", {
@@ -33,7 +42,14 @@ export const useReqDetailStore = create<ReqDetailState>()(
             set({ request: res.data });
           } catch (err) {
             console.error(err);
-            toast.error("조회 실패");
+            const errMessage =
+              err instanceof Error
+                ? err.message
+                : "업무요청 상세조회 문제가 발생하였습니다. 잠시후 다시 시도해주세요.";
+            setError(REQUEST_TASK_DETAIL_LOADING_KEYS.INFO, errMessage);
+            toast.error(errMessage);
+          } finally {
+            setLoading(REQUEST_TASK_DETAIL_LOADING_KEYS.INFO, false);
           }
         },
         patchUpdateRequestDetail: async (data) => {

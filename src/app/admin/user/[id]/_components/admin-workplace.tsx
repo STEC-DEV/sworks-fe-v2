@@ -1,46 +1,50 @@
 "use client";
-import WorkplacePagination from "@/app/admin/workplace/components/workplace-pagination";
+
 import React, { useEffect } from "react";
 import AdminWorkplaceFilter from "./filter";
 import AdminWorkplacePagination from "./admin-workplace-pagination";
 import AppTitle from "@/components/common/label/title";
 import { useAdminDetailStore } from "@/store/admin/admin/admin-detail";
-import { useParams, useSearchParams } from "next/navigation";
-import WorkplaceCard from "@/app/admin/workplace/components/workplace-card";
+import { useRouter, useSearchParams } from "next/navigation";
+
 import BaseSkeleton from "@/components/common/base-skeleton";
 
+import { workplaceColumns } from "@/app/admin/workplace/components/workplace-colums";
+import BaseTable from "@/components/common/base-table";
+import { useDecodeParam } from "@/hooks/params";
+import { useUIStore } from "@/store/common/ui-store";
+
 const AdminWorkplaceList = () => {
-  const { adminWorkplaceList, getAdminWorkplaceList } = useAdminDetailStore();
+  const router = useRouter();
+  const { adminWorkplaceList, getAdminWorkplaceList, loadingKeys } =
+    useAdminDetailStore();
+  const { isLoading, hasError } = useUIStore();
   const searchParams = useSearchParams();
-  const { id } = useParams<{ id: string }>();
+  const { rawValue: id } = useDecodeParam("id");
 
   useEffect(() => {
     getAdminWorkplaceList(new URLSearchParams(searchParams), id);
-  }, []);
-
-  useEffect(() => {
-    getAdminWorkplaceList(new URLSearchParams(searchParams), id);
-  }, [searchParams]);
+  }, [searchParams, id]);
 
   const dataList = () => {
-    if (adminWorkplaceList.type === "loading") {
+    if (isLoading(loadingKeys.WORKPLACE) || !adminWorkplaceList) {
       return <BaseSkeleton />;
     }
-    if (adminWorkplaceList.type === "error") {
-      return <BaseSkeleton />;
+    if (hasError(loadingKeys.WORKPLACE)) {
+      return <div>에러 발생</div>;
     }
 
     return (
-      <div className="flex flex-col gap-2">
-        {adminWorkplaceList.payload.data.map((w, i) => (
-          <WorkplaceCard key={i} item={w} />
-        ))}
-      </div>
+      <BaseTable
+        columns={workplaceColumns}
+        data={adminWorkplaceList.data}
+        onRowClick={(data) => router.push(`/admin/workplace/${data.siteSeq}`)}
+      />
     );
   };
 
   return (
-    <div className="w-full flex flex-col gap-6">
+    <div className="w-full flex flex-col gap-4">
       <AppTitle title="담당 사업장" />
       <AdminWorkplaceFilter />
       <AdminWorkplacePagination />

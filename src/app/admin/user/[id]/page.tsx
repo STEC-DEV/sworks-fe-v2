@@ -4,7 +4,7 @@ import AdminWorkplaceList from "./_components/admin-workplace";
 
 const Page = () => {
   return (
-    <div className="flex gap-12">
+    <div className="flex flex-col gap-12 xl:flex-row">
       <ProfileCard />
       <AdminWorkplaceList />
     </div>

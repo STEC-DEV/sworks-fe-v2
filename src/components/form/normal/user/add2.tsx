@@ -60,7 +60,7 @@ const UserAddForm = ({ onNext, onPrev }: UserAddFormProps) => {
       onNext={onNext}
       onPrev={onPrev}
     >
-      <div className="grid grid-cols-2 gap-x-24 gap-y-12">
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-x-24 gap-y-12">
         <FormField
           control={form.control}
           name="userName"
@@ -102,7 +102,9 @@ const UserAddForm = ({ onNext, onPrev }: UserAddFormProps) => {
                       ? field.value[0].toString()
                       : undefined
                   }
-                  onValueChange={() => {}}
+                  onValueChange={(value) => {
+                    field.onChange([parseInt(value)]); // 배열로 감싸고 숫자로 변환
+                  }}
                   selectItem={convertSelectOptionType(
                     createUserClassification?.serviceTypes ?? []
                   )}

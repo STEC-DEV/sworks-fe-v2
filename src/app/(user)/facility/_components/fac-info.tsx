@@ -2,9 +2,10 @@
 import CustomCard from "@/components/common/card";
 import IconButton from "@/components/common/icon-button";
 import AppTitle from "@/components/common/label/title";
+import { useDecodeParam } from "@/hooks/params";
 import { Attach, FacilityDetail } from "@/types/normal/facility/fac-detail";
 import { format } from "date-fns";
-import { Download, DownloadIcon, FileTextIcon } from "lucide-react";
+import { FileTextIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React from "react";
 import { toast } from "sonner";
@@ -15,11 +16,12 @@ interface FacInfoProps {
 }
 
 const FacInfo = ({ data, title }: FacInfoProps) => {
+  const { rawValue } = useDecodeParam("type");
   const router = useRouter();
 
   return (
     <div className="w-full flex flex-col gap-6">
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center pb-4 border-b-2 border-border">
         <AppTitle title={title} />
         <IconButton
           icon="SquarePen"
@@ -30,20 +32,33 @@ const FacInfo = ({ data, title }: FacInfoProps) => {
       <div className="flex flex-col gap-4">
         <KeyValue label="R&M 유형" value={data.facilityCodeName} />
         <KeyValue label="설명" value={data.description} />
-        <KeyValue label="시작" value={format(data.fromDt, "yyyy-MM-dd")} />
         <KeyValue
-          label="종료"
-          value={format(data.toDt || "내용없음", "yyyy-MM-dd")}
+          label={`${rawValue === "mro" ? "반입" : "시작"}`}
+          value={format(data.fromDt, "yyyy-MM-dd")}
         />
+        {rawValue !== "mro" ? (
+          <KeyValue
+            label="종료"
+            value={data.toDt ? format(data.toDt, "yyyy-MM-dd") : "내용없음"}
+          />
+        ) : null}
+
         <KeyValue label="업체" value={data.constractor} />
         <KeyValue label="연락처" value={data.tel || "내용없음"} />
         <KeyValue label="비용" value={`${data.cost}원` || "0원"} />
       </div>
-      <span className="text-lg font-bold">보고서</span>
+      <div className="pb-4 border-b-2 border-border">
+        <span className="text-lg font-bold">보고서</span>
+      </div>
+
       <div className="space-y-2">
-        {data.attaches.length > 0
-          ? data.attaches.map((f, i) => <FileBox key={i} file={f} />)
-          : null}
+        {data.attaches.length > 0 ? (
+          data.attaches.map((f, i) => <FileBox key={i} file={f} />)
+        ) : (
+          <span className="text-sm text-[var(--description-light)]">
+            보고서가 존재하지않습니다.
+          </span>
+        )}
       </div>
     </div>
   );
@@ -58,7 +73,7 @@ const KeyValue = ({ label, value }: { label: string; value: string }) => {
   );
 };
 
-const FileBox = ({ file }: { file: Attach }) => {
+export const FileBox = ({ file }: { file: Attach }) => {
   return (
     <CustomCard
       className="flex-row items-center justify-between hover:cursor-default"

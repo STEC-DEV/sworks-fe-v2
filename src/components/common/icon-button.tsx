@@ -20,7 +20,7 @@ const IconButton = ({
   return (
     <div
       className={cn(
-        "p-2 rounded-[50px] hover:bg-[var(--background)] hover:cursor-pointer",
+        "group p-2 rounded-[50px] hover:bg-[var(--background)] hover:cursor-pointer",
         bgClassName
       )}
       {...props}

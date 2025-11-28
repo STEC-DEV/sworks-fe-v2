@@ -9,7 +9,11 @@ export const reqCol: ColumnDef<RequestListItem>[] = [
     header: "유형",
     cell: ({ row }) => {
       const value = row.original.serviceTypeName;
-      return value;
+      return (
+        <span className="text-xs text-[var(--description-dark)] font-medium">
+          {value}
+        </span>
+      );
     },
   },
   {
@@ -17,7 +21,7 @@ export const reqCol: ColumnDef<RequestListItem>[] = [
     header: "제목",
     cell: ({ row }) => {
       const value = row.original.title;
-      return value;
+      return <span className="text-xs font-medium">{value}</span>;
     },
   },
   {
@@ -25,7 +29,7 @@ export const reqCol: ColumnDef<RequestListItem>[] = [
     header: "요청자",
     cell: ({ row }) => {
       const value = row.original.userName;
-      return value;
+      return <span className="text-xs">{value}</span>;
     },
   },
   {
@@ -33,7 +37,7 @@ export const reqCol: ColumnDef<RequestListItem>[] = [
     header: "요청일시",
     cell: ({ row }) => {
       const value = format(row.original.createDt, "yyyy-MM-dd");
-      return value;
+      return <span className="text-xs">{value}</span>;
     },
   },
 
@@ -44,7 +48,7 @@ export const reqCol: ColumnDef<RequestListItem>[] = [
       const value = row.original.completeDt
         ? format(row.original.completeDt, "yyyy-MM-dd")
         : null;
-      return value;
+      return <span className="text-xs">{value}</span>;
     },
   },
   {
@@ -52,7 +56,7 @@ export const reqCol: ColumnDef<RequestListItem>[] = [
     header: "소요시간",
     cell: ({ row }) => {
       const value = row.original.durationTime;
-      return value;
+      return <span className="text-xs">{value}</span>;
     },
   },
   {

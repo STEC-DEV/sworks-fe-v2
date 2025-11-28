@@ -4,31 +4,31 @@ import IconButton from "@/components/common/icon-button";
 import VocAddForm from "@/components/form/normal/voc/add";
 import BaseDialog from "@/components/ui/custom/base-dialog";
 import CommonPagination from "@/components/ui/custom/pagination/common-pagination";
+import { useUIStore } from "@/store/common/ui-store";
 import { useVocStore } from "@/store/normal/voc/voc-store";
 import { convertRecordDataToFormData } from "@/utils/convert";
 import { useSearchParams } from "next/navigation";
 import React, { useState } from "react";
-import { toast } from "sonner";
 
 const VocPagination = () => {
   const [open, setOpen] = useState<boolean>(false);
-  const { vocList, postAddVoc, getVocList } = useVocStore();
+  const { vocList, postAddVoc, getVocList, loadingKeys } = useVocStore();
+  const { isLoading, hasError } = useUIStore();
   const searchParams = useSearchParams();
   const handleSubmit = async (values: any) => {
-    console.log(values);
     //결과처리 로직
     const formData = convertRecordDataToFormData(values);
-    const res = await postAddVoc(formData);
-    res.data ? toast.success("등록") : toast.error("실패");
-    await getVocList(new URLSearchParams(searchParams));
+    await postAddVoc(formData);
     setOpen(false);
+    await getVocList(new URLSearchParams(searchParams));
   };
 
-  if (vocList.type === "loading") return <BaseSkeleton className="h-10" />;
-  if (vocList.type === "error") return;
+  if (isLoading(loadingKeys.LIST) || !vocList)
+    return <BaseSkeleton className="h-9" />;
+  if (hasError(loadingKeys.LIST)) return <div>에러 발생</div>;
   return (
     <div className="flex gap-4 items-center">
-      <CommonPagination totalCount={vocList.payload.meta.totalCount} />
+      <CommonPagination totalCount={vocList.meta.totalCount} />
       <BaseDialog
         triggerChildren={<IconButton icon={"Plus"} />}
         title="민원 접수"

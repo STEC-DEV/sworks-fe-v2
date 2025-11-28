@@ -1,12 +1,20 @@
 import api from "@/lib/api/api-manager";
+import { useUIStore } from "@/store/common/ui-store";
 import { WorkplaceListItem } from "@/types/admin/workplace/workplace-list";
 import { Response } from "@/types/common/response";
-import { ListMeta, ListState } from "@/types/list-type";
+import { ListData } from "@/types/list-type";
+import { paramsCheck } from "@/utils/param";
+import { toast } from "sonner";
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 
+export const ADMIN_WORKPLACE_LOADING_KEYS = {
+  LIST: "admin_workplace-list",
+} as const;
+
 interface WorkplaceListState {
-  workplaceList: ListState<WorkplaceListItem>;
+  workplaceList: ListData<WorkplaceListItem> | null;
+  loadingKeys: typeof ADMIN_WORKPLACE_LOADING_KEYS;
   getWorkplaceList: () => Promise<void>;
   postAddWorkplace: (value: Record<string, any>) => Promise<Response<number>>;
 }
@@ -15,39 +23,35 @@ export const useWorkplaceListStore = create<WorkplaceListState>()(
   devtools(
     persist<WorkplaceListState>(
       (set, get) => ({
-        workplaceList: { type: "loading" },
+        workplaceList: null,
+        loadingKeys: ADMIN_WORKPLACE_LOADING_KEYS,
         getWorkplaceList: async () => {
-          if (typeof window === "undefined") return;
-          const params = new URLSearchParams(window.location.search);
+          const { setLoading, setError } = useUIStore.getState();
+          const loadingKey = ADMIN_WORKPLACE_LOADING_KEYS.LIST;
+          setLoading(loadingKey, true);
+          try {
+            if (typeof window === "undefined") return;
+            const params = new URLSearchParams(window.location.search);
+            const checkParams = paramsCheck(params);
 
-          if (
-            params.size === 0 ||
-            !params.get("pageNumber") ||
-            !params.get("pageSize")
-          ) {
-            params.set("pageNumber", "1");
-            params.set("pageSize", "20");
-          }
+            const res: Response<ListData<WorkplaceListItem>> = await api
+              .get(`Site/W/sign/AllSiteList`, {
+                searchParams: checkParams,
+              })
+              .json();
 
-          const res = await api.get(`Site/W/sign/AllSiteList`, {
-            searchParams: params,
-          });
-
-          /**에러 발생 */
-          if (!res.ok) {
             set({
-              workplaceList: { type: "error", error: "데이터 조회 실패" },
+              workplaceList: res.data,
             });
-            return;
+          } catch (err) {
+            console.error(err);
+            const errorMessage =
+              err instanceof Error ? err.message : "사업장 목록 조회 실패";
+            setError(loadingKey, errorMessage);
+            toast.error(errorMessage);
+          } finally {
+            setLoading(loadingKey, false); // 항상 로딩 종료
           }
-          const response = (await res.json()) as Response<{
-            data: WorkplaceListItem[];
-            meta: ListMeta;
-          }>;
-
-          set({
-            workplaceList: { type: "data", ...response.data },
-          });
         },
         postAddWorkplace: async (value) => {
           try {

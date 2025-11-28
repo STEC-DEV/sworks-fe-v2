@@ -1,20 +1,25 @@
 import BaseSkeleton from "@/components/common/base-skeleton";
-import DataTable from "@/components/common/data-table";
 import { useVocStore } from "@/store/normal/voc/voc-store";
 import React from "react";
+import BaseTable from "@/components/common/base-table";
 import { vocListCol } from "./voc-columns";
+import { useUIStore } from "@/store/common/ui-store";
+import { useRouter } from "next/navigation";
 
 const VocList = () => {
-  const { vocList } = useVocStore();
+  const { vocList, loadingKeys } = useVocStore();
+  const { isLoading, hasError } = useUIStore();
+  const router = useRouter();
 
-  if (vocList.type === "loading") return <BaseSkeleton />;
-  if (vocList.type === "error") return;
+  if (isLoading(loadingKeys.LIST) || !vocList)
+    return <BaseSkeleton className="flex-1" />;
+  if (hasError(loadingKeys.LIST)) return <div>에러 발생</div>;
+
   return (
-    <DataTable
+    <BaseTable
       columns={vocListCol}
-      data={vocList.payload.data}
-      idName="logSeq"
-      baseUrl="voc"
+      data={vocList.data}
+      onRowClick={(data) => router.push(`/voc/${data.logSeq}`)}
     />
   );
 };

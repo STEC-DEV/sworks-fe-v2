@@ -26,4 +26,9 @@ export const dialogText = {
     description: "이 작업은 되돌릴 수 없습니다.",
     actionLabel: "삭제",
   },
+  taskCoverAdd: {
+    title: "업무처리",
+    description: "님의 업무를 관리자 권한으로 처리하시겠습니까?",
+    actionLabel: "확인",
+  },
 } as const;

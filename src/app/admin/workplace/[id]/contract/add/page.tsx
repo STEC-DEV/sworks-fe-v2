@@ -4,16 +4,17 @@ import ContractAddForm, {
 } from "@/components/form/admin/workplace/contract-add";
 import FormLayout from "@/components/layout/form-layout";
 import ResultDialog from "@/components/ui/custom/form/result-dialog";
-import { useWorkplaceDetailStore } from "@/store/admin/workplace/workplace-detail-store";
+import { useWorkplaceDetailContractStore } from "@/store/admin/workplace/contract-store";
+
 import { format } from "date-fns";
 import { useParams } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
 const Page = () => {
   const [formResult, setFormResult] = useState<boolean>(false);
   const [curStep, setCurStep] = useState<number>(1);
   const [open, setOpen] = useState<boolean>(false);
-  const { postAddContract } = useWorkplaceDetailStore();
+  const { postAddContract } = useWorkplaceDetailContractStore();
   const { id } = useParams();
 
   const handleNext = async (values: basicFormType) => {

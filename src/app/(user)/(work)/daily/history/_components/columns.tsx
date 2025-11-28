@@ -1,14 +1,18 @@
-import { TaskHistory } from "@/types/normal/task/task-history";
+import { TaskHistoryListItem } from "@/types/normal/task/task-history";
 import { ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
 
-export const taskHistoryCol: ColumnDef<TaskHistory>[] = [
+export const taskHistoryCol: ColumnDef<TaskHistoryListItem>[] = [
   {
     accessorKey: "targetDt",
     header: "날짜",
     cell: ({ row }) => {
       const value = row.original.targetDt;
-      return format(value, "yyyy-MM-dd");
+      return (
+        <span className="text-xs font-medium">
+          {format(value, "yyyy-MM-dd")}
+        </span>
+      );
     },
   },
   {
@@ -16,7 +20,11 @@ export const taskHistoryCol: ColumnDef<TaskHistory>[] = [
     header: "업무유형",
     cell: ({ row }) => {
       const value = row.original.serviceTypeName;
-      return value;
+      return (
+        <span className="text-xs text-[var(--description-dark)] font-medium">
+          {value}
+        </span>
+      );
     },
   },
   {
@@ -24,7 +32,7 @@ export const taskHistoryCol: ColumnDef<TaskHistory>[] = [
     header: "업무명",
     cell: ({ row }) => {
       const value = row.original.title;
-      return value;
+      return <span className="text-xs font-medium">{value}</span>;
     },
   },
   {
@@ -37,7 +45,11 @@ export const taskHistoryCol: ColumnDef<TaskHistory>[] = [
         .reduce((acc, curValue) => acc + curValue, 0);
       const progress = (totalUserCount / totalCount) * 100;
 
-      return `${progress}%`;
+      return (
+        <span className="text-[var(--description-dark)]">{`${progress.toFixed(
+          0
+        )}%`}</span>
+      );
     },
   },
 ];

@@ -12,7 +12,7 @@ import { convertSelectOptionType } from "@/utils/convert";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
 import { useSearchParams } from "next/navigation";
-import React, { useEffect } from "react";
+import React, { Suspense, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import z from "zod";
 
@@ -64,67 +64,69 @@ const MonthAddForm = ({ onClose }: { onClose: () => void }) => {
   };
 
   return (
-    <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(handleSubmit)}
-        className="w-full flex flex-col gap-6"
-      >
-        <ScrollArea className="overflow-hidden px-6">
-          <div className="flex flex-col gap-6">
-            {enteredWorkplace?.contracts ? (
+    <Suspense>
+      <Form {...form}>
+        <form
+          onSubmit={form.handleSubmit(handleSubmit)}
+          className="w-full flex flex-col gap-6"
+        >
+          <ScrollArea className="overflow-hidden px-6">
+            <div className="flex flex-col gap-6">
+              {enteredWorkplace?.contracts ? (
+                <FormField
+                  control={form.control}
+                  name="serviceTypeSeq"
+                  render={({ field }) => {
+                    const handleValue = (value: string) => {
+                      field.onChange(Number(value));
+                    };
+
+                    return (
+                      <SelectFormItem
+                        label="업무 유형"
+                        selectItem={convertSelectOptionType(
+                          enteredWorkplace.contracts ?? []
+                        )}
+                        onValueChange={handleValue}
+                        value={field.value?.toString()}
+                        required
+                      />
+                    );
+                  }}
+                />
+              ) : null}
               <FormField
                 control={form.control}
-                name="serviceTypeSeq"
-                render={({ field }) => {
-                  const handleValue = (value: string) => {
-                    field.onChange(Number(value));
-                  };
-
-                  return (
-                    <SelectFormItem
-                      label="업무 유형"
-                      selectItem={convertSelectOptionType(
-                        enteredWorkplace.contracts ?? []
-                      )}
-                      onValueChange={handleValue}
-                      value={field.value?.toString()}
-                      required
-                    />
-                  );
-                }}
+                name="planTitle"
+                render={({ field }) => (
+                  <TextFormItem
+                    label="제목"
+                    placeholder="제목"
+                    {...field}
+                    required
+                  />
+                )}
               />
-            ) : null}
-            <FormField
-              control={form.control}
-              name="planTitle"
-              render={({ field }) => (
-                <TextFormItem
-                  label="제목"
-                  placeholder="제목"
-                  {...field}
-                  required
-                />
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="description"
-              render={({ field }) => (
-                <TextAreaFormItem
-                  label="설명"
-                  className="h-20"
-                  placeholder="설명"
-                  {...field}
-                />
-              )}
-            />
+              <FormField
+                control={form.control}
+                name="description"
+                render={({ field }) => (
+                  <TextAreaFormItem
+                    label="설명"
+                    className="h-20"
+                    placeholder="설명"
+                    {...field}
+                  />
+                )}
+              />
+            </div>
+          </ScrollArea>
+          <div className="shrink-0 px-6">
+            <Button label="생성" />
           </div>
-        </ScrollArea>
-        <div className="shrink-0 px-6">
-          <Button label="생성" />
-        </div>
-      </form>
-    </Form>
+        </form>
+      </Form>
+    </Suspense>
   );
 };
 

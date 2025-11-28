@@ -1,6 +1,8 @@
 import Button from "@/components/common/button";
 import CheckFormItem from "@/components/common/form-input/check-field";
-import FileFormItem from "@/components/common/form-input/file-field";
+import FileFormItem, {
+  ImageFormItem,
+} from "@/components/common/form-input/file-field";
 import SelectFormItem from "@/components/common/form-input/select-field";
 import {
   TextAreaFormItem,
@@ -38,7 +40,7 @@ const ReplyAddForm = () => {
       logSeq: undefined,
       content: "",
       status: undefined,
-      sendYn: false,
+      sendYn: true,
       images: [],
     },
   });
@@ -64,7 +66,7 @@ const ReplyAddForm = () => {
       logSeq: vocDetail.logs.logSeq,
       content: "",
       status: undefined,
-      sendYn: false,
+      sendYn: true,
       images: [],
     });
 
@@ -129,15 +131,13 @@ const ReplyAddForm = () => {
           control={form.control}
           name="images"
           render={({ field }) => (
-            <FileFormItem
-              label="첨부파일"
-              accept="accept"
-              multiple={true}
+            <ImageFormItem
+              label="이미지"
               {...field}
               value={field.value}
               onChange={field.onChange}
-              imageOnly
-              isVertical
+              multiple
+              max={3}
             />
           )}
         />

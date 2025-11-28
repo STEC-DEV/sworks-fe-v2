@@ -1,7 +1,13 @@
 "use client";
 import { DragEndEvent, useDroppable } from "@dnd-kit/core";
 import { format, isSameDay, isSameMonth } from "date-fns";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, {
+  Suspense,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 // import { useCalendar } from "../date-input/useCalendar";
 import IconButton from "../icon-button";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -15,6 +21,7 @@ import {
   useCalendarNavigation,
 } from "../date-input/useCalendarV2";
 import { useScheduleStore } from "@/store/normal/schedule/shcedule-store";
+import { usePermission } from "@/hooks/usePermission";
 
 interface DroppableCalendarProps {}
 
@@ -63,23 +70,25 @@ export const DroppableCalendar = ({}: DroppableCalendarProps) => {
   };
 
   return (
-    <div className="w-full h-auto xl:h-full flex flex-col gap-2  min-w-0">
-      <CalendarHeader
-        date={curDate}
-        focusDate={focusDate}
-        onNextMonth={onNext}
-        onPrevMonth={onPrev}
-        onGetData={getData}
-      />
-      <div className="w-full h-full border-y border-[var(--border)] rounded-[4px]">
-        <CalendarContent
-          weeks={weeks}
+    <Suspense>
+      <div className="w-full h-auto xl:h-full flex flex-col gap-2  min-w-0 ">
+        <CalendarHeader
+          date={curDate}
           focusDate={focusDate}
-          curDate={curDate}
-          onClickDay={handleDate}
+          onNextMonth={onNext}
+          onPrevMonth={onPrev}
+          onGetData={getData}
         />
+        <div className="w-full h-full border-y border-[var(--border)] rounded-[4px] ">
+          <CalendarContent
+            weeks={weeks}
+            focusDate={focusDate}
+            curDate={curDate}
+            onClickDay={handleDate}
+          />
+        </div>
       </div>
-    </div>
+    </Suspense>
   );
 };
 
@@ -99,6 +108,7 @@ const CalendarHeader = ({
   onPrevMonth,
   onGetData,
 }: CalendarHeaderProps) => {
+  const { canWorkerEdit } = usePermission();
   const [open, setOpen] = useState<boolean>(false);
 
   const handleData = () => {
@@ -112,16 +122,18 @@ const CalendarHeader = ({
         onNextMonth={onNextMonth}
         onPrevMonth={onPrevMonth}
       />
-      <div>
-        <BaseDialog
-          title="일정 생성"
-          triggerChildren={<IconButton icon="Plus" />}
-          open={open}
-          setOpen={setOpen}
-        >
-          <DayScheduleAddForm focusDate={focusDate} onClose={handleData} />
-        </BaseDialog>
-      </div>
+      {canWorkerEdit && (
+        <div>
+          <BaseDialog
+            title="일정 생성"
+            triggerChildren={<IconButton icon="Plus" />}
+            open={open}
+            setOpen={setOpen}
+          >
+            <DayScheduleAddForm focusDate={focusDate} onClose={handleData} />
+          </BaseDialog>
+        </div>
+      )}
     </div>
   );
 };
@@ -186,7 +198,7 @@ const CalendarContent = ({
   }, [schedules]);
 
   return (
-    <div className="flex flex-col  w-full h-[60vh] xl:h-full">
+    <div className="flex flex-col  w-full h-full xl:h-full">
       <div className="flex border-b border-x border-[var(--border)]">
         {labels.map((l, i) => (
           <div
@@ -197,20 +209,22 @@ const CalendarContent = ({
           </div>
         ))}
       </div>
-      {weeks.map((w, i) => (
-        <div key={i} className="flex-1 flex border-b last:border-none min-w-0">
-          {w.map((d, j) => (
-            <DayBox
-              date={d}
-              schedules={schedulesByDate[format(d, "yyyy-MM-dd")]}
-              key={j}
-              curDate={curDate}
-              focusDate={focusDate}
-              onClick={onClickDay}
-            />
-          ))}
-        </div>
-      ))}
+      <div className="flex-1 flex flex-col min-h-0">
+        {weeks.map((w, i) => (
+          <div key={i} className="flex flex-1 min-h-0 border-b last:border-b-0">
+            {w.map((d, j) => (
+              <DayBox
+                date={d}
+                schedules={schedulesByDate[format(d, "yyyy-MM-dd")]}
+                key={j}
+                curDate={curDate}
+                focusDate={focusDate}
+                onClick={onClickDay}
+              />
+            ))}
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
@@ -235,21 +249,16 @@ export const DayBox = ({
   onClick,
   ...props
 }: DayBoxProps) => {
-  // const { schedules } = useScheduleStore();
-  //   useEffect(() => {
-  //     console.log("컴포넌트 날짜 : ", format(date, "yyyy-MM-dd"), date);
-  //     console.log("현재 날짜 : ", format(curDate, "yyyy-MM-dd"), curDate);
-  //     console.log("클릭 날짜 : ", format(focusDate, "yyyy-MM-dd"), focusDate);
-  //     console.log(date == focusDate);
-  //   }, [date, focusDate, curDate]);
   const { setNodeRef, isOver } = useDroppable({
     id: `droppable ${format(date, "yyyy-MM-dd")}`,
     data: date,
   });
 
+  const daySchedules = schedules?.filter((s) => isSameDay(date, s.dates)) || [];
+
   return (
     <div
-      className={`flex-1   h-full p-1 overflow-hidden min-w-0
+      className={`flex-1   h-full p-1 overflow-hidden  min-h-20
          border-r border--[var(--border)] first:border-l
          
   
@@ -267,7 +276,7 @@ export const DayBox = ({
       {...props}
     >
       <span
-        className={`tabular-nums flex items-center justify-center w-fit text-sm  rounded-full aspect-square mb-2 leading-0 p-1 
+        className={`text-xs tabular-nums flex items-center justify-center w-fit md:text-sm  rounded-full aspect-square mb-2 leading-0 p-1 
             ${isSameDay(date, new Date()) ? "text-white bg-primary" : ""}
             ${!isSameMonth(date, curDate) ? "text-gray-400" : ""}
          `}
@@ -277,10 +286,35 @@ export const DayBox = ({
 
       {/* 일정 영역 */}
       <div onClick={(e) => e.stopPropagation()} className="flex flex-col gap-1">
-        {/* {daySchedules.map((s, i) =>
+        {/* XL 이상: 일정 리스트 표시 (최대 3개) */}
+        <div className="hidden xl:flex xl:flex-col xl:gap-1">
+          {daySchedules.slice(0, 3).map((s, i) => (
+            <ScheduleItem key={i} data={s} />
+          ))}
+          {daySchedules.length > 3 && (
+            <ExtendedSchedule schedules={schedules} day={format(date, "dd")} />
+          )}
+        </div>
+        <div className="xl:hidden flex flex-col gap-1">
+          {daySchedules.slice(0, 1).map((s, i) => (
+            <ScheduleItem key={i} data={s} />
+          ))}
+          {daySchedules.length > 0 && (
+            <ExtendedSchedule schedules={schedules} day={format(date, "dd")} />
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+{
+  /* {daySchedules.map((s, i) =>
           isSameDay(date, s.dates) ? <ScheduleItem key={i} data={s} /> : null
-        )} */}
-        {schedules
+        )} */
+}
+{
+  /* {schedules
           ? schedules.map((s, i) =>
               isSameDay(date, s.dates) && i < 3 ? (
                 <ScheduleItem key={i} data={s} />
@@ -289,8 +323,5 @@ export const DayBox = ({
           : null}
         {schedules && schedules.length > 3 ? (
           <ExtendedSchedule schedules={schedules} day={format(date, "dd")} />
-        ) : null}
-      </div>
-    </div>
-  );
-};
+        ) : null} */
+}

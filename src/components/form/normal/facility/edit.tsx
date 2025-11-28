@@ -135,7 +135,7 @@ const FacilityDetailEditForm = () => {
         onSubmit={form.handleSubmit(handleSubmit)}
         className="flex flex-col gap-12"
       >
-        <div className="grid grid-cols-2 gap-x-24 gap-y-12">
+        <div className="grid xl:grid-cols-2 gap-x-24 gap-y-12">
           {basicCode.typeCodes ? (
             <FormField
               control={form.control}

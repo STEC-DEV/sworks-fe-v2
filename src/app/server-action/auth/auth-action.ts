@@ -107,7 +107,7 @@ export async function normalModeLoginAction(data: Record<string, string>) {
   console.log(data);
   console.log("======================");
   const cookie = await cookies();
-  let redirectUrl: string | null = null;
+  const redirectUrl: string | null = null;
   try {
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_BASE_URL}/login/w/login`

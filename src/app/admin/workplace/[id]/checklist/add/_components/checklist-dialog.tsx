@@ -2,6 +2,8 @@ import BaseSkeleton from "@/components/common/base-skeleton";
 import Button from "@/components/common/button";
 import CustomCard from "@/components/common/card";
 import Input from "@/components/common/input";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { useWorkplaceDetailChecklistStore } from "@/store/admin/workplace/checklist-store";
 import { useWorkplaceDetailStore } from "@/store/admin/workplace/workplace-detail-store";
 import { useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
@@ -19,7 +21,7 @@ const ChecklistDialog = ({
     updateSelectedAvailableChecklistItem,
     resetAvailableChecklistItem,
     getAvailableChecklistItem,
-  } = useWorkplaceDetailStore();
+  } = useWorkplaceDetailChecklistStore();
   const { id, types } = useParams();
   const [search, setSearch] = useState<string>("");
   const [selectedChecklist, setSelectedChecklist] = useState<Checklist[]>(
@@ -78,28 +80,32 @@ const ChecklistDialog = ({
   };
 
   return (
-    <div className="flex flex-col gap-6 w-full px-6">
+    <div className="flex flex-col gap-6 w-full ">
       {/* <Input
         className="w-full"
         placeholder="사업장명"
         value={search}
         onChange={(e) => setSearch(e.target.value)}
       /> */}
-      <div className="flex flex-col gap-2 h-120 overflow-auto">
-        {availableChecklistItem ? (
-          availableChecklistItem.map((c, i) => (
-            <ChecklistCard
-              key={i}
-              item={c}
-              isChecked={isChecked(c)}
-              onClick={handleCheck}
-            />
-          ))
-        ) : (
-          <BaseSkeleton className="h-full" />
-        )}
+      <ScrollArea className="flex-1 overflow-hidden">
+        <div className="flex flex-col gap-2 px-6 pb-1">
+          {availableChecklistItem ? (
+            availableChecklistItem.map((c, i) => (
+              <ChecklistCard
+                key={i}
+                item={c}
+                isChecked={isChecked(c)}
+                onClick={handleCheck}
+              />
+            ))
+          ) : (
+            <BaseSkeleton className="h-full" />
+          )}
+        </div>
+      </ScrollArea>
+      <div className="shrink-0 px-6">
+        <Button label="저장" onClick={handleSubmit} />
       </div>
-      <Button label="저장" onClick={handleSubmit} />
     </div>
   );
 };

@@ -1,6 +1,5 @@
 "use client";
 
-import EquipmentAddForm from "@/components/form/normal/equipment/add";
 import EquipmentHistoryAddForm, {
   HistoryAddType,
 } from "@/components/form/normal/equipment/history-add";
@@ -18,14 +17,14 @@ const Page = () => {
   const { postAddHistory } = useEquipmentHistoryMainStore();
   const handleSubmit = async (values: HistoryAddType) => {
     const res = await postAddHistory(values);
-    res.data ? setFormResult(true) : setFormResult(false);
+    setFormResult(res.data);
     setCurStep((prev) => prev + 1);
     setOpen(true);
   };
 
   const formsConfig = {
     titles: ["기본정보"],
-    forms: [<EquipmentHistoryAddForm onNext={handleSubmit} />],
+    forms: [<EquipmentHistoryAddForm onNext={handleSubmit} key={1} />],
   };
   return (
     <>

@@ -1,5 +1,8 @@
+import CheckFormItem from "@/components/common/form-input/check-field";
 import { DateFormItem } from "@/components/common/form-input/date-field";
-import FileFormItem from "@/components/common/form-input/file-field";
+import FileFormItem, {
+  ImageFormItem,
+} from "@/components/common/form-input/file-field";
 import { TextFormItem } from "@/components/common/form-input/text-field";
 import AppTitle from "@/components/common/label/title";
 import CommonFormContainer from "@/components/ui/custom/form/form-container";
@@ -21,9 +24,10 @@ export const buildingSchema = z.object({
   selfParkingSpaces: z.number(),
   autoParkingSpaces: z.number(),
   handicapParkingSpaces: z.number(),
+  towerTypeYn: z.boolean(),
   basementFloors: z.number(),
   groundFloors: z.number(),
-  images: z.array(z.instanceof(File)),
+  images: z.instanceof(File).nullable(),
 });
 
 export type BuildingFormType = z.infer<typeof buildingSchema>;
@@ -46,9 +50,10 @@ const BuildingAddForm = ({ onNext }: BuildingAddFormProps) => {
       selfParkingSpaces: 0,
       autoParkingSpaces: 0,
       handicapParkingSpaces: 0,
+      towerTypeYn: false,
       basementFloors: 0,
       groundFloors: 0,
-      images: [],
+      images: null,
     },
   });
 
@@ -64,6 +69,7 @@ const BuildingAddForm = ({ onNext }: BuildingAddFormProps) => {
       selfParkingSpaces: createBuilding.selfParkingSpaces,
       autoParkingSpaces: createBuilding.autoParkingSpaces,
       handicapParkingSpaces: createBuilding.handicapParkingSpaces,
+      towerTypeYn: createBuilding.towerTypeYn,
       basementFloors: createBuilding.basementFloors,
       groundFloors: createBuilding.groundFloors,
       images: createBuilding.images,
@@ -81,21 +87,26 @@ const BuildingAddForm = ({ onNext }: BuildingAddFormProps) => {
           control={form.control}
           name="dongName"
           render={({ field }) => (
-            <TextFormItem label="명칭" placeholder="명칭" {...field} />
+            <TextFormItem label="명칭" placeholder="명칭" {...field} required />
           )}
         />
         <FormField
           control={form.control}
           name="address"
           render={({ field }) => (
-            <TextFormItem label="위치" placeholder="위치" {...field} />
+            <TextFormItem label="위치" placeholder="위치" {...field} required />
           )}
         />
         <FormField
           control={form.control}
           name="totalArea"
           render={({ field }) => (
-            <TextFormItem label="연면적" placeholder="연면적" {...field} />
+            <TextFormItem
+              label="연면적"
+              placeholder="연면적"
+              {...field}
+              required
+            />
           )}
         />
         <FormField
@@ -106,6 +117,7 @@ const BuildingAddForm = ({ onNext }: BuildingAddFormProps) => {
               label="준공일"
               value={field.value}
               onChange={field.onChange}
+              required
             />
           )}
         />
@@ -113,7 +125,12 @@ const BuildingAddForm = ({ onNext }: BuildingAddFormProps) => {
           control={form.control}
           name="usage"
           render={({ field }) => (
-            <TextFormItem label="건물용도" placeholder="건물용도" {...field} />
+            <TextFormItem
+              label="건물용도"
+              placeholder="건물용도"
+              {...field}
+              required
+            />
           )}
         />
       </div>
@@ -171,6 +188,18 @@ const BuildingAddForm = ({ onNext }: BuildingAddFormProps) => {
               />
             )}
           />
+          <FormField
+            control={form.control}
+            name="towerTypeYn"
+            render={({ field }) => (
+              <CheckFormItem
+                label="타워유무"
+                checked={field.value}
+                {...field}
+                required
+              />
+            )}
+          />
         </div>
       </div>
       <div className="base-flex-col gap-6 !h-auto">
@@ -215,14 +244,13 @@ const BuildingAddForm = ({ onNext }: BuildingAddFormProps) => {
           control={form.control}
           name="images"
           render={({ field }) => (
-            <FileFormItem
-              label="첨부파일"
-              accept="accept"
+            <ImageFormItem
+              label="이미지"
               multiple={false}
               {...field}
               value={field.value}
+              isRemove
               onChange={field.onChange}
-              imageOnly
             />
           )}
         />

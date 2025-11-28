@@ -14,10 +14,6 @@ const TaskHistoryFilter = () => {
   const [filterConfig, setFilterConfig] = useState<FilterConfig[]>([]);
 
   useEffect(() => {
-    handleFilterConfig();
-  }, [basicCode]);
-
-  const handleFilterConfig = () => {
     if (!basicCode || !basicCode.contractCodes) return;
     const data = convertSelectOptionType(basicCode.contractCodes);
     const convertData = convertKeyValueArrayToRecord(data);
@@ -31,7 +27,7 @@ const TaskHistoryFilter = () => {
         data: convertData, // 중괄호 제거
       },
     ]);
-  };
+  }, [basicCode]);
 
   return <CommonFilter filters={filterConfig} />;
 };

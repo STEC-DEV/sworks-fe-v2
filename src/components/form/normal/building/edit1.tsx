@@ -25,7 +25,7 @@ export const buildingSchema = z.object({
   basementFloors: z.number(),
   groundFloors: z.number(),
   removeImage: z.boolean(),
-  images: z.instanceof(File).nullable().optional(),
+  images: z.instanceof(File).nullable(),
 });
 
 type BuildingFormType = z.infer<typeof buildingSchema>;
@@ -35,10 +35,8 @@ const BuildingEditForm = ({
 }: {
   onSubmit: (values: Record<string, any>) => void;
 }) => {
-  const [existingFile, setExistingFile] = useState<string | null>(null);
-  const [isRemove, setIsRemove] = useState<boolean>(false);
   const { building } = useBuildingDetailStore();
-  const { patchEditBuildingDetail } = useBuildingDetailStore();
+
   const form = useForm<BuildingFormType>({
     resolver: zodResolver(buildingSchema),
     defaultValues: {
@@ -73,12 +71,8 @@ const BuildingEditForm = ({
       removeImage: false,
       images: null,
     });
-
-    setExistingFile(building.images);
   }, [building, form]);
-  // const handleSubmit = (values: BuildingFormType) => {
-  //   patchEditBuildingDetail(values);
-  // };
+
   return (
     <Form {...form}>
       <form
@@ -228,20 +222,27 @@ const BuildingEditForm = ({
             control={form.control}
             name="images"
             render={({ field }) => {
-              const handleDelete = () => {
-                //삭제
-                setIsRemove(true);
+              const handleRemove = () => {
                 form.setValue("removeImage", true);
+              };
+              const existingFiles = () => {
+                if (!building) return;
+                const isRemove = form.watch("removeImage");
+                console.log("삭제 여부 : ", isRemove);
+                console.log(isRemove ? null : building.images);
+
+                return isRemove ? null : building.images;
               };
               return (
                 <ImageFormItem
+                  label="이미지"
+                  multiple={false}
                   {...field}
-                  label="첨부파일"
-                  value={field.value ?? null}
-                  existingFile={existingFile}
-                  isRemove={isRemove}
+                  value={field.value}
+                  isRemove={form.watch("removeImage")}
                   onChange={field.onChange}
-                  onRemoveExistingFile={handleDelete}
+                  existingFile={existingFiles()}
+                  onRemoveExistingFile={handleRemove}
                 />
               );
             }}

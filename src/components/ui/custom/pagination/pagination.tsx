@@ -7,8 +7,7 @@ import {
   ChevronsLeft,
   ChevronsRight,
 } from "lucide-react";
-import { useRouter, useSearchParams } from "next/navigation";
-import React, { Suspense, useEffect } from "react";
+import React, { Suspense } from "react";
 
 const Pagination = ({
   //현재페이지 nubmer
@@ -29,11 +28,11 @@ const Pagination = ({
   pageRangeDisplayed: number;
   onChange: (page: number) => void;
 }) => {
-  const searchParams = useSearchParams();
-  //현재 url 정보
-  const queryParams = new URLSearchParams(searchParams.toString());
-  //라우터
-  const router = useRouter();
+  // const searchParams = useSearchParams();
+  // //현재 url 정보
+  // const queryParams = new URLSearchParams(searchParams.toString());
+  // //라우터
+  // const router = useRouter();
   //pageRange기준 전체 페이지
   const allDisplayedPage = Math.ceil(totalItemCount / viewSize);
 
@@ -89,7 +88,7 @@ const Pagination = ({
 
   return (
     <Suspense>
-      <div className="flex gap-2">
+      <div className="flex gap-2 flex-wrap">
         <PageActionButton
           icon={ChevronsLeft}
           onClick={() => onPageHandle(PageActionState.FirstPage)}
@@ -134,9 +133,9 @@ const PageItemButton = ({
 }) => {
   return (
     <div
-      className={`border border-[var(--border)] text-xs px-2 py-2 rounded-[4px] w-9 h-9 flex items-center justify-center hover:bg-background cursor-pointer  ${
+      className={` border border-[var(--border)] text-xs px-2 py-2 rounded-[4px] w-7 h-7 flex items-center justify-center hover:bg-background cursor-pointer  ${
         isActive ? "bg-[var(--background)] font-bold" : "bg-white"
-      }`}
+      } md:w-9 md:h-9`}
       onClick={onClick}
     >
       {page}
@@ -153,7 +152,7 @@ const PageActionButton = ({
 }) => {
   return (
     <div
-      className="border border-[var(--border)] px-2 py-2 rounded-[4px] w-9 h-9 flex items-center justify-center hover:bg-accent cursor-pointer bg-white"
+      className="border border-[var(--border)] px-2 py-2 rounded-[4px] w-7 h-7 md:w-9 md:h-9 flex items-center justify-center hover:bg-accent cursor-pointer bg-white"
       onClick={onClick}
     >
       <Icon className="w-4" />

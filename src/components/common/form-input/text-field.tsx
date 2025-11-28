@@ -17,7 +17,7 @@ export const TextFormItem = <T extends FieldValues>({
   ...props
 }: TextFormItemProps<T>) => {
   return (
-    <FormItem className="flex flex-col gap-2 w-full">
+    <FormItem className="flex flex-col gap-2 w-full min-w-0">
       <div className="flex">
         {label ? (
           <span className="text-xs text-[var(--description-light)]">
@@ -51,7 +51,7 @@ export const TextAreaFormItem = <T extends FieldValues>({
   ...props
 }: TextAreaFormItemProps<T>) => {
   return (
-    <FormItem className="flex flex-col gap-2">
+    <FormItem className="flex flex-col gap-2 ">
       <div className="flex">
         {label ? (
           <span className="text-xs text-[var(--description-light)]">

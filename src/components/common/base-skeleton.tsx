@@ -8,12 +8,9 @@ interface BaseSkeletonProps {
 
 const BaseSkeleton = ({ className }: BaseSkeletonProps) => {
   return (
-    <Skeleton
-      className={cn(
-        "w-full h-full border-[4px] bg-[var(--skeleton)]",
-        className
-      )}
-    />
+    <div className={cn("shrink-0 h-full ", className)}>
+      <Skeleton className={"w-full h-full border-[4px] bg-[var(--skeleton)]"} />
+    </div>
   );
 };
 

@@ -2,36 +2,40 @@
 import { KeyValue } from "@/app/admin/checklist/[id]/_components/checklist-info";
 import BaseSkeleton from "@/components/common/base-skeleton";
 import EmptyBox from "@/components/ui/custom/empty";
+import { useUIStore } from "@/store/common/ui-store";
 import { useEquipmentMainStore } from "@/store/normal/equipment/equip-main-store";
 import { format } from "date-fns";
-import { ImageIcon, PackageOpenIcon } from "lucide-react";
+import { ImageIcon } from "lucide-react";
+import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
-import React, { useEffect } from "react";
+import React, { Suspense, useEffect } from "react";
 
 const EquipmentList = () => {
-  const { equipmentList, getEquipmentList } = useEquipmentMainStore();
+  const { equipmentList, getEquipmentList, loadingKeys } =
+    useEquipmentMainStore();
+  const { isLoading, hasError } = useUIStore();
   const searchParams = useSearchParams();
 
   useEffect(() => {
     getEquipmentList(new URLSearchParams(searchParams));
-  }, []);
+  }, [getEquipmentList]);
   useEffect(() => {
     getEquipmentList(new URLSearchParams(searchParams));
-  }, [searchParams]);
+  }, [searchParams, getEquipmentList]);
 
   //데이터 에러, 로딩인경우
-  if (equipmentList.type === "loading") {
-    return <BaseSkeleton />;
+  if (isLoading(loadingKeys.LIST) || !equipmentList) {
+    return <BaseSkeleton className="flex-1" />;
   }
-  if (equipmentList.type === "error") {
-    return <BaseSkeleton />;
+  if (hasError(loadingKeys.LIST)) {
+    return <div>에러 발생</div>;
   }
 
   return (
     <>
-      {equipmentList.payload.data.length > 0 ? (
-        <div className="grid grid-cols-5 gap-6">
-          {equipmentList.payload.data.map((e, i) => (
+      {equipmentList.data.length > 0 ? (
+        <div className="grid md:grid-cols-2 xl:grid-cols-5 gap-6">
+          {equipmentList.data.map((e, i) => (
             <EquipmentBox key={i} item={e} />
           ))}
         </div>
@@ -53,8 +57,13 @@ const EquipmentBox = ({ item }: { item: EquipmentListItem }) => {
       onClick={handleOnClick}
     >
       {item.images ? (
-        <div className="w-full h-25 overflow-hidden">
-          <img src={item.images} className="w-full h-full object-cover" />
+        <div className="w-full h-25 overflow-hidden relative">
+          <Image
+            fill
+            src={item.images}
+            className="w-full h-full object-cover"
+            alt="이미지"
+          />
         </div>
       ) : (
         <div className="flex items-center justify-center h-25 bg-[var(--background)]">

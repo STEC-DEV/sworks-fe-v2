@@ -48,8 +48,8 @@ const CommonFilter = ({
 
   return (
     <div
-      className={`flex justify-between border-y border-[var(--border)] py-4 ${
-        !search ? "justify-end" : null
+      className={`flex flex-col gap-4 xl:flex-row justify-between border-y-2 border-[var(--border)] py-4 ${
+        !search ? "justify-end" : ""
       }`}
     >
       {search ? (
@@ -60,35 +60,35 @@ const CommonFilter = ({
           value={searchValue}
         />
       ) : null}
-      <div className="flex gap-4">
-        {filters && filters.length > 0 ? (
-          <div className="flex gap-4">
-            {filters.map((f, i) => {
-              return (
-                <MultiSelect
-                  key={i}
-                  placeholder={f.placeholder}
-                  icon={f.icon}
-                  data={f.data}
-                  selected={filterState[f.key] || []}
-                  onClick={(data) => {
-                    updateFilter(f.key, data);
-                  }}
-                />
-              );
-            })}
-          </div>
-        ) : null}
-        {startName && endName ? (
-          <DurationItem
-            value={duration}
-            startName={startName}
-            endName={endName}
-            onClick={(date, keyName) => handleUpdateDuration(keyName, date)}
-            onReset={handleReset}
-          />
-        ) : null}
-      </div>
+      {((filters && filters.length > 0) || (startName && endName)) && (
+        <div className="flex flex-wrap gap-4">
+          {filters?.map((f, i) => (
+            <div key={i} className="shrink-0">
+              <MultiSelect
+                placeholder={f.placeholder}
+                icon={f.icon}
+                data={f.data}
+                selected={filterState[f.key] || []}
+                onClick={(data) => {
+                  updateFilter(f.key, data);
+                }}
+              />
+            </div>
+          ))}
+
+          {startName && endName && (
+            <div className="shrink-0">
+              <DurationItem
+                value={duration}
+                startName={startName}
+                endName={endName}
+                onClick={(date, keyName) => handleUpdateDuration(keyName, date)}
+                onReset={handleReset}
+              />
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 };

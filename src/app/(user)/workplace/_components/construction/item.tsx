@@ -1,53 +1,78 @@
 "use client";
-import { KeyValueItem } from "@/app/(user)/equipment/[id]/[history-id]/page";
+
 import BaseSkeleton from "@/components/common/base-skeleton";
 import IconButton from "@/components/common/icon-button";
 import AppTitle from "@/components/common/label/title";
-import Tab, { TabConfig } from "@/components/common/tab";
+import Tab from "@/components/common/tab";
+import { KeyValueItem } from "@/components/ui/custom/key-value";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { usePermission } from "@/hooks/usePermission";
+import { useUIStore } from "@/store/common/ui-store";
 import { useBuildingStore } from "@/store/normal/building/building";
 import { BuildingInfo, Construction } from "@/types/normal/building/building";
 import { format } from "date-fns";
 import { Building2 } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useEffect } from "react";
 
 const Building = () => {
   const router = useRouter();
-  const { construction, getConstruction } = useBuildingStore();
+  const { canWorkerEdit } = usePermission();
+  const { construction, getConstruction, loadingKeys } = useBuildingStore();
+  const { isLoading, hasError } = useUIStore();
 
   useEffect(() => {
     getConstruction();
   }, []);
 
-  return (
-    <>
-      <AppTitle title="건물" />
-
+  const getTab = () => {
+    if (isLoading(loadingKeys.INFO) || !construction) {
+      return (
+        <>
+          <BaseSkeleton className="h-9" />
+          <div className="flex gap-6 overflow-hidden">
+            {Array.from({ length: 6 }, (_, i) => (
+              <div key={i} className="flex flex-col gap-2">
+                <BaseSkeleton className="w-60 h-40" />
+                <BaseSkeleton className="h-6" />
+              </div>
+            ))}
+          </div>
+        </>
+      );
+    }
+    if (hasError(loadingKeys.INFO)) {
+      return <div>에러 발생</div>;
+    }
+    return (
       <Tab
         configs={[
           {
             tabTitle: "건물",
-            options: !construction ? null : (
+            options: construction && canWorkerEdit && (
               <IconButton
                 icon="Plus"
                 onClick={() => router.push("/workplace/building/add")}
               />
             ),
-
             render: (
               <ScrollArea className="w-full whitespace-nowrap ">
                 {!construction ? (
                   <span className="text-[var(--description-light)]">
                     정보를 먼저 생성해주세요.
                   </span>
-                ) : (
+                ) : construction.dongs && construction.dongs?.length > 0 ? (
                   <div className="flex gap-6 w-max">
                     {construction.dongs?.map((b, i) => {
                       return <BuildingBox key={i} data={b} />;
                     })}
                   </div>
+                ) : (
+                  <span className="text-[var(--description-light)]">
+                    건물없음
+                  </span>
                 )}
 
                 <ScrollBar orientation="horizontal" />
@@ -57,7 +82,8 @@ const Building = () => {
           {
             tabTitle: "정보",
             options:
-              construction === null ? (
+              canWorkerEdit &&
+              (construction === null ? (
                 <IconButton
                   icon="Plus"
                   onClick={() => router.push("/workplace/construction/add")}
@@ -67,7 +93,7 @@ const Building = () => {
                   icon="SquarePen"
                   onClick={() => router.push("/workplace/construction/edit")}
                 />
-              ),
+              )),
             render: construction ? (
               <ConstructionBox data={construction} />
             ) : (
@@ -79,13 +105,20 @@ const Building = () => {
           },
         ]}
       />
-    </>
+    );
+  };
+
+  return (
+    <div className="flex flex-col gap-6">
+      <AppTitle title="건물" icon={Building2} />
+      {getTab()}
+    </div>
   );
 };
 
 const ConstructionBox = ({ data }: { data: Construction }) => {
   return (
-    <div className="base-flex-col gap-2 w-full xl:w-100 ">
+    <div className="base-flex-col gap-4 w-full  ">
       <KeyValueItem
         mainStyle="flex-row justify-between"
         valueStyle="text-sm"
@@ -142,9 +175,14 @@ const BuildingBox = ({ data }: { data: BuildingInfo }) => {
   return (
     <Link href={`/workplace/building/${data.dongSeq}`}>
       <div className="base-flex-col gap-2 cursor-pointer ">
-        <div className="flex-center rounded-[4px] w-60 h-40 bg-[var(--background)]   overflow-hidden group relative ">
+        <div className=" flex-center rounded-[4px] w-60 h-40 bg-[var(--background)]   overflow-hidden group relative ">
           {data.images !== null ? (
-            <img className="object-cover " src={data.images} />
+            <Image
+              className="object-cover "
+              fill
+              src={data.images}
+              alt="이미지"
+            />
           ) : (
             <div>
               <Building2

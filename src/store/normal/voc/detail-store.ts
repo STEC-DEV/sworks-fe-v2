@@ -1,11 +1,20 @@
 import api from "@/lib/api/api-manager";
+import { useUIStore } from "@/store/common/ui-store";
 import { Response } from "@/types/common/response";
+import { HTTPError } from "ky";
+import { notFound } from "next/navigation";
 import { toast } from "sonner";
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 
+export const VOC_DETAIL_LOADING_KEYS = {
+  INFO: "voc_info",
+  REPLY_LIST: "voc_reply_list",
+} as const;
+
 interface VocDetailState {
-  vocDetail: VocDetail | undefined;
+  loadingKeys: typeof VOC_DETAIL_LOADING_KEYS;
+  vocDetail: VocDetail | null;
   getVocDetail: (vocId: string) => Promise<void>;
   resetVocDetail: () => void;
   putUpdateServiceType: (values: any) => Promise<Response<boolean>>;
@@ -17,11 +26,14 @@ export const useVocDetailStore = create<VocDetailState>()(
   devtools(
     persist<VocDetailState>(
       (set, get) => ({
-        vocDetail: undefined,
+        loadingKeys: VOC_DETAIL_LOADING_KEYS,
+        vocDetail: null,
         getVocDetail: async (vocId) => {
           if (!vocId) return;
+          const { setLoading, setError } = useUIStore.getState();
           const searchParams = new URLSearchParams();
           searchParams.set("logSeq", vocId);
+          setLoading(VOC_DETAIL_LOADING_KEYS.INFO, true);
           try {
             const res: Response<VocDetail> = await api
               .get(`voc/w/sign/getvocdetail`, {
@@ -31,7 +43,20 @@ export const useVocDetailStore = create<VocDetailState>()(
 
             set({ vocDetail: res.data });
           } catch (err) {
-            console.log(err);
+            const errMessage =
+              err instanceof Error
+                ? err.message
+                : "민원정보 조회 문제가 발생하였습니다. 잠시후 다시 시도해주세요.";
+
+            if (err instanceof HTTPError) {
+              if (err.response.status === 404) {
+                throw new Error("NOT_FOUND");
+              }
+            }
+            setError(VOC_DETAIL_LOADING_KEYS.INFO, errMessage);
+            toast.error(errMessage);
+          } finally {
+            setLoading(VOC_DETAIL_LOADING_KEYS.INFO, false);
           }
         },
         resetVocDetail: () => {
@@ -44,6 +69,7 @@ export const useVocDetailStore = create<VocDetailState>()(
                 json: values,
               })
               .json();
+
             return res;
           } catch (err) {
             const res: Response<boolean> = {
@@ -51,6 +77,7 @@ export const useVocDetailStore = create<VocDetailState>()(
               code: 500,
               message: "에러 발생",
             };
+
             return res;
           }
         },

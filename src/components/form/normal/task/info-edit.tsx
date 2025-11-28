@@ -32,12 +32,7 @@ const TaskInfoEditForm = ({
 }: {
   onSubmit: (values: TaskInfoEditType) => void;
 }) => {
-  const { taskDetail, getTaskDetail } = useTaskDetailStore();
-  const { rawValue } = useDecodeParam("id");
-  useEffect(() => {
-    if (!rawValue) return;
-    getTaskDetail(rawValue);
-  }, [rawValue]);
+  const { taskDetail } = useTaskDetailStore();
 
   const form = useForm<TaskInfoEditType>({
     resolver: zodResolver(formSchema),
@@ -61,7 +56,6 @@ const TaskInfoEditForm = ({
       termType: taskDetail.termType,
       startDt: taskDetail.startDt.toString(),
       endDt: taskDetail.endDt?.toString() ?? taskDetail.startDt.toString(),
-
       repeat: taskDetail.repeats.toString(),
     });
     // if (taskDetail.termType === 0) setEveryDay(true);

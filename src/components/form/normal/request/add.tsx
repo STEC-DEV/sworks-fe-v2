@@ -1,5 +1,7 @@
 import Button from "@/components/common/button";
-import FileFormItem from "@/components/common/form-input/file-field";
+import FileFormItem, {
+  ImageFormItem,
+} from "@/components/common/form-input/file-field";
 import SelectFormItem from "@/components/common/form-input/select-field";
 import {
   TextAreaFormItem,
@@ -14,7 +16,7 @@ import {
 } from "@/utils/convert";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useSearchParams } from "next/navigation";
-import React, { useEffect } from "react";
+import React, { Suspense, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import z from "zod";
 
@@ -54,86 +56,85 @@ const RequestAddForm = ({ onClose }: { onClose: () => void }) => {
     onClose();
   };
   return (
-    <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(handleSubmit)}
-        className="flex-1 flex flex-col min-h-0"
-      >
-        <div className="flex-1 overflow-hidden min-h-0">
-          <ScrollArea className="h-full w-full">
-            <div className="h-full flex flex-col gap-6 px-6 pb-1">
-              <FormField
-                control={form.control}
-                name="serviceTypeSeq"
-                render={({ field }) => {
-                  const handleChange = (value: string) => {
-                    if (!value) return;
-                    field.onChange(Number(value));
-                  };
-                  return (
-                    <SelectFormItem
-                      label="업무유형"
-                      selectItem={
-                        addServiceType
-                          ? convertSelectOptionType(addServiceType)
-                          : []
-                      }
-                      onValueChange={handleChange}
-                      value={field.value?.toString()}
+    <Suspense>
+      <Form {...form}>
+        <form
+          onSubmit={form.handleSubmit(handleSubmit)}
+          className="flex-1 flex flex-col min-h-0"
+        >
+          <div className="flex-1 overflow-hidden min-h-0">
+            <ScrollArea className="h-full w-full">
+              <div className="h-full flex flex-col gap-6 px-6 pb-1">
+                <FormField
+                  control={form.control}
+                  name="serviceTypeSeq"
+                  render={({ field }) => {
+                    const handleChange = (value: string) => {
+                      if (!value) return;
+                      field.onChange(Number(value));
+                    };
+                    return (
+                      <SelectFormItem
+                        label="업무유형"
+                        selectItem={
+                          addServiceType
+                            ? convertSelectOptionType(addServiceType)
+                            : []
+                        }
+                        onValueChange={handleChange}
+                        value={field.value?.toString()}
+                        required
+                      />
+                    );
+                  }}
+                />
+                <FormField
+                  control={form.control}
+                  name="title"
+                  render={({ field }) => (
+                    <TextFormItem
+                      label="제목"
+                      placeholder="제목"
+                      {...field}
                       required
                     />
-                  );
-                }}
-              />
-              <FormField
-                control={form.control}
-                name="title"
-                render={({ field }) => (
-                  <TextFormItem
-                    label="제목"
-                    placeholder="제목"
-                    {...field}
-                    required
-                  />
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="description"
-                render={({ field }) => (
-                  <TextAreaFormItem
-                    label="내용"
-                    placeholder="내용"
-                    {...field}
-                    required
-                  />
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="images"
-                render={({ field }) => (
-                  <FileFormItem
-                    label="이미지"
-                    accept="accept"
-                    multiple={true}
-                    {...field}
-                    value={field.value}
-                    onChange={field.onChange}
-                    max={3}
-                    imageOnly
-                    isVertical
-                  />
-                )}
-              />
-            </div>
-          </ScrollArea>
-        </div>
-        <div className="flex-shrink-0 px-6 pt-4">
-          <Button label="생성" />
-        </div>
-      </form>
-    </Form>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="description"
+                  render={({ field }) => (
+                    <TextAreaFormItem
+                      label="내용"
+                      placeholder="내용"
+                      {...field}
+                      required
+                    />
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="images"
+                  render={({ field }) => (
+                    <ImageFormItem
+                      label="이미지"
+                      multiple={true}
+                      max={3}
+                      {...field}
+                      value={field.value}
+                      onChange={field.onChange}
+                    />
+                  )}
+                />
+              </div>
+            </ScrollArea>
+          </div>
+          <div className="flex-shrink-0 px-6 pt-4">
+            <Button label="생성" />
+          </div>
+        </form>
+      </Form>
+    </Suspense>
   );
 };
 

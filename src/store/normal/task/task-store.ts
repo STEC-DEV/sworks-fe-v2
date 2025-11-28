@@ -1,5 +1,6 @@
 import api from "@/lib/api/api-manager";
 import { useAuthStore } from "@/store/auth/auth-store";
+import { useUIStore } from "@/store/common/ui-store";
 import { Response } from "@/types/common/response";
 import { ListData, ListState } from "@/types/list-type";
 import { TaskChecklist } from "@/types/normal/task/checklist";
@@ -9,8 +10,13 @@ import { toast } from "sonner";
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 
+export const TASK_LOADING_KEYS = {
+  LIST: "task_list",
+} as const;
+
 interface TaskState {
-  taskList: ListState<Task>;
+  loadingKeys: typeof TASK_LOADING_KEYS;
+  taskList: ListData<Task> | null;
   getTaskList: (searchParams: URLSearchParams) => Promise<void>;
   //업무등록
   createTask: CreateTask;
@@ -36,20 +42,29 @@ export const useTaskStore = create<TaskState>()(
   devtools(
     persist<TaskState>(
       (set, get) => ({
-        taskList: { type: "loading" },
+        loadingKeys: TASK_LOADING_KEYS,
+        taskList: null,
         getTaskList: async (searchParams) => {
           const checkParams = paramsCheck(searchParams);
-
+          const { setError, setLoading } = useUIStore.getState();
+          setLoading(TASK_LOADING_KEYS.LIST, true);
           try {
             const res: Response<ListData<Task>> = await api
               .get(`sitetask/w/sign/allsitetask`, {
                 searchParams: checkParams,
               })
               .json();
-            set({ taskList: { type: "data", payload: res.data } });
+            set({ taskList: res.data });
           } catch (err) {
             console.error(err);
-            toast.error("조회 실패");
+            const errMessage =
+              err instanceof Error
+                ? err.message
+                : "업무 조회 문제가 발생하였습니다. 잠시후 다시 시도해주세요.";
+            setError(TASK_LOADING_KEYS.LIST, errMessage);
+            toast.error(errMessage);
+          } finally {
+            setLoading(TASK_LOADING_KEYS.LIST, false);
           }
         },
         createTask: initialCreateTask,

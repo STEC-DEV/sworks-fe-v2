@@ -84,7 +84,7 @@ const RnMAddForm = ({ onNext }: RnMAddFormProps) => {
       nextLabel="생성"
       onNext={onNext}
     >
-      <div className="grid grid-cols-2 gap-x-24 gap-y-12">
+      <div className="grid xl:grid-cols-2 gap-x-24 gap-y-12">
         {basicCode.typeCodes ? (
           <FormField
             control={form.control}

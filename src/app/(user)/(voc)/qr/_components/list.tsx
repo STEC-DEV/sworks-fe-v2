@@ -11,27 +11,31 @@ import { downloadQRCodeSVG } from "@/utils/qr";
 import { useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { dialogText } from "../../../../../../public/text";
-import { Package, PackageOpenIcon } from "lucide-react";
 import EmptyBox from "@/components/ui/custom/empty";
+import { useUIStore } from "@/store/common/ui-store";
 
 const QrList = () => {
-  const { qrList, getQrList } = useQrStore();
+  const { qrList, getQrList, loadingKeys } = useQrStore();
+  const { isLoading, hasError } = useUIStore();
   const searchParams = useSearchParams();
 
   useEffect(() => {
     getQrList(new URLSearchParams(searchParams));
-  }, []);
+  }, [searchParams, getQrList]);
 
-  useEffect(() => {
-    getQrList(new URLSearchParams(searchParams));
-  }, [searchParams]);
+  if (isLoading(loadingKeys.LIST) || !qrList)
+    return (
+      <div className="grid grid-cols-5 gap-x-4 gap-y-6">
+        {Array.from({ length: 25 }, (_, i) => (
+          <BaseSkeleton className="h-24" key={i} />
+        ))}
+      </div>
+    );
+  if (hasError(loadingKeys.LIST)) return <div>에러 발생</div>;
 
-  if (qrList.type === "loading") return <BaseSkeleton />;
-  if (qrList.type === "error") return;
-
-  return qrList.payload.data.length > 0 ? (
-    <div className="grid grid-cols-5 gap-x-4 gap-y-6">
-      {qrList.payload.data.map((v, i) => (
+  return qrList.data.length > 0 ? (
+    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-x-4 gap-y-6">
+      {qrList.data.map((v, i) => (
         <QrItemBox key={i} data={v} />
       ))}
     </div>
@@ -46,13 +50,13 @@ const QrItemBox = ({ data }: { data: QRListItem }) => {
   const { getQrList, patchUpdateQr, deleteQr } = useQrStore();
 
   const handleSubmit = async (values: QREditFormType) => {
-    const res = await patchUpdateQr(values);
+    await patchUpdateQr(values);
     await getQrList(new URLSearchParams(searchParams));
     setOpen(false);
   };
 
   const handleQRDownload = async () => {
-    const baseUrl = "http://123.2.156.229:3000/voc/add";
+    const baseUrl = "http://123.2.156.229:3000/complain/add";
     const params = new URLSearchParams({
       vocSeq: data.vocSeq.toString(),
     });

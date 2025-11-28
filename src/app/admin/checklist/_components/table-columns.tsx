@@ -7,7 +7,11 @@ export const checklistCol: ColumnDef<ChecklistTableItem>[] = [
     header: "업무 유형",
     cell: ({ row }) => {
       const value = row.original.serviceTypeName;
-      return value;
+      return (
+        <span className="text-xs text-[var(--description-light)] font-medium">
+          {value}
+        </span>
+      );
     },
   },
   {
@@ -15,7 +19,7 @@ export const checklistCol: ColumnDef<ChecklistTableItem>[] = [
     header: "관리 부문",
     cell: ({ row }) => {
       const value = row.original.divCodeName;
-      return value;
+      return <span className="text-xs">{value}</span>;
     },
   },
   {
@@ -23,7 +27,7 @@ export const checklistCol: ColumnDef<ChecklistTableItem>[] = [
     header: "관리 유형",
     cell: ({ row }) => {
       const value = row.original.typeCodeName;
-      return value;
+      return <span className="text-xs">{value}</span>;
     },
   },
   {
@@ -31,7 +35,11 @@ export const checklistCol: ColumnDef<ChecklistTableItem>[] = [
     header: "업무 유형",
     cell: ({ row }) => {
       const value = row.original.createDt;
-      return format(value, "yyyy-MM-dd");
+      return (
+        <span className="text-xs font-medium">
+          {format(value, "yyyy-MM-dd")}
+        </span>
+      );
     },
   },
   {
@@ -39,7 +47,7 @@ export const checklistCol: ColumnDef<ChecklistTableItem>[] = [
     header: "작성자",
     cell: ({ row }) => {
       const value = row.original.createUser;
-      return value;
+      return <span className="text-xs">{value}</span>;
     },
   },
 ];

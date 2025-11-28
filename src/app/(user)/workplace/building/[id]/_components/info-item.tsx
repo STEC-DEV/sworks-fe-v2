@@ -1,8 +1,9 @@
 "use client";
-import { KeyValueItem } from "@/app/(user)/equipment/[id]/[history-id]/page";
+
 import { AccordionContents } from "@/components/common/accordion/custom-accordion";
 import CustomCard from "@/components/common/card";
 import IconButton from "@/components/common/icon-button";
+import { KeyValueItem } from "@/components/ui/custom/key-value";
 import { useBuildingDetailStore } from "@/store/normal/building/detail";
 import { format } from "date-fns";
 import {

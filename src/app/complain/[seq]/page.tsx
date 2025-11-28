@@ -1,7 +1,7 @@
 import React from "react";
 
 const Page = () => {
-  return <div>품질 페이지</div>;
+  return <div>민원조회</div>;
 };
 
 export default Page;

@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import localFont from "next/font/local";
 import BaseToast from "@/components/common/toast/base-toast";
+import { geistMono } from "@/lib/fonts";
 
 // font-family addition
 const pretendard = localFont({
@@ -10,12 +11,6 @@ const pretendard = localFont({
   display: "swap",
   weight: "45 920",
   variable: "--font-pretendard",
-});
-
-//자간 동일한 폰트
-export const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
 });
 
 export const metadata: Metadata = {

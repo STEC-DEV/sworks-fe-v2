@@ -18,8 +18,8 @@ const Page = () => {
   };
 
   return (
-    <div className="xl:w-150 base-flex-col gap-6">
-      <AppTitle title="건축물 정보 수정" />
+    <div className="xl:w-150 flex flex-col gap-6">
+      <AppTitle title="건축물 정보 수정" isBorder />
       {construction ? (
         <ConstructionEditForm data={construction} onSubmit={handleSubmit} />
       ) : (

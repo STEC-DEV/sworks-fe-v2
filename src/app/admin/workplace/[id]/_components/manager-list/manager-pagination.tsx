@@ -7,30 +7,36 @@ import Input from "@/components/common/input";
 import BaseDialog from "@/components/ui/custom/base-dialog";
 import CommonPagination from "@/components/ui/custom/pagination/common-pagination";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { useWorkplaceDetailStore } from "@/store/admin/workplace/workplace-detail-store";
+import { usePermission } from "@/hooks/usePermission";
+import { useWorkplaceManagerStore } from "@/store/admin/workplace/manager-store";
+
+import { useUIStore } from "@/store/common/ui-store";
 import { AdminListItem, SelectAdminList } from "@/types/admin/admin/user-list";
 import { useParams, useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
 const ManagerPagination = () => {
+  const { canEdit } = usePermission();
   const [open, setOpen] = useState<boolean>(false);
-  const { managers } = useWorkplaceDetailStore();
+  const { managers, loadingKeys } = useWorkplaceManagerStore();
+  const { isLoading, hasError } = useUIStore();
+  if (isLoading(loadingKeys.MANAGER) || !managers)
+    return <BaseSkeleton className="h-9" />;
+  if (hasError(loadingKeys.MANAGER)) return <div>에러 발생</div>;
   return (
-    <>
-      {managers.type === "data" ? (
-        <div className="flex gap-4 items-center">
-          <CommonPagination totalCount={managers.payload.meta.totalCount} />
-          <BaseDialog
-            triggerChildren={<IconButton icon={"SquarePen"} size={16} />}
-            title="담당 사업장 수정"
-            open={open}
-            setOpen={setOpen}
-          >
-            <EditManagerContents setOpen={setOpen} />
-          </BaseDialog>
-        </div>
-      ) : null}
-    </>
+    <div className="flex gap-4 items-center">
+      <CommonPagination totalCount={managers.meta.totalCount} />
+      {canEdit && (
+        <BaseDialog
+          triggerChildren={<IconButton icon={"SquarePen"} size={16} />}
+          title="담당 사업장 수정"
+          open={open}
+          setOpen={setOpen}
+        >
+          <EditManagerContents setOpen={setOpen} />
+        </BaseDialog>
+      )}
+    </div>
   );
 };
 
@@ -50,7 +56,7 @@ const EditManagerContents = ({
   const { id } = useParams();
   const searchParams = useSearchParams();
   const { getAllManagerList, allManagerList, getManagers, putManagerList } =
-    useWorkplaceDetailStore();
+    useWorkplaceManagerStore();
 
   //담당관리자 조회
   useEffect(() => {
@@ -79,8 +85,8 @@ const EditManagerContents = ({
       id?.toString(),
       select.map((v) => v.userSeq)
     );
-    await getManagers(new URLSearchParams(searchParams));
     setOpen(false);
+    await getManagers(new URLSearchParams(searchParams));
   };
   return (
     <div className="flex flex-col gap-6 w-full ">

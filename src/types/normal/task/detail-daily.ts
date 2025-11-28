@@ -23,5 +23,5 @@ export interface Log {
 
 export interface Attach {
   attachSeq: number;
-  images?: string;
+  images: string;
 }

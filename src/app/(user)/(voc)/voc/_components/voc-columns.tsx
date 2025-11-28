@@ -10,7 +10,11 @@ export const vocListCol: ColumnDef<VocListItem>[] = [
     header: "구분",
     cell: ({ row }) => {
       const value = row.original.division;
-      return value ? "수기입력" : "모바일";
+      return (
+        <span className="text-xs text-[var(--description-dark)] font-medium">
+          {value ? "수기입력" : "모바일"}
+        </span>
+      );
     },
   },
   {
@@ -18,7 +22,7 @@ export const vocListCol: ColumnDef<VocListItem>[] = [
     header: "지점",
     cell: ({ row }) => {
       const value = row.original.name;
-      return value;
+      return <span className="text-xs font-medium">{value}</span>;
     },
   },
   {
@@ -26,7 +30,11 @@ export const vocListCol: ColumnDef<VocListItem>[] = [
     header: "유형",
     cell: ({ row }) => {
       const value = row.original.serviceTypeName;
-      return value;
+      return (
+        <span className="text-xs text-[var(--description-dark)] font-medium">
+          {value}
+        </span>
+      );
     },
   },
   {
@@ -34,7 +42,11 @@ export const vocListCol: ColumnDef<VocListItem>[] = [
     header: "민원인",
     cell: ({ row }) => {
       const value = row.original.createUser;
-      return value;
+      return (
+        <span className="text-xs text-[var(--description-dark)] font-medium">
+          {value}
+        </span>
+      );
     },
   },
   {
@@ -42,7 +54,7 @@ export const vocListCol: ColumnDef<VocListItem>[] = [
     header: "전화번호",
     cell: ({ row }) => {
       const value = row.original.phone;
-      return value;
+      return <span className="text-xs">{value}</span>;
     },
   },
   {
@@ -50,7 +62,7 @@ export const vocListCol: ColumnDef<VocListItem>[] = [
     header: "제목",
     cell: ({ row }) => {
       const value = row.original.title;
-      return value;
+      return <span className="text-xs font-medium">{value}</span>;
     },
   },
   {
@@ -58,7 +70,11 @@ export const vocListCol: ColumnDef<VocListItem>[] = [
     header: "발생일시",
     cell: ({ row }) => {
       const value = row.original.createDt;
-      return format(value, "yyyy-MM-dd hh:mm:ss");
+      return (
+        <span className="text-xs">
+          {value && format(value, "yyyy-MM-dd hh:mm:ss")}
+        </span>
+      );
     },
   },
   {
@@ -66,7 +82,11 @@ export const vocListCol: ColumnDef<VocListItem>[] = [
     header: "처리일시",
     cell: ({ row }) => {
       const value = row.original.completeDt;
-      return value ? format(value, "yyyy-MM-dd hh:mm:ss") : null;
+      return (
+        <span className="text-xs">
+          {value && format(value, "yyyy-MM-dd hh:mm:ss")}
+        </span>
+      );
     },
   },
   {
@@ -74,7 +94,7 @@ export const vocListCol: ColumnDef<VocListItem>[] = [
     header: "소요시간",
     cell: ({ row }) => {
       const value = row.original.durationDt;
-      return value;
+      return <span className="text-xs">{value}</span>;
     },
   },
   {

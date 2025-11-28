@@ -8,11 +8,16 @@ import {
 import { toast } from "sonner";
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
-import { useBuildingStore } from "./building";
-import { convertRecordDataToFormData } from "@/utils/convert";
+import { objectToFormData } from "@/utils/convert";
+import { useUIStore } from "@/store/common/ui-store";
+
+export const BUILDING_DETAIL_LOADING_KEYS = {
+  DETAIL: "building_detail",
+} as const;
 
 interface BuildingState {
-  building: UiBuildingInfo | undefined;
+  loadingKeys: typeof BUILDING_DETAIL_LOADING_KEYS;
+  building: UiBuildingInfo | null;
   getBuildingDetail: (buildingSeq: string) => Promise<void>;
   patchEditBuildingDetail: (values: Record<string, any>) => Promise<void>;
 }
@@ -21,8 +26,11 @@ export const useBuildingDetailStore = create<BuildingState>()(
   devtools(
     persist<BuildingState>(
       (set, get) => ({
-        building: undefined,
+        loadingKeys: BUILDING_DETAIL_LOADING_KEYS,
+        building: null,
         getBuildingDetail: async (buildingSeq) => {
+          const { setError, setLoading } = useUIStore.getState();
+          setLoading(BUILDING_DETAIL_LOADING_KEYS.DETAIL, true);
           try {
             const res: Response<BuildingInfo> = await api
               .get(`building/w/sign/detaildonginfo`, {
@@ -38,12 +46,17 @@ export const useBuildingDetailStore = create<BuildingState>()(
               pumpDetails: details.filter((d, i) => d.typeGubun === false),
             };
 
-            console.log(convertData);
-
             set({ building: convertData });
           } catch (err) {
             console.error(err);
-            toast.error("에러 발생");
+            const errMessage =
+              err instanceof Error
+                ? err.message
+                : "건물상세 조회 문제가 발생하였습니다. 잠시후 다시 시도해주세요.";
+            setError(BUILDING_DETAIL_LOADING_KEYS.DETAIL, errMessage);
+            toast.error(errMessage);
+          } finally {
+            setLoading(BUILDING_DETAIL_LOADING_KEYS.DETAIL, false);
           }
         },
         patchEditBuildingDetail: async (values) => {
@@ -68,10 +81,14 @@ export const useBuildingDetailStore = create<BuildingState>()(
           const updateBuilding: EditBuildingInfo = {
             ...rest,
             ...restValues, // hvacDetails, pumpDetails가 제거된 values
-            detail: [...facilityDetails, ...fireDetails],
+            details: [...facilityDetails, ...fireDetails],
             removeImage,
           };
-          const formData = convertRecordDataToFormData(updateBuilding, true);
+          // const formData = convertRecordDataToFormData(updateBuilding, true);
+          const formData = objectToFormData(updateBuilding, true);
+
+          console.log(formData);
+
           try {
             const res: Response<boolean> = await api
               .patch(`building/w/sign/updatebuildingdong`, {

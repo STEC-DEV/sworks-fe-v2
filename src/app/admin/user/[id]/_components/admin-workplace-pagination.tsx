@@ -7,33 +7,39 @@ import Input from "@/components/common/input";
 import BaseDialog from "@/components/ui/custom/base-dialog";
 import CommonPagination from "@/components/ui/custom/pagination/common-pagination";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Skeleton } from "@/components/ui/skeleton";
+
+import { usePermission } from "@/hooks/usePermission";
 import { useAdminDetailStore } from "@/store/admin/admin/admin-detail";
-import { useParams, usePathname, useSearchParams } from "next/navigation";
+import { useAuthStore } from "@/store/auth/auth-store";
+import { useUIStore } from "@/store/common/ui-store";
+import { useParams, useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
 const AdminWorkplacePagination = () => {
   const [open, setOpen] = useState<boolean>(false);
-  const { adminWorkplaceList } = useAdminDetailStore();
+  const { admin, adminWorkplaceList, loadingKeys } = useAdminDetailStore();
+  const { isLoading, hasError } = useUIStore();
+  const { canEdit } = usePermission();
+  const { loginProfile } = useAuthStore();
+
+  if (isLoading(loadingKeys.WORKPLACE) || !adminWorkplaceList)
+    return <BaseSkeleton className="h-9" />;
+  if (hasError(loadingKeys.WORKPLACE)) return <div>에러발생</div>;
 
   return (
-    <>
-      {adminWorkplaceList.type === "data" ? (
-        <div className="flex gap-4">
-          <CommonPagination
-            totalCount={adminWorkplaceList.payload.meta.totalCount}
-          />
-          <BaseDialog
-            triggerChildren={<IconButton icon={"SquarePen"} size={16} />}
-            title="담당 사업장 수정"
-            open={open}
-            setOpen={setOpen}
-          >
-            <EditAdminWorkplaceContents setOpen={setOpen} />
-          </BaseDialog>
-        </div>
-      ) : null}
-    </>
+    <div className="flex gap-4">
+      <CommonPagination totalCount={adminWorkplaceList.meta.totalCount} />
+      {(canEdit || admin?.userSeq === loginProfile?.userSeq) && (
+        <BaseDialog
+          triggerChildren={<IconButton icon={"SquarePen"} size={16} />}
+          title="담당 사업장 수정"
+          open={open}
+          setOpen={setOpen}
+        >
+          <EditAdminWorkplaceContents setOpen={setOpen} />
+        </BaseDialog>
+      )}
+    </div>
   );
 };
 

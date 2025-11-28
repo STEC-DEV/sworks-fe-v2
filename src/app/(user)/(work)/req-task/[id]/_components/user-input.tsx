@@ -26,9 +26,10 @@ const UserInput = ({ value, onChange }: UserInputProps) => {
     getClassificationReqManager();
 
     return () => {
-      handleCancel();
+      setCurSelect([...selected]);
+      setOpen(false);
     };
-  }, [open]);
+  }, [open, getClassificationReqManager]);
 
   // ✅ reqWorker 로드 후 초기 selected 설정 (최초 1회만)
   useEffect(() => {
@@ -36,7 +37,7 @@ const UserInput = ({ value, onChange }: UserInputProps) => {
     const managers = reqWorker.filter((worker) => worker.isManager === true);
 
     setSelected(managers);
-  }, [reqWorker]);
+  }, [reqWorker, setSelected]);
 
   // ✅ value prop이 변경되면 selected 동기화 (form.reset() 시 빈 배열로 초기화)
   useEffect(() => {
@@ -75,11 +76,6 @@ const UserInput = ({ value, onChange }: UserInputProps) => {
   const handleSave = () => {
     setSelected([...curSelect]); // 깊은 복사
     onChange(curSelect.map((s) => s.userSeq));
-    setOpen(false);
-  };
-
-  const handleCancel = () => {
-    setCurSelect([...selected]);
     setOpen(false);
   };
 
@@ -145,7 +141,8 @@ const UserInput = ({ value, onChange }: UserInputProps) => {
   );
 };
 
-interface UserInputFormItemProps<TField extends FieldValues = FieldValues> {
+//<TField extends FieldValues = FieldValues>
+interface UserInputFormItemProps {
   required?: boolean;
   onValueChange: (value: number[]) => void;
   value: number[];

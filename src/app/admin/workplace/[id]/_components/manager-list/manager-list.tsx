@@ -3,43 +3,46 @@
 import React, { useEffect } from "react";
 import ManagerFilter from "./manager-filter";
 import ManagerPagination from "./manager-pagination";
-import { useWorkplaceDetailStore } from "@/store/admin/workplace/workplace-detail-store";
-import UserCard from "@/app/admin/user/components/user-card";
-import { Skeleton } from "@/components/ui/skeleton";
+
 import AppTitle from "@/components/common/label/title";
-import { useParams, useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+
+import BaseTable from "@/components/common/base-table";
+import { userColumns } from "@/app/admin/user/components/user-columns";
+import BaseSkeleton from "@/components/common/base-skeleton";
+import { useWorkplaceManagerStore } from "@/store/admin/workplace/manager-store";
+import { useUIStore } from "@/store/common/ui-store";
 
 const ManagerList = () => {
-  const { managers, getManagers } = useWorkplaceDetailStore();
+  const router = useRouter();
+  const { managers, getManagers, loadingKeys } = useWorkplaceManagerStore();
+  const { isLoading, hasError } = useUIStore();
   const searchParams = useSearchParams();
-  const { id } = useParams<{ id: string }>();
-  useEffect(() => {
-    getManagers(new URLSearchParams(searchParams));
-  }, []);
 
   useEffect(() => {
     getManagers(new URLSearchParams(searchParams));
   }, [searchParams]);
+
+  const getList = () => {
+    if (isLoading(loadingKeys.MANAGER) || !managers) return <BaseSkeleton />;
+    if (hasError(loadingKeys.MANAGER)) return <div>에러 발생</div>;
+
+    return (
+      <BaseTable
+        padding="py-3"
+        columns={userColumns}
+        data={managers.data}
+        onRowClick={(data) => router.push(`/admin/user/${data.userSeq}`)}
+      />
+    );
+  };
+
   return (
     <div className="flex flex-col gap-6">
       <AppTitle title="담당 관리자" />
-      {managers.type === "data" ? (
-        <>
-          <ManagerFilter />
-          <ManagerPagination />
-          <div className="flex flex-col gap-2">
-            {managers.payload.data.map((w, i) => (
-              <UserCard key={i} item={w} />
-            ))}
-          </div>
-        </>
-      ) : (
-        <div className="flex flex-col gap-6 w-full h-full">
-          <Skeleton className="w-full h-12 rounded-[4px] bg-[var(--background)]" />
-          <Skeleton className="w-full h-12 rounded-[4px] bg-[var(--background)]" />
-          <Skeleton className="w-full h-32 rounded-[4px] bg-[var(--background)]" />
-        </div>
-      )}
+      <ManagerFilter />
+      <ManagerPagination />
+      {getList()}
     </div>
   );
 };

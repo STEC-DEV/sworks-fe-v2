@@ -1,12 +1,20 @@
 import api from "@/lib/api/api-manager";
+import { useUIStore } from "@/store/common/ui-store";
 import { AdminListItem } from "@/types/admin/admin/user-list";
 import { Response } from "@/types/common/response";
-import { ListMeta, ListState } from "@/types/list-type";
+import { ListData } from "@/types/list-type";
+import { paramsCheck } from "@/utils/param";
+import { toast } from "sonner";
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 
+export const ADMIN_LIST_LOADING_KEYS = {
+  LIST: "admin-list",
+} as const;
+
 interface AdminListState {
-  adminList: ListState<AdminListItem>;
+  loadingKeys: typeof ADMIN_LIST_LOADING_KEYS;
+  adminList: ListData<AdminListItem> | null;
   getAdminList: (params: URLSearchParams) => Promise<void>;
   postAddAdmin: (value: Record<string, any>) => Promise<Response<number>>;
 }
@@ -15,37 +23,33 @@ export const useAdminListStore = create<AdminListState>()(
   devtools(
     persist<AdminListState>(
       (set, get) => ({
-        adminList: { type: "loading" },
+        loadingKeys: ADMIN_LIST_LOADING_KEYS,
+        adminList: null,
         getAdminList: async (params) => {
-          if (
-            params.size === 0 ||
-            !params.get("pageNumber") ||
-            !params.get("pageSize")
-          ) {
-            params.set("pageNumber", "1");
-            params.set("pageSize", "20");
-          }
+          const checkParams = paramsCheck(params);
+          const { setError, setLoading } = useUIStore.getState();
+          setLoading(ADMIN_LIST_LOADING_KEYS.LIST, true);
+          try {
+            const res: Response<ListData<AdminListItem>> = await api
+              .get(`AdminUser/W/sign/AdminList`, {
+                searchParams: checkParams,
+              })
+              .json();
 
-          const res = await api.get(`AdminUser/W/sign/AdminList`, {
-            searchParams: params,
-          });
-
-          /**에러 발생 */
-          if (!res.ok) {
             set({
-              adminList: { type: "error", message: "데이터 조회 실패" },
+              adminList: res.data,
             });
-            return;
+          } catch (err) {
+            console.error(err);
+            const errMessage =
+              err instanceof Error
+                ? err.message
+                : "관리자 조회 문제가 발생하였습니다. 잠시후 다시 시도해주세요.";
+            setError(ADMIN_LIST_LOADING_KEYS.LIST, errMessage);
+            toast.error(errMessage);
+          } finally {
+            setLoading(ADMIN_LIST_LOADING_KEYS.LIST, false);
           }
-
-          const response = (await res.json()) as Response<{
-            data: AdminListItem[];
-            meta: ListMeta;
-          }>;
-
-          set({
-            adminList: { type: "data", ...response.data },
-          });
         },
         postAddAdmin: async (value) => {
           const formData = new FormData();

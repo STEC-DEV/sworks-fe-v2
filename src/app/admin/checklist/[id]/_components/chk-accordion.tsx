@@ -5,8 +5,10 @@ import dialogText from "../../../../../../public/dialog-text.json";
 import React from "react";
 import { useParams, useRouter } from "next/navigation";
 import { CircleCheckBig } from "lucide-react";
+import { usePermission } from "@/hooks/usePermission";
 
 const ChkAccordion = ({ data }: { data: Checklist }) => {
+  const { canEdit } = usePermission();
   const router = useRouter();
   const { id } = useParams();
 
@@ -15,21 +17,23 @@ const ChkAccordion = ({ data }: { data: Checklist }) => {
       label={data.chkMainTitle}
       icon={CircleCheckBig}
       optionChildren={
-        <div className="flex gap-2">
-          <IconButton
-            icon="SquarePen"
-            size={16}
-            onClick={() => router.push(`${id}/${data.chkMainSeq}`)}
-          />
-          <CheckDialog
-            title={dialogText.checklistItemDelete.title}
-            description={dialogText.checklistItemDelete.description}
-            actionLabel={dialogText.checklistItemDelete.actionLabel}
-            onClick={() => {}}
-          >
-            <IconButton icon="Trash2" size={16} />
-          </CheckDialog>
-        </div>
+        canEdit && (
+          <div className="flex gap-2">
+            <IconButton
+              icon="SquarePen"
+              size={16}
+              onClick={() => router.push(`${id}/${data.chkMainSeq}`)}
+            />
+            <CheckDialog
+              title={dialogText.checklistItemDelete.title}
+              description={dialogText.checklistItemDelete.description}
+              actionLabel={dialogText.checklistItemDelete.actionLabel}
+              onClick={() => {}}
+            >
+              <IconButton icon="Trash2" size={16} />
+            </CheckDialog>
+          </div>
+        )
       }
     >
       {data.subs.map((v, i) => (
@@ -88,7 +92,7 @@ export const CheckItem = ({ item }: { item: ChecklistItemDetail }) => {
         </span>
       </div>
       {item.chkDetailPoint ? (
-        <div className="px-4 py-1 bg-blue-500 text-white text-sm rounded-[4px]">
+        <div className="whitespace-nowrap px-4 py-1 bg-blue-500 text-white text-sm rounded-[4px]">
           {item.chkDetailPoint}점
         </div>
       ) : null}

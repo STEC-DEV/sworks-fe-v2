@@ -8,7 +8,7 @@ import ChecklistAddForm, {
 
 import FormLayout from "@/components/layout/form-layout";
 import ResultDialog from "@/components/ui/custom/form/result-dialog";
-import { useWorkplaceDetailStore } from "@/store/admin/workplace/workplace-detail-store";
+import { useWorkplaceDetailChecklistStore } from "@/store/admin/workplace/checklist-store";
 import { useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
@@ -22,7 +22,7 @@ const Page = () => {
     setCreateChecklist,
     resetCreateChecklist,
     resetSelectedAvailableChecklistItem,
-  } = useWorkplaceDetailStore();
+  } = useWorkplaceDetailChecklistStore();
   const { id } = useParams();
 
   useEffect(() => {
