@@ -103,14 +103,6 @@ const Page = () => {
     setExistedFile(equipmentDetail.images);
   }, [equipmentDetail, form]);
 
-  useEffect(() => {
-    console.log("basicCode.contractCodes 변화:", basicCode.contractCodes);
-  }, [basicCode.contractCodes]);
-
-  useEffect(() => {
-    console.log("equipmentDetail 변화:", equipmentDetail);
-  }, [equipmentDetail]);
-
   const handleSubmit = async (values: UpdateFormType) => {
     const formData = convertRecordDataToFormData(values, true);
     await patchUpdateEquipmentDetail(formData);
@@ -134,7 +126,7 @@ const Page = () => {
                 if (!value) return;
                 field.onChange(Number(value));
               };
-              console.log("serviceTypeSeq 컴포넌트 값 : ", field.value);
+
               return (
                 <SelectFormItem
                   label="유형"

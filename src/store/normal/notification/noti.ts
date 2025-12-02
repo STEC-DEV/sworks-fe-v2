@@ -19,7 +19,9 @@ export const NOTIFICATION_LOADING_KEYS = {
 interface NotificationState {
   loadingKeys: typeof NOTIFICATION_LOADING_KEYS;
   notificationList: Notification[] | null;
-  getNotification: () => Promise<void>;
+  hasMore: boolean;
+  lastCursor: number | null;
+  getNotification: (lastNoticeSeq?: number) => Promise<void>;
   putReadNotification: (id: string) => Promise<void>;
 }
 
@@ -29,15 +31,23 @@ export const useNotificationStore = create<NotificationState>()(
       (set, get) => ({
         loadingKeys: NOTIFICATION_LOADING_KEYS,
         notificationList: null,
-        getNotification: async () => {
+        hasMore: false,
+        lastCursor: null,
+        getNotification: async (lastNoticeSeq) => {
           const { setLoading, setError } = useUIStore.getState();
           setLoading(NOTIFICATION_LOADING_KEYS.LIST, true);
           try {
             const res: Response<NotiResponse> = await api
-              .get(`unread/w/sign/getnotificationlist`)
+              .get(`unread/w/sign/getnotificationlist`, {
+                searchParams: { lastNoticeSeq },
+              })
               .json();
 
-            set({ notificationList: res.data.items });
+            set({
+              notificationList: res.data.items,
+              hasMore: res.data.hasMore,
+              lastCursor: res.data.lastCursor,
+            });
           } catch (err) {
             console.error(err);
             const errMessage =

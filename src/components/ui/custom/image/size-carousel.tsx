@@ -10,9 +10,14 @@ interface DialogCarouselProps {
   currentIndex?: number;
   pathList: string[];
   imageTxt?: string[];
+  isSmall?: boolean;
 }
 
-const DialogCarousel = ({ pathList, imageTxt }: DialogCarouselProps) => {
+const DialogCarousel = ({
+  pathList,
+  imageTxt,
+  isSmall = false,
+}: DialogCarouselProps) => {
   const [index, setIndex] = useState<number>(0);
   const [open, setOpen] = useState<boolean>(false);
 
@@ -46,6 +51,7 @@ const DialogCarousel = ({ pathList, imageTxt }: DialogCarouselProps) => {
                 setIndex(i); // 클릭한 이미지로 인덱스 설정
                 setOpen(true);
               }}
+              isSmall={isSmall}
             />
           ))}
         </div>
@@ -125,10 +131,12 @@ const DialogCarousel = ({ pathList, imageTxt }: DialogCarouselProps) => {
 const ImageBox = ({
   src,
   description,
+  isSmall = false,
   onClick,
 }: {
   src: string;
   description?: string;
+  isSmall?: boolean;
   onClick: () => void;
 }) => {
   return (
@@ -137,13 +145,23 @@ const ImageBox = ({
         className="border border-[var(--border)] rounded-[4px] overflow-hidden last flex-shrink-0 relative"
         onClick={onClick}
       >
-        <Image
-          width={192} // w-48 = 12rem = 192px
-          height={128} // h-32 = 8rem = 128px
-          className="h-32 w-48 object-cover"
-          src={src}
-          alt="이미지"
-        />
+        {isSmall ? (
+          <Image
+            width={64} // w-16 = 64px
+            height={64}
+            className="w-16 h-16 object-cover aspect-square"
+            src={src}
+            alt="이미지"
+          />
+        ) : (
+          <Image
+            width={192} // w-48 = 12rem = 192px
+            height={128} // h-32 = 8rem = 128px
+            className="h-32 w-48 object-cover"
+            src={src}
+            alt="이미지"
+          />
+        )}
       </div>
       <span className="text-xs text-[var(--description-light)]">
         {description}

@@ -145,140 +145,134 @@ const ComplainAddForm = ({ seq }: ComplainAddFormProps) => {
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(handleSubmit)}
-          className="flex-1 flex flex-col gap-6 min-h-0"
+          className="flex-1 flex flex-col gap-6 "
         >
-          <ScrollArea className="flex-1 overflow-hidden">
-            <div className=" flex flex-col gap-6 px-6">
-              <FormField
-                control={form.control}
-                name="createUser"
-                render={({ field }) => (
-                  <TextFormItem
-                    label="성함"
-                    placeholder="성함"
-                    {...field}
-                    required
-                  />
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="replyYn"
-                render={({ field }) => (
-                  <CheckFormItem
-                    label="회신여부"
-                    description="전화번호를 입력하시면 처리내용을 회신받을 수 있습니다."
-                    checked={field.value}
-                    onChange={field.onChange}
-                    onBlur={field.onBlur}
-                    name={field.name}
-                    ref={field.ref}
-                    disabled={isSuccess}
-                  />
-                )}
-              />
+          <div className="flex-1 flex flex-col gap-6 px-6">
+            <FormField
+              control={form.control}
+              name="createUser"
+              render={({ field }) => (
+                <TextFormItem
+                  label="성함"
+                  placeholder="성함"
+                  {...field}
+                  required
+                />
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="replyYn"
+              render={({ field }) => (
+                <CheckFormItem
+                  label="회신여부"
+                  description="전화번호를 입력하시면 처리내용을 회신받을 수 있습니다."
+                  checked={field.value}
+                  onChange={field.onChange}
+                  onBlur={field.onBlur}
+                  name={field.name}
+                  ref={field.ref}
+                  disabled={isSuccess}
+                />
+              )}
+            />
 
-              {!isSuccess ? (
-                form.watch("replyYn") ? (
-                  <div className="flex flex-col gap-6">
-                    <FormField
-                      control={form.control}
-                      name="phone"
-                      render={({ field }) => (
-                        <TextFormItem
-                          label="전화번호"
-                          placeholder="전화번호"
-                          {...field}
-                          required
-                        />
-                      )}
-                    />
-
-                    {verification ? (
-                      <div className="flex flex-col gap-2">
-                        <span className="text-sm text-[var(--description-light)]">
-                          {formatTime()}
-                        </span>
-                        <span className="text-sm text-[var(--description-light)]">
-                          남은횟수 : {tryCount}
-                        </span>
-                        <div className="flex gap-6">
-                          <Input
-                            className="w-full"
-                            type="text"
-                            placeholder="인증번호"
-                            value={code}
-                            onChange={(e) => setCode(e.target.value)}
-                          />
-                          <Button
-                            label="확인"
-                            size={"sm"}
-                            type="button"
-                            onClick={handleCheckVerification}
-                          />
-                        </div>
-                      </div>
-                    ) : form.watch("phone") ? (
-                      <Button
-                        label="전송"
-                        onClick={handleSendVerification}
-                        type="button"
-                      />
-                    ) : (
-                      <Button
-                        label="전송"
-                        variant={"disabled"}
-                        disabled={true}
+            {!isSuccess ? (
+              form.watch("replyYn") ? (
+                <div className="flex flex-col gap-6">
+                  <FormField
+                    control={form.control}
+                    name="phone"
+                    render={({ field }) => (
+                      <TextFormItem
+                        label="전화번호"
+                        placeholder="전화번호"
+                        {...field}
+                        required
                       />
                     )}
-                  </div>
-                ) : null
-              ) : (
-                <span className="text-xs text-blue-500">인증되었습니다.</span>
-              )}
+                  />
 
-              <FormField
-                control={form.control}
-                name="title"
-                render={({ field }) => (
-                  <TextFormItem
-                    label="제목"
-                    placeholder="제목"
-                    {...field}
-                    required
-                  />
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="content"
-                render={({ field }) => (
-                  <TextAreaFormItem
-                    label="내용"
-                    placeholder="내용"
-                    {...field}
-                    required
-                  />
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="images"
-                render={({ field }) => (
-                  <FileFormItem
-                    label="첨부파일"
-                    accept="accept"
-                    multiple={true}
-                    {...field}
-                    value={field.value}
-                    onChange={field.onChange}
-                    imageOnly
-                    isVertical
-                  />
-                )}
-              />
-            </div>
-          </ScrollArea>
+                  {verification ? (
+                    <div className="flex flex-col gap-2">
+                      <span className="text-sm text-[var(--description-light)]">
+                        {formatTime()}
+                      </span>
+                      <span className="text-sm text-[var(--description-light)]">
+                        남은횟수 : {tryCount}
+                      </span>
+                      <div className="flex gap-6">
+                        <Input
+                          className="w-full"
+                          type="text"
+                          placeholder="인증번호"
+                          value={code}
+                          onChange={(e) => setCode(e.target.value)}
+                        />
+                        <Button
+                          label="확인"
+                          size={"sm"}
+                          type="button"
+                          onClick={handleCheckVerification}
+                        />
+                      </div>
+                    </div>
+                  ) : form.watch("phone") ? (
+                    <Button
+                      label="전송"
+                      onClick={handleSendVerification}
+                      type="button"
+                    />
+                  ) : (
+                    <Button label="전송" variant={"disabled"} disabled={true} />
+                  )}
+                </div>
+              ) : null
+            ) : (
+              <span className="text-xs text-blue-500">인증되었습니다.</span>
+            )}
+
+            <FormField
+              control={form.control}
+              name="title"
+              render={({ field }) => (
+                <TextFormItem
+                  label="제목"
+                  placeholder="제목"
+                  {...field}
+                  required
+                />
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="content"
+              render={({ field }) => (
+                <TextAreaFormItem
+                  label="내용"
+                  placeholder="내용"
+                  {...field}
+                  required
+                />
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="images"
+              render={({ field }) => (
+                <FileFormItem
+                  label="첨부파일"
+                  accept="accept"
+                  multiple={true}
+                  {...field}
+                  value={field.value}
+                  onChange={field.onChange}
+                  imageOnly
+                  isVertical
+                />
+              )}
+            />
+          </div>
 
           <div className="shrink-0 px-6">
             <Button label="접수" />

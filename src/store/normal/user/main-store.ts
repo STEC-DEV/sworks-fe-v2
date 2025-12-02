@@ -7,6 +7,7 @@ import {
   CreateUser,
   CreateUserClassification,
 } from "@/types/normal/user/create";
+import { UserListItem } from "@/types/normal/user/list";
 import { convertRecordDataToFormData } from "@/utils/convert";
 import { paramsCheck } from "@/utils/param";
 import { toast } from "sonner";

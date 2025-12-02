@@ -1,6 +1,7 @@
 import api from "@/lib/api/api-manager";
 import { useAuthStore } from "@/store/auth/auth-store";
 import { useUIStore } from "@/store/common/ui-store";
+import { UserServiceType } from "@/types/common/basic-code";
 import { Response } from "@/types/common/response";
 import { ListData } from "@/types/list-type";
 import { paramsCheck } from "@/utils/param";

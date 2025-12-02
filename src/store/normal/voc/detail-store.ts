@@ -10,6 +10,7 @@ import { devtools, persist } from "zustand/middleware";
 export const VOC_DETAIL_LOADING_KEYS = {
   INFO: "voc_info",
   REPLY_LIST: "voc_reply_list",
+  COMPLAIN: "voc_complain",
 } as const;
 
 interface VocDetailState {
@@ -20,6 +21,9 @@ interface VocDetailState {
   putUpdateServiceType: (values: any) => Promise<Response<boolean>>;
   postAddReply: (formData: FormData) => Promise<Response<boolean>>;
   patchUpdateReply: (formData: FormData) => Promise<void>;
+
+  complain: VocDetail | null;
+  getComplain: (code: string) => Promise<void>;
 }
 
 export const useVocDetailStore = create<VocDetailState>()(
@@ -110,6 +114,30 @@ export const useVocDetailStore = create<VocDetailState>()(
           } catch (err) {
             console.error(err);
             toast.error("문제가 발생하였습니다. 잠시후 다시 시도해주세요.");
+          }
+        },
+        complain: null,
+        getComplain: async (code) => {
+          const { setError, setLoading } = useUIStore.getState();
+          setLoading(VOC_DETAIL_LOADING_KEYS.COMPLAIN, true);
+          try {
+            const res: Response<VocDetail> = await api
+              .get("voc/w/getvoccode", {
+                searchParams: { vocCode: code },
+              })
+              .json();
+
+            set({ complain: res.data });
+          } catch (err) {
+            console.error(err);
+            const errMessage =
+              err instanceof Error
+                ? err.message
+                : "민원조회 문제가 발생하였습니다. 잠시후 다시 시도해주세요.";
+            setError(VOC_DETAIL_LOADING_KEYS.COMPLAIN, errMessage);
+            toast.error(errMessage);
+          } finally {
+            setLoading(VOC_DETAIL_LOADING_KEYS.COMPLAIN, false);
           }
         },
       }),

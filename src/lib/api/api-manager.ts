@@ -1,12 +1,10 @@
 import ky from "ky";
 import setAuthorizationHeader from "./hooks/setAuthorization";
 import beforeRetry from "./hooks/beforeRetry";
+import { notifyApiError } from "./errorHandler";
 
 const instance = ky.create({
   prefixUrl: process.env.NEXT_PUBLIC_BASE_URL,
-  // headers: {
-  //   "Content-Type": "application/json",
-  // },
   credentials: "include",
 });
 
@@ -20,6 +18,18 @@ const api = instance.extend({
   hooks: {
     beforeRequest: [setAuthorizationHeader],
     beforeRetry: [beforeRetry],
+    afterResponse: [
+      async (request, options, response) => {
+        if (response.status === 409) {
+          notifyApiError({
+            status: 409,
+            message: "토근이 만료되었습니다.",
+            response,
+          });
+        }
+        return response;
+      },
+    ],
   },
 });
 

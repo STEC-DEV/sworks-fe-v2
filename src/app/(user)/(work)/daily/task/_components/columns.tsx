@@ -31,11 +31,7 @@ export const taskCol: ColumnDef<Task>[] = [
     header: "유형",
     cell: ({ row }) => {
       const value = row.original.serviceTypeName;
-      return (
-        <span className="text-xs text-[var(--description-dark)] font-medium">
-          {value}
-        </span>
-      );
+      return <span className="text-xs text-blue-500 font-medium">{value}</span>;
     },
   },
   {

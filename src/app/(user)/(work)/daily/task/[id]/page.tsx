@@ -20,6 +20,7 @@ import React, { useEffect, useState } from "react";
 import { WorkerColumns } from "./_components/worker-columns";
 import { useUIStore } from "@/store/common/ui-store";
 import BaseSkeleton from "@/components/common/base-skeleton";
+import ChkEditForm from "@/components/form/normal/task/chk-edit";
 
 const Page = () => {
   const { taskDetail, getTaskDetail, patchUpdateTaskDetail, loadingKeys } =
@@ -28,6 +29,7 @@ const Page = () => {
   const { rawValue } = useDecodeParam("id");
 
   const [infoEditOpen, setInfoEditOpen] = useState<boolean>(false);
+  const [chkEditOpen, setChkEditOpen] = useState<boolean>(false);
   const [workerEditOpen, setWorkerEditOpen] = useState<boolean>(false);
 
   useEffect(() => {
@@ -70,6 +72,7 @@ const Page = () => {
     if (!rawValue) return;
     await patchUpdateTaskDetail(values);
     setInfoEditOpen(false);
+    setChkEditOpen(false);
     await getTaskDetail(rawValue);
   };
 
@@ -111,7 +114,14 @@ const Page = () => {
         <div className="flex flex-col gap-6">
           <div className="flex justify-between items-center pb-4 border-b-2 border-border">
             <AppTitle title={"체크리스트"} />
-            <IconButton icon="SquarePen" />
+            <BaseDialog
+              title="체크리스트 수정"
+              open={chkEditOpen}
+              setOpen={setChkEditOpen}
+              triggerChildren={<IconButton icon="SquarePen" />}
+            >
+              <ChkEditForm onSubmit={handleUpdate} />
+            </BaseDialog>
           </div>
           <div className="flex flex-col gap-4">
             {taskDetail.mains.map((c, i) => (

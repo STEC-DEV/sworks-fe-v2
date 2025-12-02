@@ -258,7 +258,7 @@ export const DayBox = ({
 
   return (
     <div
-      className={`flex-1   h-full p-1 overflow-hidden  min-h-20
+      className={`flex-1   h-full p-1 overflow-hidden  min-h-25
          border-r border--[var(--border)] first:border-l
          
   

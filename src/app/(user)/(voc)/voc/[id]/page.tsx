@@ -19,7 +19,6 @@ import TypeEditForm from "@/components/form/normal/voc/type-edit";
 import ReplyEditForm from "@/components/form/normal/voc/reply-edit";
 import { KeyValueItem } from "@/components/ui/custom/key-value";
 import { useUIStore } from "@/store/common/ui-store";
-import EmptyBox from "@/components/ui/custom/empty";
 
 const Page = () => {
   const [open, setOpen] = useState<boolean>(false);

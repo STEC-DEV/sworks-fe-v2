@@ -4,12 +4,13 @@ import BaseTable from "@/components/common/base-table";
 import CustomCard from "@/components/common/card";
 import EmptyBox from "@/components/ui/custom/empty";
 import { useUserMainStore } from "@/store/normal/user/main-store";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import React, { Suspense, useCallback, useEffect } from "react";
 import { userColumns } from "./user-column";
 import { useUIStore } from "@/store/common/ui-store";
 
 const UserList = () => {
+  const router = useRouter();
   const { userList, getUserList, loadingKeys } = useUserMainStore();
   const { isLoading, hasError } = useUIStore();
   const searchParams = useSearchParams();
@@ -28,7 +29,12 @@ const UserList = () => {
   if (hasError(loadingKeys.LIST)) return <div>에러 발생</div>;
 
   return (
-    <BaseTable padding="py-3" columns={userColumns} data={userList.data} />
+    <BaseTable
+      padding="py-3"
+      columns={userColumns}
+      data={userList.data}
+      onRowClick={(data) => router.push(`/workplace/user/${data.userSeq}`)}
+    />
   );
 };
 

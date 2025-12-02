@@ -11,7 +11,7 @@ const buttonVariants = cva(
     variants: {
       /**색상변경 */
       variant: {
-        default: "bg-blue-500",
+        default: "bg-blue-500 border border-blue-500",
         secondary: "text-blue-500 bg-parent hover:bg-blue-50",
         filter: "px-2 py-2",
         prev: "border border-[var(--border)] bg-[var(--background)] text-[var(--description-light)] hover:bg-[var(--border)]",

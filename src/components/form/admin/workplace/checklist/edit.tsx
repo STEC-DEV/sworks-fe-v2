@@ -31,6 +31,7 @@ import {
 import AppTitle from "@/components/common/label/title";
 import Button from "@/components/common/button";
 import { useParams, useRouter } from "next/navigation";
+import { useWorkplaceDetailChecklistStore } from "@/store/admin/workplace/checklist-store";
 
 const formSchema = z.object({
   chkMainSeq: z
@@ -49,7 +50,7 @@ const WorkplaceChecklistEditForm = () => {
     selectedAvailableChecklistItem,
     updateSelectedAvailableChecklistItem,
     putUpdateChecklist,
-  } = useWorkplaceDetailStore();
+  } = useWorkplaceDetailChecklistStore();
   const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
   // 로컬 상태로 드래그 가능한 아이템들 관리
   const [items, setItems] = useState<Checklist[]>([]);

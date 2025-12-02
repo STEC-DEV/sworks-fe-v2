@@ -6,7 +6,7 @@ import IconButton from "@/components/common/icon-button";
 import { useAuthStore } from "@/store/auth/auth-store";
 import { icons, LogOut, MenuIcon } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   Sheet,
   SheetContent,
@@ -212,15 +212,6 @@ const SideBar = ({ loginMode }: SideBarProps) => {
             )
           )}
         </div>
-        {/* <div className="px-6 py-6">
-          <Button
-            className="hover:text-red-500 hover:font-bold "
-            variant={"login"}
-            onClick={() => logout()}
-            icon={LogOut}
-            label={"로그아웃"}
-          />
-        </div> */}
       </ScrollArea>
     </div>
   );
@@ -230,6 +221,8 @@ const Noti = () => {
   const {
     loadingKeys,
     notificationList,
+    hasMore,
+    lastCursor,
     getNotification,
     putReadNotification,
   } = useNotificationStore();
@@ -237,11 +230,33 @@ const Noti = () => {
   const [open, setOpen] = useState<boolean>(false);
   const router = useRouter();
 
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [isFetchingMore, setIsFetchingMore] = useState(false);
+
   useEffect(() => {
     if (!open) return;
 
     getNotification();
   }, [open]);
+
+  // 무한 스크롤 핸들러
+  const handleScroll = useCallback(async () => {
+    if (!scrollRef.current) return;
+    if (isFetchingMore || !hasMore) return;
+    if (isLoading(loadingKeys.LIST)) return;
+
+    const { scrollTop, scrollHeight, clientHeight } = scrollRef.current;
+
+    // 스크롤이 하단 100px 이내로 도달하면 추가 로드
+    if (scrollHeight - scrollTop - clientHeight < 100) {
+      setIsFetchingMore(true);
+      try {
+        await getNotification(lastCursor || undefined); // cursor와 함께 요청
+      } finally {
+        setIsFetchingMore(false);
+      }
+    }
+  }, [hasMore, lastCursor, isFetchingMore, isLoading, loadingKeys.LIST]);
 
   const type = (type: number): { label: string; value: string } => {
     switch (type) {
@@ -275,29 +290,43 @@ const Noti = () => {
         <BaseSkeleton key={i} className="w-87 h-20.5" />
       ));
     if (hasError(loadingKeys.LIST)) return <div>에러발생</div>;
-    return notificationList.length > 0 ? (
-      notificationList.map((n, i) => (
-        <CustomCard
-          key={i}
-          variant={"list"}
-          className={`hover:border-blue-500 hover:bg-blue-50 ${
-            n.isRead ? "bg-[var(--read)]" : ""
-          }`}
-          onClick={() => onClick(n)}
-        >
-          <div className="flex items-center justify-between ">
-            <span className="text-blue-500 text-sm">
-              {type(n.notiType).label}
-            </span>
-            <span className="text-xs text-[var(--description-light)]">
-              {format(n.createDt, "yyyy-MM-dd HH:mm:ss")}
-            </span>
+    return (
+      <>
+        {notificationList.map((n, i) => (
+          <CustomCard
+            key={`${n.readSignSeq}-${i}`}
+            variant={"list"}
+            className={`hover:border-blue-500 hover:bg-blue-50 ${
+              n.isRead ? "bg-[var(--read)]" : ""
+            }`}
+            onClick={() => onClick(n)}
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-blue-500 text-sm">
+                {type(n.notiType).label}
+              </span>
+              <span className="text-xs text-[var(--description-light)]">
+                {format(n.createDt, "yyyy-MM-dd HH:mm:ss")}
+              </span>
+            </div>
+            <span className="text-sm">{n.contents}</span>
+          </CustomCard>
+        ))}
+
+        {/* 추가 로딩 중 표시 */}
+        {isFetchingMore && (
+          <div className="flex justify-center py-4">
+            <BaseSkeleton className="w-87 h-20.5" />
           </div>
-          <span className="text-sm">{n.contents}</span>
-        </CustomCard>
-      ))
-    ) : (
-      <EmptyBox />
+        )}
+
+        {/* 더 이상 데이터 없음 표시 */}
+        {!hasMore && notificationList.length > 0 && (
+          <div className="text-center py-4 text-sm text-[var(--description-light)]">
+            더 이상 알림이 없습니다
+          </div>
+        )}
+      </>
     );
   };
 
@@ -320,7 +349,11 @@ const Noti = () => {
         <SheetHeader>
           <SheetTitle className="text-xl">알람</SheetTitle>
         </SheetHeader>
-        <ScrollArea className="overflow-hidden">
+        <ScrollArea
+          className="overflow-hidden"
+          ref={scrollRef}
+          onScroll={handleScroll}
+        >
           <div className="px-4 pb-2">
             <div className="flex flex-col gap-4">{getList()}</div>
           </div>

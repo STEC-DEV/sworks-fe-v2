@@ -35,6 +35,7 @@ export const useUIStore = create<UIState>()(
     setLoading: (key, isLoading) => {
       set((state) => ({
         loading: { ...state.loading, [key]: isLoading },
+        errors: isLoading ? { ...state.errors, [key]: null } : state.errors,
       }));
     },
     setError: (key, error) => {

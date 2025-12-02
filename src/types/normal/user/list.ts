@@ -1,4 +1,4 @@
-interface UserListItem {
+export interface UserListItem {
   userSeq: number;
   userName: string;
   role: string;
@@ -14,4 +14,15 @@ interface UserServiceType {
 
 interface UserNameList {
   userName: string;
+}
+
+export interface User {
+  userSeq: number;
+  userName: string;
+  role: string;
+  job: string;
+  phone: string;
+  email: string;
+  serviceTypes: UserServiceType[];
+  images: string;
 }

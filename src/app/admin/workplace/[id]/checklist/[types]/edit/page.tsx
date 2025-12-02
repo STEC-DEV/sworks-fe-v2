@@ -14,14 +14,6 @@ const Page = () => {
   const router = useRouter();
   return (
     <div className="flex gap-2">
-      {/* <div>
-        <IconButton
-          icon="ChevronLeft"
-          size={24}
-          onClick={() => router.back()}
-        />
-      </div> */}
-
       <div className="w-full xl:w-150 flex flex-col gap-4">
         <AppTitle title="체크리스트 수정" />
 

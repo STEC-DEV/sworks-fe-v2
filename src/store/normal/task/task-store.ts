@@ -12,6 +12,7 @@ import { devtools, persist } from "zustand/middleware";
 
 export const TASK_LOADING_KEYS = {
   LIST: "task_list",
+  UPDATE_CHK_CLASSIFICATION: "update_task_chk_classification",
 } as const;
 
 interface TaskState {
@@ -25,6 +26,10 @@ interface TaskState {
   postAddTask: () => Promise<boolean>;
   taskChecklist: TaskChecklist[] | undefined;
   getChecklist: () => Promise<Response<TaskChecklist[] | null>>;
+  //업무수정
+  ////현재 체크리스트 조회
+  updateChkClassification: TaskChecklist[] | null;
+  getChecklistClassification: (taskSeq: string) => Promise<void>;
 }
 
 const initialCreateTask = {
@@ -128,6 +133,30 @@ export const useTaskStore = create<TaskState>()(
             console.error(err);
             toast.error("업무생성 실패");
             return false;
+          }
+        },
+        //업무 수정
+        updateChkClassification: null,
+        getChecklistClassification: async (taskSeq) => {
+          const { setError, setLoading } = useUIStore.getState();
+          setLoading(TASK_LOADING_KEYS.UPDATE_CHK_CLASSIFICATION, true);
+          try {
+            const res: Response<TaskChecklist[]> = await api
+              .get(`sitetask/w/sign/updatechkclassification`, {
+                searchParams: { taskSeq: taskSeq },
+              })
+              .json();
+            set({ updateChkClassification: res.data });
+          } catch (err) {
+            console.error(err);
+            const errMessage =
+              err instanceof Error
+                ? err.message
+                : "업무 체크리스트 조회 문제가 발생하였습니다. 잠시후 다시 시도해주세요.";
+            setError(TASK_LOADING_KEYS.UPDATE_CHK_CLASSIFICATION, errMessage);
+            toast.error(errMessage);
+          } finally {
+            setLoading(TASK_LOADING_KEYS.UPDATE_CHK_CLASSIFICATION, false);
           }
         },
       }),

@@ -14,9 +14,6 @@ const AdminList = () => {
   const { isLoading, hasError } = useUIStore();
   const searchParams = useSearchParams();
   const router = useRouter();
-  useEffect(() => {
-    getAdminList(new URLSearchParams(searchParams));
-  }, []);
 
   useEffect(() => {
     getAdminList(new URLSearchParams(searchParams));

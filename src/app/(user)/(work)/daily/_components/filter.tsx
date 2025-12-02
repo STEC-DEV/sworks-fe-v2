@@ -7,7 +7,7 @@ import {
   convertKeyValueArrayToRecord,
   convertSelectOptionType,
 } from "@/utils/convert";
-import { ReceiptTextIcon } from "lucide-react";
+import { ReceiptTextIcon, RotateCcwIcon } from "lucide-react";
 import React, { useEffect, useState } from "react";
 
 const TaskFilter = () => {
@@ -27,24 +27,17 @@ const TaskFilter = () => {
         icon: ReceiptTextIcon,
         data: convertData, // 중괄호 제거
       },
+      {
+        key: "completeYn",
+        placeholder: "처리상태",
+        icon: RotateCcwIcon,
+        data: {
+          미완료: 0,
+          완료: 1,
+        }, // 중괄호 제거
+      },
     ]);
   }, [basicCode]);
-
-  // const handleFilterConfig = () => {
-  //   if (!basicCode || !basicCode.contractCodes) return;
-  //   const data = convertSelectOptionType(basicCode.contractCodes);
-  //   const convertData = convertKeyValueArrayToRecord(data);
-
-  //   setFilterConfig((prev) => [
-  //     ...prev,
-  //     {
-  //       key: "serviceTypeSeq",
-  //       placeholder: "유형",
-  //       icon: ReceiptTextIcon,
-  //       data: convertData, // 중괄호 제거
-  //     },
-  //   ]);
-  // };
 
   return (
     <div>

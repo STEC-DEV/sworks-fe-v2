@@ -151,148 +151,254 @@ const ChecklistEditContents = ({
     setChecklist(checklist.data);
   };
 
+  // const handleMainCheck = useCallback(
+  //   (isCheck: boolean, data: TaskChecklist) => {
+  //     console.log(isCheck);
+  //     //해제 경우
+  //     if (!isCheck) {
+  //       setSelectedChecklist((prev) => {
+  //         console.log(prev.filter((v) => v.chkMainSeq !== data.chkMainSeq));
+  //         return prev.filter((v) => v.chkMainSeq !== data.chkMainSeq);
+  //       });
+  //       return;
+  //     } else {
+  //       //전체선택
+  //       setSelectedChecklist((prev) => {
+  //         const select = prev.find((v) => v.chkMainSeq === data.chkMainSeq);
+  //         return select
+  //           ? //기존 메인에 sub가 일부 존재하는경우 sub를 지우고 main만 남겨야함
+  //             prev.map((item) =>
+  //               item.chkMainSeq === data.chkMainSeq
+  //                 ? {
+  //                     ...item,
+  //                     chkSubs: [],
+  //                   }
+  //                 : item
+  //             )
+  //           : [
+  //               //기존에 없었던경우에는 sub를 제외한 메인만 추가
+  //               ...prev,
+  //               {
+  //                 chkMainSeq: data.chkMainSeq,
+  //                 chkMainTitle: data.chkMainTitle,
+  //                 chkSubs: [],
+  //               },
+  //             ];
+  //       });
+  //     }
+  //   },
+  //   []
+  // );
+
+  // //서브항목 체크
+  // const handleSubCheck = useCallback(
+  //   (isCheck: boolean, data: TaskChecklistSub, main: TaskChecklist) => {
+  //     //체크 경우
+  //     if (isCheck) {
+  //       setSelectedChecklist((prev) => {
+  //         const select = prev.find((v) => v.chkMainSeq === main.chkMainSeq);
+  //         //메인은 존재하는경우 -> 일부 sub값이 선택되어있는것임
+  //         if (select) {
+  //           const result = prev.map((item) =>
+  //             item.chkMainSeq === main.chkMainSeq
+  //               ? {
+  //                   ...item,
+  //                   chkSubs: [...item.chkSubs, data],
+  //                 }
+  //               : item
+  //           );
+  //           //sub 2개 존재하는경우 기존에 1개 추가되어있다가 1개 더 추가되었을떄 sub를 없애줘야함
+  //           return main.subs.length ===
+  //             result.find((item) => item.chkMainSeq === main.chkMainSeq)
+  //               ?.chkSubs.length
+  //             ? result.map((item) =>
+  //                 item.chkMainSeq === main.chkMainSeq
+  //                   ? { ...item, chkSubs: [] }
+  //                   : item
+  //               )
+  //             : result;
+  //         } else {
+  //           const newItem = {
+  //             chkMainSeq: main.chkMainSeq,
+  //             chkMainTitle: main.chkMainTitle,
+  //             chkSubs: [data],
+  //           };
+
+  //           const selectedSubCount = newItem.chkSubs.length;
+  //           const totalSubCount = main.subs.length;
+
+  //           //아예 선택되지않은것임
+  //           return selectedSubCount === totalSubCount
+  //             ? [
+  //                 ...prev,
+  //                 {
+  //                   chkMainSeq: main.chkMainSeq,
+  //                   chkMainTitle: main.chkMainTitle,
+  //                   chkSubs: [], // 전체 선택
+  //                 },
+  //               ]
+  //             : [...prev, newItem];
+  //         }
+  //       });
+  //     } else {
+  //       //전체센택되면 SUB가 없음 근데 한개를 지우면  나머지 두개는 존재해야하기에 넣어줘야함
+
+  //       setSelectedChecklist((prev) => {
+  //         const select = prev.find(
+  //           (item) => item.chkMainSeq === main.chkMainSeq
+  //         );
+  //         //select는 항상존재할 수 밖에 없음.
+  //         if (!select) return prev;
+
+  //         //1. 메인은 존재하는데 서브가 존재하지않는 경우. 즉, 전체선택인 경우
+  //         if (select.chkSubs.length === 0) {
+  //           //해제한 sub가 아닌 나머지 sub
+  //           const rest = main.subs.filter(
+  //             (sub) => sub.chkSubSeq !== data.chkSubSeq
+  //           );
+  //           if (rest.length === 0) {
+  //             return prev.filter((item) => item.chkMainSeq !== main.chkMainSeq);
+  //           }
+  //           return prev.map((item) =>
+  //             item.chkMainSeq === main.chkMainSeq
+  //               ? {
+  //                   ...item,
+  //                   chkSubs: rest,
+  //                 }
+  //               : item
+  //           );
+  //         } else {
+  //           //2. 일부서브들만 선택된 상황에서 해제
+
+  //           return prev
+  //             .map((item) => {
+  //               //해당 sub제거
+  //               if (item.chkMainSeq === main.chkMainSeq) {
+  //                 const newSubs = item.chkSubs.filter(
+  //                   (sub) => sub.chkSubSeq !== data.chkSubSeq
+  //                 );
+
+  //                 //2-1. 마지막 sub를 삭제하는경우는 메인도 지워야함
+  //                 if (newSubs.length === 0) {
+  //                   return null;
+  //                 }
+
+  //                 return { ...item, chkSubs: newSubs };
+  //               }
+  //               return item;
+  //             })
+  //             .filter((item) => item !== null);
+  //         }
+  //       });
+  //     }
+  //   },
+  //   []
+  // );
+
   const handleMainCheck = useCallback(
     (isCheck: boolean, data: TaskChecklist) => {
-      console.log(isCheck);
-      //해제 경우
-      if (!isCheck) {
-        setSelectedChecklist((prev) => {
-          console.log(prev.filter((v) => v.chkMainSeq !== data.chkMainSeq));
-          return prev.filter((v) => v.chkMainSeq !== data.chkMainSeq);
-        });
-        return;
-      } else {
-        //전체선택
-        setSelectedChecklist((prev) => {
-          const select = prev.find((v) => v.chkMainSeq === data.chkMainSeq);
-          return select
-            ? //기존 메인에 sub가 일부 존재하는경우 sub를 지우고 main만 남겨야함
-              prev.map((item) =>
-                item.chkMainSeq === data.chkMainSeq
-                  ? {
-                      ...item,
-                      chkSubs: [],
-                    }
-                  : item
-              )
-            : [
-                //기존에 없었던경우에는 sub를 제외한 메인만 추가
-                ...prev,
-                {
-                  chkMainSeq: data.chkMainSeq,
-                  chkMainTitle: data.chkMainTitle,
-                  chkSubs: [],
-                },
-              ];
-        });
-      }
+      setSelectedChecklist((prev) => {
+        const exists = prev.find((item) => item.chkMainSeq === data.chkMainSeq);
+
+        // 체크 해제
+        if (!isCheck) {
+          return prev.filter((item) => item.chkMainSeq !== data.chkMainSeq);
+        }
+
+        // 체크
+        if (exists) {
+          // 이미 있으면 모든 subs로 업데이트
+          return prev.map((item) =>
+            item.chkMainSeq === data.chkMainSeq
+              ? {
+                  ...item,
+                  chkSubs: data.subs.map((s) => ({
+                    chkSubSeq: s.chkSubSeq,
+                    chkSubTitle: s.chkSubTitle,
+                  })),
+                }
+              : item
+          );
+        }
+
+        // 새로 추가
+        return [
+          ...prev,
+          {
+            chkMainSeq: data.chkMainSeq,
+            chkMainTitle: data.chkMainTitle,
+            chkSubs: data.subs.map((s) => ({
+              chkSubSeq: s.chkSubSeq,
+              chkSubTitle: s.chkSubTitle,
+            })),
+          },
+        ];
+      });
     },
     []
   );
 
-  //서브항목 체크
   const handleSubCheck = useCallback(
-    (isCheck: boolean, data: TaskChecklistSub, main: TaskChecklist) => {
-      //체크 경우
-      if (isCheck) {
-        setSelectedChecklist((prev) => {
-          const select = prev.find((v) => v.chkMainSeq === main.chkMainSeq);
-          //메인은 존재하는경우 -> 일부 sub값이 선택되어있는것임
-          if (select) {
-            const result = prev.map((item) =>
-              item.chkMainSeq === main.chkMainSeq
-                ? {
-                    ...item,
-                    chkSubs: [...item.chkSubs, data],
-                  }
-                : item
-            );
-            //sub 2개 존재하는경우 기존에 1개 추가되어있다가 1개 더 추가되었을떄 sub를 없애줘야함
-            return main.subs.length ===
-              result.find((item) => item.chkMainSeq === main.chkMainSeq)
-                ?.chkSubs.length
-              ? result.map((item) =>
-                  item.chkMainSeq === main.chkMainSeq
-                    ? { ...item, chkSubs: [] }
-                    : item
-                )
-              : result;
-          } else {
-            const newItem = {
-              chkMainSeq: main.chkMainSeq,
-              chkMainTitle: main.chkMainTitle,
-              chkSubs: [data],
-            };
+    (isCheck: boolean, sub: TaskChecklistSub, main: TaskChecklist) => {
+      setSelectedChecklist((prev) => {
+        const exists = prev.find((item) => item.chkMainSeq === main.chkMainSeq);
 
-            const selectedSubCount = newItem.chkSubs.length;
-            const totalSubCount = main.subs.length;
-
-            //아예 선택되지않은것임
-            return selectedSubCount === totalSubCount
-              ? [
-                  ...prev,
+        if (!exists) {
+          if (isCheck) {
+            return [
+              ...prev,
+              {
+                chkMainSeq: main.chkMainSeq,
+                chkMainTitle: main.chkMainTitle,
+                chkSubs: [
                   {
-                    chkMainSeq: main.chkMainSeq,
-                    chkMainTitle: main.chkMainTitle,
-                    chkSubs: [], // 전체 선택
+                    chkSubSeq: sub.chkSubSeq,
+                    chkSubTitle: sub.chkSubTitle,
                   },
-                ]
-              : [...prev, newItem];
+                ],
+              },
+            ];
           }
-        });
-      } else {
-        //전체센택되면 SUB가 없음 근데 한개를 지우면  나머지 두개는 존재해야하기에 넣어줘야함
-        console.log("여길까요?");
-        setSelectedChecklist((prev) => {
-          const select = prev.find(
-            (item) => item.chkMainSeq === main.chkMainSeq
-          );
-          //select는 항상존재할 수 밖에 없음.
-          if (!select) return prev;
+          return prev;
+        }
 
-          //1. 메인은 존재하는데 서브가 존재하지않는 경우. 즉, 전체선택인 경우
-          if (select.chkSubs.length === 0) {
-            //해제한 sub가 아닌 나머지 sub
-            const rest = main.subs.filter(
-              (sub) => sub.chkSubSeq !== data.chkSubSeq
-            );
-            if (rest.length === 0) {
-              return prev.filter((item) => item.chkMainSeq !== main.chkMainSeq);
+        return prev
+          .map((item) => {
+            if (item.chkMainSeq !== main.chkMainSeq) return item;
+
+            if (isCheck) {
+              const subExists = item.chkSubs.some(
+                (s) => s.chkSubSeq === sub.chkSubSeq
+              );
+              if (subExists) return item;
+
+              return {
+                ...item,
+                chkSubs: [
+                  ...item.chkSubs,
+                  {
+                    chkSubSeq: sub.chkSubSeq,
+                    chkSubTitle: sub.chkSubTitle,
+                  },
+                ],
+              };
+            } else {
+              const updatedSubs = item.chkSubs.filter(
+                (s) => s.chkSubSeq !== sub.chkSubSeq
+              );
+
+              if (updatedSubs.length === 0) {
+                return null;
+              }
+
+              return {
+                ...item,
+                chkSubs: updatedSubs,
+              };
             }
-            return prev.map((item) =>
-              item.chkMainSeq === main.chkMainSeq
-                ? {
-                    ...item,
-                    chkSubs: rest,
-                  }
-                : item
-            );
-          } else {
-            //2. 일부서브들만 선택된 상황에서 해제
-
-            return prev
-              .map((item) => {
-                //해당 sub제거
-                if (item.chkMainSeq === main.chkMainSeq) {
-                  console.log("해재");
-                  console.log(item);
-                  const newSubs = item.chkSubs.filter(
-                    (sub) => sub.chkSubSeq !== data.chkSubSeq
-                  );
-
-                  //2-1. 마지막 sub를 삭제하는경우는 메인도 지워야함
-                  if (newSubs.length === 0) {
-                    return null;
-                  }
-
-                  return { ...item, chkSubs: newSubs };
-                }
-                return item;
-              })
-              .filter((item) => item !== null);
-          }
-        });
-      }
+          })
+          .filter((item) => item !== null) as SelectTaskChecklist[];
+      });
     },
     []
   );
@@ -352,7 +458,7 @@ const ChecklistEditContents = ({
   );
 };
 
-const ChecklistSelectAccordion = ({
+export const ChecklistSelectAccordion = ({
   data,
   selectedValue,
   onMainChange,
@@ -367,18 +473,22 @@ const ChecklistSelectAccordion = ({
     main: TaskChecklist
   ) => void;
 }) => {
-  // const [isMainCheck, setIsMainCheck] = useState<boolean>(false);
-
   // Main 체크 상태 계산
   const isMainCheck = useMemo(() => {
-    // console.log("실행됨");
-    // console.log(data);
     const selected = selectedValue.find(
       (v) => v.chkMainSeq === data.chkMainSeq
     );
-    // console.log(selected ? selected.chkSubs.length === 0 : false);
-    return selected ? selected.chkSubs.length === 0 : false;
-  }, [selectedValue, data.chkMainSeq]);
+
+    if (!selected) return false;
+
+    // 모든 subs가 선택되어 있는지 확인
+    if (selected.chkSubs.length !== data.subs.length) return false;
+
+    // 모든 sub의 seq가 일치하는지 확인
+    return data.subs.every((sub) =>
+      selected.chkSubs.some((s) => s.chkSubSeq === sub.chkSubSeq)
+    );
+  }, [selectedValue, data.chkMainSeq, data.subs]);
 
   // Sub 체크 상태 계산
   const isSubChecked = useCallback(

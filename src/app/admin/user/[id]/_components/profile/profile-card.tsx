@@ -139,7 +139,7 @@ interface KeyValueProps {
   value: string;
 }
 
-const KeyValue = ({ icon, label, value }: KeyValueProps) => {
+export const KeyValue = ({ icon, label, value }: KeyValueProps) => {
   const LucideIcon = icon;
   return (
     <div className="flex gap-4 items-center px-6">
