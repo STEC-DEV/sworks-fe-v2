@@ -12,6 +12,7 @@ import { cn } from "@/lib/utils";
 interface CustomAccordionProps {
   icon?: LucideIcon;
   label: string;
+  labelOptions?: React.ReactNode;
   optionChildren?: React.ReactNode;
   children: React.ReactNode;
   isPaddingBottom?: boolean;
@@ -20,6 +21,7 @@ interface CustomAccordionProps {
 const CustomAccordion = ({
   icon,
   label,
+  labelOptions,
   children,
   optionChildren,
   isPaddingBottom = true,
@@ -38,12 +40,13 @@ const CustomAccordion = ({
           }`}
         >
           <div className="flex justify-between items-center w-full">
-            <div className="flex gap-4">
+            <div className="flex gap-4 items-center">
               {Icon ? (
                 <Icon className="w-5 h-5 text-blue-500 " strokeWidth={1.5} />
               ) : null}
 
               <span className="text-sm font-normal">{label}</span>
+              {labelOptions}
             </div>
             <div onClick={(e) => e.stopPropagation()}>{optionChildren}</div>
           </div>

@@ -1,5 +1,7 @@
+import { UserListItem } from "@/types/normal/user/list";
 import { ColumnDef } from "@tanstack/react-table";
 import { UserIcon } from "lucide-react";
+import Image from "next/image";
 
 export const userColumns: ColumnDef<UserListItem>[] = [
   {
@@ -9,16 +11,34 @@ export const userColumns: ColumnDef<UserListItem>[] = [
     enableResizing: false,
     cell: ({ row }) => {
       const name = row.original.userName;
-      const job = row.original.job;
+      const sabun = row.original.sabun;
+      const image = row.original.images;
       return (
         <div className="flex gap-2 w-fit">
-          <div className="p-2 border-2xl border border-border bg-background rounded-[4px]">
-            <UserIcon className="text-[var(--icon)]" strokeWidth={1.5} />
+          <div className="relative aspect-square w-10 h-10  border-2xl border border-border bg-background rounded-[4px]">
+            {image ? (
+              <Image
+                fill
+                src={image}
+                alt="img"
+                className="object-cover rounded-[4px]"
+                loading="lazy"
+              />
+            ) : (
+              <div className=" p-2 w-full h-full flex items-center justify-center">
+                <UserIcon
+                  className="text-[var(--icon)]"
+                  strokeWidth={1.5}
+                  size={50}
+                />
+              </div>
+            )}
           </div>
           <div className="flex flex-col gap-1">
             <span className="text-sm font-medium">{name}</span>
             <span className="text-xs text-[var(--description-light)]">
-              {job ?? "job"}
+              {sabun}
+              {/* 사번으로 교체 */}
             </span>
           </div>
         </div>

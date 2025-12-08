@@ -13,7 +13,12 @@ const Page = () => {
   const serviceTypeSeq = searchParams.get("serviceTypeSeq");
   const divCodeSeq = searchParams.get("divCodeSeq");
   const typeCodeSeq = searchParams.get("typeCodeSeq");
-  const { evaluateChecklist, getEvaluateChecklist, loadingKeys } = useQeStore();
+  const {
+    resetEvaluateChecklist,
+    evaluateChecklist,
+    getEvaluateChecklist,
+    loadingKeys,
+  } = useQeStore();
   const { isLoading, hasError } = useUIStore();
 
   useEffect(() => {
@@ -22,8 +27,10 @@ const Page = () => {
   }, [searchParams]);
 
   useEffect(() => {
-    console.log(evaluateChecklist);
-  }, [evaluateChecklist]);
+    return () => {
+      resetEvaluateChecklist();
+    };
+  }, []);
 
   if (isLoading(loadingKeys.EVALUATE_CHECKLIST) || !evaluateChecklist)
     return (

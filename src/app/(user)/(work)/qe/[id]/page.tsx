@@ -44,6 +44,11 @@ const Page = () => {
     );
   if (hasError(loadingKeys.DETAIL)) return <div> 에러발생</div>;
 
+  const totalPoint = qeDetail.mains.reduce(
+    (acc, value) => acc + value.chkMainTotalPoint,
+    0
+  );
+
   return (
     <>
       <div className="flex flex-col gap-6 xl:w-150">
@@ -90,7 +95,15 @@ const Page = () => {
         <AppTitle title="평가항목" isBorder />
         <div className="flex gap-2 items-center">
           <span className="text-md text-[var(--description-light)]">총점</span>
-          <span className="text-lg text-blue-500 ">{qeDetail.totalScore}</span>
+          <div className="flex items-center gap-1">
+            <span className="text-lg font-semibold text-blue-500 ">
+              {qeDetail.totalScore}
+            </span>
+            <span className="text-md text-[var(--description-light)]">/</span>
+            <span className="text-lg font-semibold text-[var(--description-light)] ">
+              {totalPoint}
+            </span>
+          </div>
         </div>
 
         <div className="space-y-4">
@@ -110,7 +123,19 @@ const QeChkAccordion = ({ main }: { main: QeViewMain }) => {
   const [open, setOpen] = useState<boolean>(false);
   return (
     <CustomAccordion
-      label={main.chkMainTitle}
+      label={`${main.chkMainTitle}`}
+      labelOptions={
+        <div className="flex items-center gap-1">
+          <span className="text-md text-blue-500">
+            {main.chkMainTotalScore}
+          </span>
+          <span className="text-md text-[var(--description-light)]">/</span>
+
+          <span className="text-md text-[var(--description-light)]">
+            {main.chkMainTotalPoint}
+          </span>
+        </div>
+      }
       icon={CircleCheckBig}
       optionChildren={
         canWorkerEdit && (

@@ -8,6 +8,7 @@ import { useWorkplaceDetailStore } from "./workplace-detail-store";
 import { paramsCheck } from "@/utils/param";
 import { useUIStore } from "@/store/common/ui-store";
 import { toast } from "sonner";
+import { handleApiError } from "@/lib/api/errorHandler";
 
 export const WORKPLACE_MANAGER_LOADING_KEYS = {
   MANAGER: "admin_workplace_manager",
@@ -18,7 +19,7 @@ interface WorkplaceManagerState {
   ////담당관리자
   managers: ListData<AdminListItem> | null;
   //--담당관리자 관련--
-  getManagers: (params: URLSearchParams) => Promise<void>;
+  getManagers: (siteSeq: string, params: URLSearchParams) => Promise<void>;
   getAllManagerList: (id: string, search?: string) => Promise<void>;
   allManagerList: SelectAdminList[] | undefined;
   //담당 관리자 수정 put
@@ -31,12 +32,12 @@ export const useWorkplaceManagerStore = create<WorkplaceManagerState>()(
       (set, get) => ({
         loadingKeys: WORKPLACE_MANAGER_LOADING_KEYS,
         managers: null,
-        getManagers: async (params) => {
+        getManagers: async (siteSeq, params) => {
+          console.log(params);
           const checkParams = paramsCheck(params);
           const { setLoading, setError } = useUIStore.getState();
-          const { workplace } = useWorkplaceDetailStore.getState();
-          if (!workplace) return;
-          params.set("siteSeq", workplace?.siteSeq.toString());
+
+          params.set("siteSeq", siteSeq);
 
           setLoading(WORKPLACE_MANAGER_LOADING_KEYS.MANAGER, true);
 
@@ -52,10 +53,7 @@ export const useWorkplaceManagerStore = create<WorkplaceManagerState>()(
             });
           } catch (err) {
             console.log(err);
-            const errMessage =
-              err instanceof Error
-                ? err.message
-                : "담당관리자 조회 문제가 발생하였습니다. 잠시후 다시 시도해주세요.";
+            const errMessage = await handleApiError(err);
             setError(WORKPLACE_MANAGER_LOADING_KEYS.MANAGER, errMessage);
             toast.error(errMessage);
           } finally {
@@ -75,6 +73,7 @@ export const useWorkplaceManagerStore = create<WorkplaceManagerState>()(
             set({ allManagerList: data as SelectAdminList[] });
           } catch (err) {
             console.log(err);
+            const errMessage = await handleApiError(err);
           }
         },
         allManagerList: undefined,
@@ -89,6 +88,7 @@ export const useWorkplaceManagerStore = create<WorkplaceManagerState>()(
             });
           } catch (err) {
             console.log(err);
+            const errMessage = await handleApiError(err);
           }
         },
       }),

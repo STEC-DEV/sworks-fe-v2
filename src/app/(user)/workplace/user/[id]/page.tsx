@@ -15,6 +15,7 @@ import React, { useEffect, useState } from "react";
 import { dialogText } from "../../../../../../public/text";
 import { useRouter } from "next/navigation";
 import UserEditForm from "@/components/form/normal/user/edit";
+import { SingleImageBox } from "@/components/common/image-box";
 
 const Page = () => {
   const router = useRouter();
@@ -49,12 +50,21 @@ const Page = () => {
     <div className="flex flex-col gap-6">
       <CustomCard className="w-full xl:w-100 gap-6">
         <div className="flex gap-4 items-center px-6">
-          <div className="flex items-end justify-center w-20 h-20  rounded-[50px] border border-[var(--border)] bg-[var(--background)]">
-            <User className="text-[var(--icon)] stroke-[1.25px]" size={56} />
+          <div className="relative flex items-end justify-center w-20 h-20  rounded-[50px] border border-[var(--border)] bg-[var(--background)] overflow-hidden">
+            {user.images ? (
+              <SingleImageBox path={user.images} />
+            ) : (
+              <User className="text-[var(--icon)] stroke-[1.25px]" size={56} />
+            )}
           </div>
-          <div className="flex items-end gap-2">
-            <span className="text-xl font-semibold">{user.userName}</span>
-            <span className="text-sm text-blue-500">{user.role}</span>
+          <div className="flex flex-col gap-2">
+            <div className="flex items-end gap-2">
+              <span className="text-xl font-semibold">{user.userName}</span>
+              <span className="text-sm text-blue-500">{user.role}</span>
+            </div>
+            <span className="text-sm text-[var(--description-light)]">
+              {user.sabun}
+            </span>
           </div>
         </div>
         <div className="flex flex-col gap-4">
@@ -80,7 +90,6 @@ const Page = () => {
             setOpen={setEditInfoOpen}
           >
             <UserEditForm onClose={() => setEditInfoOpen(false)} />
-            <div></div>
           </BaseDialog>
 
           <CheckDialog

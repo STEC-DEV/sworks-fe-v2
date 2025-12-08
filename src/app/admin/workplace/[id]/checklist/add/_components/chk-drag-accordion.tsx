@@ -30,7 +30,11 @@ const DraggableCheckAccordion = ({ data }: { data: Checklist }) => {
         listeners={listeners}
         setActivatorNodeRef={setActivatorNodeRef}
       />
-      <CustomAccordion label={data.chkMainTitle} icon={CircleCheckBig}>
+      <CustomAccordion
+        label={data.chkMainTitle}
+        icon={CircleCheckBig}
+        isPaddingBottom={false}
+      >
         {data.subs.map((v, i) => (
           <CheckItemWrapper key={i} data={v} />
         ))}

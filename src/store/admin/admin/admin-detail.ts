@@ -1,4 +1,5 @@
 import api from "@/lib/api/api-manager";
+import { handleApiError } from "@/lib/api/errorHandler";
 import { useUIStore } from "@/store/common/ui-store";
 import { AdminListItem } from "@/types/admin/admin/user-list";
 import {
@@ -59,10 +60,7 @@ export const useAdminDetailStore = create<AdminDetailState>()(
             set({ admin: response.data });
           } catch (err) {
             console.log(err);
-            const errMessage =
-              err instanceof Error
-                ? err.message
-                : "관리자 정보 조회 문제가 발생하였습니다. 잠시후 다시 시도해주세요.";
+            const errMessage = await handleApiError(err);
             setError(ADMIN_DETAIL_LOADING_KEYS.INFO, errMessage);
             toast.error(errMessage);
           } finally {
@@ -80,7 +78,8 @@ export const useAdminDetailStore = create<AdminDetailState>()(
             return res.data;
           } catch (err) {
             console.error(err);
-            toast.error("문제가 발생하였습니다. 잠시후 다시 시도해주세요.");
+            const errMessage = await handleApiError(err);
+            toast.error(errMessage);
             return false;
           }
         },
@@ -106,10 +105,7 @@ export const useAdminDetailStore = create<AdminDetailState>()(
             });
           } catch (err) {
             console.log(err);
-            const errMessage =
-              err instanceof Error
-                ? err.message
-                : "담당 사업장 조회 문제가 발생하였습니다. 잠시후 다시시도해주세요.";
+            const errMessage = await handleApiError(err);
             setError(ADMIN_DETAIL_LOADING_KEYS.WORKPLACE, errMessage);
             toast.error(errMessage);
           } finally {
@@ -128,7 +124,8 @@ export const useAdminDetailStore = create<AdminDetailState>()(
             toast.success("저장");
           } catch (err) {
             console.log(err);
-            toast.error("");
+            const errMessage = await handleApiError(err);
+            toast.error(errMessage);
           }
         },
         getAllWorkplace: async (id, search) => {
@@ -148,6 +145,8 @@ export const useAdminDetailStore = create<AdminDetailState>()(
             });
           } catch (err) {
             console.log(err);
+            const errMessage = await handleApiError(err);
+            toast.error(errMessage);
           }
         },
         allWorkplace: undefined,
@@ -175,9 +174,10 @@ export const useAdminDetailStore = create<AdminDetailState>()(
               })
               .json();
             toast.success("저장");
-          } catch (error) {
-            console.log(error);
-            toast.error("저장 실패. 다시 시도해주세요.");
+          } catch (err) {
+            console.log(err);
+            const errMessage = await handleApiError(err);
+            toast.error(errMessage);
           }
         },
       }),

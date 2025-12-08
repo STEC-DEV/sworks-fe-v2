@@ -46,8 +46,8 @@ const TypeEditForm = ({
     if (!vocDetail) return;
     const res = await putUpdateServiceType(values);
     res.data ? toast.success("저장") : toast.error(res.message);
-    await getVocDetail(vocDetail?.logs.logSeq.toString());
     setOpen(false);
+    await getVocDetail(vocDetail?.logs.logSeq.toString());
   };
   return (
     <Form {...form}>

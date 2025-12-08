@@ -38,9 +38,13 @@ const Page = () => {
             <div className="pb-4 border-b-2 border-border text-md font-semibold">
               처리현황
             </div>
-            {complain.replys.map((v, i) => (
-              <Reply key={i} data={v} />
-            ))}
+            {complain.replys.length > 0 ? (
+              complain.replys.map((v, i) => <Reply key={i} data={v} />)
+            ) : (
+              <span className="text-sm text-[var(--description-light)]">
+                아직 등록된 처리 현황이 없습니다
+              </span>
+            )}
           </div>
         </div>
       </div>
@@ -55,7 +59,7 @@ const Log = ({ data }: { data: LogInfo }) => {
     <div className="px-6 flex flex-col gap-2">
       <div className="flex justify-between items-center">
         <span className="text-sm">{data.createUser}</span>
-        <span className="text-sm text-blue-500">{data.serviceTypeName}</span>
+        {/* <span className="text-sm text-blue-500">{data.serviceTypeName}</span> */}
       </div>
       <DialogCarousel pathList={data.attaches.map((v) => v.path)} isSmall />
       <span className="text-sm">{data.title}</span>

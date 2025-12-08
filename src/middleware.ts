@@ -1,7 +1,34 @@
 import { NextRequest, NextResponse } from "next/server";
 
+interface JWTPayload {
+  UserSeq: "117";
+  Name: "난매니저";
+  jti: "5aa1b828-4ef5-45c7-887f-89fa81c0350a";
+  UserType: "매니저";
+  // http://schemas.microsoft.com/ws/2008/06/identity/claims/role: "Manager",
+  uuid: "c3f40bdea1fa49dd9aa828c278aed820";
+  exp: 1764728469;
+  iss: "https://sws.s-tec.co.kr/";
+  aud: "https://sws.s-tec.co.kr/";
+}
+
 export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
+  // const token = req.cookies.get("accessToken")?.value;
+
+  // // console.log("토큰");
+  // // console.log(token);
+  // if (!token) return;
+
+  // try {
+  //   console.log("여기옴");
+  //   const decoded = jwt.verify(token, token) as JWTPayload;
+  //   console.log("gma");
+  //   console.log("JWT 검증 성공:", decoded);
+  //   console.log("사용자 역할:", decoded.UserType);
+  // } catch (err) {
+  //   console.log(err);
+  // }
 
   // 경로에 확장자가 있으면 `true` 없으면 `null`
   const isFileRequest = pathname.match(/\.\w+$/);

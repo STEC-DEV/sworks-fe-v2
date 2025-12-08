@@ -18,6 +18,7 @@ import SelectFormItem from "@/components/common/form-input/select-field";
 import {
   convertRecordDataToFormData,
   convertSelectOptionType,
+  objectToFormData,
 } from "@/utils/convert";
 import Button from "@/components/common/button";
 import { toast } from "sonner";
@@ -75,7 +76,7 @@ const FacilityDetailEditForm = () => {
       facilityCodeSeq: undefined,
       description: "",
       fromDt: undefined,
-      toDt: undefined,
+      toDt: null,
       constractor: "",
       tel: "",
       cost: "",
@@ -91,7 +92,7 @@ const FacilityDetailEditForm = () => {
         facilityCodeSeq: facilityDetail.facilityCodeSeq,
         description: facilityDetail.description,
         fromDt: new Date(facilityDetail.fromDt),
-        toDt: facilityDetail.toDt ? new Date(facilityDetail.toDt) : undefined,
+        toDt: facilityDetail.toDt ? new Date(facilityDetail.toDt) : null,
         constractor: facilityDetail.constractor,
         tel: facilityDetail.tel,
         cost: facilityDetail.cost?.toString(),
@@ -120,7 +121,7 @@ const FacilityDetailEditForm = () => {
   });
 
   const handleSubmit = async (values: FacilityEditFormType) => {
-    const formData = convertRecordDataToFormData(values);
+    const formData = objectToFormData(values);
     const res = await updateFacilityDetail(formData);
     if (res.data) toast.success("수정 완료");
     else {

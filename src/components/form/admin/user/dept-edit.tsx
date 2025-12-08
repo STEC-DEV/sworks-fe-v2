@@ -65,7 +65,7 @@ const DeptEditForm = ({
             <TextFormItem label="부서명" placeholder="부서명" {...field} />
           )}
         />
-        <Button label="생성" />
+        <Button label="저장" />
       </form>
     </Form>
   );

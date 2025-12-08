@@ -126,6 +126,26 @@ interface SideBarProps {
 const SideBar = ({ loginMode }: SideBarProps) => {
   const { loginProfile, normalModeProfile, enteredWorkplace } = useAuthStore();
 
+  const role = () => {
+    if (!loginProfile) return "Unknown";
+    switch (loginProfile?.role) {
+      case "시스템관리자":
+        return "System Manager";
+      case "마스터":
+        return "Master";
+      case "매니저":
+        return "Manager";
+      case "현장 관리자":
+        return "Site Manager";
+      case "계약담당자":
+        return "Contract Manager";
+      case "근무자":
+        return "Worker";
+      default:
+        return "Unknown";
+    }
+  };
+
   const returnProfile = () => {
     if (loginMode === "ADMIN") {
       return loginProfile ? (
@@ -133,7 +153,7 @@ const SideBar = ({ loginMode }: SideBarProps) => {
           loginMode={loginMode}
           name={loginProfile.userName ?? "관리자"}
           job={loginProfile?.job}
-          permission="MASTER"
+          permission={loginProfile.role}
         />
       ) : (
         <div className="flex flex-col gap-1 px-6 py-4">
@@ -148,7 +168,7 @@ const SideBar = ({ loginMode }: SideBarProps) => {
           workplace={enteredWorkplace?.siteName}
           job={loginProfile?.job}
           name={loginProfile?.userName || ""}
-          permission={loginProfile?.role || ""}
+          permission={role()}
         />
       ) : (
         <div className="flex flex-col gap-1 px-6 py-4">
@@ -290,41 +310,50 @@ const Noti = () => {
         <BaseSkeleton key={i} className="w-87 h-20.5" />
       ));
     if (hasError(loadingKeys.LIST)) return <div>에러발생</div>;
+    console.log("공지");
+    console.log(notificationList);
     return (
       <>
-        {notificationList.map((n, i) => (
-          <CustomCard
-            key={`${n.readSignSeq}-${i}`}
-            variant={"list"}
-            className={`hover:border-blue-500 hover:bg-blue-50 ${
-              n.isRead ? "bg-[var(--read)]" : ""
-            }`}
-            onClick={() => onClick(n)}
-          >
-            <div className="flex items-center justify-between">
-              <span className="text-blue-500 text-sm">
-                {type(n.notiType).label}
-              </span>
-              <span className="text-xs text-[var(--description-light)]">
-                {format(n.createDt, "yyyy-MM-dd HH:mm:ss")}
-              </span>
-            </div>
-            <span className="text-sm">{n.contents}</span>
-          </CustomCard>
-        ))}
+        {notificationList.length === 0 ? (
+          // 알림이 아예 없는 경우
+          <EmptyBox message="알람이 없습니다." />
+        ) : (
+          <>
+            {notificationList.map((n, i) => (
+              <CustomCard
+                key={`${n.readSignSeq}-${i}`}
+                variant={"list"}
+                className={`hover:border-blue-500 hover:bg-blue-50 ${
+                  n.isRead ? "bg-[var(--read)]" : ""
+                }`}
+                onClick={() => onClick(n)}
+              >
+                <div className="flex items-center justify-between">
+                  <span className="text-blue-500 text-sm">
+                    {type(n.notiType).label}
+                  </span>
+                  <span className="text-xs text-[var(--description-light)]">
+                    {format(n.createDt, "yyyy-MM-dd HH:mm:ss")}
+                  </span>
+                </div>
+                <span className="text-sm">{n.contents}</span>
+              </CustomCard>
+            ))}
 
-        {/* 추가 로딩 중 표시 */}
-        {isFetchingMore && (
-          <div className="flex justify-center py-4">
-            <BaseSkeleton className="w-87 h-20.5" />
-          </div>
-        )}
+            {/* 추가 로딩 중 표시 */}
+            {isFetchingMore && (
+              <div className="flex justify-center py-4">
+                <BaseSkeleton className="w-87 h-20.5" />
+              </div>
+            )}
 
-        {/* 더 이상 데이터 없음 표시 */}
-        {!hasMore && notificationList.length > 0 && (
-          <div className="text-center py-4 text-sm text-[var(--description-light)]">
-            더 이상 알림이 없습니다
-          </div>
+            {/* 더 이상 데이터 없음 표시 */}
+            {!hasMore && notificationList.length > 0 && (
+              <div className="text-center py-4 text-sm text-[var(--description-light)]">
+                더 이상 알림이 없습니다
+              </div>
+            )}
+          </>
         )}
       </>
     );

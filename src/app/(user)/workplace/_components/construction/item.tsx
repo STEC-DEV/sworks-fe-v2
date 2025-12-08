@@ -28,7 +28,7 @@ const Building = () => {
   }, []);
 
   const getTab = () => {
-    if (isLoading(loadingKeys.INFO) || !construction) {
+    if (isLoading(loadingKeys.INFO)) {
       return (
         <>
           <BaseSkeleton className="h-9" />
@@ -71,7 +71,7 @@ const Building = () => {
                   </div>
                 ) : (
                   <span className="text-[var(--description-light)]">
-                    건물없음
+                    + 버튼을 눌러 건물을 생성해주세요.
                   </span>
                 )}
 
@@ -99,7 +99,7 @@ const Building = () => {
             ) : (
               <span className="text-[var(--description-light)]">
                 {" "}
-                건물정보를 생성해주세요.
+                + 버튼을 눌러 건축물정보를 생성해주세요.
               </span>
             ),
           },

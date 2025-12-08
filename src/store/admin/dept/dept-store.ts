@@ -1,5 +1,6 @@
 import { DeptEditType } from "@/components/form/admin/user/dept-edit";
 import api from "@/lib/api/api-manager";
+import { handleApiError } from "@/lib/api/errorHandler";
 import { useUIStore } from "@/store/common/ui-store";
 import { Response } from "@/types/common/response";
 import { toast } from "sonner";
@@ -16,6 +17,7 @@ interface DeptState {
   getDepartmentList: () => Promise<void>;
   postAddDept: (data: Record<string, string>) => Promise<void>;
   putUpdateDept: (data: DeptEditType) => Promise<void>;
+  deleteDept: (seq: number) => Promise<void>;
 }
 
 export const useDeptStore = create<DeptState>()(
@@ -33,10 +35,7 @@ export const useDeptStore = create<DeptState>()(
             set({ departmentList: data });
           } catch (err) {
             console.log(err);
-            const errMessage =
-              err instanceof Error
-                ? err.message
-                : "부서 조회 문제가 발생하였습니다. 잠시후 다시 시도해주세요.";
+            const errMessage = await handleApiError(err);
             setError(DEPARTMENT_LOADING_KEYS.LIST, errMessage);
             toast.error(errMessage);
           } finally {
@@ -54,10 +53,7 @@ export const useDeptStore = create<DeptState>()(
             if (res.data) toast.success("생성");
           } catch (err) {
             console.error(err);
-            const errMessage =
-              err instanceof Error
-                ? err.message
-                : "부서생성 문제가 발생하였습니다. 잠시후 다시 시도해주세요.";
+            const errMessage = await handleApiError(err);
             toast.error(errMessage);
           }
         },
@@ -72,10 +68,27 @@ export const useDeptStore = create<DeptState>()(
             toast.success("저장");
           } catch (err) {
             console.error(err);
-            const errMessage =
-              err instanceof Error
-                ? err.message
-                : "부서 수정 문제가 발생하였습니다. 잠시후 다시 시도해주세요.";
+            const errMessage = await handleApiError(err);
+            toast.error(errMessage);
+          }
+        },
+        deleteDept: async (seq) => {
+          const params = new URLSearchParams();
+          params.append("delSeq", seq.toString());
+
+          try {
+            const res: Response<boolean> = await api
+              .delete(`dept/w/sign/deletedept`, {
+                searchParams: params,
+              })
+              .json();
+          } catch (err) {
+            console.error(err);
+            // const errMessage =
+            //   err instanceof Error
+            //     ? err.message
+            //     : "부서 삭제 문제가 발생하였습니다. 잠시후 다시 시도해주세요.";
+            const errMessage = await handleApiError(err);
             toast.error(errMessage);
           }
         },

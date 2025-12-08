@@ -1,10 +1,14 @@
 import Button from "@/components/common/button";
+import CheckDialog from "@/components/common/check-dialog";
 import CheckFormItem from "@/components/common/form-input/check-field";
-import FileFormItem from "@/components/common/form-input/file-field";
+import FileFormItem, {
+  ImageFormItem,
+} from "@/components/common/form-input/file-field";
 import {
   TextAreaFormItem,
   TextFormItem,
 } from "@/components/common/form-input/text-field";
+import IconButton from "@/components/common/icon-button";
 import Input from "@/components/common/input";
 import ResultDialog from "@/components/ui/custom/form/result-dialog";
 import { Form, FormField } from "@/components/ui/form";
@@ -13,10 +17,12 @@ import { useTimer } from "@/hooks/timer";
 import { useVocStore } from "@/store/normal/voc/voc-store";
 import { objectToFormData } from "@/utils/convert";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { RotateCcwIcon } from "lucide-react";
 import React, { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import z from "zod";
+import { dialogText } from "../../../../../public/text";
 
 const formSchema = z.object({
   vocSeq: z.number("위치를 선택해주세요.").min(1),
@@ -55,13 +61,17 @@ const ComplainAddForm = ({ seq }: ComplainAddFormProps) => {
   const [result, setResult] = useState<boolean>(false);
   const [open, setOpen] = useState<boolean>(false);
   const [createCode, setCreateCode] = useState<string | null>();
+  const [dialogOpen, setDialogOpen] = useState(false);
 
   const handleExpire = useCallback(() => {
     toast.error("입력시간이 초과되었습니다.");
     setVerification(false);
     setTryCount(3);
   }, []);
-  const { formatTime, start, reset } = useTimer(180, handleExpire);
+  const { formatTime, start, reset, seconds } = useTimer(180, handleExpire);
+  useEffect(() => {
+    if (seconds === 0) setDialogOpen(false);
+  }, [seconds]);
 
   const form = useForm<ComplainAddFormType>({
     resolver: zodResolver(formSchema),
@@ -195,12 +205,26 @@ const ComplainAddForm = ({ seq }: ComplainAddFormProps) => {
 
                   {verification ? (
                     <div className="flex flex-col gap-2">
-                      <span className="text-sm text-[var(--description-light)]">
-                        {formatTime()}
-                      </span>
-                      <span className="text-sm text-[var(--description-light)]">
-                        남은횟수 : {tryCount}
-                      </span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm text-blue-500 font-mono">
+                          {formatTime()}
+                        </span>
+                        <span className="text-sm text-[var(--description-light)]">
+                          남은횟수 : {tryCount}
+                        </span>
+                        <CheckDialog
+                          title={dialogText.codeRetry.title}
+                          description={dialogText.codeRetry.description}
+                          actionLabel={dialogText.codeRetry.actionLabel}
+                          onClick={handleSendVerification}
+                          buttonColor="bg-blue-500"
+                          open={dialogOpen}
+                          onOpenChange={setDialogOpen}
+                        >
+                          <IconButton icon="RotateCcw" />
+                        </CheckDialog>
+                      </div>
+
                       <div className="flex gap-6">
                         <Input
                           className="w-full"
@@ -260,15 +284,13 @@ const ComplainAddForm = ({ seq }: ComplainAddFormProps) => {
               control={form.control}
               name="images"
               render={({ field }) => (
-                <FileFormItem
-                  label="첨부파일"
-                  accept="accept"
-                  multiple={true}
+                <ImageFormItem
+                  label="이미지"
                   {...field}
                   value={field.value}
                   onChange={field.onChange}
-                  imageOnly
-                  isVertical
+                  multiple
+                  max={5}
                 />
               )}
             />

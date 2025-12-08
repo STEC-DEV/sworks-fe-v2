@@ -6,17 +6,18 @@ import { Form, FormField } from "@/components/ui/form";
 import { useBuildingStore } from "@/store/normal/building/building";
 import { Construction } from "@/types/normal/building/building";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { format } from "date-fns";
 import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import z from "zod";
 
 const formSchema = z.object({
   buildingSeq: z.number(),
-  buildingName: z.string(),
-  completeDt: z.date(),
-  address: z.string(),
-  totalArea: z.string(),
-  usage: z.string(),
+  buildingName: z.string().min(1, "건물명을 입력해주세요."),
+  completeDt: z.string().min(1, "준공일을 입력해주세요."),
+  address: z.string().min(1, "주소를 입력해주세요."),
+  totalArea: z.string().min(1, "연면적을 입력해주세요."),
+  usage: z.string().min(1, "건물용도를 입력해주세요."),
   selfParkingSpaces: z.number(),
   autoParkingSpaces: z.number(),
   handicapParkingSpaces: z.number(),
@@ -38,7 +39,7 @@ const ConstructionEditForm = ({
     defaultValues: {
       buildingSeq: undefined,
       buildingName: "",
-      completeDt: new Date(),
+      completeDt: "",
       address: "",
       totalArea: "",
       usage: "",
@@ -53,7 +54,7 @@ const ConstructionEditForm = ({
     form.reset({
       buildingSeq: data.buildingSeq,
       buildingName: data.buildingName,
-      completeDt: data.completeDt,
+      completeDt: format(data.completeDt, "yyyy-MM-dd"),
       address: data.address,
       totalArea: data.totalArea,
       usage: data.usage,
@@ -73,39 +74,54 @@ const ConstructionEditForm = ({
           control={form.control}
           name="buildingName"
           render={({ field }) => (
-            <TextFormItem label="명칭" placeholder="명칭" {...field} />
+            <TextFormItem label="명칭" placeholder="명칭" {...field} required />
           )}
         />
         <FormField
           control={form.control}
           name="completeDt"
-          render={({ field }) => (
-            <DateFormItem
-              label="준공일"
-              value={field.value}
-              onChange={field.onChange}
-            />
-          )}
+          render={({ field }) => {
+            const dateValue = field.value ? new Date(field.value) : new Date();
+
+            return (
+              <DateFormItem
+                label="준공일"
+                value={dateValue}
+                onChange={(date) => field.onChange(format(date, "yyyy-MM-dd"))}
+                required
+              />
+            );
+          }}
         />
         <FormField
           control={form.control}
           name="address"
           render={({ field }) => (
-            <TextFormItem label="주소" placeholder="주소" {...field} />
+            <TextFormItem label="주소" placeholder="주소" {...field} required />
           )}
         />
         <FormField
           control={form.control}
           name="totalArea"
           render={({ field }) => (
-            <TextFormItem label="연면적" placeholder="연면적" {...field} />
+            <TextFormItem
+              label="연면적"
+              placeholder="연면적"
+              {...field}
+              required
+            />
           )}
         />
         <FormField
           control={form.control}
           name="usage"
           render={({ field }) => (
-            <TextFormItem label="건물용도" placeholder="건물용도" {...field} />
+            <TextFormItem
+              label="건물용도"
+              placeholder="건물용도"
+              {...field}
+              required
+            />
           )}
         />
         <FormField
@@ -117,6 +133,7 @@ const ConstructionEditForm = ({
               placeholder="자주식 주차장"
               type="number"
               {...field}
+              onChange={(e) => field.onChange(parseInt(e.target.value))}
             />
           )}
         />
@@ -129,6 +146,7 @@ const ConstructionEditForm = ({
               placeholder="기계식 주차장"
               type="number"
               {...field}
+              onChange={(e) => field.onChange(parseInt(e.target.value))}
             />
           )}
         />
@@ -141,6 +159,7 @@ const ConstructionEditForm = ({
               placeholder="장애인 주차장"
               type="number"
               {...field}
+              onChange={(e) => field.onChange(parseInt(e.target.value))}
             />
           )}
         />

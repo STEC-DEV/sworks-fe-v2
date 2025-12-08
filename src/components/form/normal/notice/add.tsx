@@ -134,7 +134,7 @@ const NoticeAddForm = () => {
           render={({ field }) => {
             return (
               <DateFormItem
-                label="주요공지사항"
+                label="공지기간"
                 value={field.value}
                 onChange={field.onChange}
                 required

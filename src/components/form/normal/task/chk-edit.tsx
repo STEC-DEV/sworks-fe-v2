@@ -36,6 +36,7 @@ const ChkEditForm = ({
 
   useEffect(() => {
     if (!updateChkClassification) return;
+    console.log(updateChkClassification);
 
     //isMainStatus - true
     const selectedMain: SelectTaskChecklist[] = updateChkClassification
@@ -43,10 +44,12 @@ const ChkEditForm = ({
       .map((m) => ({
         chkMainSeq: m.chkMainSeq,
         chkMainTitle: m.chkMainTitle,
-        chkSubs: m.subs.map((s) => ({
-          chkSubSeq: s.chkSubSeq,
-          chkSubTitle: s.chkSubTitle,
-        })),
+        chkSubs: m.subs
+          .filter((s) => s.isSubStatus)
+          .map((s) => ({
+            chkSubSeq: s.chkSubSeq,
+            chkSubTitle: s.chkSubTitle,
+          })),
       }));
 
     console.log(selectedMain);
@@ -218,6 +221,8 @@ const ChkEditForm = ({
     //       subs: subItem,
     //     };
     //   });
+
+    console.log(selectedChecklist);
 
     onSubmit({ mains: selectedChecklist });
   };

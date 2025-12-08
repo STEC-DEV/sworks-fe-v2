@@ -1,4 +1,5 @@
 import api from "@/lib/api/api-manager";
+import { handleApiError } from "@/lib/api/errorHandler";
 import { useUIStore } from "@/store/common/ui-store";
 import { Contract } from "@/types/admin/workplace/contract-info";
 import { ContractType } from "@/types/common/basic-code";
@@ -23,6 +24,8 @@ interface WorkplaceDetailContractState {
   postAddContract: (value: Record<string, any>) => Promise<Response<number>>;
   //수정
   patchContract: (updateContract: Record<string, any>) => Promise<void>;
+  //삭제
+  deleteContract: (delSeq: number) => Promise<void>;
 }
 
 export const useWorkplaceDetailContractStore =
@@ -48,10 +51,7 @@ export const useWorkplaceDetailContractStore =
               set({ contractList: data });
             } catch (err) {
               console.error(err);
-              const errMessage =
-                err instanceof Error
-                  ? err.message
-                  : "계약정보 조회 문제가 발생하였습니다. 잠시후 다시 시도해주세요.";
+              const errMessage = await handleApiError(err);
               setError(
                 ADMIN_WORKPLACE_DETAIL_CONTRACT_LOADING_KEYS.CONTRACT,
                 errMessage
@@ -75,7 +75,8 @@ export const useWorkplaceDetailContractStore =
               return res;
             } catch (err) {
               console.log(err);
-
+              const errMessage = await handleApiError(err);
+              toast.error(errMessage);
               return {
                 code: 500,
                 data: 0,
@@ -94,7 +95,8 @@ export const useWorkplaceDetailContractStore =
               toast.success("저장");
             } catch (err) {
               console.log(err);
-              toast.error("저장 실패. 다시 시도해주세요.");
+              const errMessage = await handleApiError(err);
+              toast.error(errMessage);
             }
           },
           workplaceContractTypeList: undefined,
@@ -111,6 +113,22 @@ export const useWorkplaceDetailContractStore =
               set({ workplaceContractTypeList: data });
             } catch (err) {
               console.log(err);
+              const errMessage = await handleApiError(err);
+              toast.error(errMessage);
+            }
+          },
+          deleteContract: async (delSeq) => {
+            try {
+              const res: Response<boolean> = await api
+                .delete(`site/w/sign/deletecontract`, {
+                  searchParams: { delSeq },
+                })
+                .json();
+              toast.success("삭제");
+            } catch (err) {
+              console.error(err);
+              const errMessage = await handleApiError(err);
+              toast.error(errMessage);
             }
           },
         }),

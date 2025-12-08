@@ -57,7 +57,7 @@ const EquipmentBox = ({ item }: { item: EquipmentListItem }) => {
       onClick={handleOnClick}
     >
       {item.images ? (
-        <div className="w-full h-25 overflow-hidden relative">
+        <div className="w-full h-30 overflow-hidden relative">
           <Image
             fill
             src={item.images}
@@ -80,39 +80,39 @@ const EquipmentBox = ({ item }: { item: EquipmentListItem }) => {
         </div>
         <span className="text-sm">{item.name}</span>
         <div className="flex flex-col gap-1">
-          <KeyValue
+          {/* <KeyValue
             label="용도"
             value={item.usage}
             valueSize="text-xs font-semibold"
-          />
+          /> */}
           <KeyValue
             label="제조사"
             value={item.maker}
             valueSize="text-xs font-semibold"
           />
-          <KeyValue
+          {/* <KeyValue
             label="규격용량"
             value={item.capacity}
             valueSize="text-xs font-semibold"
-          />
-          <KeyValue
+          /> */}
+          {/* <KeyValue
             label="구매자"
             value={item.buyer}
             valueSize="text-xs font-semibold"
-          />
+          /> */}
           <KeyValue
             label="구매일"
             value={format(item.buyDt, "yyyy-MM-dd")}
             valueSize="text-xs font-semibold"
           />
           <KeyValue
-            label="구매단가"
-            value={`${item.cost?.toString() ?? "0"}원`}
+            label="수량"
+            value={item.amount.toString()}
             valueSize="text-xs font-semibold"
           />
           <KeyValue
-            label="수량"
-            value={item.amount.toString()}
+            label="가격"
+            value={`${item.cost?.toString() ?? "0"}원`}
             valueSize="text-xs font-semibold"
           />
         </div>

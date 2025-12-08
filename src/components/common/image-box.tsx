@@ -100,3 +100,42 @@ export const ImageBoxDialog = ({
     </Dialog>
   );
 };
+
+export const SingleImageBox = ({ path }: { path: string }) => {
+  const [open, setOpen] = useState<boolean>(false);
+
+  return (
+    <>
+      <Image
+        fill
+        src={path}
+        alt="img"
+        className="w-full h-full object-cover cursor-pointer"
+        onClick={() => {
+          setOpen(true);
+        }}
+      />
+      {open && (
+        <BaseOverlay isOpen={open} onBackClick={() => setOpen(false)}>
+          <div className="flex items-center justify-center w-full h-full p-4">
+            <div className="relative max-w-[90vw] max-h-[90vh]">
+              <Image
+                src={path}
+                width={0}
+                height={0}
+                sizes="90vw"
+                style={{
+                  width: "auto",
+                  height: "auto",
+                  maxWidth: "90vw",
+                  maxHeight: "90vh",
+                }}
+                alt="이미지"
+              />
+            </div>
+          </div>
+        </BaseOverlay>
+      )}
+    </>
+  );
+};

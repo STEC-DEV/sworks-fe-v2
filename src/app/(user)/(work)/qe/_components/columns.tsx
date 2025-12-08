@@ -57,10 +57,19 @@ export const qeCol: ColumnDef<QeListItem>[] = [
   },
   {
     accessorKey: "score",
-    header: "점수",
+    header: () => <div className="text-right">점수</div>,
+    size: 20,
     cell: ({ row }) => {
       const value = row.original.score;
-      return <span className="text-md font-medium text-blue-500">{value}</span>;
+      const point = row.original.total;
+      return (
+        <div className="text-right">
+          <span className="text-md font-medium text-blue-500">{value} </span>
+          <span className="text-md font-medium text-[var(--description-light)]">
+            / {point}
+          </span>
+        </div>
+      );
     },
   },
 ];

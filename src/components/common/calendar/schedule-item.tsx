@@ -25,7 +25,7 @@ import Tab from "../tab";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import DialogCarousel from "@/components/ui/custom/image/size-carousel";
 import { downloadFile } from "@/app/(user)/facility/_components/fac-info";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { usePermission } from "@/hooks/usePermission";
 import {
   Carousel,
@@ -37,6 +37,9 @@ import {
 import Image from "next/image";
 import BaseOverlay from "../overlay";
 import { createPortal } from "react-dom";
+import CheckDialog from "../check-dialog";
+import { dialogText } from "../../../../public/text";
+import { useScheduleStore } from "@/store/normal/schedule/shcedule-store";
 
 interface ScheduleItemProps {
   data: DaySchedule;
@@ -46,6 +49,8 @@ const ScheduleItem = ({ data }: ScheduleItemProps) => {
   const { canWorkerEdit } = usePermission();
   const router = useRouter();
   const [open, setOpen] = useState<boolean>(false);
+  const { getDaySchedule, deleteDaySchedule } = useScheduleStore();
+  const searchParams = useSearchParams();
 
   useEffect(() => {
     if (!data) return;
@@ -86,6 +91,18 @@ const ScheduleItem = ({ data }: ScheduleItemProps) => {
     return <Tab configs={tabConfigs} />;
   };
 
+  const onDelete = async () => {
+    if (!searchParams) {
+      const date = format(new Date(), "yyyy-MM");
+
+      await deleteDaySchedule(data.schSeq, date);
+    } else {
+      const year = searchParams.get("year");
+      const month = searchParams.get("month");
+      await deleteDaySchedule(data.schSeq, `${year}-${month}`);
+    }
+  };
+
   return (
     <Popover
       open={open}
@@ -121,7 +138,14 @@ const ScheduleItem = ({ data }: ScheduleItemProps) => {
                 router.push(`/schedule/edit/${data.schSeq}`);
               }}
             />
-            <IconButton icon="Trash2" />
+            <CheckDialog
+              title={dialogText.defaultDelete.title}
+              description={dialogText.defaultDelete.description}
+              actionLabel={dialogText.defaultDelete.actionLabel}
+              onClick={onDelete}
+            >
+              <IconButton icon="Trash2" />
+            </CheckDialog>
           </div>
         )}
 

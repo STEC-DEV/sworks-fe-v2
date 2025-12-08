@@ -6,6 +6,7 @@ import { Response } from "@/types/common/response";
 import { paramsCheck } from "@/utils/param";
 import { useUIStore } from "@/store/common/ui-store";
 import { toast } from "sonner";
+import { handleApiError } from "@/lib/api/errorHandler";
 
 export const COMMON_CHECKLIST_LOADING_KEYS = {
   LIST: "common_checklist",
@@ -41,10 +42,7 @@ export const useChecklistStore = create<ChecklistState>()(
             set({ commonChecklist: res.data });
           } catch (err) {
             console.log(err);
-            const errMessage =
-              err instanceof Error
-                ? err.message
-                : "체크리스트 조회 문제가 발생하였습니다. 잠시후 다시 시도해주세요.";
+            const errMessage = await handleApiError(err);
             setError(COMMON_CHECKLIST_LOADING_KEYS.LIST, errMessage);
             toast.error(errMessage);
           } finally {

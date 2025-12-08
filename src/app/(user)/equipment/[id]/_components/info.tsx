@@ -2,6 +2,7 @@
 import BaseSkeleton from "@/components/common/base-skeleton";
 import CustomCard from "@/components/common/card";
 import IconButton from "@/components/common/icon-button";
+import { SingleImageBox } from "@/components/common/image-box";
 import { useDecodeParam } from "@/hooks/params";
 import { useUIStore } from "@/store/common/ui-store";
 import { useEquipmentDetailStore } from "@/store/normal/equipment/equip-detail-store";
@@ -52,16 +53,11 @@ const EquipmentInfoCard = () => {
   return (
     <CustomCard className="xl:flex-row p-0 gap-0 ">
       {data.images ? (
-        <div className="h-40 xl:w-80 xl:h-59 overflow-hidden relative">
-          <Image
-            src={data.images}
-            className="w-full h-full object-cover"
-            fill
-            alt="이미지"
-          />
+        <div className="h-40 xl:w-80 xl:h-59 overflow-hidden relative rounded-l-[4px] ">
+          <SingleImageBox path={data.images} />
         </div>
       ) : (
-        <div className="w-80 bg-[var(--background)] flex items-center justify-center">
+        <div className="w-80 bg-[var(--background)] flex items-center justify-center ">
           <ImageIcon size={24} className="text-[var(--icon)]" />
         </div>
       )}

@@ -18,7 +18,7 @@ export const buildingSchema = z.object({
   address: z.string().min(1, "주소를 입력해주세요."),
   totalArea: z.string().min(1, "연면적을 입력해주세요."),
   completeDt: z.date("준공일을 입력해주세요."),
-  usage: z.string().min(1, "명칭을 입력해주세요."),
+  usage: z.string().min(1, "건물용도를 입력해주세요."),
   selfParkingSpaces: z.number(),
   autoParkingSpaces: z.number(),
   handicapParkingSpaces: z.number(),
@@ -84,21 +84,36 @@ const BuildingEditForm = ({
             control={form.control}
             name="dongName"
             render={({ field }) => (
-              <TextFormItem label="명칭" placeholder="명칭" {...field} />
+              <TextFormItem
+                label="명칭"
+                placeholder="명칭"
+                {...field}
+                required
+              />
             )}
           />
           <FormField
             control={form.control}
             name="address"
             render={({ field }) => (
-              <TextFormItem label="위치" placeholder="위치" {...field} />
+              <TextFormItem
+                label="위치"
+                placeholder="위치"
+                {...field}
+                required
+              />
             )}
           />
           <FormField
             control={form.control}
             name="totalArea"
             render={({ field }) => (
-              <TextFormItem label="연면적" placeholder="연면적" {...field} />
+              <TextFormItem
+                label="연면적"
+                placeholder="연면적"
+                {...field}
+                required
+              />
             )}
           />
           <FormField
@@ -109,6 +124,7 @@ const BuildingEditForm = ({
                 label="준공일"
                 value={field.value}
                 onChange={field.onChange}
+                required
               />
             )}
           />
@@ -120,6 +136,7 @@ const BuildingEditForm = ({
                 label="건물용도"
                 placeholder="건물용도"
                 {...field}
+                required
               />
             )}
           />

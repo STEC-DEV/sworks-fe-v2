@@ -54,10 +54,6 @@ const ContractAddForm = ({ onNext }: ContractAddFormProps) => {
     getWorkplaceServiceType(id?.toString());
   }, []);
 
-  useEffect(() => {
-    console.log(workplaceContractTypeList);
-  }, [workplaceContractTypeList]);
-
   const { handleDateChange } = useDateValidation({
     form,
     startFieldName: "startDt",

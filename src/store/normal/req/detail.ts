@@ -1,7 +1,9 @@
 import api from "@/lib/api/api-manager";
+import { handleApiError } from "@/lib/api/errorHandler";
 import { useUIStore } from "@/store/common/ui-store";
 import { Response } from "@/types/common/response";
 import { Request, RequestWorker } from "@/types/normal/request/req-detail";
+import { HTTPError } from "ky";
 import { toast } from "sonner";
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
@@ -22,6 +24,8 @@ interface ReqDetailState {
   postAddReply: (data: FormData) => Promise<boolean>;
   //처리내용 삭제
   deleteReply: (seq: string) => Promise<void>;
+  //처리내용 수정
+  postUpdateReply: (data: FormData) => Promise<void>;
 }
 
 export const useReqDetailStore = create<ReqDetailState>()(
@@ -116,6 +120,21 @@ export const useReqDetailStore = create<ReqDetailState>()(
           } catch (err) {
             console.error(err);
             toast.error("문제가 발생하였습니다. 잠시후 다시 시도해주세요.");
+          }
+        },
+        postUpdateReply: async (data) => {
+          try {
+            const res: Response<boolean> = await api
+              .post(`siterequest/w/sign/updatelog`, {
+                body: data,
+              })
+              .json();
+
+            // return res.data;
+          } catch (err) {
+            console.error(err);
+            const errorMessage = await handleApiError(err);
+            toast.error(errorMessage);
           }
         },
       }),

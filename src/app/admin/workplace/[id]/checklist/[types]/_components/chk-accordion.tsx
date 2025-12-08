@@ -4,7 +4,11 @@ import { CircleCheckBig } from "lucide-react";
 
 const ChkAccordion = ({ data }: { data: Checklist }) => {
   return (
-    <CustomAccordion label={data.chkMainTitle} icon={CircleCheckBig}>
+    <CustomAccordion
+      label={data.chkMainTitle}
+      icon={CircleCheckBig}
+      isPaddingBottom={false}
+    >
       {data.subs.map((v, i) => (
         <CheckItemWrapper key={i} data={v} />
       ))}

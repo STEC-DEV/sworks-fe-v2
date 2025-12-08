@@ -1,4 +1,5 @@
 import api from "@/lib/api/api-manager";
+import { handleApiError } from "@/lib/api/errorHandler";
 import { useAuthStore } from "@/store/auth/auth-store";
 import { useUIStore } from "@/store/common/ui-store";
 import { Response } from "@/types/common/response";
@@ -22,6 +23,8 @@ interface UserMainState {
   loadingKeys: typeof USER_LOADING_KEYS;
   userList: ListData<UserListItem> | null;
   getUserList: (param: URLSearchParams) => Promise<void>;
+  /**사번 중복검사 */
+  getCheckSabun: (sabun: string) => Promise<boolean>;
   /* 사용자 관련 */
   createUser: CreateUser;
   updateCreateUser: (value: Record<string, any>) => void;
@@ -77,6 +80,22 @@ export const useUserMainStore = create<UserMainState>()(
             toast.error(errMessage);
           } finally {
             setLoading(USER_LOADING_KEYS.LIST, false);
+          }
+        },
+        getCheckSabun: async (sabun) => {
+          try {
+            const res: Response<boolean> = await api
+              .get(`comm/w/chksabun`, {
+                searchParams: { sabun },
+              })
+              .json();
+
+            return res.data;
+          } catch (err) {
+            console.error(err);
+            const errMessage = await handleApiError(err);
+            toast.error(errMessage);
+            return false;
           }
         },
         createUser: initialCreateUser,

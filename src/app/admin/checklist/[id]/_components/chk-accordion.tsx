@@ -6,11 +6,21 @@ import React from "react";
 import { useParams, useRouter } from "next/navigation";
 import { CircleCheckBig } from "lucide-react";
 import { usePermission } from "@/hooks/usePermission";
+import { useChecklistDetailStore } from "@/store/admin/checklist/checklist-detail-store";
+import { useDecodeParam } from "@/hooks/params";
 
 const ChkAccordion = ({ data }: { data: Checklist }) => {
   const { canEdit } = usePermission();
+  const { getChecklistDetail, deleteChecklist } = useChecklistDetailStore();
   const router = useRouter();
   const { id } = useParams();
+  const { rawValue } = useDecodeParam("id");
+
+  const onDelete = async () => {
+    if (!rawValue) return;
+    await deleteChecklist(data.chkMainSeq);
+    await getChecklistDetail(rawValue);
+  };
 
   return (
     <CustomAccordion
@@ -28,13 +38,14 @@ const ChkAccordion = ({ data }: { data: Checklist }) => {
               title={dialogText.checklistItemDelete.title}
               description={dialogText.checklistItemDelete.description}
               actionLabel={dialogText.checklistItemDelete.actionLabel}
-              onClick={() => {}}
+              onClick={onDelete}
             >
               <IconButton icon="Trash2" size={16} />
             </CheckDialog>
           </div>
         )
       }
+      isPaddingBottom={false}
     >
       {data.subs.map((v, i) => (
         <CheckItemWrapper key={i} data={v} />
@@ -57,6 +68,7 @@ export const ChecklistAccordion = ({
       label={data.chkMainTitle}
       icon={CircleCheckBig}
       optionChildren={optionChildren}
+      isPaddingBottom={false}
     >
       <div className="flex flex-col gap-4">
         {data.subs.map((v, i) => (
@@ -73,7 +85,7 @@ export const CheckItemWrapper = ({ data }: { data: ChecklistItem }) => {
       <span className="block px-4 py-2 bg-[var(--background)]">
         {data.chkSubTitle}
       </span>
-      <div className="flex flex-col gap-4 px-4 pt-4">
+      <div className="flex flex-col gap-4 px-4 py-4">
         {data.details.map((v, i) => (
           <CheckItem key={i} item={v} />
         ))}

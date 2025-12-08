@@ -19,6 +19,8 @@ interface CheckDialogProps {
   children: React.ReactNode;
   buttonColor?: string;
   onClick: () => void;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }
 
 const CheckDialog = ({
@@ -28,9 +30,11 @@ const CheckDialog = ({
   onClick,
   buttonColor,
   children,
+  open,
+  onOpenChange,
 }: CheckDialogProps) => {
   return (
-    <AlertDialog>
+    <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogTrigger asChild>{children}</AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>

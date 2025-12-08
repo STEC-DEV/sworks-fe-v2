@@ -17,8 +17,8 @@ const QrPagination = () => {
   const searchParams = useSearchParams();
   const handleSubmit = async (values: any) => {
     await postAddQr(values);
-    await getQrList(new URLSearchParams(searchParams));
     setOpen(false);
+    await getQrList(new URLSearchParams(searchParams));
   };
 
   if (isLoading(loadingKeys.LIST) || !qrList)

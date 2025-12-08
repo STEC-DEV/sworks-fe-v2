@@ -41,7 +41,6 @@ const Page = () => {
 
   //최종 생성
   const handleChecklistSubmit = async (values: ChecklistAddFormType) => {
-    console.log(values);
     if (!id) return;
     setCreateChecklist(values);
 

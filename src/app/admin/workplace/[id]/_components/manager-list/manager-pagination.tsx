@@ -7,6 +7,7 @@ import Input from "@/components/common/input";
 import BaseDialog from "@/components/ui/custom/base-dialog";
 import CommonPagination from "@/components/ui/custom/pagination/common-pagination";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { useDecodeParam } from "@/hooks/params";
 import { usePermission } from "@/hooks/usePermission";
 import { useWorkplaceManagerStore } from "@/store/admin/workplace/manager-store";
 
@@ -53,7 +54,7 @@ const EditManagerContents = ({
 }) => {
   const [search, setSearch] = useState<string>("");
   const [select, setSelect] = useState<SelectAdminList[]>([]);
-  const { id } = useParams();
+  const { rawValue: id } = useDecodeParam("id");
   const searchParams = useSearchParams();
   const { getAllManagerList, allManagerList, getManagers, putManagerList } =
     useWorkplaceManagerStore();
@@ -86,7 +87,7 @@ const EditManagerContents = ({
       select.map((v) => v.userSeq)
     );
     setOpen(false);
-    await getManagers(new URLSearchParams(searchParams));
+    await getManagers(id, new URLSearchParams(searchParams));
   };
   return (
     <div className="flex flex-col gap-6 w-full ">

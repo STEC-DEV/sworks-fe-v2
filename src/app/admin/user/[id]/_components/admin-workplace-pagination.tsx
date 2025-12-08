@@ -77,11 +77,11 @@ const EditAdminWorkplaceContents = ({
   const handleSubmit = async () => {
     if (!id) return;
     await putAdminWorkplaceList(id?.toString());
+    setOpen(false);
     await getAdminWorkplaceList(
       new URLSearchParams(searchParams),
       id.toString()
     );
-    setOpen(false);
   };
   return (
     <div className="flex flex-col gap-6 w-full">

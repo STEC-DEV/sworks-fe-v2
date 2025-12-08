@@ -1,4 +1,5 @@
 import api from "@/lib/api/api-manager";
+import { handleApiError } from "@/lib/api/errorHandler";
 import { useUIStore } from "@/store/common/ui-store";
 import { Workplace } from "@/types/admin/workplace/v2/workplace";
 import { WorkplaceDetail } from "@/types/admin/workplace/workplace-detail";
@@ -41,10 +42,9 @@ export const useWorkplaceDetailStore = create<WorkplaceDetailState>()(
             set({ workplace: res.data });
           } catch (err) {
             console.log(err);
-            const errorMessage =
-              err instanceof Error ? err.message : "사업장 정보 조회 실패";
-            setError(ADMIN_WORKPLACE_DETAIL_LOADING_KEYS.INFO, errorMessage);
-            toast.error(errorMessage);
+            const errMessage = await handleApiError(err);
+            setError(ADMIN_WORKPLACE_DETAIL_LOADING_KEYS.INFO, errMessage);
+            toast.error(errMessage);
           } finally {
             setLoading(ADMIN_WORKPLACE_DETAIL_LOADING_KEYS.INFO, false);
           }
@@ -61,7 +61,8 @@ export const useWorkplaceDetailStore = create<WorkplaceDetailState>()(
             toast.success("저장");
           } catch (err) {
             console.log(err);
-            toast.success("저장실패");
+            const errMessage = await handleApiError(err);
+            toast.success(errMessage);
           }
         },
       }),

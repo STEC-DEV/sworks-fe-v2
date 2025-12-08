@@ -1,4 +1,5 @@
 import api from "@/lib/api/api-manager";
+import { handleApiError } from "@/lib/api/errorHandler";
 import { useUIStore } from "@/store/common/ui-store";
 import { WorkplaceListItem } from "@/types/admin/workplace/workplace-list";
 import { Response } from "@/types/common/response";
@@ -45,10 +46,9 @@ export const useWorkplaceListStore = create<WorkplaceListState>()(
             });
           } catch (err) {
             console.error(err);
-            const errorMessage =
-              err instanceof Error ? err.message : "사업장 목록 조회 실패";
-            setError(loadingKey, errorMessage);
-            toast.error(errorMessage);
+            const errMessage = await handleApiError(err);
+            setError(loadingKey, errMessage);
+            toast.error(errMessage);
           } finally {
             setLoading(loadingKey, false); // 항상 로딩 종료
           }
@@ -70,6 +70,8 @@ export const useWorkplaceListStore = create<WorkplaceListState>()(
               message: "요청 중 오류가 발생했습니다.",
               data: -1,
             };
+            const errMessage = await handleApiError(err);
+            toast.error(errMessage);
             return response;
           }
         },

@@ -87,7 +87,10 @@ const Page = () => {
         </div>
         <DragOverlay className="bg-blue-50  p-2 border border-[var(--border)] rounded-[4px]">
           {activeId && activeItem ? (
-            <MonthScheduleItem data={activeItem} isDrag={true} />
+            <MonthScheduleItem
+              data={activeItem}
+              isDrag={activeId === activeItem.planSeq}
+            />
           ) : null}
         </DragOverlay>
       </DndContext>

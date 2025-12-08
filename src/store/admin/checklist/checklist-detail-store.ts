@@ -1,4 +1,5 @@
 import api from "@/lib/api/api-manager";
+import { handleApiError } from "@/lib/api/errorHandler";
 import { useUIStore } from "@/store/common/ui-store";
 import { Response } from "@/types/common/response";
 import { toast } from "sonner";
@@ -25,6 +26,7 @@ interface ChecklistDetailState {
   setEditChecklistItem: (id: number) => void;
   resetEditChecklistItem: () => void;
   putEditChecklistItem: (item: Checklist) => Promise<void>;
+  deleteChecklist: (delSeq: number) => Promise<void>;
 }
 
 export const useChecklistDetailStore = create<ChecklistDetailState>()(
@@ -45,10 +47,7 @@ export const useChecklistDetailStore = create<ChecklistDetailState>()(
             set({ checklistDetail: res.data });
           } catch (err) {
             console.log(err);
-            const errMessage =
-              err instanceof Error
-                ? err.message
-                : "체크리스트 정보 조회 문제가 발생하였습니다. 잠시후 다시 시도해주세요.";
+            const errMessage = await handleApiError(err);
             setError(COMMON_CHECKLIST_DETAIL_LOADING_KEYS.INFO, errMessage);
             toast.error(errMessage);
           } finally {
@@ -73,11 +72,13 @@ export const useChecklistDetailStore = create<ChecklistDetailState>()(
             return res;
           } catch (err) {
             console.log(err);
+            const errMessage = await handleApiError(err);
             const response: Response<number> = {
               code: 500,
               message: "요청 중 오류가 발생했습니다.",
               data: -1,
             };
+            toast.error(errMessage);
             return response;
           }
         },
@@ -106,6 +107,22 @@ export const useChecklistDetailStore = create<ChecklistDetailState>()(
             console.log(res);
           } catch (err) {
             console.log(err);
+            const errMessage = await handleApiError(err);
+            toast.error(errMessage);
+          }
+        },
+        deleteChecklist: async (delSeq) => {
+          try {
+            const res: Response<boolean> = await api
+              .delete(`checklist/w/sign/deletechkmain`, {
+                searchParams: { delSeq },
+              })
+              .json();
+            toast.success("삭제");
+          } catch (err) {
+            console.error(err);
+            const errMessage = await handleApiError(err);
+            toast.error(errMessage);
           }
         },
       }),

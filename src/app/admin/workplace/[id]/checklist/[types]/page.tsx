@@ -10,12 +10,14 @@ import IconButton from "@/components/common/icon-button";
 import { useWorkplaceDetailChecklistStore } from "@/store/admin/workplace/checklist-store";
 import { useUIStore } from "@/store/common/ui-store";
 import EmptyBox from "@/components/ui/custom/empty";
+import { usePermission } from "@/hooks/usePermission";
 
 const Page = () => {
   const { id, types } = useParams();
   const { checklistDetail, getChecklistDetail, loadingKeys } =
     useWorkplaceDetailChecklistStore();
   const { isLoading, hasError } = useUIStore();
+  const { canEdit } = usePermission();
   const router = useRouter();
 
   const loading = isLoading(loadingKeys.DETAIL);
@@ -41,11 +43,13 @@ const Page = () => {
     <div className="w-full xl:w-150 flex flex-col gap-4">
       <div className="flex items-center justify-between">
         <AppTitle title="체크리스트" />
-        <IconButton
-          icon="SquarePen"
-          size={16}
-          onClick={() => router.push(`${types}/edit`)}
-        />
+        {canEdit && (
+          <IconButton
+            icon="SquarePen"
+            size={16}
+            onClick={() => router.push(`${types}/edit`)}
+          />
+        )}
       </div>
       <div className="flex flex-col gap-2">
         <KeyValue

@@ -9,6 +9,7 @@ export interface QeListItem {
   createDt: string;
   createUser: string;
   score: string;
+  total: string;
 }
 
 export interface EvaluateListItem {

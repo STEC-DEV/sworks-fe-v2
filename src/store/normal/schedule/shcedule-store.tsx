@@ -1,4 +1,5 @@
 import api from "@/lib/api/api-manager";
+import { handleApiError } from "@/lib/api/errorHandler";
 import { useAuthStore } from "@/store/auth/auth-store";
 import { Response } from "@/types/common/response";
 import { DaySchedule } from "@/types/normal/schedule/day-schedule";
@@ -7,6 +8,7 @@ import {
   monthSchedules,
 } from "@/types/normal/schedule/month";
 import { format } from "date-fns";
+import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
@@ -19,11 +21,16 @@ interface ScheduleState {
   resetSchedule: () => void;
   postAddSchedule: (data: Record<string, any>) => Promise<void>;
   patchUpdateSchedule: (data: FormData) => Promise<void>;
+  deleteDaySchedule: (schSeq: number, date: string) => Promise<void>;
   //월간일정
   monthSchedules: MonthScheduleListItem[] | undefined;
   getMonthSchedule: (date: URLSearchParams) => Promise<void>;
   postAddMonthSchedule: (data: Record<string, any>) => Promise<void>;
-  patchUpdateMonthSchedule: (data: Record<string, any>) => Promise<void>;
+  patchUpdateMonthSchedule: (
+    data: Record<string, any>,
+    date: URLSearchParams
+  ) => Promise<void>;
+  deleteMonthSchedule: (delSeq: number, date: URLSearchParams) => Promise<void>;
   //Month to Day
   postMonthToDay: (data: MonthScheduleListItem, date: Date) => Promise<void>;
 }
@@ -100,6 +107,22 @@ export const useScheduleStore = create<ScheduleState>()(
             toast.error("수정 실패");
           }
         },
+        deleteDaySchedule: async (delSeq, date) => {
+          const { getDaySchedule } = get();
+          try {
+            const res: Response<boolean> = await api
+              .delete(`sch/w/sign/deletesch`, {
+                searchParams: { delSeq },
+              })
+              .json();
+            toast.success("삭제되었습니다.");
+            await getDaySchedule(date);
+          } catch (err) {
+            console.error(err);
+            const errMessage = await handleApiError(err);
+            toast.error(errMessage);
+          }
+        },
         monthSchedules: undefined,
         getMonthSchedule: async (date) => {
           try {
@@ -132,17 +155,36 @@ export const useScheduleStore = create<ScheduleState>()(
             toast.error("등록 실패");
           }
         },
-        patchUpdateMonthSchedule: async (data) => {
+        patchUpdateMonthSchedule: async (data, date) => {
+          const { getMonthSchedule } = get();
           try {
             const res: Response<boolean> = await api
               .patch(`plan/w/sign/updateplaninfo`, {
                 json: data,
               })
               .json();
-            toast.success("저장");
+            toast.success("수정되었습니다.");
+            await getMonthSchedule(date);
           } catch (err) {
             console.error(err);
             toast.error("저장 실패");
+          }
+        },
+        deleteMonthSchedule: async (delSeq, date) => {
+          const { getMonthSchedule } = get();
+          try {
+            const res: Response<boolean> = await api
+              .delete(`plan/w/sign/delplansch`, {
+                searchParams: { delSeq },
+              })
+              .json();
+            toast.success("삭제되었습니다.");
+
+            await getMonthSchedule(date);
+          } catch (err) {
+            console.error(err);
+            const errMessage = await handleApiError(err);
+            toast.error(errMessage);
           }
         },
         postMonthToDay: async (data, date) => {

@@ -11,6 +11,7 @@ import FacilityPagination from "../_components/pagination";
 import { mroColumns } from "../_components/mro-columns";
 import BaseTable from "@/components/common/base-table";
 import { useUIStore } from "@/store/common/ui-store";
+import { CogIcon, HammerIcon, LucideIcon, Package } from "lucide-react";
 
 const Page = () => {
   const { facilityList, getFacilityList, loadingKeys } = useFacilityMainStore();
@@ -75,9 +76,22 @@ const Page = () => {
     );
   };
 
+  const icon = (): LucideIcon => {
+    switch (decodeValue) {
+      case "R&M":
+        return HammerIcon;
+      case "M&O":
+        return CogIcon;
+      case "MRO":
+        return Package;
+      default:
+        return HammerIcon;
+    }
+  };
+
   return (
     <>
-      <AppTitle title={decodeValue} />
+      <AppTitle icon={icon()} title={decodeValue} />
       <FacilityFilter />
       <FacilityPagination />
       {getList()}

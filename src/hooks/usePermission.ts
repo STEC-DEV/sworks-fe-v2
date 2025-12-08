@@ -8,6 +8,7 @@ export const usePermission = () => {
     canWorkerEdit:
       user?.role === "현장 관리자" ||
       user?.role === "시스템관리자" ||
-      user?.role === "마스터",
+      user?.role === "마스터" ||
+      user?.role === "매니저",
   };
 };

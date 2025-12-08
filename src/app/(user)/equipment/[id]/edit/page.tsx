@@ -13,6 +13,7 @@ import { useEquipmentDetailStore } from "@/store/normal/equipment/equip-detail-s
 import {
   convertRecordDataToFormData,
   convertSelectOptionType,
+  objectToFormData,
 } from "@/utils/convert";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
@@ -104,7 +105,7 @@ const Page = () => {
   }, [equipmentDetail, form]);
 
   const handleSubmit = async (values: UpdateFormType) => {
-    const formData = convertRecordDataToFormData(values, true);
+    const formData = objectToFormData(values, true);
     await patchUpdateEquipmentDetail(formData);
     router.replace(`/equipment/${values.equipSeq}`);
   };
@@ -248,7 +249,10 @@ const Page = () => {
               <DateFormItem
                 label="구매일"
                 value={field.value}
-                onChange={(date) => field.onChange(date)}
+                onChange={(date) => {
+                  console.log(date);
+                  field.onChange(date);
+                }}
                 required
               />
             )}

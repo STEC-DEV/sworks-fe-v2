@@ -16,3 +16,5 @@ export interface NotiResponse {
   lastCursor: number;
   hasMore: boolean;
 }
+
+export interface SSENotification {}

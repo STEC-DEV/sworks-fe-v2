@@ -1,4 +1,5 @@
 import api from "@/lib/api/api-manager";
+import { handleApiError } from "@/lib/api/errorHandler";
 import { useUIStore } from "@/store/common/ui-store";
 import { AdminListItem } from "@/types/admin/admin/user-list";
 import { Response } from "@/types/common/response";
@@ -41,10 +42,7 @@ export const useAdminListStore = create<AdminListState>()(
             });
           } catch (err) {
             console.error(err);
-            const errMessage =
-              err instanceof Error
-                ? err.message
-                : "관리자 조회 문제가 발생하였습니다. 잠시후 다시 시도해주세요.";
+            const errMessage = await handleApiError(err);
             setError(ADMIN_LIST_LOADING_KEYS.LIST, errMessage);
             toast.error(errMessage);
           } finally {
@@ -68,11 +66,13 @@ export const useAdminListStore = create<AdminListState>()(
             return response;
           } catch (err) {
             console.log(err);
+            const errMessage = await handleApiError(err);
             const response: Response<number> = {
               code: 500,
               message: "요청 중 오류가 발생했습니다.",
               data: -1,
             };
+            toast.error(errMessage);
             return response;
           }
         },

@@ -4,6 +4,8 @@ export interface UserListItem {
   role: string;
   job: string;
   phone: string;
+  sabun: string;
+  images: string;
   serviceTypes: UserServiceType[];
 }
 
@@ -20,6 +22,7 @@ export interface User {
   userSeq: number;
   userName: string;
   role: string;
+  sabun: string;
   job: string;
   phone: string;
   email: string;

@@ -12,16 +12,19 @@ import { userColumns } from "@/app/admin/user/components/user-columns";
 import BaseSkeleton from "@/components/common/base-skeleton";
 import { useWorkplaceManagerStore } from "@/store/admin/workplace/manager-store";
 import { useUIStore } from "@/store/common/ui-store";
+import { useDecodeParam } from "@/hooks/params";
 
 const ManagerList = () => {
   const router = useRouter();
   const { managers, getManagers, loadingKeys } = useWorkplaceManagerStore();
+  const { rawValue: id } = useDecodeParam("id");
   const { isLoading, hasError } = useUIStore();
   const searchParams = useSearchParams();
 
   useEffect(() => {
-    getManagers(new URLSearchParams(searchParams));
-  }, [searchParams]);
+    if (!id && !searchParams) return;
+    getManagers(id, new URLSearchParams(searchParams));
+  }, [searchParams, id]);
 
   const getList = () => {
     if (isLoading(loadingKeys.MANAGER) || !managers) return <BaseSkeleton />;

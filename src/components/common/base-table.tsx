@@ -65,6 +65,47 @@ const BaseTable = <TData, TValue>({
         </TableHeader>
         <TableBody>
           {table.getRowModel().rows?.length ? (
+            table.getRowModel().rows.map((row) => {
+              const firstCell = row.getVisibleCells()[0];
+              const meta = firstCell?.column.columnDef.meta as any;
+              const rowStyle = meta?.getRowStyle?.(row.original);
+
+              // backgroundColor 값이 실제로 있는지 체크
+              const hasCustomBg =
+                rowStyle?.backgroundColor && rowStyle.backgroundColor !== null;
+
+              return (
+                <TableRow
+                  key={row.id}
+                  data-state={row.getIsSelected() && "selected"}
+                  className={cn(
+                    "cursor-pointer",
+                    !hasCustomBg && "hover:bg-blue-50" // backgroundColor가 없을 때만 hover
+                  )}
+                  style={hasCustomBg ? rowStyle : undefined}
+                  onClick={() => onRowClick?.(row.original)}
+                >
+                  {row.getVisibleCells().map((cell) => (
+                    <TableCell key={cell.id} className={cn("py-3", padding)}>
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              );
+            })
+          ) : (
+            <TableRow>
+              <TableCell colSpan={columns.length} className="text-center">
+                <EmptyBox />
+              </TableCell>
+            </TableRow>
+          )}
+        </TableBody>
+        {/* <TableBody>
+          {table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map((row) => (
               <TableRow
                 key={row.id}
@@ -86,7 +127,7 @@ const BaseTable = <TData, TValue>({
               </TableCell>
             </TableRow>
           )}
-        </TableBody>
+        </TableBody> */}
       </Table>
     </div>
   );

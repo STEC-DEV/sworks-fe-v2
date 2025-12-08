@@ -31,4 +31,9 @@ export const dialogText = {
     description: "님의 업무를 관리자 권한으로 처리하시겠습니까?",
     actionLabel: "확인",
   },
+  codeRetry: {
+    title: "재전송",
+    description: "인증번호를 재전송하시겠습니까?",
+    actionLabel: "확인",
+  },
 } as const;

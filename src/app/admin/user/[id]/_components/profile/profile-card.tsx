@@ -16,6 +16,9 @@ import { dialogText } from "../../../../../../../public/text";
 import { useAuthStore } from "@/store/auth/auth-store";
 import { usePermission } from "@/hooks/usePermission";
 import { useUIStore } from "@/store/common/ui-store";
+import { logout } from "@/app/server-action/auth/auth-action";
+import Image from "next/image";
+import { SingleImageBox } from "@/components/common/image-box";
 
 const ProfileCard = () => {
   const { canEdit } = usePermission();
@@ -40,9 +43,14 @@ const ProfileCard = () => {
   }, [id]);
 
   const handleDelete = async () => {
+    if (!loginProfile) return;
     const res = await deleteAdmin(id);
+
     if (res) {
-      return router.replace("/admin/user");
+      if (parseInt(id) === loginProfile?.userSeq) return logout();
+      else {
+        return router.replace("/admin/user");
+      }
     }
   };
 
@@ -58,8 +66,12 @@ const ProfileCard = () => {
     <div className="flex flex-col gap-6">
       <CustomCard className="w-full xl:w-100 gap-6">
         <div className="flex gap-4 items-center px-6">
-          <div className="flex items-end justify-center w-20 h-20  rounded-[50px] border border-[var(--border)] bg-[var(--background)]">
-            <User className="text-[var(--icon)] stroke-[1.25px]" size={56} />
+          <div className="relative flex items-end justify-center w-20 h-20  rounded-[50px] border border-[var(--border)] bg-[var(--background)] overflow-hidden">
+            {admin.images ? (
+              <SingleImageBox path={admin.images} />
+            ) : (
+              <User className="text-[var(--icon)] stroke-[1.25px]" size={56} />
+            )}
           </div>
           <div className="flex flex-col gap-2">
             <div className="flex items-end gap-2">
@@ -86,19 +98,19 @@ const ProfileCard = () => {
           />
         </div>
       </CustomCard>
-      {canEdit && (
+      {(canEdit || admin.userSeq === loginProfile?.userSeq) && (
         <div className="flex gap-4">
           {/* 정보수정: canEdit AND 본인 계정 둘 다 필요 */}
-          {admin.userSeq === loginProfile?.userSeq && (
+          {
             <BaseDialog
               title="정보수정"
               triggerChildren={<Button size={"sm"} label="정보수정" />}
               open={editInfoOpen}
               setOpen={setEditInfoOpen}
             >
-              <InfoEditForm setOpen={setEditInfoOpen} />
+              <InfoEditForm onClose={() => setEditInfoOpen(false)} />
             </BaseDialog>
-          )}
+          }
 
           {/* 비밀번호 초기화: canEdit만 있으면 OK */}
           <CheckDialog

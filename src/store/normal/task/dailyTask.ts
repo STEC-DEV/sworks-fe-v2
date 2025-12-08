@@ -1,4 +1,5 @@
 import api from "@/lib/api/api-manager";
+import { handleApiError } from "@/lib/api/errorHandler";
 import { useUIStore } from "@/store/common/ui-store";
 
 import { Response } from "@/types/common/response";
@@ -37,10 +38,7 @@ export const useDailyTaskStore = create<DailyTaskStatus>()(
             set({ dailyTaskList: res.data });
           } catch (err) {
             console.error(err);
-            const errMessage =
-              err instanceof Error
-                ? err.message
-                : "일일업무 조회 문제가 발생하였습니다. 잠시후 다시 시도해주세요.";
+            const errMessage = await handleApiError(err);
             setError(DAILY_TASK_LOADING_KEYS.LIST, errMessage);
             toast.error(errMessage);
           } finally {

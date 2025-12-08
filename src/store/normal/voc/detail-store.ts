@@ -1,4 +1,5 @@
 import api from "@/lib/api/api-manager";
+import { handleApiError } from "@/lib/api/errorHandler";
 import { useUIStore } from "@/store/common/ui-store";
 import { Response } from "@/types/common/response";
 import { HTTPError } from "ky";
@@ -21,6 +22,7 @@ interface VocDetailState {
   putUpdateServiceType: (values: any) => Promise<Response<boolean>>;
   postAddReply: (formData: FormData) => Promise<Response<boolean>>;
   patchUpdateReply: (formData: FormData) => Promise<void>;
+  deleteReply: (delSeq: number) => Promise<void>;
 
   complain: VocDetail | null;
   getComplain: (code: string) => Promise<void>;
@@ -138,6 +140,19 @@ export const useVocDetailStore = create<VocDetailState>()(
             toast.error(errMessage);
           } finally {
             setLoading(VOC_DETAIL_LOADING_KEYS.COMPLAIN, false);
+          }
+        },
+        deleteReply: async (delSeq) => {
+          try {
+            const res: Response<boolean> = await api
+              .delete(`voc/w/sign/deletevoclogreply`, {
+                searchParams: { delSeq },
+              })
+              .json();
+          } catch (err) {
+            console.error(err);
+            const errMessage = await handleApiError(err);
+            toast.error(errMessage);
           }
         },
       }),

@@ -19,6 +19,7 @@ const Page = () => {
     updateCreateUser,
     resetCreateUser,
     postAddUser,
+    getCheckSabun,
     getCreateUserClassification,
   } = useUserMainStore();
 
@@ -40,6 +41,8 @@ const Page = () => {
 
   const handleSubmit = async (values: UserAddFormType) => {
     updateCreateUser(values);
+    const check = await getCheckSabun(values.sabun);
+    if (!check) return;
     const res = await postAddUser();
     setFormResult(res.data);
     setCurStep((prev) => prev + 1);

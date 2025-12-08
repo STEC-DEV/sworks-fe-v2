@@ -1,4 +1,5 @@
 import api from "@/lib/api/api-manager";
+import { handleApiError } from "@/lib/api/errorHandler";
 import { useAuthStore } from "@/store/auth/auth-store";
 import { useUIStore } from "@/store/common/ui-store";
 import { Response } from "@/types/common/response";
@@ -21,6 +22,7 @@ interface BuildingState {
   architecture: Architecture | undefined;
   getArchitecture: () => Promise<void>;
   postAddArchitecture: (data: Record<string, any>) => Promise<boolean>;
+  patchUpdateArchitecture: (data: Record<string, any>) => Promise<void>;
 
   //건물
   createBuilding: CreateBuilding;
@@ -115,6 +117,21 @@ export const useBuildingStore = create<BuildingState>()(
             return false;
           }
         },
+        patchUpdateArchitecture: async (data) => {
+          try {
+            const res: Response<boolean> = await api
+              .patch(`building/w/sign/updatebuildinginfo`, {
+                json: data,
+              })
+              .json();
+            toast.error("수정");
+          } catch (err) {
+            console.error(err);
+            const errMessage = await handleApiError(err);
+            toast.error(errMessage);
+          }
+        },
+
         /**건물 생성 */
         createBuilding: initialCreateBuilding,
         setCreateBuilding: (values) => {

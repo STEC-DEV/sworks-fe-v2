@@ -19,6 +19,8 @@ import { KeyValueItem } from "@/components/ui/custom/key-value";
 import { usePermission } from "@/hooks/usePermission";
 import { useUIStore } from "@/store/common/ui-store";
 import { Request } from "@/types/normal/request/req-detail";
+import ReplyEditForm from "@/components/form/normal/request/reply-edit";
+import { useAuthStore } from "@/store/auth/auth-store";
 
 const Page = () => {
   const { getRequestDetail, loadingKeys, request } = useReqDetailStore();
@@ -111,12 +113,24 @@ const Info = ({ data }: { data: Request }) => {
 const Reply = ({ data }: { data: Request }) => {
   const { deleteReply, getRequestDetail } = useReqDetailStore();
   const { canWorkerEdit } = usePermission();
-  const [open, setOpen] = useState<boolean>(false);
+  const { loginProfile } = useAuthStore();
+  // const [open, setOpen] = useState<boolean>(false);
+  const [openDialogs, setOpenDialogs] = useState<Record<string, boolean>>({});
 
   const handleRemove = async (seq: string) => {
     if (!data) return;
     await deleteReply(seq);
     await getRequestDetail(data?.requestSeq.toString());
+  };
+
+  const createSetOpen = (logSeq: string) => {
+    return (value: boolean | ((prev: boolean) => boolean)) => {
+      setOpenDialogs((prev) => ({
+        ...prev,
+        [logSeq]:
+          typeof value === "function" ? value(prev[logSeq] || false) : value,
+      }));
+    };
   };
 
   return (
@@ -129,15 +143,19 @@ const Reply = ({ data }: { data: Request }) => {
             <CustomCard className="gap-2" key={i} size={"sm"}>
               <div className="flex justify-between items-center">
                 <ProcessBadge value={v.logStatus} />
-                {canWorkerEdit && (
+                {canWorkerEdit && loginProfile?.userSeq === v.createUserSeq && (
                   <div className="flex justify-end gap-2">
                     <BaseDialog
+                      key={i}
                       title="처리내용 수정"
                       triggerChildren={<IconButton icon="SquarePen" />}
-                      open={open}
-                      setOpen={setOpen}
+                      open={openDialogs[v.logSeq] || false}
+                      setOpen={createSetOpen(v.logSeq.toString())}
                     >
-                      <div></div>
+                      <ReplyEditForm
+                        data={v}
+                        onClose={() => createSetOpen(v.logSeq.toString())}
+                      />
                     </BaseDialog>
                     <CheckDialog
                       title={dialogText.defaultDelete.title}

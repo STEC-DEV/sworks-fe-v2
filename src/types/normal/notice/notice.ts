@@ -7,6 +7,7 @@ export interface NoticeListItem {
   endDt: Date;
   isPin: boolean;
   creator: string;
+  createDt: Date;
   viewYn: boolean;
   serviceTypes: ServiceType[];
 }

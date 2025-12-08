@@ -41,11 +41,7 @@ const formSchema = z.object({
 
 export type basicFormType = z.infer<typeof formSchema>;
 
-const InfoEditForm = ({
-  setOpen,
-}: {
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-}) => {
+const InfoEditForm = ({ onClose }: { onClose: () => void }) => {
   const { admin, patchAdminInfo, getAdminDetail } = useAdminDetailStore();
   const { departmentList, getDepartmentList } = useDeptStore();
 
@@ -63,18 +59,18 @@ const InfoEditForm = ({
     },
   });
 
-  useEffect(() => {
-    getDepartmentList();
-    return () => {
-      if (!rawValue) return;
-      getAdminDetail(rawValue);
-    };
-  }, [rawValue]);
+  // useEffect(() => {
+  //   getDepartmentList();
+  //   return () => {
+  //     if (!rawValue) return;
+  //     getAdminDetail(rawValue);
+  //   };
+  // }, [rawValue]);
 
-  const handleSubmit = (values: basicFormType) => {
-    patchAdminInfo(values);
-    getAdminDetail(rawValue);
-    setOpen(false);
+  const handleSubmit = async (values: basicFormType) => {
+    await patchAdminInfo(values);
+    onClose();
+    await getAdminDetail(rawValue);
   };
 
   return (

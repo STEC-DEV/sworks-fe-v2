@@ -47,12 +47,15 @@ const Page = () => {
           label={"점검일자"}
           value={format(historyDetail.detailDt, "yyyy-MM-dd")}
         />
-        <KeyValueItem
-          labelStyle="text-sm"
-          valueStyle="text-md font-normal"
-          label={"비고"}
-          value={historyDetail.remark ?? ""}
-        />
+        {historyDetail.remark && (
+          <KeyValueItem
+            labelStyle="text-sm"
+            valueStyle="text-md font-normal"
+            label={"비고"}
+            value={historyDetail.remark}
+          />
+        )}
+
         <KeyValueItem
           labelStyle="text-sm"
           valueStyle="text-md font-normal"

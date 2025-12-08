@@ -25,6 +25,7 @@ interface QeState {
   evaluateChecklist: QeChecklist | null;
   getEvaluateChecklist: (searchParams: URLSearchParams) => Promise<void>;
   postAddEvaluate: (data: QeAddFormValueType) => Promise<boolean>;
+  resetEvaluateChecklist: () => void;
 }
 
 export const useQeStore = create<QeState>()(
@@ -108,7 +109,7 @@ export const useQeStore = create<QeState>()(
             setError(QE_LOADING_KEYS.EVALUATE_CHECKLIST, errMessage);
             toast.error(errMessage);
           } finally {
-            setLoading(QE_LOADING_KEYS.EVALUATE_CHECKLIST, true);
+            setLoading(QE_LOADING_KEYS.EVALUATE_CHECKLIST, false);
           }
         },
         postAddEvaluate: async (data) => {
@@ -124,6 +125,9 @@ export const useQeStore = create<QeState>()(
             return false;
           } finally {
           }
+        },
+        resetEvaluateChecklist: () => {
+          set({ evaluateChecklist: null });
         },
       }),
       { name: "qe-store" }

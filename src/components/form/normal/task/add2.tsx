@@ -498,7 +498,7 @@ export const ChecklistSelectAccordion = ({
       );
 
       if (!select) return false;
-      if (select.chkSubs.length === 0) return true; // 전체 선택
+      // if (select.chkSubs.length === 0) return true; // 전체 선택
       return select.chkSubs.some((item) => item.chkSubSeq === sub.chkSubSeq);
     },
     [selectedValue, data.chkMainSeq]

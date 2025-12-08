@@ -9,6 +9,7 @@ import React, { useEffect } from "react";
 import { BuildingInfo, FacilityInfo, FireInfo } from "./_components/info-item";
 import Image from "next/image";
 import { useUIStore } from "@/store/common/ui-store";
+import { SingleImageBox } from "@/components/common/image-box";
 
 const Page = () => {
   const { rawValue } = useDecodeParam("id");
@@ -27,14 +28,9 @@ const Page = () => {
   return (
     <>
       <AppTitle title={building?.dongName} />
-      <div className="w-full h-60 border rounded-[4px] shrink-0 relative">
+      <div className="w-full h-80 border rounded-[4px] shrink-0 relative">
         {building.images ? (
-          <Image
-            fill
-            className="w-full h-full object-cover"
-            src={building?.images}
-            alt="이미지"
-          />
+          <SingleImageBox path={building.images} />
         ) : (
           <div className="w-full h-full flex items-center justify-center bg-background">
             <Building2

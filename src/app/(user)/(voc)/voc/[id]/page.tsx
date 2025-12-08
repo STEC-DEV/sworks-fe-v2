@@ -19,6 +19,7 @@ import TypeEditForm from "@/components/form/normal/voc/type-edit";
 import ReplyEditForm from "@/components/form/normal/voc/reply-edit";
 import { KeyValueItem } from "@/components/ui/custom/key-value";
 import { useUIStore } from "@/store/common/ui-store";
+import { useDecodeParam } from "@/hooks/params";
 
 const Page = () => {
   const [open, setOpen] = useState<boolean>(false);
@@ -112,6 +113,8 @@ const Page = () => {
 
 const ReplyBox = ({ data }: { data: VocReply }) => {
   const [open, setOpen] = useState<boolean>(false);
+  const { rawValue: id } = useDecodeParam("id");
+  const { getVocDetail, deleteReply } = useVocDetailStore();
 
   const process = () => {
     switch (data.status) {
@@ -141,6 +144,12 @@ const ReplyBox = ({ data }: { data: VocReply }) => {
         );
     }
   };
+
+  const onDelete = async () => {
+    if (!id) return;
+    await deleteReply(data.replySeq);
+    await getVocDetail(id);
+  };
   return (
     <CustomCard className="gap-2 px-0" size={"sm"}>
       <div className="flex justify-between items-center px-4">
@@ -166,7 +175,7 @@ const ReplyBox = ({ data }: { data: VocReply }) => {
             title={dialogText.replyItemDelete.title}
             description={dialogText.replyItemDelete.description}
             actionLabel={dialogText.replyItemDelete.actionLabel}
-            onClick={() => {}}
+            onClick={onDelete}
           >
             <IconButton icon="Trash2" size={16} />
           </CheckDialog>

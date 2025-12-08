@@ -3,18 +3,20 @@ import BaseSkeleton from "@/components/common/base-skeleton";
 import AppTitle from "@/components/common/label/title";
 import ConstructionEditForm from "@/components/form/normal/construction/edit";
 import { useBuildingStore } from "@/store/normal/building/building";
+import { useRouter } from "next/navigation";
 import React, { useEffect } from "react";
 
 const Page = () => {
-  const { construction, getConstruction } = useBuildingStore();
+  const { construction, getConstruction, patchUpdateArchitecture } =
+    useBuildingStore();
+  const router = useRouter();
   useEffect(() => {
     getConstruction();
   }, []);
 
-  const handleSubmit = (values: any) => {
-    console.log("============수정============");
-    console.log(values);
-    console.log("============================");
+  const handleSubmit = async (values: any) => {
+    await patchUpdateArchitecture(values);
+    router.push("/workplace");
   };
 
   return (

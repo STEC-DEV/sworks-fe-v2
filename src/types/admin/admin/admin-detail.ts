@@ -8,4 +8,5 @@ interface AdminDetail {
   deptName: string;
   phone: string;
   email: string;
+  images: string;
 }

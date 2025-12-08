@@ -15,6 +15,7 @@ import CheckDialog from "@/components/common/check-dialog";
 import { usePermission } from "@/hooks/usePermission";
 import { useWorkplaceDetailContractStore } from "@/store/admin/workplace/contract-store";
 import { useUIStore } from "@/store/common/ui-store";
+import { useDecodeParam } from "@/hooks/params";
 
 const ContractWrapper = () => {
   const { canEdit } = usePermission();
@@ -63,8 +64,12 @@ const ContractWrapper = () => {
 const ContractCard = ({ data }: { data: Contract }) => {
   const { canEdit } = usePermission();
   const [editOpen, setEditOpen] = useState<boolean>(false);
-  const handleDelete = () => {
-    console.log(data);
+  const { getContractList, deleteContract } = useWorkplaceDetailContractStore();
+  const { rawValue: id } = useDecodeParam("id");
+  const handleDelete = async () => {
+    if (!id) return;
+    await deleteContract(data.contractSeq);
+    await getContractList(id);
   };
   return (
     <CustomCard className="w-full items-end gap-0 py-4 ">

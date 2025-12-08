@@ -13,7 +13,7 @@ import { convertSelectOptionType } from "@/utils/convert";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
 import { useSearchParams } from "next/navigation";
-import React, { Suspense, useEffect } from "react";
+import React, { Suspense, useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import z from "zod";
 
@@ -71,8 +71,25 @@ const MonthEditForm = ({
     }
   }, [searchParams]);
 
+  const getSearchParams = useMemo(() => {}, [searchParams]);
+
   const handleSubmit = async (values: EditFormType) => {
-    await patchUpdateMonthSchedule(values);
+    console.log(values);
+    const year = searchParams.get("year");
+    const month = searchParams.get("month");
+
+    if (!year || !month) {
+      await patchUpdateMonthSchedule(
+        values,
+        new URLSearchParams({ targetDt: format(new Date(), "yyyy-MM") })
+      );
+    } else {
+      await patchUpdateMonthSchedule(
+        values,
+        new URLSearchParams({ targetDt: `${year}-${month}` })
+      );
+    }
+
     onClose();
   };
 

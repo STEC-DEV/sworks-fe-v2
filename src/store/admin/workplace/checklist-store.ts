@@ -1,4 +1,5 @@
 import api from "@/lib/api/api-manager";
+import { handleApiError } from "@/lib/api/errorHandler";
 import { useUIStore } from "@/store/common/ui-store";
 import { ChecklistMultiType } from "@/types/admin/workplace/chk-types";
 import { Response } from "@/types/common/response";
@@ -51,6 +52,12 @@ interface WorkplaceDetailChecklistState {
   selectedAvailableChecklistItem: Checklist[];
   resetSelectedAvailableChecklistItem: () => void;
   updateSelectedAvailableChecklistItem: (checklist: Checklist[]) => void;
+  deleteChecklist: (
+    siteSeq: number,
+    serviceTypeSeq: number,
+    divCodeSeq: number,
+    typeCodeSeq: number
+  ) => Promise<void>;
 }
 
 const initialCreateChecklist: CreateChecklist = {
@@ -80,10 +87,7 @@ export const useWorkplaceDetailChecklistStore =
               set({ checklist: res.data });
             } catch (err) {
               console.log(err);
-              const errMessage =
-                err instanceof Error
-                  ? err.message
-                  : "체크리스트 조회 문제가 발생하였습니다. 잠시후 다시 시도해주세요.";
+              const errMessage = await handleApiError(err);
               setError(WORKPLACE_CHECKLIST_LOADING_KEYS.CHECKLIST, errMessage);
               toast.error(errMessage);
             } finally {
@@ -114,10 +118,7 @@ export const useWorkplaceDetailChecklistStore =
               set({ checklistDetail: res.data });
             } catch (err) {
               console.error(err);
-              const errMessage =
-                err instanceof Error
-                  ? err.message
-                  : "체크리스트 조회 문제가 발생하였습니다. 잠시후 다시 시도해주세요.";
+              const errMessage = await handleApiError(err);
               setError(WORKPLACE_CHECKLIST_LOADING_KEYS.DETAIL, errMessage);
               toast.error(errMessage);
             } finally {
@@ -140,7 +141,9 @@ export const useWorkplaceDetailChecklistStore =
               return res;
             } catch (err) {
               console.log(err);
+              const errMessage = await handleApiError(err);
               resetCreateChecklist();
+              toast.error(errMessage);
               return {
                 code: 500,
                 data: initialCreateChecklist,
@@ -160,6 +163,8 @@ export const useWorkplaceDetailChecklistStore =
               console.log(data);
             } catch (err) {
               console.log(err);
+              const errMessage = await handleApiError(err);
+              toast.error(errMessage);
             }
           },
           checklistMultiType: undefined,
@@ -176,6 +181,8 @@ export const useWorkplaceDetailChecklistStore =
               set({ checklistMultiType: data });
             } catch (err) {
               console.log(err);
+              const errMessage = await handleApiError(err);
+              toast.error(errMessage);
             }
           },
           /* 선택한 체크리스트 */
@@ -232,6 +239,32 @@ export const useWorkplaceDetailChecklistStore =
               set({ availableChecklistItem: data });
             } catch (err) {
               console.log(err);
+              const errMessage = await handleApiError(err);
+              toast.error(errMessage);
+            }
+          },
+          deleteChecklist: async (
+            siteSeq,
+            serviceTypeSeq,
+            divCodeSeq,
+            typeCodeSeq
+          ) => {
+            try {
+              const res: Response<boolean> = await api
+                .delete(`site/w/sign/deletesitechklist`, {
+                  searchParams: {
+                    siteSeq,
+                    serviceTypeSeq,
+                    divCodeSeq,
+                    typeCodeSeq,
+                  },
+                })
+                .json();
+              toast.success("삭제");
+            } catch (err) {
+              console.error(err);
+              const errMessage = await handleApiError(err);
+              toast.error(errMessage);
             }
           },
         }),

@@ -5,6 +5,7 @@ import Input from "@/components/common/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useWorkplaceDetailChecklistStore } from "@/store/admin/workplace/checklist-store";
 import { useWorkplaceDetailStore } from "@/store/admin/workplace/workplace-detail-store";
+import { CircleCheck } from "lucide-react";
 import { useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
@@ -119,10 +120,13 @@ interface ChecklistCardProps {
 const ChecklistCard = ({ item, isChecked, onClick }: ChecklistCardProps) => {
   return (
     <CustomCard
-      className={`${isChecked ? "border-blue-500 bg-blue-50" : null}`}
+      className={`${
+        isChecked ? "border-blue-500 bg-blue-50" : null
+      } flex-row items-center`}
       variant={"list"}
       onClick={() => onClick(item)}
     >
+      <CircleCheck className="text-blue-500" strokeWidth={1.5} />
       <span className="text-sm ">{item.chkMainTitle}</span>
     </CustomCard>
   );

@@ -28,6 +28,7 @@ const Page = () => {
   const { dailyTask, getDailyTask, putCoverTaskComplete, loadingKeys } =
     useDailyTaskDetailStore();
   const { isLoading, hasError } = useUIStore();
+  const { loginProfile } = useAuthStore();
   const [selectWorker, setSelectWorker] = useState<Worker | null>(null);
 
   useEffect(() => {
@@ -106,12 +107,13 @@ const Page = () => {
         ) : (
           <>
             {/* totalCount와 logs.length가 다르면 CheckButton 표시 */}
-            {selectWorker.logs.length < dailyTask.totalCount && (
-              <CheckButton
-                name={selectWorker.userName}
-                onClick={handleCoverTaskComplete}
-              />
-            )}
+            {loginProfile?.role === "현장 관리자" &&
+              selectWorker.logs.length < dailyTask.totalCount && (
+                <CheckButton
+                  name={selectWorker.userName}
+                  onClick={handleCoverTaskComplete}
+                />
+              )}
 
             {/* logs가 있으면 표시, 없으면 EmptyBox */}
             {selectWorker.logs.length > 0 ? (

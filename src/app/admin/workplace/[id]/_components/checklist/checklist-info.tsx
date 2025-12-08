@@ -2,7 +2,9 @@
 import CustomAccordion from "@/components/common/accordion/custom-accordion";
 import BaseSkeleton from "@/components/common/base-skeleton";
 import CustomCard from "@/components/common/card";
+import CheckDialog from "@/components/common/check-dialog";
 import IconButton from "@/components/common/icon-button";
+import { useDecodeParam } from "@/hooks/params";
 import { usePermission } from "@/hooks/usePermission";
 import { useWorkplaceDetailChecklistStore } from "@/store/admin/workplace/checklist-store";
 import { useUIStore } from "@/store/common/ui-store";
@@ -11,6 +13,7 @@ import { ListCheck } from "lucide-react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import React, { useEffect } from "react";
+import { dialogText } from "../../../../../../../public/text";
 
 const ChecklistWrapper = () => {
   const { canEdit } = usePermission();
@@ -54,26 +57,53 @@ const ChecklistWrapper = () => {
 
 const ChecklistCard = ({ data }: { data: WorkplaceChecklist }) => {
   const { canEdit } = usePermission();
+  const { getChecklist, deleteChecklist } = useWorkplaceDetailChecklistStore();
   const { id } = useParams();
-  return (
-    <Link
-      href={`${id}/checklist/${data.serviceTypeSeq}-${data.divCodeSeq}-${data.typeCodeSeq}`}
-    >
-      <CustomCard className="w-full  gap-0 py-4 hover:cursor-pointer hover:border-blue-500">
-        {canEdit && (
-          <div className="flex justify-end px-4">
-            <IconButton icon="Trash2" size={16} />
-          </div>
-        )}
+  const { rawValue } = useDecodeParam("id");
+  const router = useRouter();
 
-        <div className="flex justify-between items-center px-4">
-          <span className="text-blue-500">{data.serviceTypeName}</span>
-          <span>
-            {data.divCodeName}({data.typeCodeName})
-          </span>
+  const onDelete = async () => {
+    if (!rawValue) return;
+    await deleteChecklist(
+      parseInt(rawValue),
+      data.serviceTypeSeq,
+      data.divCodeSeq,
+      data.typeCodeSeq
+    );
+    await getChecklist(rawValue);
+  };
+  return (
+    <CustomCard
+      className="w-full  gap-0 py-4 hover:cursor-pointer hover:border-blue-500"
+      onClick={() =>
+        router.push(
+          `/admin/workplace/${id}/checklist/${data.serviceTypeSeq}-${data.divCodeSeq}-${data.typeCodeSeq}`
+        )
+      }
+    >
+      {canEdit && (
+        <div
+          className="flex justify-end px-4"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <CheckDialog
+            title={dialogText.defaultDelete.title}
+            description={dialogText.defaultDelete.description}
+            actionLabel={dialogText.defaultDelete.actionLabel}
+            onClick={onDelete}
+          >
+            <IconButton icon="Trash2" size={16} />
+          </CheckDialog>
         </div>
-      </CustomCard>
-    </Link>
+      )}
+
+      <div className="flex justify-between items-center px-4">
+        <span className="text-blue-500">{data.serviceTypeName}</span>
+        <span>
+          {data.divCodeName}({data.typeCodeName})
+        </span>
+      </div>
+    </CustomCard>
   );
 };
 

@@ -13,7 +13,7 @@ export interface Request {
   logs: RequestLog[];
 }
 
-interface RequestLog {
+export interface RequestLog {
   logSeq: number;
   logContents: string;
   logWorkDt: Date;

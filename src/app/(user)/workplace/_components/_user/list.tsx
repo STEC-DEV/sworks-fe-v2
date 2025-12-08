@@ -8,6 +8,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import React, { Suspense, useCallback, useEffect } from "react";
 import { userColumns } from "./user-column";
 import { useUIStore } from "@/store/common/ui-store";
+import { UserListItem } from "@/types/normal/user/list";
 
 const UserList = () => {
   const router = useRouter();

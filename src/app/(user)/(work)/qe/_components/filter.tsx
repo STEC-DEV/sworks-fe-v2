@@ -37,7 +37,7 @@ const QeFilter = () => {
     []
   ); // 빈 의존성 배열로 한 번만 생성
 
-  return <CommonFilter filters={filterConfig} />;
+  return <CommonFilter filters={filterConfig} search={false} />;
 };
 
 export default QeFilter;

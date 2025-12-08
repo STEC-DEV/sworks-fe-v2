@@ -1,4 +1,5 @@
 import CustomCard from "@/components/common/card";
+import CheckDialog from "@/components/common/check-dialog";
 import IconButton from "@/components/common/icon-button";
 import MonthAddForm from "@/components/form/normal/schedule/month-add";
 import MonthEditForm from "@/components/form/normal/schedule/month-edit";
@@ -11,8 +12,10 @@ import { useScheduleStore } from "@/store/normal/schedule/shcedule-store";
 import { MonthScheduleListItem } from "@/types/normal/schedule/month";
 import { useDraggable } from "@dnd-kit/core";
 import { format } from "date-fns";
+import { EllipsisVertical, GripVertical } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import React, { useCallback, useEffect, useState } from "react";
+import { dialogText } from "../../../../../public/text";
 
 const MonthSchedule = () => {
   const { monthSchedules, getMonthSchedule } = useScheduleStore();
@@ -67,7 +70,7 @@ const MonthSchedule = () => {
                   </DraggableBox>
                 ) : (
                   <div
-                    className="px-2 py-2 border border-border rounded-[4px]"
+                    className="pr-2 py-2 border border-border rounded-[4px]"
                     key={i}
                   >
                     <MonthScheduleItem key={i} data={v} />
@@ -100,24 +103,65 @@ export const MonthScheduleItem = ({
 }) => {
   const [open, setOpen] = useState<boolean>(false);
   const { canWorkerEdit } = usePermission();
+  const searchParams = useSearchParams();
+  const { deleteMonthSchedule } = useScheduleStore();
+
   const handleClick = (e: React.MouseEvent<HTMLOrSVGElement>) => {
     e.stopPropagation(); // 이벤트 버블링중단
     // e.preventDefault(); // 기본동작 방지
-    console.log("클릭");
+  };
+
+  // useEffect(() => {
+  //   console.log("useEffect 실행:", {
+  //     isDrag,
+  //     timestamp: Date.now(),
+  //   });
+  //   if (isDrag) {
+  //     console.log("드래그됨");
+  //   }
+  // }, [isDrag]);
+
+  const onDelete = async () => {
+    const year = searchParams.get("year");
+    const month = searchParams.get("month");
+
+    if (!year || !month) {
+      await deleteMonthSchedule(
+        data.planSeq,
+        new URLSearchParams({ targetDt: format(new Date(), "yyyy-MM") })
+      );
+    } else {
+      await deleteMonthSchedule(
+        data.planSeq,
+        new URLSearchParams({ targetDt: `${year}-${month}` })
+      );
+    }
   };
   return (
-    <div className={cn("w-full flex justify-between", className)}>
-      <div className="flex flex-col">
-        <span className="text-xs text-blue-500">{data.serviceTypeName}</span>
-        <span className="text-sm">{data.planTitle}</span>
-        <span className="text-xs text-[var(--description-light)]">
-          {data.description}
-        </span>
+    <div
+      className={cn(
+        `w-full flex justify-between items-center ${
+          canWorkerEdit && "cursor-pointer"
+        }`,
+        className
+      )}
+    >
+      <div className="flex gap-2 items-center">
+        <EllipsisVertical className="text-[var(--icon)]" strokeWidth={1.5} />
+        <div className="flex flex-col">
+          <span className="text-xs text-blue-500">{data.serviceTypeName}</span>
+          <span className="text-sm">{data.planTitle}</span>
+          <span className="text-xs text-[var(--description-light)]">
+            {data.description}
+          </span>
+        </div>
       </div>
-      {isDrag && canWorkerEdit && (
+
+      {!isDrag && canWorkerEdit && (
         <div
           onPointerDown={(e) => e.stopPropagation()}
           // onClick={(e) => e.stopPropagation()}
+          className="flex gap-2 items-center"
         >
           <BaseDialog
             title="월간일정 수정"
@@ -129,6 +173,14 @@ export const MonthScheduleItem = ({
           >
             <MonthEditForm data={data} onClose={() => setOpen(false)} />
           </BaseDialog>
+          <CheckDialog
+            title={dialogText.defaultDelete.title}
+            description={dialogText.defaultDelete.description}
+            actionLabel={dialogText.defaultDelete.actionLabel}
+            onClick={onDelete}
+          >
+            <IconButton icon="Trash2" />
+          </CheckDialog>
         </div>
       )}
     </div>
@@ -153,7 +205,7 @@ const DraggableBox = ({ children, id }: DraggableBoxProps) => {
   return (
     <div
       className={`
-        px-2 py-2
+        pr-2 py-2
        focus-visible:outline-none
         ${
           transform

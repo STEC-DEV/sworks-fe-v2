@@ -115,6 +115,7 @@ const QeAddForm = () => {
   };
 
   const onSubmit = async (values: QeAddFormValueType) => {
+    console.log(values);
     const unscoredItems = checkUnscoredItems(values);
 
     if (unscoredItems.length > 0) {
