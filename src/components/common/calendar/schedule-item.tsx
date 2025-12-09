@@ -72,7 +72,10 @@ const ScheduleItem = ({ data }: ScheduleItemProps) => {
       tabConfigs.push({
         tabTitle: "before",
         render: (
-          <ImageCarousel pathList={data.logs.beforeImages.map((v) => v.path)} />
+          <ImageCarousel
+            key={`before-${data.logs.beforeImages.length}`}
+            pathList={data.logs.beforeImages.map((v) => v.path)}
+          />
         ),
         size: "sm" as const,
       });
@@ -82,7 +85,10 @@ const ScheduleItem = ({ data }: ScheduleItemProps) => {
       tabConfigs.push({
         tabTitle: "after",
         render: (
-          <ImageCarousel pathList={data.logs.afterImages.map((v) => v.path)} />
+          <ImageCarousel
+            key={`after-${data.logs.afterImages.length}`}
+            pathList={data.logs.afterImages.map((v) => v.path)}
+          />
         ),
         size: "sm" as const,
       });
@@ -302,13 +308,6 @@ const ImageCarousel = ({ pathList }: ImageCarouselProps) => {
   };
   return (
     <>
-      {/* <Image
-        src={path}
-        alt="이미지"
-        width={48}
-        height={32}
-        onClick={() => setOpen(true)}
-      /> */}
       <div className="relative ">
         <Carousel className="w-full px-10 ">
           <CarouselContent>

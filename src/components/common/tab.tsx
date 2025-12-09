@@ -33,6 +33,9 @@ const Tab = ({ configs }: { configs: TabConfig[] }) => {
         {configs[curIdx].options}
       </div>
 
+      {/* <div key={curIdx}>
+        {configs[curIdx].render}
+      </div> */}
       {configs[curIdx].render}
     </div>
   );

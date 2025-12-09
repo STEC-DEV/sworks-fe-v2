@@ -186,6 +186,7 @@ const SideBar = ({ loginMode }: SideBarProps) => {
         const filteredItems = section.items.filter(
           (item) =>
             !(
+              item.title === "일일업무" ||
               item.title === "품질" ||
               item.title === "R&M" ||
               item.title === "M&O" ||
