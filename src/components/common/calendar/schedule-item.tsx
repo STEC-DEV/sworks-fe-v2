@@ -170,7 +170,9 @@ const ScheduleItem = ({ data }: ScheduleItemProps) => {
             />
 
             <ScheduleIconValue icon={Bookmark} value={data.logs?.logComments} />
-            <ScheduleIconFileValue icon={File} attach={data.logs?.files} />
+            {data.logs?.files.length > 0 && (
+              <ScheduleIconFileValue icon={File} attach={data.logs?.files} />
+            )}
 
             {/* 작업 전후 이미지 */}
             {getTab()}
