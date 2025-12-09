@@ -55,7 +55,7 @@ const Page = () => {
                 router.push("/notice");
               }}
             >
-              <IconButton icon="X" />
+              <IconButton icon="Trash2" />
             </CheckDialog>
           </div>
         )}
@@ -72,38 +72,41 @@ const Page = () => {
         value={notice.description}
         labelStyle="text-sm"
         valueStyle="text-md"
+        isTextArea
       />
-      <div className="flex flex-col gap-1">
-        <span className="text-sm text-[var(--description-light)]">
-          첨부파일
-        </span>
-        <div className="flex flex-col gap-4">
-          {notice.fileAttaches.map((f, i) => (
-            <FileBox
-              key={`file-${i}`}
-              file={{
-                attachSeq: f.attachSeq,
-                fileExt: f.fileName.slice(f.fileName.lastIndexOf(".")),
-                fileLength: f.fileLength,
-                fileName: f.fileName,
-                path: f.path,
-              }}
-            />
-          ))}
-          {notice.imageAttaches.map((f, i) => (
-            <FileBox
-              key={`image-${i}`}
-              file={{
-                attachSeq: f.attachSeq,
-                fileExt: f.fileName.slice(f.fileName.lastIndexOf(".")),
-                fileLength: f.fileLength,
-                fileName: f.fileName,
-                path: f.path,
-              }}
-            />
-          ))}
+      {notice.fileAttaches.length > 0 && (
+        <div className="flex flex-col gap-1">
+          <span className="text-sm text-[var(--description-light)]">
+            첨부파일
+          </span>
+          <div className="flex flex-col gap-4">
+            {notice.fileAttaches.map((f, i) => (
+              <FileBox
+                key={`file-${i}`}
+                file={{
+                  attachSeq: f.attachSeq,
+                  fileExt: f.fileName.slice(f.fileName.lastIndexOf(".")),
+                  fileLength: f.fileLength,
+                  fileName: f.fileName,
+                  path: f.path,
+                }}
+              />
+            ))}
+            {notice.imageAttaches.map((f, i) => (
+              <FileBox
+                key={`image-${i}`}
+                file={{
+                  attachSeq: f.attachSeq,
+                  fileExt: f.fileName.slice(f.fileName.lastIndexOf(".")),
+                  fileLength: f.fileLength,
+                  fileName: f.fileName,
+                  path: f.path,
+                }}
+              />
+            ))}
+          </div>
         </div>
-      </div>
+      )}
     </>
   );
 };

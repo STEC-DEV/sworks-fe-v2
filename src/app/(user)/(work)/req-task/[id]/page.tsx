@@ -21,6 +21,8 @@ import { useUIStore } from "@/store/common/ui-store";
 import { Request } from "@/types/normal/request/req-detail";
 import ReplyEditForm from "@/components/form/normal/request/reply-edit";
 import { useAuthStore } from "@/store/auth/auth-store";
+import EmptyBox from "@/components/ui/custom/empty";
+import { useRouter } from "next/navigation";
 
 const Page = () => {
   const { getRequestDetail, loadingKeys, request } = useReqDetailStore();
@@ -45,22 +47,42 @@ const Page = () => {
 const Info = ({ data }: { data: Request }) => {
   const { canWorkerEdit } = usePermission();
   const [open, setOpen] = useState<boolean>(false);
+  const { loginProfile } = useAuthStore();
+  const { deleteRequest } = useReqDetailStore();
+  const router = useRouter();
+
+  const onDelete = async () => {
+    await deleteRequest(data.requestSeq);
+    router.push(`/req-task`);
+  };
   return (
     <>
       {data ? (
         <div className="flex-1 flex flex-col gap-6">
           <div className="flex justify-between items-center pb-4 border-b-2 border-border">
             <AppTitle title={data.title} />
-            {canWorkerEdit && (
-              <BaseDialog
-                title="수정"
-                triggerChildren={<IconButton icon="SquarePen" />}
-                open={open}
-                setOpen={setOpen}
-              >
-                <RequestEditForm onClose={() => setOpen(false)} />
-              </BaseDialog>
-            )}
+            <div className="flex items-center gap-2">
+              {canWorkerEdit && (
+                <BaseDialog
+                  title="수정"
+                  triggerChildren={<IconButton icon="SquarePen" />}
+                  open={open}
+                  setOpen={setOpen}
+                >
+                  <RequestEditForm onClose={() => setOpen(false)} />
+                </BaseDialog>
+              )}
+              {(canWorkerEdit || data.userSeq === loginProfile?.userSeq) && (
+                <CheckDialog
+                  title={dialogText.defaultDelete.title}
+                  description={dialogText.defaultDelete.description}
+                  actionLabel={dialogText.defaultDelete.actionLabel}
+                  onClick={onDelete}
+                >
+                  <IconButton icon="Trash2" />
+                </CheckDialog>
+              )}
+            </div>
           </div>
 
           <div className="flex flex-col gap-6">
@@ -139,62 +161,69 @@ const Reply = ({ data }: { data: Request }) => {
 
       {data ? (
         <div className="flex flex-col gap-6">
-          {data.logs.map((v, i) => (
-            <CustomCard className="gap-2" key={i} size={"sm"}>
-              <div className="flex justify-between items-center">
-                <ProcessBadge value={v.logStatus} />
-                {canWorkerEdit && loginProfile?.userSeq === v.createUserSeq && (
-                  <div className="flex justify-end gap-2">
-                    <BaseDialog
-                      key={i}
-                      title="처리내용 수정"
-                      triggerChildren={<IconButton icon="SquarePen" />}
-                      open={openDialogs[v.logSeq] || false}
-                      setOpen={createSetOpen(v.logSeq.toString())}
-                    >
-                      <ReplyEditForm
-                        data={v}
-                        onClose={() => createSetOpen(v.logSeq.toString())}
-                      />
-                    </BaseDialog>
-                    <CheckDialog
-                      title={dialogText.defaultDelete.title}
-                      description={dialogText.defaultDelete.description}
-                      actionLabel={dialogText.defaultDelete.actionLabel}
-                      onClick={() => handleRemove(v.logSeq.toString())}
-                    >
-                      <IconButton icon="Trash2" />
-                    </CheckDialog>
-                  </div>
-                )}
-              </div>
+          {data.logs.length > 0 ? (
+            data.logs.map((v, i) => (
+              <CustomCard className="gap-2" key={i} size={"sm"}>
+                <div className="flex justify-between items-center">
+                  <ProcessBadge value={v.logStatus} />
+                  {canWorkerEdit &&
+                    loginProfile?.userSeq === v.createUserSeq && (
+                      <div className="flex justify-end gap-2">
+                        <BaseDialog
+                          key={i}
+                          title="처리내용 수정"
+                          triggerChildren={<IconButton icon="SquarePen" />}
+                          open={openDialogs[v.logSeq] || false}
+                          setOpen={createSetOpen(v.logSeq.toString())}
+                        >
+                          <ReplyEditForm
+                            data={v}
+                            onClose={() => createSetOpen(v.logSeq.toString())}
+                          />
+                        </BaseDialog>
+                        <CheckDialog
+                          title={dialogText.defaultDelete.title}
+                          description={dialogText.defaultDelete.description}
+                          actionLabel={dialogText.defaultDelete.actionLabel}
+                          onClick={() => handleRemove(v.logSeq.toString())}
+                        >
+                          <IconButton icon="Trash2" />
+                        </CheckDialog>
+                      </div>
+                    )}
+                </div>
 
-              <div className="flex justify-between">
-                <span className="text-sm">{v.createUserName}</span>
-                <span className="text-[var(--description-light)] text-xs">
-                  {format(v.logWorkDt, "yyyy-MM-dd hh:mm:ss")}
-                </span>
-              </div>
-              <div className="flex gap-4">
-                <span className="text-sm text-[var(--description-light)]">
-                  담당자
-                </span>
-
-                {v.users.map((v, i) => (
-                  <span
-                    key={i}
-                    className="px-2 rounded-xl text-sm bg-blue-500 text-white"
-                  >
-                    {v.managerName}
+                <div className="flex justify-between">
+                  <span className="text-sm">{v.createUserName}</span>
+                  <span className="text-[var(--description-light)] text-xs">
+                    {format(v.logWorkDt, "yyyy-MM-dd hh:mm:ss")}
                   </span>
-                ))}
-              </div>
-              <div>
-                <span>{v.logContents}</span>
-              </div>
-              <DialogCarousel pathList={v.attaches.map((a) => a.path)} />
-            </CustomCard>
-          ))}
+                </div>
+                <div className="flex gap-4">
+                  <span className="text-sm text-[var(--description-light)]">
+                    담당자
+                  </span>
+
+                  {v.users.map((v, i) => (
+                    <span
+                      key={i}
+                      className="px-2 rounded-xl text-sm bg-blue-500 text-white"
+                    >
+                      {v.managerName}
+                    </span>
+                  ))}
+                </div>
+                <div>
+                  <span>{v.logContents}</span>
+                </div>
+                <DialogCarousel pathList={v.attaches.map((a) => a.path)} />
+              </CustomCard>
+            ))
+          ) : (
+            <span className="text-sm text-[var(--description-light)]">
+              처리내용을 등록해주세요.
+            </span>
+          )}
         </div>
       ) : (
         <BaseSkeleton />

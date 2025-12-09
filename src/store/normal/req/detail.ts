@@ -17,6 +17,8 @@ interface ReqDetailState {
   request: Request | null;
   getRequestDetail: (id: string) => Promise<void>;
   patchUpdateRequestDetail: (formData: FormData) => Promise<boolean>;
+  deleteRequest: (delSeq: number) => Promise<void>;
+
   //업무요청 처리 담당자 조회
   reqWorker: RequestWorker[] | undefined;
   getClassificationReqManager: (search?: string | null) => Promise<void>;
@@ -69,6 +71,21 @@ export const useReqDetailStore = create<ReqDetailState>()(
             console.error(err);
             toast.error("저장 실패");
             return false;
+          }
+        },
+        deleteRequest: async (delSeq) => {
+          try {
+            const res: Response<boolean> = await api
+              .delete(`siterequest/w/sign/delrequest`, {
+                searchParams: { delSeq },
+              })
+              .json();
+
+            toast.success("수정되었습니다.");
+          } catch (err) {
+            console.error(err);
+            const errMessage = await handleApiError(err);
+            toast.error(errMessage);
           }
         },
         reqWorker: undefined,

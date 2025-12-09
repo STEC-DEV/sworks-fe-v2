@@ -4,6 +4,7 @@ import { AccordionContents } from "@/components/common/accordion/custom-accordio
 import CustomCard from "@/components/common/card";
 import IconButton from "@/components/common/icon-button";
 import { KeyValueItem } from "@/components/ui/custom/key-value";
+import { usePermission } from "@/hooks/usePermission";
 import { useBuildingDetailStore } from "@/store/normal/building/detail";
 import { format } from "date-fns";
 import {
@@ -20,6 +21,7 @@ import { useEffect } from "react";
 export const BuildingInfo = () => {
   const router = useRouter();
   const { building } = useBuildingDetailStore();
+  const { canWorkerEdit } = usePermission();
   useEffect(() => {
     console.log(building);
   }, [building]);
@@ -29,10 +31,12 @@ export const BuildingInfo = () => {
       title="건물정보"
       icon={Building2Icon}
       options={
-        <IconButton
-          icon="SquarePen"
-          onClick={() => router.push(`${building?.dongSeq}/edit/building`)}
-        />
+        canWorkerEdit && (
+          <IconButton
+            icon="SquarePen"
+            onClick={() => router.push(`${building?.dongSeq}/edit/building`)}
+          />
+        )
       }
     >
       <div className="mt-2 space-y-6 xl:grid xl:grid-cols-2 xl:gap-x-12 xl:gap-y-6 xl:space-y-0">
@@ -99,15 +103,18 @@ export const BuildingInfo = () => {
 export const FacilityInfo = () => {
   const router = useRouter();
   const { building } = useBuildingDetailStore();
+  const { canWorkerEdit } = usePermission();
   return (
     <InfoBox
       title="설비정보"
       icon={CogIcon}
       options={
-        <IconButton
-          icon="SquarePen"
-          onClick={() => router.push(`${building?.dongSeq}/edit/facility`)}
-        />
+        canWorkerEdit && (
+          <IconButton
+            icon="SquarePen"
+            onClick={() => router.push(`${building?.dongSeq}/edit/facility`)}
+          />
+        )
       }
     >
       <div className="mt-2 space-y-6 xl:grid xl:grid-cols-2 xl:gap-x-12 xl:gap-y-6 xl:space-y-0">
@@ -190,6 +197,7 @@ export const FacilityInfo = () => {
 export const FireInfo = () => {
   const router = useRouter();
   const { building } = useBuildingDetailStore();
+  const { canWorkerEdit } = usePermission();
   const firePanelTypeName = () => {
     switch (building?.firePanelType) {
       case 1:
@@ -205,10 +213,12 @@ export const FireInfo = () => {
       title="소방정보"
       icon={FlameIcon}
       options={
-        <IconButton
-          icon="SquarePen"
-          onClick={() => router.push(`${building?.dongSeq}/edit/fire`)}
-        />
+        canWorkerEdit && (
+          <IconButton
+            icon="SquarePen"
+            onClick={() => router.push(`${building?.dongSeq}/edit/fire`)}
+          />
+        )
       }
     >
       <div className="mt-2 space-y-6 xl:grid xl:grid-cols-2 xl:gap-x-12 xl:gap-y-6 xl:space-y-0">

@@ -2,6 +2,7 @@
 import BaseSkeleton from "@/components/common/base-skeleton";
 import IconButton from "@/components/common/icon-button";
 import CommonPagination from "@/components/ui/custom/pagination/common-pagination";
+import { usePermission } from "@/hooks/usePermission";
 import { useUIStore } from "@/store/common/ui-store";
 import { useEquipmentMainStore } from "@/store/normal/equipment/equip-main-store";
 import { useRouter } from "next/navigation";
@@ -11,6 +12,7 @@ const EquipmentPagination = () => {
   const router = useRouter();
   const { equipmentList, loadingKeys } = useEquipmentMainStore();
   const { isLoading, hasError } = useUIStore();
+  const { canWorkerEdit } = usePermission();
   //데이터 에러, 로딩인경우
   if (isLoading(loadingKeys.LIST) || !equipmentList) {
     return <BaseSkeleton className="h-9" />;
@@ -23,10 +25,12 @@ const EquipmentPagination = () => {
     <>
       <div className="flex gap-4 items-center">
         <CommonPagination totalCount={equipmentList.meta.totalCount}>
-          <IconButton
-            icon="Plus"
-            onClick={() => router.push("equipment/add")}
-          />
+          {canWorkerEdit && (
+            <IconButton
+              icon="Plus"
+              onClick={() => router.push("equipment/add")}
+            />
+          )}
         </CommonPagination>
       </div>
     </>

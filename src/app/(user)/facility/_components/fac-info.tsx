@@ -3,6 +3,7 @@ import CustomCard from "@/components/common/card";
 import IconButton from "@/components/common/icon-button";
 import AppTitle from "@/components/common/label/title";
 import { useDecodeParam } from "@/hooks/params";
+import { usePermission } from "@/hooks/usePermission";
 import { Attach, FacilityDetail } from "@/types/normal/facility/fac-detail";
 import { format } from "date-fns";
 import { FileTextIcon } from "lucide-react";
@@ -18,15 +19,18 @@ interface FacInfoProps {
 const FacInfo = ({ data, title }: FacInfoProps) => {
   const { rawValue } = useDecodeParam("type");
   const router = useRouter();
+  const { canWorkerEdit } = usePermission();
 
   return (
     <div className="w-full flex flex-col gap-6">
       <div className="flex justify-between items-center pb-4 border-b-2 border-border">
         <AppTitle title={title} />
-        <IconButton
-          icon="SquarePen"
-          onClick={() => router.push(`${data.facilitySeq}/edit`)}
-        />
+        {canWorkerEdit && (
+          <IconButton
+            icon="SquarePen"
+            onClick={() => router.push(`${data.facilitySeq}/edit`)}
+          />
+        )}
       </div>
 
       <div className="flex flex-col gap-4">

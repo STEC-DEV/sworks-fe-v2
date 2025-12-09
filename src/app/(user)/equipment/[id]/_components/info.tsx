@@ -4,6 +4,7 @@ import CustomCard from "@/components/common/card";
 import IconButton from "@/components/common/icon-button";
 import { SingleImageBox } from "@/components/common/image-box";
 import { useDecodeParam } from "@/hooks/params";
+import { usePermission } from "@/hooks/usePermission";
 import { useUIStore } from "@/store/common/ui-store";
 import { useEquipmentDetailStore } from "@/store/normal/equipment/equip-detail-store";
 import { format } from "date-fns";
@@ -31,6 +32,7 @@ const EquipmentInfoCard = () => {
     loadingKeys,
   } = useEquipmentDetailStore();
   const { isLoading, hasError } = useUIStore();
+  const { canWorkerEdit } = usePermission();
 
   const { rawValue } = useDecodeParam("id");
 
@@ -73,11 +75,12 @@ const EquipmentInfoCard = () => {
               {data?.serviceTypeName}
             </span>
           </div>
-
-          <IconButton
-            icon="SquarePen"
-            onClick={() => router.push(`${rawValue}/edit`)}
-          />
+          {canWorkerEdit && (
+            <IconButton
+              icon="SquarePen"
+              onClick={() => router.push(`${rawValue}/edit`)}
+            />
+          )}
         </div>
         {/* 바디 */}
         <div className="flex flex-col gap-6 ">

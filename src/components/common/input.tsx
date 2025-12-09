@@ -42,21 +42,43 @@ const InputSearch = ({
 
 const TextArea = ({
   className,
+  maxLength = 255,
+  showCount = true,
+  value,
   ...props
-}: React.ComponentProps<"textarea">) => {
+}: React.ComponentProps<"textarea"> & {
+  maxLength?: number;
+  showCount?: boolean;
+}) => {
+  const count = typeof value === "string" ? value.length : 0;
   return (
-    <textarea
-      className={cn(
-        `text-sm px-3 py-1 h-40 rounded-[4px] border border-[var(--border)] transition-[border,box-shadow] duration-300 bg-white
-        hover:border-[var(--primary)]
-        focus:outline-none focus:ring-1 focus:ring-[var(--primary)] focus:border-[var(--primary)] focus:ring-inset 
-        resize-none
-        
-        `,
-        className
+    <div className="relative w-full">
+      <textarea
+        className={cn(
+          `text-sm px-3 py-1 h-40 rounded-[4px] border border-[var(--border)] transition-[border,box-shadow] duration-300 bg-white w-full
+          hover:border-[var(--primary)]
+          focus:outline-none focus:ring-1 focus:ring-[var(--primary)] focus:border-[var(--primary)] focus:ring-inset 
+          resize-none
+          `,
+          showCount && "pb-8", // 글자수 공간 확보
+          className
+        )}
+        value={value}
+        maxLength={maxLength}
+        {...props}
+      />
+
+      {showCount && (
+        <div className="absolute bottom-2 right-3 text-xs text-gray-500">
+          <span
+            className={count > maxLength ? "text-red-500 font-semibold" : ""}
+          >
+            {count}
+          </span>
+          <span className="text-gray-400"> / {maxLength}</span>
+        </div>
       )}
-      {...props}
-    />
+    </div>
   );
 };
 

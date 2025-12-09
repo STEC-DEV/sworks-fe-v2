@@ -2,6 +2,7 @@ import BaseSkeleton from "@/components/common/base-skeleton";
 import IconButton from "@/components/common/icon-button";
 import CommonPagination from "@/components/ui/custom/pagination/common-pagination";
 import { useDecodeParam } from "@/hooks/params";
+import { usePermission } from "@/hooks/usePermission";
 import { useUIStore } from "@/store/common/ui-store";
 import { useEquipmentHistoryMainStore } from "@/store/normal/equipment/history/list-store";
 import { useRouter } from "next/navigation";
@@ -12,13 +13,16 @@ const HistoryPagination = () => {
   const { historyList, loadingKeys } = useEquipmentHistoryMainStore();
   const { isLoading, hasError } = useUIStore();
   const { rawValue: id } = useDecodeParam("id");
+  const { canWorkerEdit } = usePermission();
 
   if (isLoading(loadingKeys.LIST) || !historyList)
     return <BaseSkeleton className="h-9" />;
   if (hasError(loadingKeys.LIST)) return <div>에러 발생</div>;
   return (
     <CommonPagination totalCount={20}>
-      <IconButton icon="Plus" onClick={() => router.push(`${id}/add`)} />
+      {canWorkerEdit && (
+        <IconButton icon="Plus" onClick={() => router.push(`${id}/add`)} />
+      )}
     </CommonPagination>
   );
 };

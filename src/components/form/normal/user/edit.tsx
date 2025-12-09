@@ -37,6 +37,7 @@ const formSchema = z.object({
       { message: "이메일 형식을 확인해주세요." }
     )
     .optional(),
+  userServiceTypeSeq: z.array(z.number()),
   removeImage: z.boolean(),
   images: z.instanceof(File).nullable(),
 });
@@ -53,21 +54,15 @@ const UserEditForm = ({ onClose }: { onClose: () => void }) => {
       userSeq: user?.userSeq,
       userName: user?.userName,
       job: user?.job || "",
-
+      userServiceTypeSeq: user?.serviceTypes.map((s) =>
+        parseInt(s.userServiceTypeSeq)
+      ),
       phone: user?.phone,
       email: user?.email || "",
       removeImage: false,
       images: null,
     },
   });
-
-  // useEffect(() => {
-
-  //   return () => {
-  //     if (!rawValue) return;
-  //     getAdminDetail(rawValue);
-  //   };
-  // }, [rawValue]);
 
   useEffect(() => {
     if (!user) return;
@@ -76,6 +71,8 @@ const UserEditForm = ({ onClose }: { onClose: () => void }) => {
       userName: user.userName,
       job: user.job || "",
       phone: user.phone,
+      userServiceTypeSeq:
+        user?.serviceTypes.map((s) => parseInt(s.userServiceTypeSeq)) || [],
       email: user.email || "",
       removeImage: false,
       images: null,
@@ -93,7 +90,7 @@ const UserEditForm = ({ onClose }: { onClose: () => void }) => {
     <Form {...form}>
       <form
         className="flex flex-col gap-6 w-full"
-        onSubmit={form.handleSubmit(handleSubmit)}
+        onSubmit={form.handleSubmit(handleSubmit, (err) => console.log(err))}
       >
         <ScrollArea className="overflow-hidden">
           <div className="flex flex-col gap-6 px-6 pb-1">

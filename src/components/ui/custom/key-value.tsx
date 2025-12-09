@@ -6,6 +6,7 @@ interface KeyValueItemProps {
   mainStyle?: string;
   labelStyle?: string;
   valueStyle?: string;
+  isTextArea?: boolean;
   isHorizontal?: boolean;
 }
 
@@ -15,6 +16,7 @@ export const KeyValueItem = ({
   mainStyle,
   labelStyle,
   valueStyle,
+  isTextArea = false,
   isHorizontal = false,
 }: KeyValueItemProps) => {
   return (
@@ -31,14 +33,18 @@ export const KeyValueItem = ({
       >
         {label}
       </span>
-      <span
-        className={cn(
-          "text-xs font-semibold text-[var(--description-dark)]",
-          valueStyle
-        )}
-      >
-        {value}
-      </span>
+      {isTextArea ? (
+        <p className="whitespace-pre-wrap">{value}</p>
+      ) : (
+        <span
+          className={cn(
+            "text-xs font-semibold text-[var(--description-dark)]",
+            valueStyle
+          )}
+        >
+          {value}
+        </span>
+      )}
     </div>
   );
 };

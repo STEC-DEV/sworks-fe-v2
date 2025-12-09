@@ -139,6 +139,7 @@ export const MultiSelectFormItem = ({
           onClick={onValueChange}
         />
       </FormControl>
+      <FormMessage className="text-xs text-red-500" />
     </FormItem>
   );
 };

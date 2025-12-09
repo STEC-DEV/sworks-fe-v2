@@ -69,12 +69,13 @@ const MonthSchedule = () => {
                     <MonthScheduleItem key={i} data={v} />
                   </DraggableBox>
                 ) : (
-                  <div
-                    className="pr-2 py-2 border border-border rounded-[4px]"
-                    key={i}
-                  >
-                    <MonthScheduleItem key={i} data={v} />
-                  </div>
+                  // <div
+                  //   className="pr-2 py-2 border border-border rounded-[4px]"
+                  //   key={i}
+                  // >
+                  //   <MonthScheduleItem key={i} data={v} />
+                  // </div>
+                  <MonthScheduleItem key={i} data={v} />
                 )
               )
             ) : (

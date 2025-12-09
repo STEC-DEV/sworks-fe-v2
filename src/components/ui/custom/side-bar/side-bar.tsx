@@ -125,6 +125,7 @@ interface SideBarProps {
 
 const SideBar = ({ loginMode }: SideBarProps) => {
   const { loginProfile, normalModeProfile, enteredWorkplace } = useAuthStore();
+  const router = useRouter();
 
   const role = () => {
     if (!loginProfile) return "Unknown";
@@ -168,7 +169,7 @@ const SideBar = ({ loginMode }: SideBarProps) => {
           workplace={enteredWorkplace?.siteName}
           job={loginProfile?.job}
           name={loginProfile?.userName || ""}
-          permission={role()}
+          permission={loginProfile.role}
         />
       ) : (
         <div className="flex flex-col gap-1 px-6 py-4">
@@ -181,19 +182,48 @@ const SideBar = ({ loginMode }: SideBarProps) => {
 
   const getFilteredNormalMenu = () => {
     if (loginProfile?.role === "근무자") {
-      return NormalMenu.filter((section) => {
-        const hasRestrictedMenu = section.items.some(
+      return NormalMenu.map((section) => {
+        const filteredItems = section.items.filter(
           (item) =>
-            item.title === "시설" ||
-            item.title === "R&M" ||
-            item.title === "M&O" ||
-            item.title === "MRO" ||
-            item.title === "장비" ||
-            item.title === "민원" ||
-            item.title === "위치 QR"
+            !(
+              item.title === "품질" ||
+              item.title === "R&M" ||
+              item.title === "M&O" ||
+              item.title === "MRO" ||
+              item.title === "장비" ||
+              item.title === "민원" ||
+              item.title === "위치 QR"
+            )
         );
-        return !hasRestrictedMenu;
-      });
+
+        // 그룹 제목을 제외한 실제 메뉴가 있는지 확인
+        const hasActualMenu = filteredItems.some((item) => !item.isGroup);
+
+        return hasActualMenu ? { ...section, items: filteredItems } : null;
+      }).filter((section) => section !== null);
+    } else if (loginProfile?.role === "계약 담당자") {
+      return NormalMenu.map((section) => {
+        let items = section.items.filter(
+          (item) =>
+            !(
+              item.title === "사업장" ||
+              item.title === "일일업무" ||
+              item.title === "품질" ||
+              item.title === "민원" ||
+              item.title === "위치 QR"
+            )
+        );
+
+        // "일일업무"를 "업무"로 교체
+        // items = items.map((item) =>
+        //   item.title === "일일업무"
+        //     ? { title: "업무", icon: "BriefcaseBusiness", path: "/task" }
+        //     : item
+        // );
+
+        const hasActualMenu = items.some((item) => !item.isGroup);
+        return hasActualMenu ? { ...section, items } : null;
+      }).filter((section) => section !== null);
     }
     return NormalMenu;
   };
@@ -205,12 +235,18 @@ const SideBar = ({ loginMode }: SideBarProps) => {
        * 로고, 프로필
        */}
       <div className="flex justify-between items-center px-6 py-6">
-        <div className="text-2xl font-bold text-white ">S-Agent</div>
+        <div
+          className="text-2xl font-bold text-white cursor-pointer"
+          onClick={() => router.push(`/schedule`)}
+        >
+          S-Agent
+        </div>
         {loginMode === "NORMAL" &&
           !(
             loginProfile?.role === "시스템관리자" ||
             loginProfile?.role === "마스터" ||
-            loginProfile?.role === "매니저"
+            loginProfile?.role === "매니저" ||
+            loginProfile?.role === "계약 담당자"
           ) && <Noti />}
       </div>
 

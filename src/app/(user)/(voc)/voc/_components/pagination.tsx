@@ -4,6 +4,7 @@ import IconButton from "@/components/common/icon-button";
 import VocAddForm from "@/components/form/normal/voc/add";
 import BaseDialog from "@/components/ui/custom/base-dialog";
 import CommonPagination from "@/components/ui/custom/pagination/common-pagination";
+import { usePermission } from "@/hooks/usePermission";
 import { useUIStore } from "@/store/common/ui-store";
 import { useVocStore } from "@/store/normal/voc/voc-store";
 import { convertRecordDataToFormData } from "@/utils/convert";
@@ -14,6 +15,7 @@ const VocPagination = () => {
   const [open, setOpen] = useState<boolean>(false);
   const { vocList, postAddVoc, getVocList, loadingKeys } = useVocStore();
   const { isLoading, hasError } = useUIStore();
+  const { canWorkerEdit } = usePermission();
   const searchParams = useSearchParams();
   const handleSubmit = async (values: any) => {
     //결과처리 로직
@@ -27,17 +29,18 @@ const VocPagination = () => {
     return <BaseSkeleton className="h-9" />;
   if (hasError(loadingKeys.LIST)) return <div>에러 발생</div>;
   return (
-    <div className="flex gap-4 items-center">
-      <CommonPagination totalCount={vocList.meta.totalCount} />
-      <BaseDialog
-        triggerChildren={<IconButton icon={"Plus"} />}
-        title="민원 접수"
-        open={open}
-        setOpen={setOpen}
-      >
-        <VocAddForm onSubmit={handleSubmit} />
-      </BaseDialog>
-    </div>
+    <CommonPagination totalCount={vocList.meta.totalCount}>
+      {canWorkerEdit && (
+        <BaseDialog
+          triggerChildren={<IconButton icon={"Plus"} />}
+          title="민원 접수"
+          open={open}
+          setOpen={setOpen}
+        >
+          <VocAddForm onSubmit={handleSubmit} />
+        </BaseDialog>
+      )}
+    </CommonPagination>
   );
 };
 

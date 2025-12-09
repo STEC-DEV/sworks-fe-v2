@@ -22,7 +22,7 @@ import z from "zod";
 
 const NoticeSchema = z.object({
   noticeSeq: z.number(),
-  serviceTypeSeq: z.array(z.number()),
+  serviceTypeSeq: z.array(z.number()).min(1, "유형을 선택해주세요."),
   title: z.string().min(1, "제목을 입력해주세요."),
   description: z.string().min(1, "내용을 입력해주세요."),
   endDt: z.date(),
@@ -70,6 +70,7 @@ const NoticeEditForm = () => {
 
   useEffect(() => {
     if (!notice) return;
+    console.log(notice);
     form.reset({
       noticeSeq: notice.noticeSeq,
       serviceTypeSeq: notice.serviceTypes.map((v) => v.serviceTypeSeq),
@@ -140,6 +141,7 @@ const NoticeEditForm = () => {
                   value={field.value.map((v) => v.toString())}
                   onValueChange={handleSelect}
                   selectItem={userClassification ?? []}
+                  required
                 />
               );
             }}
@@ -155,7 +157,7 @@ const NoticeEditForm = () => {
           render={({ field }) => {
             return (
               <DateFormItem
-                label="주요공지사항"
+                label="공지기간"
                 value={field.value}
                 onChange={field.onChange}
                 required
@@ -180,6 +182,7 @@ const NoticeEditForm = () => {
               label="내용"
               placeholder="내용"
               required
+              showCount
               {...field}
             />
           )}

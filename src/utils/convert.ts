@@ -169,7 +169,13 @@ export const objectToFormData = (
 
   // 원시 타입 처리 (string, number, boolean)
   if (parentKey) {
-    formData.append(parentKey, String(data));
+    // ✅ 문자열인 경우 개행 문자 정규화
+    if (typeof data === "string") {
+      const normalizedString = data.replace(/\r\n/g, "\n").replace(/\r/g, "\n");
+      formData.append(parentKey, normalizedString);
+    } else {
+      formData.append(parentKey, String(data));
+    }
   }
   return formData;
 };

@@ -7,6 +7,7 @@ import HistoryEdit from "@/components/form/normal/equipment/history-edit";
 import BaseDialog from "@/components/ui/custom/base-dialog";
 import { KeyValueItem } from "@/components/ui/custom/key-value";
 import { useDecodeParam } from "@/hooks/params";
+import { usePermission } from "@/hooks/usePermission";
 import { useUIStore } from "@/store/common/ui-store";
 import { useEquipmentHistoryDetailStore } from "@/store/normal/equipment/history/detail-store";
 import { format } from "date-fns";
@@ -15,12 +16,12 @@ import React, { useEffect, useState } from "react";
 
 const Page = () => {
   const [open, setOpen] = useState<boolean>(false);
-  const router = useRouter();
-  const { rawValue: id } = useDecodeParam("id");
+
   const { rawValue } = useDecodeParam("history-id");
   const { historyDetail, getHistoryDetail, loadingKeys } =
     useEquipmentHistoryDetailStore();
   const { isLoading, hasError } = useUIStore();
+  const { canWorkerEdit } = usePermission();
 
   useEffect(() => {
     if (rawValue) getHistoryDetail(rawValue);
@@ -61,6 +62,7 @@ const Page = () => {
           valueStyle="text-md font-normal"
           label={"점검내용"}
           value={historyDetail.contents}
+          isTextArea
         />
       </div>
     );
@@ -80,14 +82,16 @@ const Page = () => {
       <div className="flex-1 base-flex-col gap-6">
         <div className="flex justify-between pb-4 border-b-2 border-border">
           <AppTitle title="관리이력 상세" />
-          <BaseDialog
-            title="수정"
-            triggerChildren={<IconButton icon="SquarePen" />}
-            open={open}
-            setOpen={setOpen}
-          >
-            <HistoryEdit setOpen={setOpen} />
-          </BaseDialog>
+          {canWorkerEdit && (
+            <BaseDialog
+              title="수정"
+              triggerChildren={<IconButton icon="SquarePen" />}
+              open={open}
+              setOpen={setOpen}
+            >
+              <HistoryEdit setOpen={setOpen} />
+            </BaseDialog>
+          )}
         </div>
         {getData()}
       </div>

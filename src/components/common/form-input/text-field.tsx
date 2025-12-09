@@ -39,6 +39,7 @@ interface TextAreaFormItemProps<T extends FieldValues>
   extends React.ComponentProps<"textarea"> {
   label?: string;
   required?: boolean;
+  showCount?: boolean;
 }
 
 /**
@@ -48,6 +49,7 @@ interface TextAreaFormItemProps<T extends FieldValues>
 export const TextAreaFormItem = <T extends FieldValues>({
   label,
   required = false,
+  showCount = true,
   ...props
 }: TextAreaFormItemProps<T>) => {
   return (
@@ -62,7 +64,7 @@ export const TextAreaFormItem = <T extends FieldValues>({
       </div>
 
       <FormControl>
-        <TextArea {...props} />
+        <TextArea {...props} showCount={showCount} />
       </FormControl>
       <FormMessage className="text-xs text-red-500" />
     </FormItem>

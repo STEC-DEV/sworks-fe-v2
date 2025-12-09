@@ -9,7 +9,7 @@ import { FormField } from "@/components/ui/form";
 import { useUserMainStore } from "@/store/normal/user/main-store";
 import { convertSelectOptionType } from "@/utils/convert";
 import { zodResolver } from "@hookform/resolvers/zod";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import z from "zod";
 
@@ -26,7 +26,7 @@ const formSchema = z.object({
     .string()
     .min(9, { message: "자릿수를 확인해주세요." })
     .max(11, { message: "자릿수를 확인해주세요." }),
-  userServiceTypeSeq: z.array(z.number().min(0, "담당 업무를 선택해주세요.")),
+  userServiceTypeSeq: z.array(z.number()),
   images: z.array(z.instanceof(File)),
 });
 
@@ -39,9 +39,23 @@ interface UserAddFormProps {
 
 const UserAddForm = ({ onNext, onPrev }: UserAddFormProps) => {
   const { createUser, createUserClassification } = useUserMainStore();
-  const [test, setTest] = useState<string[]>([]);
+
+  const dynamicSchema = formSchema.refine(
+    (data) => {
+      // codeSeq가 8이 아닌 경우에만 userServiceTypeSeq 검증
+      if (createUser.codeSeq !== 8) {
+        return data.userServiceTypeSeq.length >= 1;
+      }
+      return true; // codeSeq가 8이면 검증 통과
+    },
+    {
+      message: "담당 업무를 선택해주세요.",
+      path: ["userServiceTypeSeq"], // 에러 표시 위치
+    }
+  );
+
   const form = useForm<UserAddFormType>({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(dynamicSchema),
     defaultValues: {
       userName: createUser.userName,
       sabun: createUser.sabun,
@@ -52,6 +66,10 @@ const UserAddForm = ({ onNext, onPrev }: UserAddFormProps) => {
       images: createUser.images,
     },
   });
+
+  useEffect(() => {
+    console.log(createUser);
+  }, [createUser]);
   return (
     <CommonFormContainer
       title="기본정보"

@@ -1,5 +1,6 @@
 "use client";
 import Button from "@/components/common/button";
+import CheckFormItem from "@/components/common/form-input/check-field";
 import { DateFormItem } from "@/components/common/form-input/date-field";
 import FileFormItem from "@/components/common/form-input/file-field";
 import { MultiSelectFormItem } from "@/components/common/form-input/select-field";
@@ -20,7 +21,7 @@ import { useForm } from "react-hook-form";
 import z from "zod";
 
 const NoticeSchema = z.object({
-  serviceTypeSeq: z.array(z.number()),
+  serviceTypeSeq: z.array(z.number()).min(1, "유형을 선택해주세요."),
   title: z.string().min(1, "제목을 입력해주세요."),
   description: z.string().min(1, "내용을 입력해주세요."),
   endDt: z.date(),
@@ -57,7 +58,7 @@ const NoticeAddForm = () => {
       title: "",
       description: "",
       endDt: new Date(),
-      viewYn: false,
+      viewYn: true,
       attaches: [],
     },
   });
@@ -93,6 +94,12 @@ const NoticeAddForm = () => {
 
   const handleSubmit = async (values: NoticeAddFormType) => {
     const formData = objectToFormData(values, true);
+    for (let [key, value] of formData.entries()) {
+      if (key === "description") {
+        console.log("Raw value:", JSON.stringify(value));
+        // "\n" 또는 "\r\n"으로 표시됨
+      }
+    }
     await postAddNotice(formData);
     router.push("/notice");
   };
@@ -102,6 +109,23 @@ const NoticeAddForm = () => {
         onSubmit={form.handleSubmit(handleSubmit)}
         className="flex flex-col gap-6"
       >
+        <FormField
+          control={form.control}
+          name="viewYn"
+          render={({ field }) => {
+            return (
+              <CheckFormItem
+                label="비공개"
+                description="계약 담당자 비공개 여부"
+                checked={!field.value}
+                {...field}
+                onChange={(e) => {
+                  field.onChange(!e.target.checked);
+                }}
+              />
+            );
+          }}
+        />
         {allNotice()}
         {!all && (
           <FormField
@@ -119,6 +143,7 @@ const NoticeAddForm = () => {
                   value={field.value.map((v) => v.toString())}
                   onValueChange={handleSelect}
                   selectItem={userClassification ?? []}
+                  required
                 />
               );
             }}
@@ -159,6 +184,7 @@ const NoticeAddForm = () => {
               label="내용"
               placeholder="내용"
               required
+              showCount={true}
               {...field}
             />
           )}
