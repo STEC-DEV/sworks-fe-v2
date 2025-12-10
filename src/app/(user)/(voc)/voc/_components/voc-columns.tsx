@@ -72,7 +72,7 @@ export const vocListCol: ColumnDef<VocListItem>[] = [
       const value = row.original.createDt;
       return (
         <span className="text-xs">
-          {value && format(value, "yyyy-MM-dd hh:mm:ss")}
+          {value && format(value, "yyyy-MM-dd HH:mm:ss")}
         </span>
       );
     },
@@ -84,7 +84,7 @@ export const vocListCol: ColumnDef<VocListItem>[] = [
       const value = row.original.completeDt;
       return (
         <span className="text-xs">
-          {value && format(value, "yyyy-MM-dd hh:mm:ss")}
+          {value && format(value, "yyyy-MM-dd HH:mm:ss")}
         </span>
       );
     },

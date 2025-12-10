@@ -196,7 +196,7 @@ const Reply = ({ data }: { data: Request }) => {
                 <div className="flex justify-between">
                   <span className="text-sm">{v.createUserName}</span>
                   <span className="text-[var(--description-light)] text-xs">
-                    {format(v.logWorkDt, "yyyy-MM-dd hh:mm:ss")}
+                    {format(v.logWorkDt, "yyyy-MM-dd HH:mm:ss")}
                   </span>
                 </div>
                 <div className="flex gap-4">

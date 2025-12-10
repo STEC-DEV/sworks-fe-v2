@@ -155,7 +155,7 @@ const ReplyBox = ({ data }: { data: VocReply }) => {
       <div className="flex justify-between items-center px-4">
         <div className="space-x-2">
           <span className="text-xs text-[var(--description-light)]">
-            {format(data.createDt, "yyyy-MM-dd hh:mm:ss")}
+            {format(data.createDt, "yyyy-MM-dd HH:mm:ss")}
           </span>
           <span className="text-xs text-[var(--description-light)]">
             {data.createUser}
