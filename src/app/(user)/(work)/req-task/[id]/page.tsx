@@ -237,7 +237,7 @@ export default Page;
 
 const RequestDetailSkeleton = () => {
   return (
-    <div className="flex xl:flex-row xl:gap-12 overflow-hidden">
+    <div className="flex flex-col xl:flex-row gap-12 overflow-hidden">
       <div className="flex-1 flex flex-col gap-6">
         <BaseSkeleton className="h-8" />
         {Array.from({ length: 3 }, (_, i) => (

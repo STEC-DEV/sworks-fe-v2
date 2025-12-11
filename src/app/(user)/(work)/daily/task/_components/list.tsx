@@ -21,7 +21,7 @@ const TaskList = () => {
     <BaseTable
       columns={taskCol}
       data={taskList.data}
-      onRowClick={(data) => router.push(`/task/${data.taskSeq}`)}
+      onRowClick={(data) => router.push(`/daily/task/${data.taskSeq}`)}
     />
   );
 };

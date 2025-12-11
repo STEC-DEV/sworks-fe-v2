@@ -16,7 +16,7 @@ const TaskPagination = () => {
 
   return (
     <CommonPagination totalCount={taskList.meta.totalCount}>
-      <Link href={"/task/add"}>
+      <Link href={"/daily/task/add"}>
         <IconButton icon="Plus" />
       </Link>
     </CommonPagination>

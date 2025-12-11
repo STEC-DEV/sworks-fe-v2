@@ -64,8 +64,8 @@ const Page = () => {
         result={formResult}
         open={open}
         setOpen={setOpen}
-        successUrl={`/task`}
-        failedUrl={`/task`}
+        successUrl={`/daily/task`}
+        failedUrl={`/daily/task`}
       />
     </>
   );

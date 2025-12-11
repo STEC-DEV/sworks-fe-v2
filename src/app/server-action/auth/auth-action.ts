@@ -1,5 +1,8 @@
 "use server";
 
+import { JWTVerified } from "@/lib/jwt-verifiied";
+import { getTime } from "@/lib/time";
+import { c } from "@/middleware";
 import { Response, ReturnToken } from "@/types/common/response";
 import { cookies } from "next/headers";
 import { redirect, RedirectType } from "next/navigation";
@@ -35,15 +38,14 @@ export async function LoginAction(
 
     const returnData: LoginResponse = {
       result: false,
-      message: "로그인 실패",
+      message: "아이디 비밀번호를 확인해주세요.",
       url: "",
-      code: 500,
+      code: 401,
     };
     //로그인 실패
     if (!res.ok) return returnData;
 
     const result: Response<ReturnToken> = await res.json();
-    console.log(result);
 
     //최초 로그인 시 패스워드 변경
     if (result.code === 199) {
@@ -87,6 +89,14 @@ export async function LoginAction(
 
     //로그인 성공
     const { accessToken, refreshToken } = result.data;
+    const payload = await JWTVerified(accessToken);
+    console.log(
+      `${c.cyan}[${getTime()}]${c.r} ${c.bgYellow}${c.green}${
+        c.bold
+      } ✅ LOGIN [${adminMode ? "관리" : "사업장"}] ${c.r} ${
+        payload.UserType
+      } ${payload.UserSeq}`
+    );
 
     cookie.set("accessToken", accessToken);
     cookie.set("refreshToken", refreshToken);
@@ -103,10 +113,6 @@ export async function LoginAction(
  * @param data
  */
 export async function normalModeLoginAction(data: Record<string, string>) {
-  console.log("======================");
-  console.log("서버액션 일반모드 로그인 값");
-  console.log(data);
-  console.log("======================");
   const cookie = await cookies();
   const redirectUrl: string | null = null;
   try {
@@ -121,6 +127,15 @@ export async function normalModeLoginAction(data: Record<string, string>) {
  */
 export async function logout() {
   const cookie = await cookies();
+  const accessToken = cookie.get("accessToken")?.value;
+  if (!accessToken) return redirect("/login", RedirectType.replace);
+  const payload = await JWTVerified(accessToken);
+
+  console.log(
+    `${c.cyan}[${getTime()}] ${c.r}${c.bgYellow}${c.bold} ❌ 로그아웃 ${c.r} ${
+      payload.UserType
+    } ${payload.UserSeq}`
+  );
 
   cookie.delete("accessToken");
   cookie.delete("refreshToken");

@@ -59,7 +59,7 @@ const AdminCard = ({ item, isCheck, onClick }: AdminCardProps) => {
         <div className="flex flex-col gap-1 min-w-20">
           <span className="text-sm">{item.userName}</span>
           <span className="text-xs text-[var(--description-light)]">
-            {item.role}
+            {item.sabun}
           </span>
         </div>
         <div className="min-w-20">

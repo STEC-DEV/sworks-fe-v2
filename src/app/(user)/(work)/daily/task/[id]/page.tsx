@@ -189,6 +189,16 @@ const WorkerEditContents = ({
     });
   };
 
+  const filteredWorkers = classificationTaskWorker?.filter((worker) => {
+    const searchLower = search.toLowerCase().trim();
+    if (!searchLower) return true;
+
+    return (
+      worker.userName.toLowerCase().includes(searchLower) ||
+      worker.serviceTypeName.toLowerCase().includes(searchLower)
+    );
+  });
+
   const handleSubmit = async () => {
     if (!taskDetail) return;
     await putUpdateTaskWorker(selectedWorker);
@@ -201,7 +211,7 @@ const WorkerEditContents = ({
       <div className="px-6">
         <Input
           className="w-full"
-          placeholder="근무자명"
+          placeholder="근무자명" // 🔄 수정: placeholder 변경
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
@@ -210,23 +220,31 @@ const WorkerEditContents = ({
       <div className="flex-1 overflow-hidden">
         <ScrollArea className="h-full px-6">
           <div className="h-full flex flex-col gap-2">
-            {classificationTaskWorker?.map((v, i) => (
-              <CustomCard
-                key={i}
-                variant={"list"}
-                className={`flex-row justify-between ${
-                  selectedWorker.includes(v.userSeq)
-                    ? "bg-blue-50 border-blue-500"
-                    : null
-                }`}
-                onClick={() => handleCheck(v)}
-              >
-                <span className="text-sm">{v.userName}</span>
-                <span className="text-sm text-blue-500">
-                  {v.serviceTypeName}
-                </span>
-              </CustomCard>
-            ))}
+            {/* 🔄 수정: classificationTaskWorker → filteredWorkers */}
+            {filteredWorkers && filteredWorkers.length > 0 ? (
+              filteredWorkers.map((v, i) => (
+                <CustomCard
+                  key={i}
+                  variant={"list"}
+                  className={`flex-row justify-between ${
+                    selectedWorker.includes(v.userSeq)
+                      ? "bg-blue-50 border-blue-500"
+                      : "" // 🔄 수정: null → "" (더 명확한 표현)
+                  }`}
+                  onClick={() => handleCheck(v)}
+                >
+                  <span className="text-sm">{v.userName}</span>
+                  <span className="text-sm text-blue-500">
+                    {v.serviceTypeName}
+                  </span>
+                </CustomCard>
+              ))
+            ) : (
+              // ✨ 추가: 검색 결과 없을 때 메시지
+              <div className="flex items-center justify-center h-full text-gray-400">
+                검색 결과가 없습니다.
+              </div>
+            )}
           </div>
         </ScrollArea>
       </div>

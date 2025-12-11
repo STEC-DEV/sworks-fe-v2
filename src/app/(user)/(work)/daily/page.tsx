@@ -49,7 +49,7 @@ const Page = () => {
         {canWorkerEdit && (
           <div className="flex gap-6">
             <TabButton label="과거이력" href="/daily/history" />
-            <TabButton label="업무관리" href="task" />
+            <TabButton label="업무관리" href="/daily/task" />
           </div>
         )}
       </div>

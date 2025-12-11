@@ -19,6 +19,7 @@ const UserInput = ({ value, onChange }: UserInputProps) => {
   const [selected, setSelected] = useState<RequestWorker[]>([]);
   const [curSelect, setCurSelect] = useState<RequestWorker[]>([]);
   const [open, setOpen] = useState<boolean>(false);
+  const [search, setSearch] = useState<string>(""); // ✨ 추가: 검색어 state
   const { reqWorker, getClassificationReqManager } = useReqDetailStore();
 
   useEffect(() => {
@@ -60,8 +61,20 @@ const UserInput = ({ value, onChange }: UserInputProps) => {
   useEffect(() => {
     if (open) {
       setCurSelect([...selected]); // 깊은 복사
+      setSearch(""); // ✨ 추가: 다이얼로그 열 때 검색어 초기화
     }
   }, [open, selected]);
+
+  // ✨ 추가: 검색 필터링 로직
+  const filteredWorkers = reqWorker?.filter((worker) => {
+    const searchLower = search.toLowerCase().trim();
+    if (!searchLower) return true;
+
+    return (
+      worker.userName.toLowerCase().includes(searchLower) ||
+      worker.serviceTypeName.toLowerCase().includes(searchLower)
+    );
+  });
 
   const handleSelect = (worker: RequestWorker) => {
     setCurSelect((prev) => {
@@ -90,7 +103,7 @@ const UserInput = ({ value, onChange }: UserInputProps) => {
           ) : null}
           {selected.map((v, i) => (
             <span
-              className="500 bg-blue-500   text-white px-2 rounded-2xl text-sm"
+              className="500 bg-blue-500 text-white px-2 rounded-2xl text-sm"
               key={i}
             >
               {v.userName}
@@ -108,28 +121,41 @@ const UserInput = ({ value, onChange }: UserInputProps) => {
       >
         <div className="w-full flex flex-col gap-6">
           <div className="px-6">
-            <InputSearch />
+            {/* 🔄 수정: InputSearch → Input으로 변경 */}
+            <InputSearch
+              placeholder="담당자명 또는 서비스 유형 검색"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
           </div>
 
           <ScrollArea>
             <div className="flex flex-col gap-4 px-6">
-              {reqWorker?.map((v, i) => (
-                <CustomCard
-                  className={`flex-row justify-between ${
-                    curSelect.find((s) => s.userSeq === v.userSeq)
-                      ? "bg-blue-50 border-blue-500"
-                      : ""
-                  }`}
-                  variant={"list"}
-                  onClick={() => handleSelect(v)}
-                  key={i}
-                >
-                  <span className="text-sm">{v.userName}</span>
-                  <span className="text-sm text-blue-500">
-                    {v.serviceTypeName}
-                  </span>
-                </CustomCard>
-              ))}
+              {/* 🔄 수정: reqWorker → filteredWorkers로 변경 */}
+              {filteredWorkers && filteredWorkers.length > 0 ? (
+                filteredWorkers.map((v, i) => (
+                  <CustomCard
+                    className={`flex-row justify-between ${
+                      curSelect.find((s) => s.userSeq === v.userSeq)
+                        ? "bg-blue-50 border-blue-500"
+                        : ""
+                    }`}
+                    variant={"list"}
+                    onClick={() => handleSelect(v)}
+                    key={i}
+                  >
+                    <span className="text-sm">{v.userName}</span>
+                    <span className="text-sm text-blue-500">
+                      {v.serviceTypeName}
+                    </span>
+                  </CustomCard>
+                ))
+              ) : (
+                // ✨ 추가: 검색 결과 없을 때 메시지
+                <div className="flex items-center justify-center py-8 text-gray-400">
+                  검색 결과가 없습니다.
+                </div>
+              )}
             </div>
           </ScrollArea>
           <div className="px-6">

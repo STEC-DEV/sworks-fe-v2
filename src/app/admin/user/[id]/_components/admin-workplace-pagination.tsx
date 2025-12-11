@@ -3,7 +3,7 @@ import WorkplaceCard from "@/app/admin/workplace/components/workplace-card";
 import BaseSkeleton from "@/components/common/base-skeleton";
 import Button from "@/components/common/button";
 import IconButton from "@/components/common/icon-button";
-import Input from "@/components/common/input";
+import Input, { InputSearch } from "@/components/common/input";
 import BaseDialog from "@/components/ui/custom/base-dialog";
 import CommonPagination from "@/components/ui/custom/pagination/common-pagination";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -83,10 +83,18 @@ const EditAdminWorkplaceContents = ({
       id.toString()
     );
   };
+
+  const filteredSites = allWorkplace?.filter((site) => {
+    const searchLower = search.toLowerCase().trim();
+    if (!searchLower) return true;
+
+    return site.siteName.toLowerCase().includes(searchLower);
+  });
+
   return (
     <div className="flex flex-col gap-6 w-full">
       <div className="px-6">
-        <Input
+        <InputSearch
           className="w-full"
           placeholder="사업장명"
           value={search}
@@ -96,8 +104,8 @@ const EditAdminWorkplaceContents = ({
 
       <ScrollArea className="overflow-hidden">
         <div className="flex flex-col gap-2 px-6 pb-1">
-          {allWorkplace ? (
-            allWorkplace.map((v, i) => (
+          {filteredSites && filteredSites.length > 0 ? (
+            filteredSites.map((v, i) => (
               <WorkplaceCard
                 key={i}
                 item={v}
@@ -106,8 +114,13 @@ const EditAdminWorkplaceContents = ({
                 onClick={handleCheck}
               />
             ))
-          ) : (
+          ) : allWorkplace === null ? (
             <BaseSkeleton />
+          ) : (
+            // ✨ 추가: 검색 결과 없을 때 메시지
+            <div className="flex items-center justify-center py-8 text-gray-400">
+              검색 결과가 없습니다.
+            </div>
           )}
         </div>
       </ScrollArea>

@@ -4,6 +4,7 @@ import localFont from "next/font/local";
 import BaseToast from "@/components/common/toast/base-toast";
 import { geistMono } from "@/lib/fonts";
 import ApiErrorHandler from "@/components/layout/error";
+import RedirectError from "@/components/layout/redirect-error";
 
 // font-family addition
 const pretendard = localFont({
@@ -30,9 +31,11 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${pretendard.variable} ${geistMono.variable}`}>
       <body>
+        <BaseToast />
         <ApiErrorHandler />
         {children}
-        <BaseToast />
+
+        <RedirectError />
       </body>
     </html>
   );

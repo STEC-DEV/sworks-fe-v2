@@ -16,6 +16,7 @@ export interface SelectAdminList {
   phone: string;
   job: string;
   role: string;
+  sabun: string;
   deptSeq: number;
   deptName: string;
   isAdminSite: boolean;
