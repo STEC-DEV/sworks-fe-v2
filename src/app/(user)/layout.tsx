@@ -1,4 +1,5 @@
 import NormalLayout from "@/components/layout/normal-layout";
+import { SSEProvider } from "@/components/layout/sse-provider";
 import { Suspense } from "react";
 
 export default function Layout({
@@ -8,7 +9,9 @@ export default function Layout({
 }>) {
   return (
     <Suspense>
-      <NormalLayout>{children}</NormalLayout>
+      <SSEProvider>
+        <NormalLayout>{children}</NormalLayout>
+      </SSEProvider>
     </Suspense>
   );
 }

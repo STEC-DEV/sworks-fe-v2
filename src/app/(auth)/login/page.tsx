@@ -1,9 +1,18 @@
+"use client";
 import CustomCard from "@/components/common/card";
 import LoginForm from "@/components/form/login-form";
 
-import React from "react";
+import React, { useEffect } from "react";
 
 const page = () => {
+  useEffect(() => {
+    // 모든 localStorage 삭제
+    localStorage.clear();
+
+    // sessionStorage도 삭제 (필요시)
+    sessionStorage.clear();
+  }, []);
+
   return (
     <div className="flex items-center justify-center h-full bg-gradient-to-l from-blue-100 via-blue-300 to-blue-500">
       <CustomCard className={`w-130`} size={"lg"}>

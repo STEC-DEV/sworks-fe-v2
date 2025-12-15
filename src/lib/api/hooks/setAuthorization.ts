@@ -3,13 +3,19 @@ import Cookies from "js-cookie";
 import { useAuthStore } from "@/store/auth/auth-store";
 
 const setAuthorizationHeader: BeforeRequestHook = (req) => {
+  // req.headers.set("SiteSeq", enteredWorkplace.siteSeq.toString());
   const accessToken = Cookies.get("accessToken");
-  const { enteredWorkplace } = useAuthStore.getState();
+  if (accessToken) {
+    req.headers.set("Authorization", `Bearer ${accessToken}`);
+  }
 
-  if (!accessToken) return;
-  req.headers.set("Authorization", `Bearer ${accessToken}`);
-  if (!enteredWorkplace) return;
-  req.headers.set("SiteSeq", enteredWorkplace.siteSeq.toString());
+  // 2. SiteSeq는 독립적으로 설정 (accessToken 없어도 설정됨)
+  const { enteredWorkplace } = useAuthStore.getState();
+  if (enteredWorkplace) {
+    req.headers.set("SiteSeq", enteredWorkplace.siteSeq.toString());
+  } else {
+    req.headers.delete("SiteSeq");
+  }
 };
 
 export default setAuthorizationHeader;

@@ -33,6 +33,7 @@ interface AuthState {
   enteredWorkplace: UserWorkplaceDetail | undefined;
   //사업장 권한 조회
   getWorkplacePermission: (siteSeq?: string) => Promise<void>;
+  reset: () => void;
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -128,6 +129,13 @@ export const useAuthStore = create<AuthState>()(
           } catch (err) {
             console.log(err);
           }
+        },
+
+        reset: () => {
+          set({
+            loginProfile: undefined,
+            enteredWorkplace: undefined,
+          });
         },
       }),
       { name: "auth-store" }

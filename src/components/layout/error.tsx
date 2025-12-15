@@ -14,7 +14,7 @@ const ApiErrorHandler = () => {
 
   useEffect(() => {
     const unsubscribe = subscribeToApiErrors((error) => {
-      if (error.status === 409) {
+      if (error.status === 401 && error.data?.error === "session_expired") {
         setIsOpen(true); // state 업데이트로 렌더링 트리거
       }
     });

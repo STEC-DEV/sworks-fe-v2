@@ -98,15 +98,14 @@ const ScheduleItem = ({ data }: ScheduleItemProps) => {
   };
 
   const onDelete = async () => {
-    if (!searchParams) {
-      const date = format(new Date(), "yyyy-MM");
+    const year = searchParams?.get("year");
+    const month = searchParams?.get("month");
 
-      await deleteDaySchedule(data.schSeq, date);
-    } else {
-      const year = searchParams.get("year");
-      const month = searchParams.get("month");
-      await deleteDaySchedule(data.schSeq, `${year}-${month}`);
-    }
+    // year와 month가 모두 있을 때만 사용, 없으면 현재 날짜 사용
+    const date =
+      year && month ? `${year}-${month}` : format(new Date(), "yyyy-MM");
+
+    await deleteDaySchedule(data.schSeq, date);
   };
 
   return (

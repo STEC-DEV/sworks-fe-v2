@@ -1,8 +1,11 @@
 "use server";
 
+import { decryptCookie, encryptCookie } from "@/lib/crypt-cookie";
 import { JWTVerified } from "@/lib/jwt-verifiied";
 import { getTime } from "@/lib/time";
 import { c } from "@/middleware";
+import { useAuthStore } from "@/store/auth/auth-store";
+import { useSSENotificationStore } from "@/store/normal/sse-store";
 import { Response, ReturnToken } from "@/types/common/response";
 import { cookies } from "next/headers";
 import { redirect, RedirectType } from "next/navigation";
@@ -27,12 +30,13 @@ export async function LoginAction(
   let redirectUrl: string | null = null;
 
   try {
+    console.log({ ...data, mode: adminMode });
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_BASE_URL}/Login/W/Login`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...data }),
+        body: JSON.stringify({ ...data, mode: adminMode }),
       }
     );
 
@@ -98,6 +102,12 @@ export async function LoginAction(
       } ${payload.UserSeq}`
     );
 
+    const cryptMode = encryptCookie(payload.mode ? "true" : "false");
+    console.log("쿠키:", cryptMode);
+    const de = decryptCookie(cryptMode);
+    console.log("복호화값", de);
+
+    cookie.set("s-agent", cryptMode);
     cookie.set("accessToken", accessToken);
     cookie.set("refreshToken", refreshToken);
     return returnData;
@@ -127,18 +137,33 @@ export async function normalModeLoginAction(data: Record<string, string>) {
  */
 export async function logout() {
   const cookie = await cookies();
+
   const accessToken = cookie.get("accessToken")?.value;
   if (!accessToken) return redirect("/login", RedirectType.replace);
-  const payload = await JWTVerified(accessToken);
-
-  console.log(
-    `${c.cyan}[${getTime()}] ${c.r}${c.bgYellow}${c.bold} ❌ 로그아웃 ${c.r} ${
-      payload.UserType
-    } ${payload.UserSeq}`
-  );
+  if (accessToken) {
+    try {
+      const payload = await JWTVerified(accessToken);
+      console.log(
+        `${c.cyan}[${getTime()}] ${c.r}${c.bgYellow}${c.bold} ❌ 로그아웃 ${
+          c.r
+        } ${payload.UserType} ${payload.UserSeq}`
+      );
+    } catch {
+      console.log(
+        `${c.cyan}[${getTime()}] ${c.r}${c.bgYellow}${c.bold} ❌ 로그아웃 ${
+          c.r
+        } (만료된 세션)`
+      );
+    }
+  }
 
   cookie.delete("accessToken");
   cookie.delete("refreshToken");
+  cookie.delete("s-agent");
+
+  useAuthStore.getState().reset();
+
+  useSSENotificationStore.getState().clearAllCounts();
 
   redirect("/login", RedirectType.replace);
 }

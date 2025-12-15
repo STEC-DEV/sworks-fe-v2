@@ -25,6 +25,7 @@ import CustomCard from "@/components/common/card";
 import { format } from "date-fns";
 import { Notification } from "@/types/normal/notification/notification";
 import EmptyBox from "../empty";
+import { useSSENotificationStore } from "@/store/normal/sse-store";
 interface MenuItem {
   title: string;
   icon?: keyof typeof icons;
@@ -86,6 +87,7 @@ const AdminMenu: MenuSection[] = [
 const MenuItem = ({ item }: { item: MenuItem }) => {
   const router = useRouter();
   const pathName = usePathname();
+  const { counts } = useSSENotificationStore();
 
   const SelectLucideIcon = item.icon ? icons[item.icon] : null;
 
@@ -93,6 +95,38 @@ const MenuItem = ({ item }: { item: MenuItem }) => {
     if (!item.path) return;
     router.push(item.path);
   };
+
+  const alarm = () => {
+    switch (item.path) {
+      case "/schedule":
+        //  <span className="text-sm text-red-500">{counts.sch}</span>
+
+        return (
+          counts.sch > 0 && (
+            <div className="w-2 h-2 aspect-square rounded-4xl bg-red-500" />
+          )
+        );
+      case "/notice":
+        return (
+          counts.notice > 0 && (
+            <div className="w-2 h-2 aspect-square rounded-4xl bg-red-500" />
+          )
+        );
+      case "/req-task":
+        return (
+          counts.req > 0 && (
+            <div className="w-2 h-2 aspect-square rounded-4xl bg-red-500" />
+          )
+        );
+      case "/voc":
+        return (
+          counts.voc > 0 && (
+            <div className="w-2 h-2 aspect-square rounded-4xl bg-red-500" />
+          )
+        );
+    }
+  };
+
   return (
     <div
       className={`flex gap-2 py-2 items-center text-white group ${
@@ -115,6 +149,7 @@ const MenuItem = ({ item }: { item: MenuItem }) => {
       >
         {item.title}
       </span>
+      {alarm()}
     </div>
   );
 };
@@ -347,8 +382,6 @@ const Noti = () => {
         <BaseSkeleton key={i} className="w-87 h-20.5" />
       ));
     if (hasError(loadingKeys.LIST)) return <div>에러발생</div>;
-    console.log("공지");
-    console.log(notificationList);
     return (
       <>
         {notificationList.length === 0 ? (

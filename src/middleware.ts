@@ -51,6 +51,7 @@ export interface JWTPayload {
   jti: string;
   UserType: string;
   "http://schemas.microsoft.com/ws/2008/06/identity/claims/role": string;
+  mode: boolean;
   uuid: string;
   exp: number;
   iss: string;
@@ -90,6 +91,14 @@ const ROLE_RESTRICTION = {
   Master: { restrictedUrls: [], canAdd: true },
   SystemManager: { restrictedUrls: [], canAdd: true },
 } as const;
+
+const setUnauthorizedCookie = (res: NextResponse) => {
+  res.cookies.set("redirect_error", "unauthorized", {
+    maxAge: 3,
+    path: "/",
+    httpOnly: false,
+  });
+};
 
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
@@ -144,6 +153,32 @@ export async function middleware(req: NextRequest) {
         payload.UserSeq
       } ${c.r} ${role}`
     );
+
+    const loginMode =
+      payload.mode.toString() === "True" || payload.mode === true;
+    const isAdminPath = pathname.startsWith("/admin");
+
+    // console.log("━━━━━━━━━━━━━━━━━━━━━━");
+    // console.log("JWT mode:", payload.mode);
+    // console.log("loginMode (boolean):", loginMode);
+    // console.log("pathname:", pathname);
+    // console.log("isAdminPath:", isAdminPath);
+    // console.log("━━━━━━━━━━━━━━━━━━━━━━");
+
+    // 관리모드 <-> 사업장모드 접근 제어
+    if (loginMode && !isAdminPath) {
+      //관리모드가 사업장에 접근
+      const res = NextResponse.redirect(new URL("/admin/workplace", req.url));
+      setUnauthorizedCookie(res);
+      return res;
+    }
+
+    if (!loginMode && isAdminPath) {
+      //사업장모드에서 관리모드
+      const res = NextResponse.redirect(new URL("/schedule", req.url));
+      setUnauthorizedCookie(res);
+      return res;
+    }
 
     //5. 권한별 제한 체크
     const config = ROLE_RESTRICTION[role as keyof typeof ROLE_RESTRICTION];
@@ -200,108 +235,6 @@ export async function middleware(req: NextRequest) {
     return response;
   }
 }
-
-// export async function middleware(req: NextRequest) {
-//   const { pathname } = req.nextUrl;
-
-//   // 1. 정적 파일 및 API 요청 스킵
-//   const isFileRequest = pathname.match(/\.\w+$/);
-//   if (isFileRequest) {
-//     return NextResponse.next();
-//   }
-
-//   if (pathname.startsWith("/api/")) {
-//     // console.log(`${c.yellow}API 요청 - 미들웨어 스킵${c.r}`);
-//     return NextResponse.next();
-//   }
-
-//   //2. 인증없이 접근 가능한 경로
-//   const publicPath = ["/login", "/complain"];
-//   if (publicPath.some((path) => pathname.startsWith(path))) {
-//     // console.log(
-//     //   `${c.bgYellow}${c.black}${c.bold} ⚠️ [${pathname}] : 미들웨어 스킵 페이지${c.r}`
-//     // );
-//     return NextResponse.next();
-//   }
-
-//   if (pathname == "/login") return NextResponse.next();
-//   if (pathname.startsWith("/complain")) return NextResponse.next();
-
-//   //3. 토큰 확인
-//   const accessToken = req.cookies.get("accessToken")?.value;
-//   const refreshToken = req.cookies.get("refreshToken")?.value;
-
-//   // refreshToken이 없으면 로그인 필요
-//   if (!refreshToken) {
-//     return NextResponse.redirect(new URL("/login", req.url));
-//   }
-
-//   // accessToken이 없으면 로그인 필요 (또는 refresh 로직)
-//   if (!accessToken) {
-//     return NextResponse.redirect(new URL("/login", req.url));
-//   }
-
-//   // 4. JWT 검증 및 권한 체크
-//   try {
-//     const payload = await JWTVerified(accessToken);
-
-//     const role =
-//       payload["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
-//     const userSeq = payload.UserSeq;
-//     console.log(
-//       `${c.cyan}[${getTime()}]${c.r} ${c.bgBlue}${c.brightWhite}${
-//         c.bold
-//       } 📍 REQUEST ${c.r} ${pathname}`
-//     );
-//     console.log(
-//       `${c.cyan}[${getTime()}]${c.r} ${c.bgGreen}${c.black}${c.bold} 👤 User ${
-//         payload.UserSeq
-//       } ${c.r} ${role}`
-//     );
-
-//     //5. 권한별 제한 체크
-//     const config = ROLE_RESTRICTION[role as keyof typeof ROLE_RESTRICTION];
-
-//     if (config) {
-//       const isRestrictedBaseUrl = config.restrictedUrls.some((url) =>
-//         pathname.startsWith(url)
-//       );
-//       const isRestrictedAction =
-//         !config.canAdd &&
-//         (pathname.includes("/add") || pathname.includes("/edit"));
-
-//       if (isRestrictedAction || isRestrictedBaseUrl) {
-//         console.log(
-//           `${c.cyan}[${getTime()}]${c.r}${c.bgRed}${
-//             c.bold
-//           } 🚫 ACCESS BLOCKED [${pathname}] User ${userSeq} ${role} ${c.r}`
-//         );
-
-//         const response = NextResponse.redirect(new URL("/schedule", req.url));
-//         response.cookies.set("redirect_error", "unauthorized", {
-//           maxAge: 3,
-//           path: "/",
-//           httpOnly: false,
-//         });
-
-//         return response;
-//       }
-//     }
-//   } catch (err: any) {
-//     console.error("JWT 검증 에러:", err);
-
-//     // 토큰 만료
-//     if (err.code === "ERR_JWT_EXPIRED") {
-//       // TODO: refreshToken으로 새 accessToken 발급 로직 추가
-//       const response = NextResponse.redirect(new URL("/login", req.url));
-//       response.cookies.delete("accessToken");
-//       return response;
-//     }
-
-//     // 기타 에러 - 로그인으로
-//     return NextResponse.redirect(new URL("/login", req.url));
-//   }
-// }
 
 export const config = {
   matcher: [
