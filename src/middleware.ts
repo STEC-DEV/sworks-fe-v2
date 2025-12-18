@@ -158,12 +158,12 @@ export async function middleware(req: NextRequest) {
       payload.mode.toString() === "True" || payload.mode === true;
     const isAdminPath = pathname.startsWith("/admin");
 
-    // console.log("━━━━━━━━━━━━━━━━━━━━━━");
-    // console.log("JWT mode:", payload.mode);
-    // console.log("loginMode (boolean):", loginMode);
-    // console.log("pathname:", pathname);
-    // console.log("isAdminPath:", isAdminPath);
-    // console.log("━━━━━━━━━━━━━━━━━━━━━━");
+    console.log("━━━━━━━━━━━━━━━━━━━━━━");
+    console.log("JWT mode:", payload.mode);
+    console.log("loginMode (boolean):", loginMode);
+    console.log("pathname:", pathname);
+    console.log("isAdminPath:", isAdminPath);
+    console.log("━━━━━━━━━━━━━━━━━━━━━━");
 
     // 관리모드 <-> 사업장모드 접근 제어
     if (loginMode && !isAdminPath) {

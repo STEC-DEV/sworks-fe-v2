@@ -1,7 +1,7 @@
 "use client";
 import CustomCard from "@/components/common/card";
 import LoginForm from "@/components/form/login-form";
-
+import Cookies from "js-cookie";
 import React, { useEffect } from "react";
 
 const page = () => {
@@ -11,6 +11,10 @@ const page = () => {
 
     // sessionStorage도 삭제 (필요시)
     sessionStorage.clear();
+    //쿠키삭제
+    Cookies.remove("s-agent");
+    Cookies.remove("accessToken");
+    Cookies.remove("refreshToken");
   }, []);
 
   return (

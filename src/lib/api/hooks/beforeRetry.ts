@@ -43,6 +43,7 @@ const beforeRetry: BeforeRetryHook = async ({ request, error, retryCount }) => {
     console.log(`${c.cyan}[${getTime()}]${c.r}❌ 복호화 실패`);
     return ky.stop;
   }
+  console.log("재발급 시 로그인 모드 : ", mode);
 
   try {
     // 토큰 갱신 요청
@@ -52,7 +53,7 @@ const beforeRetry: BeforeRetryHook = async ({ request, error, retryCount }) => {
         json: {
           accessToken,
           refreshToken,
-          mode: mode === "true" ? true : false,
+          mode: mode === "True" ? true : false,
         },
         timeout: 10000,
         retry: 0,

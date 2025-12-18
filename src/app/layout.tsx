@@ -18,8 +18,8 @@ export const metadata: Metadata = {
   title: "S-Agent",
   description: "에스텍시스템 용역업무관리 플랫폼",
   icons: {
-    icon: "/s-agent-badge-green.svg",
-    apple: "/s-agent-badge-green.svg",
+    icon: "/S-Agent.png",
+    apple: "/S-Agent.png",
   },
 };
 

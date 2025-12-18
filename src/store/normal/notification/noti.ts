@@ -43,11 +43,14 @@ export const useNotificationStore = create<NotificationState>()(
               })
               .json();
 
-            set({
-              notificationList: res.data.items,
+            set((state) => ({
+              // lastNoticeSeq가 있으면 기존 리스트에 추가, 없으면 새로 설정
+              notificationList: lastNoticeSeq
+                ? [...(state.notificationList || []), ...res.data.items]
+                : res.data.items,
               hasMore: res.data.hasMore,
               lastCursor: res.data.lastCursor,
-            });
+            }));
           } catch (err) {
             console.error(err);
             const errMessage =

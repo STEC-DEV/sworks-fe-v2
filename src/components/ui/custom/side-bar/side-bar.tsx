@@ -7,6 +7,7 @@ import { useAuthStore } from "@/store/auth/auth-store";
 import { icons, LogOut, MenuIcon } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useInView } from "react-intersection-observer";
 import {
   Sheet,
   SheetContent,
@@ -250,13 +251,6 @@ const SideBar = ({ loginMode }: SideBarProps) => {
             )
         );
 
-        // "일일업무"를 "업무"로 교체
-        // items = items.map((item) =>
-        //   item.title === "일일업무"
-        //     ? { title: "업무", icon: "BriefcaseBusiness", path: "/task" }
-        //     : item
-        // );
-
         const hasActualMenu = items.some((item) => !item.isGroup);
         return hasActualMenu ? { ...section, items } : null;
       }).filter((section) => section !== null);
@@ -309,6 +303,163 @@ const SideBar = ({ loginMode }: SideBarProps) => {
   );
 };
 
+// const Noti = () => {
+//   const {
+//     loadingKeys,
+//     notificationList,
+//     hasMore,
+//     lastCursor,
+//     getNotification,
+//     putReadNotification,
+//   } = useNotificationStore();
+//   const { isLoading, hasError } = useUIStore();
+//   const [open, setOpen] = useState<boolean>(false);
+//   const router = useRouter();
+
+//   const scrollRef = useRef<HTMLDivElement>(null);
+//   const [isFetchingMore, setIsFetchingMore] = useState(false);
+
+//   useEffect(() => {
+//     if (!open) return;
+
+//     getNotification();
+//   }, [open]);
+
+//   // 무한 스크롤 핸들러
+//   const handleScroll = useCallback(async () => {
+//     if (!scrollRef.current) return;
+//     if (isFetchingMore || !hasMore) return;
+//     if (isLoading(loadingKeys.LIST)) return;
+
+//     const { scrollTop, scrollHeight, clientHeight } = scrollRef.current;
+
+//     console.log("스크롤 조회");
+
+//     // 스크롤이 하단 100px 이내로 도달하면 추가 로드
+//     if (scrollHeight - scrollTop - clientHeight < 100) {
+//       setIsFetchingMore(true);
+//       try {
+//         await getNotification(lastCursor || undefined); // cursor와 함께 요청
+//       } finally {
+//         setIsFetchingMore(false);
+//       }
+//     }
+//   }, [hasMore, lastCursor, isFetchingMore, isLoading, loadingKeys.LIST]);
+
+//   const type = (type: number): { label: string; value: string } => {
+//     switch (type) {
+//       case 0:
+//         return { label: "민원", value: "voc" };
+//       case 1:
+//         return { label: "공지사항", value: "notice" };
+//       case 2:
+//         return { label: "업무요청", value: "req-task" };
+//       case 3:
+//         return { label: "일정", value: "schedule" };
+//       default:
+//         return { label: "Unknown", value: "Unknown" };
+//     }
+//   };
+
+//   const onClick = (data: Notification) => {
+//     putReadNotification(data.readSignSeq.toString());
+
+//     if (type(data.notiType).label === "일정") {
+//       router.push(`/${type(data.notiType).value}`);
+//     } else {
+//       router.push(`/${type(data.notiType).value}/${data.originSeq}`);
+//     }
+//     setOpen(false);
+//   };
+
+//   const getList = () => {
+//     if (isLoading(loadingKeys.LIST) || !notificationList)
+//       return Array.from({ length: 10 }, (_, i) => (
+//         <BaseSkeleton key={i} className="w-87 h-20.5" />
+//       ));
+//     if (hasError(loadingKeys.LIST)) return <div>에러발생</div>;
+//     return (
+//       <>
+//         {notificationList.length === 0 ? (
+//           // 알림이 아예 없는 경우
+//           <EmptyBox message="알람이 없습니다." />
+//         ) : (
+//           <>
+//             {notificationList.map((n, i) => (
+//               <CustomCard
+//                 key={`${n.readSignSeq}-${i}`}
+//                 variant={"list"}
+//                 className={`hover:border-blue-500 hover:bg-blue-50 ${
+//                   n.isRead ? "bg-[var(--read)]" : ""
+//                 }`}
+//                 onClick={() => onClick(n)}
+//               >
+//                 <div className="flex items-center justify-between">
+//                   <span className="text-blue-500 text-sm">
+//                     {type(n.notiType).label}
+//                   </span>
+//                   <span className="text-xs text-[var(--description-light)]">
+//                     {format(n.createDt, "yyyy-MM-dd HH:mm:ss")}
+//                   </span>
+//                 </div>
+//                 <span className="text-sm">{n.contents}</span>
+//               </CustomCard>
+//             ))}
+
+//             {/* 추가 로딩 중 표시 */}
+//             {isFetchingMore && (
+//               <div className="flex justify-center py-4">
+//                 <BaseSkeleton className="w-87 h-20.5" />
+//               </div>
+//             )}
+
+//             {/* 더 이상 데이터 없음 표시 */}
+//             {!hasMore && notificationList.length > 0 && (
+//               <div className="text-center py-4 text-sm text-[var(--description-light)]">
+//                 더 이상 알림이 없습니다
+//               </div>
+//             )}
+//           </>
+//         )}
+//       </>
+//     );
+//   };
+
+//   return (
+//     <Sheet
+//       open={open}
+//       onOpenChange={(open) => {
+//         setOpen(open);
+//       }}
+//     >
+//       <SheetTrigger asChild>
+//         <IconButton
+//           bgClassName="hover:bg-white"
+//           className="text-white  group-hover:text-primary"
+//           icon="BellRing"
+//           size={21}
+//         />
+//       </SheetTrigger>
+//       <SheetContent className="bg-white">
+//         <SheetHeader>
+//           <SheetTitle className="text-xl">알람</SheetTitle>
+//         </SheetHeader>
+//         <ScrollArea
+//           className="overflow-hidden"
+//           ref={scrollRef}
+//           onScroll={(e) => {
+//             console.log(e);
+//           }}
+//         >
+//           <div className="px-4 pb-2">
+//             <div className="flex flex-col gap-4">{getList()}</div>
+//           </div>
+//         </ScrollArea>
+//       </SheetContent>
+//     </Sheet>
+//   );
+// };
+
 const Noti = () => {
   const {
     loadingKeys,
@@ -322,8 +473,13 @@ const Noti = () => {
   const [open, setOpen] = useState<boolean>(false);
   const router = useRouter();
 
-  const scrollRef = useRef<HTMLDivElement>(null);
   const [isFetchingMore, setIsFetchingMore] = useState(false);
+
+  // react-intersection-observer 사용
+  const { ref: observerRef, inView } = useInView({
+    threshold: 0.1,
+    triggerOnce: false,
+  });
 
   useEffect(() => {
     if (!open) return;
@@ -331,24 +487,17 @@ const Noti = () => {
     getNotification();
   }, [open]);
 
-  // 무한 스크롤 핸들러
-  const handleScroll = useCallback(async () => {
-    if (!scrollRef.current) return;
-    if (isFetchingMore || !hasMore) return;
-    if (isLoading(loadingKeys.LIST)) return;
+  // inView가 true가 되면 추가 데이터 로드
+  useEffect(() => {
+    if (!inView || !hasMore || !open) return;
+    if (isFetchingMore || isLoading(loadingKeys.LIST)) return;
 
-    const { scrollTop, scrollHeight, clientHeight } = scrollRef.current;
-
-    // 스크롤이 하단 100px 이내로 도달하면 추가 로드
-    if (scrollHeight - scrollTop - clientHeight < 100) {
-      setIsFetchingMore(true);
-      try {
-        await getNotification(lastCursor || undefined); // cursor와 함께 요청
-      } finally {
-        setIsFetchingMore(false);
-      }
-    }
-  }, [hasMore, lastCursor, isFetchingMore, isLoading, loadingKeys.LIST]);
+    console.log("추가 데이터 로딩 시작");
+    setIsFetchingMore(true);
+    getNotification(lastCursor || undefined).finally(() => {
+      setIsFetchingMore(false);
+    });
+  }, [inView, hasMore, open, isFetchingMore, isLoading, loadingKeys.LIST]);
 
   const type = (type: number): { label: string; value: string } => {
     switch (type) {
@@ -417,6 +566,11 @@ const Noti = () => {
               </div>
             )}
 
+            {/* 무한 스크롤 트리거 요소 */}
+            {hasMore && !isFetchingMore && (
+              <div ref={observerRef} className="h-10" />
+            )}
+
             {/* 더 이상 데이터 없음 표시 */}
             {!hasMore && notificationList.length > 0 && (
               <div className="text-center py-4 text-sm text-[var(--description-light)]">
@@ -448,15 +602,17 @@ const Noti = () => {
         <SheetHeader>
           <SheetTitle className="text-xl">알람</SheetTitle>
         </SheetHeader>
-        <ScrollArea
+        <div className="flex-1 overflow-y-auto px-4 pb-2">
+          <div className="flex flex-col gap-4">{getList()}</div>
+        </div>
+        {/* <ScrollArea
+          key={notificationList?.length || 0}
           className="overflow-hidden"
-          ref={scrollRef}
-          onScroll={handleScroll}
         >
           <div className="px-4 pb-2">
             <div className="flex flex-col gap-4">{getList()}</div>
           </div>
-        </ScrollArea>
+        </ScrollArea> */}
       </SheetContent>
     </Sheet>
   );
