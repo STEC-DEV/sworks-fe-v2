@@ -149,7 +149,8 @@ export function useSSENotifications() {
 
     try {
       const res = await fetch(
-        `http://123.2.156.148:5247/api/sse/subscribe/${siteSeq}_${topic}`,
+        `${process.env.NEXT_PUBLIC_SSE_URL}/sse/subscribe/${siteSeq}_${topic}`,
+
         {
           method: "GET",
           headers: {
