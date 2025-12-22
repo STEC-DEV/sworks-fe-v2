@@ -32,7 +32,7 @@ export async function LoginAction(
   try {
     console.log({ ...data, mode: adminMode });
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/Login/W/Login`,
+      `${process.env.NEXT_PUBLIC_BASE_URL}/Login/w/Login`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
