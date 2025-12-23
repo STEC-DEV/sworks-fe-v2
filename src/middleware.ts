@@ -114,7 +114,7 @@ export async function middleware(req: NextRequest) {
   }
 
   //2. 인증없이 접근 가능한 경로
-  const publicPath = ["/login", "/complain"];
+  const publicPath = ["/login", "/complain", "/cancel"];
   if (publicPath.some((path) => pathname.startsWith(path))) {
     return NextResponse.next();
   }

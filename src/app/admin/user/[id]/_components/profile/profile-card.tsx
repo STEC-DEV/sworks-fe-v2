@@ -166,7 +166,7 @@ export const KeyValue = ({ icon, label, value }: KeyValueProps) => {
   );
 };
 
-const InfoSkeleton = () => {
+export const InfoSkeleton = () => {
   return (
     <CustomCard className="w-100 gap-6 shrink-0 h-fit">
       <div className="flex gap-4 items-center px-6 ">
