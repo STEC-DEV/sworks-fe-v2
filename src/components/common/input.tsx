@@ -188,6 +188,11 @@ const DragNDropInput = React.forwardRef<HTMLInputElement, FileInputProps>(
     const [isDragOver, setIsDragOver] = useState(false);
     const internalRef = React.useRef<HTMLInputElement>(null);
 
+    useEffect(() => {
+      console.log("=======값");
+      console.log(value);
+    }, [value]);
+
     // 두 ref를 모두 세팅
     const setRefs = (el: HTMLInputElement | null) => {
       internalRef.current = el;
@@ -285,7 +290,6 @@ const DragNDropInput = React.forwardRef<HTMLInputElement, FileInputProps>(
 
       //전체 파일수 제한
       if (max && multiple) {
-        console.log("여기옴");
         const curLen =
           value.length + (existingFiles?.length || 0) + fileList.length;
         console.log(max);
@@ -311,6 +315,11 @@ const DragNDropInput = React.forwardRef<HTMLInputElement, FileInputProps>(
     //파일 제거
     const handleRemoveFile = async (item: File) => {
       const updatedFiles = value.filter((v) => v !== item);
+
+      // input 요소의 value 초기화
+      if (internalRef.current) {
+        internalRef.current.value = "";
+      }
       // setFiles(updatedFiles);
       onFilesChange?.(updatedFiles);
     };
@@ -407,6 +416,11 @@ const FileBox = ({
   ];
 
   useEffect(() => {
+    if (!file) {
+      setImg(false);
+      return;
+    }
+    console.log(file.name);
     const fileExtension = file.name.toLowerCase().split(".").pop();
     setImg(imgExtension.includes(`.${fileExtension}`));
   }, [file]);

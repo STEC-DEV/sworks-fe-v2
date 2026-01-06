@@ -46,7 +46,7 @@ const BaseTable = <TData, TValue>({
                   <TableHead
                     key={header.id}
                     className={cn(
-                      "text-[var(--description-dark)] text-xs font-light py-3",
+                      "font-medium text-[var(--description-dark)] text-xs  py-3",
                       padding
                     )}
                     style={{ width: header.getSize() }}
