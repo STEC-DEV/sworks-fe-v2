@@ -572,7 +572,11 @@ export const ImageDndInput = (props: UnifiedImageDndInputProps) => {
           accept="image/*"
         />
         {hasImage ? (
-          <ImageBox src={imageSource} onRemove={handleRemoveFile} isEdit />
+          <ImageBox
+            src={imageSource}
+            onRemove={handleRemoveFile}
+            isEdit={true}
+          />
         ) : (
           <label
             htmlFor={`input-file-single-${props.id}`}

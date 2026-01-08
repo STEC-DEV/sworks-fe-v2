@@ -1,4 +1,5 @@
 import Button from "@/components/common/button";
+import { ImageFormItem } from "@/components/common/form-input/file-field";
 import SelectFormItem from "@/components/common/form-input/select-field";
 import { TextFormItem } from "@/components/common/form-input/text-field";
 
@@ -37,6 +38,7 @@ const formSchema = z.object({
     )
     .optional(),
   removeImage: z.boolean(),
+  images: z.instanceof(File).nullable(),
 });
 
 export type basicFormType = z.infer<typeof formSchema>;
@@ -56,6 +58,7 @@ const InfoEditForm = ({ onClose }: { onClose: () => void }) => {
       phone: admin?.phone,
       email: admin?.email || "",
       removeImage: false,
+      images: null,
     },
   });
 
@@ -139,6 +142,35 @@ const InfoEditForm = ({ onClose }: { onClose: () => void }) => {
                   {...field}
                 />
               )}
+            />
+            <FormField
+              control={form.control}
+              name="images"
+              render={({ field }) => {
+                const handleRemove = () => {
+                  form.setValue("removeImage", true);
+                };
+
+                const existingFiles = () => {
+                  if (!admin) return;
+                  const isRemove = form.watch("removeImage");
+
+                  return isRemove ? null : admin.images;
+                };
+
+                return (
+                  <ImageFormItem
+                    label="이미지"
+                    multiple={false}
+                    {...field}
+                    value={field.value}
+                    isRemove={form.watch("removeImage")}
+                    onChange={field.onChange}
+                    existingFile={existingFiles()}
+                    onRemoveExistingFile={handleRemove}
+                  />
+                );
+              }}
             />
           </div>
         </ScrollArea>

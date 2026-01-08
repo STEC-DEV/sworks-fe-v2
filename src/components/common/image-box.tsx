@@ -17,12 +17,14 @@ const ImageBox = ({ src, isEdit = false, onRemove }: ImageBoxProps) => {
     <>
       <div className="relative w-48 h-32 border rounded-[4px] overflow-hidden shrink-0">
         {isEdit ? (
-          <IconButton
-            bgClassName="absolute right-0 top-0 hover:bg-red-50 bg-white/70 z-10"
-            className="text-red-500"
-            icon="Trash2"
-            onClick={onRemove}
-          />
+          <div className="absolute right-0 top-0 z-20">
+            <IconButton
+              bgClassName="hover:bg-red-50 bg-white/70 z-10"
+              className="text-red-500"
+              icon="Trash2"
+              onClick={onRemove}
+            />
+          </div>
         ) : null}
         <Image
           fill

@@ -1,5 +1,5 @@
 import { FormControl, FormItem, FormMessage } from "@/components/ui/form";
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import { DragNDropInput, ImageDndInput } from "../input";
 import { FieldValues } from "react-hook-form";
 
@@ -142,6 +142,11 @@ export const ImageFormItem = <T extends FieldValues>(
   props: UnifiedImageFormItemProps<T>
 ) => {
   const { label, required, maxSize, multiple = false, ...restProps } = props;
+
+  useEffect(() => {
+    if (multiple) return;
+    console.log("삭제여부", (props as SingleImageFormItemProps<T>).isRemove);
+  }, []);
 
   return (
     <FormItem className="w-full">
