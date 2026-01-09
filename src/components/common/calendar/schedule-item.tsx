@@ -139,6 +139,7 @@ const ScheduleItem = ({ data }: ScheduleItemProps) => {
           <div className="flex justify-end">
             <IconButton
               icon="SquarePen"
+              size={16}
               onClick={() => {
                 router.push(`/schedule/edit/${data.schSeq}`);
               }}
@@ -149,7 +150,7 @@ const ScheduleItem = ({ data }: ScheduleItemProps) => {
               actionLabel={dialogText.defaultDelete.actionLabel}
               onClick={onDelete}
             >
-              <IconButton icon="Trash2" />
+              <IconButton icon="Trash2" size={16} />
             </CheckDialog>
           </div>
         )}

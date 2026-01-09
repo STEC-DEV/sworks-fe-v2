@@ -47,7 +47,7 @@ const Page = () => {
           />
           <BaseDialog
             title="담당 유형"
-            triggerChildren={<IconButton icon="SquarePen" />}
+            triggerChildren={<IconButton icon="SquarePen" size={16} />}
             open={open}
             setOpen={setOpen}
           >
@@ -167,7 +167,7 @@ const ReplyBox = ({ data }: { data: VocReply }) => {
             title="답변 수정"
             open={open}
             setOpen={setOpen}
-            triggerChildren={<IconButton icon="SquarePen" />}
+            triggerChildren={<IconButton icon="SquarePen" size={16} />}
           >
             <ReplyEditForm data={data} onClose={() => setOpen(false)} />
           </BaseDialog>

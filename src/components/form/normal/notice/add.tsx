@@ -63,34 +63,34 @@ const NoticeAddForm = () => {
     },
   });
 
-  const allNotice = () => {
-    if (!basicCode.contractCodes) return;
-    const code = convertSelectOptionType(basicCode.contractCodes);
+  // const allNotice = () => {
+  //   if (!basicCode.contractCodes) return;
+  //   const code = convertSelectOptionType(basicCode.contractCodes);
 
-    const handleCheck = (check: boolean) => {
-      setAll(check);
-      if (!check) {
-        form.setValue("serviceTypeSeq", []);
-      } else {
-        form.setValue(
-          "serviceTypeSeq",
-          code.map((c) => parseInt(c.value.toString()))
-        );
-      }
-    };
+  //   const handleCheck = (check: boolean) => {
+  //     setAll(check);
+  //     if (!check) {
+  //       form.setValue("serviceTypeSeq", []);
+  //     } else {
+  //       form.setValue(
+  //         "serviceTypeSeq",
+  //         code.map((c) => parseInt(c.value.toString()))
+  //       );
+  //     }
+  //   };
 
-    return (
-      <div className="flex items-center gap-2">
-        <span className="text-xs text-[var(--description-light)]">
-          전체 공지
-        </span>
-        <CheckBox
-          checked={all}
-          onChange={(e) => handleCheck(e.target.checked)}
-        />
-      </div>
-    );
-  };
+  //   return (
+  //     <div className="flex items-center gap-2">
+  //       <span className="text-xs text-[var(--description-light)]">
+  //         전체 공지
+  //       </span>
+  //       <CheckBox
+  //         checked={all}
+  //         onChange={(e) => handleCheck(e.target.checked)}
+  //       />
+  //     </div>
+  //   );
+  // };
 
   const handleSubmit = async (values: NoticeAddFormType) => {
     const formData = objectToFormData(values, true);
@@ -126,7 +126,7 @@ const NoticeAddForm = () => {
             );
           }}
         />
-        {allNotice()}
+        {/* {allNotice()} */}
         {!all && (
           <FormField
             control={form.control}

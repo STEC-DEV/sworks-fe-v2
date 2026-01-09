@@ -112,16 +112,6 @@ export const MonthScheduleItem = ({
     // e.preventDefault(); // 기본동작 방지
   };
 
-  // useEffect(() => {
-  //   console.log("useEffect 실행:", {
-  //     isDrag,
-  //     timestamp: Date.now(),
-  //   });
-  //   if (isDrag) {
-  //     console.log("드래그됨");
-  //   }
-  // }, [isDrag]);
-
   const onDelete = async () => {
     const year = searchParams.get("year");
     const month = searchParams.get("month");
@@ -169,7 +159,11 @@ export const MonthScheduleItem = ({
             open={open}
             setOpen={setOpen}
             triggerChildren={
-              <IconButton icon="SquarePen" onClick={(e) => handleClick(e)} />
+              <IconButton
+                icon="SquarePen"
+                onClick={(e) => handleClick(e)}
+                size={16}
+              />
             }
           >
             <MonthEditForm data={data} onClose={() => setOpen(false)} />
@@ -180,7 +174,7 @@ export const MonthScheduleItem = ({
             actionLabel={dialogText.defaultDelete.actionLabel}
             onClick={onDelete}
           >
-            <IconButton icon="Trash2" />
+            <IconButton icon="Trash2" size={16} />
           </CheckDialog>
         </div>
       )}

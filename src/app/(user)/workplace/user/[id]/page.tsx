@@ -123,7 +123,7 @@ const Page = () => {
         )}
       </div>
 
-      <div className="h-full w-full relative rounded-[4px] overflow-hidden">
+      <div className="h-full w-full relative rounded-[4px] ">
         {/* <Image
           fill
           src="/space_ai.png"
@@ -133,8 +133,8 @@ const Page = () => {
           priority // 우선 로딩
         /> */}
         {/* 애니메이션 그라데이션 배경 */}
-        <Ani />
-        <Glass />
+        {/* <Ani /> */}
+        {/* <Glass /> */}
       </div>
     </div>
   );
@@ -143,59 +143,18 @@ const Page = () => {
 export default Page;
 
 const Ani = () => {
-  return (
-    <div className="absolute inset-0 bg-gradient-to-br from-blue-900 via-indigo-900 to-slate-900">
-      {/* 움직이는 그라데이션 오브 1 */}
-      <div
-        className="absolute w-96 h-96 rounded-full blur-3xl opacity-50 animate-pulse"
-        style={{
-          background:
-            "radial-gradient(circle, rgba(59, 130, 246, 0.6) 0%, rgba(37, 99, 235, 0.3) 50%, transparent 70%)",
-          top: "10%",
-          left: "10%",
-          animationDuration: "8s",
-        }}
-      />
-
-      {/* 움직이는 그라데이션 오브 2 */}
-      <div
-        className="absolute w-96 h-96 rounded-full blur-3xl opacity-40 animate-pulse"
-        style={{
-          background:
-            "radial-gradient(circle, rgba(99, 102, 241, 0.5) 0%, rgba(67, 56, 202, 0.3) 50%, transparent 70%)",
-          bottom: "20%",
-          right: "15%",
-          animationDuration: "10s",
-          animationDelay: "2s",
-        }}
-      />
-
-      {/* 움직이는 그라데이션 오브 3 */}
-      <div
-        className="absolute w-80 h-80 rounded-full blur-3xl opacity-30 animate-pulse"
-        style={{
-          background:
-            "radial-gradient(circle, rgba(30, 64, 175, 0.6) 0%, rgba(29, 78, 216, 0.3) 50%, transparent 70%)",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-          animationDuration: "12s",
-          animationDelay: "4s",
-        }}
-      />
-    </div>
-  );
+  return <div className="absolute inset-0 bg-gradient-to-br"></div>;
 };
 const Glass = () => {
   return (
-    <div className="absolute inset-0 p-6">
+    <div className="absolute inset-0 ">
       <div className="grid grid-cols-4 grid-rows-3 gap-4 h-full">
         {/* 큰 카드 - 2x2 */}
-        <div className="col-span-2 row-span-2 backdrop-blur-xl bg-white/10 border border-white/20 rounded-2xl shadow-2xl group hover:bg-white/15 transition-all duration-300">
+        <div className="col-span-2 row-span-2 backdrop-blur-xl bg-white/10 border border-white/20 rounded-2xl shadow-2xl group hover:bg-black/7 transition-all duration-300">
           <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-transparent to-transparent opacity-50 rounded-2xl" />
           <div className="relative z-10 p-6 h-full flex flex-col justify-end">
-            <h3 className="text-white text-3xl font-bold mb-2">Featured</h3>
-            <p className="text-white/70">추후 업데이트 예정!</p>
+            <h3 className=" text-3xl font-bold mb-2">Featured</h3>
+            <p className="text-black/70">추후 업데이트 예정!</p>
           </div>
         </div>
 
@@ -203,8 +162,8 @@ const Glass = () => {
         <div className="col-span-1 row-span-2 backdrop-blur-lg bg-white/10 border border-white/20 rounded-2xl shadow-2xl group hover:bg-white/15 transition-all duration-300">
           <div className="absolute inset-0 bg-gradient-to-br from-white/15 via-transparent to-transparent opacity-50 rounded-2xl" />
           <div className="relative z-10 p-4 h-full flex flex-col justify-center">
-            <h4 className="text-white text-xl font-semibold mb-2">Stats</h4>
-            <p className="text-white/60 text-sm">Vertical card</p>
+            <h4 className=" text-xl font-semibold mb-2">Stats</h4>
+            <p className="text-black/60 text-sm">Vertical card</p>
           </div>
         </div>
 
@@ -212,7 +171,7 @@ const Glass = () => {
         <div className="col-span-1 row-span-1 backdrop-blur-lg bg-white/10 border border-white/20 rounded-xl shadow-2xl group hover:bg-white/15 transition-all duration-300">
           <div className="absolute inset-0 bg-gradient-to-br from-white/15 via-transparent to-transparent opacity-50 rounded-xl" />
           <div className="relative z-10 p-4 h-full flex items-center justify-center">
-            <p className="text-white text-sm font-medium">Quick</p>
+            <p className=" text-sm font-medium">Quick</p>
           </div>
         </div>
 
@@ -220,9 +179,7 @@ const Glass = () => {
         <div className="col-span-2 row-span-1 backdrop-blur-lg bg-white/10 border border-white/20 rounded-2xl shadow-2xl group hover:bg-white/15 transition-all duration-300">
           <div className="absolute inset-0 bg-gradient-to-br from-white/15 via-transparent to-transparent opacity-50 rounded-2xl" />
           <div className="relative z-10 p-4 h-full flex items-center">
-            <h4 className="text-white text-lg font-semibold">
-              Horizontal Banner
-            </h4>
+            <h4 className=" text-lg font-semibold">Horizontal Banner</h4>
           </div>
         </div>
 
@@ -230,14 +187,14 @@ const Glass = () => {
         <div className="col-span-1 row-span-1 backdrop-blur-lg bg-white/10 border border-white/20 rounded-xl shadow-2xl group hover:bg-white/15 transition-all duration-300">
           <div className="absolute inset-0 bg-gradient-to-br from-white/15 via-transparent to-transparent opacity-50 rounded-xl" />
           <div className="relative z-10 p-4 h-full flex items-center justify-center">
-            <p className="text-white text-sm font-medium">Area 1</p>
+            <p className=" text-sm font-medium">Area 1</p>
           </div>
         </div>
 
         <div className="col-span-1 row-span-1 backdrop-blur-lg bg-white/10 border border-white/20 rounded-xl shadow-2xl group hover:bg-white/15 transition-all duration-300">
           <div className="absolute inset-0 bg-gradient-to-br from-white/15 via-transparent to-transparent opacity-50 rounded-xl" />
           <div className="relative z-10 p-4 h-full flex items-center justify-center">
-            <p className="text-white text-sm font-medium">Area 2</p>
+            <p className=" text-sm font-medium">Area 2</p>
           </div>
         </div>
       </div>

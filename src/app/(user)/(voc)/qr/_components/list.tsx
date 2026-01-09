@@ -77,7 +77,7 @@ const QrItemBox = ({ data }: { data: QRListItem }) => {
         <span className="text-xs text-blue-500">{data.serviceTypeName}</span>
         <div className="flex gap-2 items-center">
           <BaseDialog
-            triggerChildren={<IconButton icon="SquarePen" />}
+            triggerChildren={<IconButton icon="SquarePen" size={16} />}
             title={`${data.name} QR 수정`}
             open={open}
             setOpen={setOpen}
@@ -90,7 +90,7 @@ const QrItemBox = ({ data }: { data: QRListItem }) => {
             actionLabel={dialogText.defaultDelete.actionLabel}
             onClick={handleDelete}
           >
-            <IconButton icon="Trash2" />
+            <IconButton icon="Trash2" size={16} />
           </CheckDialog>
         </div>
       </div>

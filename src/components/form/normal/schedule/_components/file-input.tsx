@@ -278,14 +278,16 @@ export const ImageFileItem = ({
           }}
         />
       </div>
-      <IconButton
-        icon="X"
-        bgClassName="absolute right-0 top-0 hover:bg-red-50"
-        className="text-red-500"
-        onClick={() => {
-          onDelete(data);
-        }}
-      />
+      <div className="absolute right-0 top-0">
+        <IconButton
+          icon="X"
+          bgClassName=" hover:bg-red-50"
+          className="text-red-500"
+          onClick={() => {
+            onDelete(data);
+          }}
+        />
+      </div>
     </CustomCard>
   );
 };

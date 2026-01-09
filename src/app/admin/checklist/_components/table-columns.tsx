@@ -32,7 +32,7 @@ export const checklistCol: ColumnDef<ChecklistTableItem>[] = [
   },
   {
     accessorKey: "createDt",
-    header: "업무 유형",
+    header: "생성 일자",
     cell: ({ row }) => {
       const value = row.original.createDt;
       return (
