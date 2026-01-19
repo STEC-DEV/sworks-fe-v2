@@ -32,7 +32,7 @@ const formSchema = z.object({
         // 값이 있으면 이메일 형식 검증
         return z.string().email().safeParse(val).success;
       },
-      { message: "이메일 형식을 확인해주세요." }
+      { message: "이메일 형식을 확인해주세요." },
     )
     .optional(),
 });
@@ -83,7 +83,16 @@ const AdminAddForm = ({ onNext, onPrev }: AdminAddFormProps) => {
           control={form.control}
           name="sabun"
           render={({ field }) => (
-            <TextFormItem label="사번" placeholder="사번" required {...field} />
+            <TextFormItem
+              label="사번"
+              placeholder="사번"
+              required
+              {...field}
+              onChange={(e) => {
+                const filtered = e.target.value.replace(/[^0-9]/g, "");
+                field.onChange(filtered);
+              }}
+            />
           )}
         />
 
@@ -100,9 +109,13 @@ const AdminAddForm = ({ onNext, onPrev }: AdminAddFormProps) => {
           render={({ field }) => (
             <TextFormItem
               label="전화번호"
-              placeholder="전화번호"
+              placeholder="전화번호 ( - 제외)"
               required
               {...field}
+              onChange={(e) => {
+                const filtered = e.target.value.replace(/[^0-9]/g, "");
+                field.onChange(filtered);
+              }}
             />
           )}
         />

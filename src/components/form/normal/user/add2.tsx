@@ -51,7 +51,7 @@ const UserAddForm = ({ onNext, onPrev }: UserAddFormProps) => {
     {
       message: "담당 업무를 선택해주세요.",
       path: ["userServiceTypeSeq"], // 에러 표시 위치
-    }
+    },
   );
 
   const form = useForm<UserAddFormType>({
@@ -90,7 +90,16 @@ const UserAddForm = ({ onNext, onPrev }: UserAddFormProps) => {
           control={form.control}
           name="sabun"
           render={({ field }) => (
-            <TextFormItem label="사번" placeholder="사번" required {...field} />
+            <TextFormItem
+              label="사번"
+              placeholder="사번"
+              required
+              {...field}
+              onChange={(e) => {
+                const filtered = e.target.value.replace(/[^0-9]/g, "");
+                field.onChange(filtered);
+              }}
+            />
           )}
         />
         {createUser.codeSeq !== 8 ? (
@@ -108,7 +117,7 @@ const UserAddForm = ({ onNext, onPrev }: UserAddFormProps) => {
                   value={field.value.map((v) => v.toString())}
                   onValueChange={handleValue}
                   selectItem={convertSelectOptionType(
-                    createUserClassification?.serviceTypes ?? []
+                    createUserClassification?.serviceTypes ?? [],
                   )}
                   required
                 />
@@ -124,7 +133,7 @@ const UserAddForm = ({ onNext, onPrev }: UserAddFormProps) => {
                     field.onChange([parseInt(value)]); // 배열로 감싸고 숫자로 변환
                   }}
                   selectItem={convertSelectOptionType(
-                    createUserClassification?.serviceTypes ?? []
+                    createUserClassification?.serviceTypes ?? [],
                   )}
                   required
                 />
@@ -139,9 +148,14 @@ const UserAddForm = ({ onNext, onPrev }: UserAddFormProps) => {
           render={({ field }) => (
             <TextFormItem
               label="전화번호"
+              type="tel"
               placeholder="전화번호 ( - 제외)"
               required
               {...field}
+              onChange={(e) => {
+                const filtered = e.target.value.replace(/[^0-9]/g, "");
+                field.onChange(filtered);
+              }}
             />
           )}
         />
