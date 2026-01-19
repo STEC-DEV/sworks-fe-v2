@@ -1,3 +1,4 @@
+"use client";
 import { useBasicStore } from "@/store/basic-store";
 import React, { useEffect } from "react";
 

@@ -206,7 +206,7 @@ const NoticeAddForm = () => {
           )}
         />
         <div className="flex justify-end">
-          <Button label="등록" size={"sm"} />
+          <Button label="생성" size={"sm"} />
         </div>
       </form>
     </Form>

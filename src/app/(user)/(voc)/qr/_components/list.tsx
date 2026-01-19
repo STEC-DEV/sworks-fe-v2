@@ -56,13 +56,13 @@ const QrItemBox = ({ data }: { data: QRListItem }) => {
   };
 
   const handleQRDownload = async () => {
-    const baseUrl = "http://123.2.156.229:3000/complain/add";
+    const baseUrl = `${window.location.origin}/complain/add`;
     const params = new URLSearchParams({
       vocSeq: data.vocSeq.toString(),
     });
     await downloadQRCodeSVG(
       `${baseUrl}?${params.toString()}`,
-      `${data.name}_QR`
+      `${data.name}_QR`,
     );
   };
 

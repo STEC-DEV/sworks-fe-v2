@@ -15,12 +15,12 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { useDecodeParam } from "@/hooks/params";
 import { useTaskDetailStore } from "@/store/normal/task/detail-task";
 
-import { format } from "date-fns";
-import React, { useEffect, useState } from "react";
-import { WorkerColumns } from "./_components/worker-columns";
-import { useUIStore } from "@/store/common/ui-store";
 import BaseSkeleton from "@/components/common/base-skeleton";
 import ChkEditForm from "@/components/form/normal/task/chk-edit";
+import { useUIStore } from "@/store/common/ui-store";
+import { format } from "date-fns";
+import { useEffect, useState } from "react";
+import { WorkerColumns } from "./_components/worker-columns";
 
 const Page = () => {
   const { taskDetail, getTaskDetail, patchUpdateTaskDetail, loadingKeys } =
@@ -113,9 +113,9 @@ const Page = () => {
         </div>
         <div className="flex flex-col gap-6">
           <div className="flex justify-between items-center pb-4 border-b-2 border-border">
-            <AppTitle title={"체크리스트"} />
+            <AppTitle title={"평가항목"} />
             <BaseDialog
-              title="체크리스트 수정"
+              title="평가항목 수정"
               open={chkEditOpen}
               setOpen={setChkEditOpen}
               triggerChildren={<IconButton icon="SquarePen" />}
