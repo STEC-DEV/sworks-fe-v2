@@ -43,7 +43,7 @@ const Page = () => {
 
     switch (taskDetail.termType) {
       case 0:
-        value = "매일";
+        value = `${format(taskDetail.startDt, "yyyy/MM/dd")} ~`;
         break;
       case 1:
         value = format(taskDetail.startDt, "yyyy/MM/dd");
@@ -52,7 +52,7 @@ const Page = () => {
         value = taskDetail.endDt
           ? `${format(taskDetail.startDt, "yyyy/MM/dd")} ~ ${format(
               taskDetail.endDt,
-              "yyyy/MM/dd"
+              "yyyy/MM/dd",
             )}`
           : "";
         break;

@@ -14,18 +14,19 @@ export const taskCol: ColumnDef<Task>[] = [
       let value = "";
       //추후 처리
       if (row.original.termType === 0) {
-        value = "매일";
+        value = `${format(startDt, "yyyy/MM/dd")} ~`;
       } else if (row.original.termType === 1) {
         value = format(startDt, "yyyy/MM/dd");
       } else if (row.original.termType === 2 && endDt)
         value = `${format(startDt, "yyyy/MM/dd")} ~ ${format(
           endDt,
-          "yyyy/MM/dd"
+          "yyyy/MM/dd",
         )}`;
 
       return <span className="text-xs font-medium ">{value}</span>;
     },
   },
+
   {
     accessorKey: "serviceTypeName",
     header: "유형",

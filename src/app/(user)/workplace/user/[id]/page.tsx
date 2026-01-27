@@ -52,7 +52,7 @@ const Page = () => {
       <div className="flex flex-col gap-6">
         <CustomCard className="w-full xl:w-100 gap-6">
           <div className="flex gap-4 items-center px-6">
-            <div className="relative flex items-end justify-center w-20 h-20  rounded-[50px] border border-[var(--border)] bg-[var(--background)] overflow-hidden">
+            <div className="relative shrink-0 flex items-end justify-center w-20 h-20   rounded-[50px] border border-[var(--border)] bg-[var(--background)] overflow-hidden">
               {user.images ? (
                 <SingleImageBox path={user.images} />
               ) : (
@@ -65,7 +65,9 @@ const Page = () => {
             <div className="flex flex-col gap-2">
               <div className="flex items-end gap-2">
                 <span className="text-xl font-semibold">{user.userName}</span>
-                <span className="text-sm text-blue-500">{user.role}</span>
+                <span className="text-sm text-blue-500 whitespace-nowrap">
+                  {user.role}
+                </span>
               </div>
               <span className="text-sm text-[var(--description-light)]">
                 {user.sabun}

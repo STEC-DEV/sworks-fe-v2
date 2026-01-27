@@ -230,7 +230,7 @@ const SideBar = ({ loginMode }: SideBarProps) => {
               item.title === "장비" ||
               item.title === "민원" ||
               item.title === "위치 QR"
-            )
+            ),
         );
 
         // 그룹 제목을 제외한 실제 메뉴가 있는지 확인
@@ -248,7 +248,7 @@ const SideBar = ({ loginMode }: SideBarProps) => {
               item.title === "품질" ||
               item.title === "민원" ||
               item.title === "위치 QR"
-            )
+            ),
         );
 
         const hasActualMenu = items.some((item) => !item.isGroup);
@@ -295,7 +295,7 @@ const SideBar = ({ loginMode }: SideBarProps) => {
                   <MenuItem key={j} item={item} />
                 ))}
               </div>
-            )
+            ),
           )}
         </div>
       </ScrollArea>
@@ -705,7 +705,7 @@ const Profile = ({
       <div className="flex flex-col gap-1 ">
         <div className="flex gap-1 items-end ">
           <span className="text-sm font-medium">{name}</span>
-          <span className="text-xs text-[var(--description-dark)] font-medium">
+          <span className="shrink-0 text-xs text-[var(--description-dark)] font-medium">
             {job}
           </span>
         </div>

@@ -38,7 +38,10 @@ const Page = () => {
         ))}
       </div>
     ) : (
-      <EmptyBox />
+      // <EmptyBox />
+      <span className="text-md text-[var(--description-light)]">
+        오늘은 업무가 없습니다
+      </span>
     );
   };
 
