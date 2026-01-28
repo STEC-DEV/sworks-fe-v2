@@ -96,14 +96,14 @@ const Page = () => {
               >
                 <TaskInfoEditForm onSubmit={handleUpdate} />
               </BaseDialog>
-              <CheckDialog
+              {/* <CheckDialog
                 title={dialogText.defaultDelete.title}
                 description={dialogText.defaultDelete.description}
                 actionLabel={dialogText.defaultDelete.actionLabel}
                 onClick={() => {}}
               >
                 <IconButton icon={"Trash2"} />
-              </CheckDialog>
+              </CheckDialog> */}
             </div>
           </div>
           <div className="flex flex-col gap-4">

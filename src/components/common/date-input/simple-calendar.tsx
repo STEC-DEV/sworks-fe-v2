@@ -1,8 +1,17 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
 // import { useCalendar } from "./useCalendar";
 // import dayjs from "dayjs";
-import { useCallback, useEffect } from "react";
-import { addMonths, format, isSameMonth, subMonths } from "date-fns";
+import { useCallback, useEffect, useState } from "react";
+import {
+  addMonths,
+  addYears,
+  format,
+  getYear,
+  isSameMonth,
+  setYear,
+  subMonths,
+  subYears,
+} from "date-fns";
 import { useCalendar } from "./useCalendarV2";
 
 interface SimpleCalendarProps {
@@ -11,6 +20,7 @@ interface SimpleCalendarProps {
 }
 
 const SimpleCalendar = ({ defaultValue, onSelect }: SimpleCalendarProps) => {
+  const [viewMode, setViewMode] = useState<"day" | "year">("day");
   const { weeks, curDate, focusDate, setCurDate, onFocusDate } =
     useCalendar(defaultValue);
 
@@ -32,24 +42,46 @@ const SimpleCalendar = ({ defaultValue, onSelect }: SimpleCalendarProps) => {
     setCurDate((prev) => addMonths(prev, 1));
   }, [setCurDate]);
 
+  const handlePrevYear = useCallback(() => {
+    setCurDate((prev) => subYears(prev, 9));
+  }, [setCurDate]);
+
+  const handleNextYear = useCallback(() => {
+    setCurDate((prev) => addYears(prev, 9));
+  }, [setCurDate]);
+
+  const handleYearClick = (year: number) => {
+    setCurDate((prev) => setYear(prev, year));
+    setViewMode("day");
+  };
+
+  const handleViewMode = () => {
+    viewMode === "day" ? setViewMode("year") : setViewMode("day");
+  };
+
   return (
     <div className="flex flex-col gap-2 pb-2">
       <div className="flex-shrink-0">
         {/* 헤더는 고정 크기 */}
         <SimpleCalendarHeader
           date={curDate}
-          onNextMonth={handleNextMonth}
-          onPrevMonth={handlePrevMonth}
+          onNextMonth={viewMode === "day" ? handleNextMonth : handleNextYear}
+          onPrevMonth={viewMode === "day" ? handlePrevMonth : handlePrevYear}
+          onViewMode={handleViewMode}
         />
       </div>
       <div className="flex-1  px-2">
         {/* 나머지 공간, 최소높이 0 */}
-        <SimpleCalendarDay
-          weeks={weeks}
-          viewDate={curDate}
-          focusDate={focusDate}
-          onFocusDate={handleDateClick}
-        />
+        {viewMode === "day" ? (
+          <SimpleCalendarDay
+            weeks={weeks}
+            viewDate={curDate}
+            focusDate={focusDate}
+            onFocusDate={handleDateClick}
+          />
+        ) : (
+          <SimpleCalendarYear date={curDate} onYearClick={handleYearClick} />
+        )}
       </div>
     </div>
   );
@@ -62,12 +94,14 @@ interface SimpleCalendarHeaderProps {
   date: Date;
   onPrevMonth: () => void;
   onNextMonth: () => void;
+  onViewMode: () => void;
 }
 
 const SimpleCalendarHeader = ({
   date,
   onNextMonth,
   onPrevMonth,
+  onViewMode,
 }: SimpleCalendarHeaderProps) => {
   return (
     <div className="flex justify-between p-2 ">
@@ -77,10 +111,13 @@ const SimpleCalendarHeader = ({
       >
         <ChevronLeft className="w-5 h-5 text-gray-500" />
       </div>
-      <span className="flex items-center text-sm">
+      <div
+        className="flex-1 flex justify-center items-center text-sm hover:bg-[var(--background)] cursor-pointer rounded-[4px]"
+        onClick={onViewMode}
+      >
         {/* {dayjs(date).format("YYYY")}.{dayjs(date).format("MM")} */}
         {`${format(date, "yyyy")}.${format(date, "MM")}`}
-      </span>
+      </div>
       <div
         className="flex items-center justify-center p-1 hover:cursor-pointer  hover:bg-gray-200"
         onClick={onNextMonth}
@@ -175,3 +212,43 @@ const DayBox = ({
 };
 
 export default SimpleCalendar;
+
+/**
+ * 연도 선택 컴포넌트
+ */
+interface SimpleCalendarYearProps {
+  date: Date; // 현재 선택된 날짜
+  onYearClick: (year: number) => void; // 연도 클릭 시 콜백
+}
+const SimpleCalendarYear = ({ date, onYearClick }: SimpleCalendarYearProps) => {
+  const currentYear = getYear(date);
+  const yearRangeStart = currentYear - 4;
+
+  const years = Array.from({ length: 9 }, (_, i) => yearRangeStart + i);
+
+  const yearRows = [years.slice(0, 3), years.slice(3, 6), years.slice(6, 9)];
+
+  return (
+    <div className="flex flex-col gap-1 px-2" style={{ width: "224px" }}>
+      {" "}
+      {/* ✅ 전체 너비 고정 */}
+      {yearRows.map((row, rowIndex) => (
+        <div key={rowIndex} className="flex gap-1">
+          {row.map((year) => (
+            <div
+              key={year}
+              className={`flex-1 h-16 flex items-center justify-center 
+                hover:cursor-pointer hover:bg-gray-200 dark:hover:bg-[#535353]
+                text-sm rounded
+                ${year === currentYear ? "bg-blue-100 dark:bg-[#535353] font-medium" : ""}
+              `}
+              onClick={() => onYearClick(year)}
+            >
+              {year}
+            </div>
+          ))}
+        </div>
+      ))}
+    </div>
+  );
+};
