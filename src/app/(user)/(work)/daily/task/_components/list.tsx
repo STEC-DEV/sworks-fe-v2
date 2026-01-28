@@ -2,13 +2,18 @@
 import BaseSkeleton from "@/components/common/base-skeleton";
 
 import { useTaskStore } from "@/store/normal/task/task-store";
-import React from "react";
+import React, { useState } from "react";
 import { taskCol } from "./columns";
 import BaseTable from "@/components/common/base-table";
 import { useRouter } from "next/navigation";
 import { useUIStore } from "@/store/common/ui-store";
 
-const TaskList = () => {
+interface TaskListProps {
+  // selectedTasks: Task[];
+  onSelectionChange: (tasks: Task[]) => void;
+}
+
+const TaskList = ({ onSelectionChange }: TaskListProps) => {
   const router = useRouter();
   const { taskList, loadingKeys } = useTaskStore();
   const { isLoading, hasError } = useUIStore();
@@ -22,6 +27,9 @@ const TaskList = () => {
       columns={taskCol}
       data={taskList.data}
       onRowClick={(data) => router.push(`/daily/task/${data.taskSeq}`)}
+      enableRowSelection={true} // 이걸 true로 해야 선택 기능 동작
+      getRowId={(row) => row.taskSeq.toString()}
+      onSelectionChange={onSelectionChange}
     />
   );
 };

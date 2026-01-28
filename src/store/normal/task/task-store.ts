@@ -30,6 +30,8 @@ interface TaskState {
   ////현재 체크리스트 조회
   updateChkClassification: TaskChecklist[] | null;
   getChecklistClassification: (taskSeq: string) => Promise<void>;
+
+  deleteTask: (taskSeq: string[]) => Promise<void>;
 }
 
 const initialCreateTask = {
@@ -94,7 +96,7 @@ export const useTaskStore = create<TaskState>()(
             };
           searchParams.set(
             "serviceTypeSeq",
-            createTask.serviceTypeSeq.toString()
+            createTask.serviceTypeSeq.toString(),
           );
           try {
             const res: Response<TaskChecklist[]> = await api
@@ -159,8 +161,24 @@ export const useTaskStore = create<TaskState>()(
             setLoading(TASK_LOADING_KEYS.UPDATE_CHK_CLASSIFICATION, false);
           }
         },
+        deleteTask: async (taskSeq) => {
+          try {
+            const searchParams = new URLSearchParams();
+            taskSeq.map((t) => searchParams.append("delSeq", t));
+
+            const res: Response<boolean> = await api
+              .delete("siteTask/w/sign/delsitetask", {
+                searchParams: searchParams,
+              })
+              .json();
+            toast.success("삭제되었습니다.");
+          } catch (err) {
+            console.error(err);
+            toast.error("저장 실패");
+          }
+        },
       }),
-      { name: "task-store" }
-    )
-  )
+      { name: "task-store" },
+    ),
+  ),
 );

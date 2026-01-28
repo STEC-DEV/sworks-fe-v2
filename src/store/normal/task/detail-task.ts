@@ -17,6 +17,7 @@ interface TaskDetailState {
   classificationTaskWorker: ClassificationTaskWorker[] | undefined;
   getTaskUserList: (taskSeq: string) => Promise<void>;
   putUpdateTaskWorker: (workers: number[]) => Promise<void>;
+  deleteTask: (taskSeq: string[]) => Promise<void>;
 }
 
 export const useTaskDetailStore = create<TaskDetailState>()(
@@ -102,10 +103,25 @@ export const useTaskDetailStore = create<TaskDetailState>()(
             toast.error("저장 실패");
           }
         },
+        deleteTask: async (taskSeq) => {
+          try {
+            const searchParams = new URLSearchParams();
+            taskSeq.map((t) => searchParams.set("delSeq", t));
+            const res: Response<boolean> = await api
+              .delete("siteTask/w/sign/delsitetask", {
+                searchParams: searchParams,
+              })
+              .json();
+            toast.success("삭제되었습니다.");
+          } catch (err) {
+            console.error(err);
+            toast.error("저장 실패");
+          }
+        },
       }),
       {
         name: "task-detail-store",
-      }
-    )
-  )
+      },
+    ),
+  ),
 );

@@ -21,6 +21,8 @@ import { useUIStore } from "@/store/common/ui-store";
 import { format } from "date-fns";
 import { useEffect, useState } from "react";
 import { WorkerColumns } from "./_components/worker-columns";
+import CheckDialog from "@/components/common/check-dialog";
+import { dialogText } from "../../../../../../../public/text";
 
 const Page = () => {
   const { taskDetail, getTaskDetail, patchUpdateTaskDetail, loadingKeys } =
@@ -85,15 +87,24 @@ const Page = () => {
         <div className="flex flex-col gap-6">
           <div className="flex justify-between items-center pb-4 border-b-2 border-border">
             <AppTitle title={taskDetail.title} />
-
-            <BaseDialog
-              title="업무정보 수정"
-              open={infoEditOpen}
-              setOpen={setInfoEditOpen}
-              triggerChildren={<IconButton icon="SquarePen" />}
-            >
-              <TaskInfoEditForm onSubmit={handleUpdate} />
-            </BaseDialog>
+            <div className="flex items-center gap-4">
+              <BaseDialog
+                title="업무정보 수정"
+                open={infoEditOpen}
+                setOpen={setInfoEditOpen}
+                triggerChildren={<IconButton icon="SquarePen" />}
+              >
+                <TaskInfoEditForm onSubmit={handleUpdate} />
+              </BaseDialog>
+              <CheckDialog
+                title={dialogText.defaultDelete.title}
+                description={dialogText.defaultDelete.description}
+                actionLabel={dialogText.defaultDelete.actionLabel}
+                onClick={() => {}}
+              >
+                <IconButton icon={"Trash2"} />
+              </CheckDialog>
+            </div>
           </div>
           <div className="flex flex-col gap-4">
             <KeyValueItem

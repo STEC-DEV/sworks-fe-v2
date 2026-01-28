@@ -1,13 +1,37 @@
 "use client";
 import CustomCard from "@/components/common/card";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useHoverTooltip } from "@/hooks/useHoverToolTip";
 import { ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
 
 export const taskCol: ColumnDef<Task>[] = [
   {
+    id: "select",
+    header: ({ table }) => (
+      <Checkbox
+        checked={
+          table.getIsAllPageRowsSelected() ||
+          (table.getIsSomePageRowsSelected() && "indeterminate")
+        }
+        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+        aria-label="Select all"
+      />
+    ),
+    cell: ({ row }) => (
+      <Checkbox
+        checked={row.getIsSelected()}
+        onCheckedChange={(value) => row.toggleSelected(!!value)}
+        aria-label="Select row"
+        onClick={(e) => e.stopPropagation()}
+      />
+    ),
+    enableSorting: false,
+    enableHiding: false,
+  },
+  {
     accessorKey: "termType",
-    header: "구분",
+    header: "기간",
     cell: ({ row }) => {
       const startDt = row.original.startDt;
       const endDt = row.original.endDt;
@@ -59,13 +83,7 @@ export const taskCol: ColumnDef<Task>[] = [
       const users = row.original.users;
       const value = users.map((user) => user.userName);
 
-      return (
-        // <div className="relative overflow-visible">
-        //   {/* <UserList data={value} /> */}
-
-        // </div>
-        <span className="text-xs">{value.length}명</span>
-      );
+      return <span className="text-xs">{value.length}명</span>;
     },
   },
 ];

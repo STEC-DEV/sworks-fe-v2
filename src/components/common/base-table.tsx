@@ -1,3 +1,4 @@
+"use client";
 import {
   Table,
   TableBody,
@@ -13,7 +14,7 @@ import {
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import EmptyBox from "../ui/custom/empty";
 
 interface DataTableProps<TData, TValue> {
@@ -21,6 +22,10 @@ interface DataTableProps<TData, TValue> {
   data: TData[];
   onRowClick?: (row: TData) => void;
   padding?: string;
+  // 선택 기능 관련 - 옵셔널
+  enableRowSelection?: boolean;
+  onSelectionChange?: (selectedRows: TData[]) => void;
+  getRowId?: (row: TData) => string;
 }
 
 const BaseTable = <TData, TValue>({
@@ -28,13 +33,44 @@ const BaseTable = <TData, TValue>({
   data,
   padding,
   onRowClick,
+  enableRowSelection = false,
+  onSelectionChange,
+  getRowId,
 }: DataTableProps<TData, TValue>) => {
+  const [rowSelection, setRowSelection] = useState<Record<string, boolean>>({});
+
   const table = useReactTable({
     data,
     columns,
-
     getCoreRowModel: getCoreRowModel(),
+    // enableRowSelection이 true일 때만 선택 기능 추가
+    ...(enableRowSelection && {
+      state: {
+        rowSelection,
+      },
+      enableRowSelection: true,
+      onRowSelectionChange: setRowSelection,
+      getRowId: getRowId,
+    }),
   });
+
+  // const table = useReactTable({
+  //   data,
+  //   columns,
+
+  //   getCoreRowModel: getCoreRowModel(),
+  // });
+
+  // 선택된 rows 변경 시 콜백 호출
+  useEffect(() => {
+    if (enableRowSelection && onSelectionChange) {
+      const selectedRows = table
+        .getSelectedRowModel()
+        .rows.map((row) => row.original);
+      onSelectionChange(selectedRows);
+    }
+  }, [rowSelection, enableRowSelection, onSelectionChange, table]);
+
   return (
     <div className=" rounded-md ">
       <Table>
@@ -47,7 +83,7 @@ const BaseTable = <TData, TValue>({
                     key={header.id}
                     className={cn(
                       "font-medium text-[var(--description-dark)] text-xs  py-3",
-                      padding
+                      padding,
                     )}
                     style={{ width: header.getSize() }}
                   >
@@ -55,7 +91,7 @@ const BaseTable = <TData, TValue>({
                       ? null
                       : flexRender(
                           header.column.columnDef.header,
-                          header.getContext()
+                          header.getContext(),
                         )}
                   </TableHead>
                 );
@@ -80,7 +116,7 @@ const BaseTable = <TData, TValue>({
                   data-state={row.getIsSelected() && "selected"}
                   className={cn(
                     "cursor-pointer",
-                    !hasCustomBg && "hover:bg-blue-50" // backgroundColor가 없을 때만 hover
+                    !hasCustomBg && "hover:bg-blue-50", // backgroundColor가 없을 때만 hover
                   )}
                   style={hasCustomBg ? rowStyle : undefined}
                   onClick={() => onRowClick?.(row.original)}
@@ -89,7 +125,7 @@ const BaseTable = <TData, TValue>({
                     <TableCell key={cell.id} className={cn("py-3", padding)}>
                       {flexRender(
                         cell.column.columnDef.cell,
-                        cell.getContext()
+                        cell.getContext(),
                       )}
                     </TableCell>
                   ))}
@@ -104,7 +140,14 @@ const BaseTable = <TData, TValue>({
             </TableRow>
           )}
         </TableBody>
-        {/* <TableBody>
+      </Table>
+    </div>
+  );
+};
+
+export default BaseTable;
+{
+  /* <TableBody>
           {table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map((row) => (
               <TableRow
@@ -127,10 +170,5 @@ const BaseTable = <TData, TValue>({
               </TableCell>
             </TableRow>
           )}
-        </TableBody> */}
-      </Table>
-    </div>
-  );
-};
-
-export default BaseTable;
+        </TableBody> */
+}

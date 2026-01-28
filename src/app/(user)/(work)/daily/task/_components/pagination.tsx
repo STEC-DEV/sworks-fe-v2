@@ -1,12 +1,18 @@
 import BaseSkeleton from "@/components/common/base-skeleton";
+import CheckDialog from "@/components/common/check-dialog";
 import IconButton from "@/components/common/icon-button";
 import CommonPagination from "@/components/ui/custom/pagination/common-pagination";
 import { useUIStore } from "@/store/common/ui-store";
 import { useTaskStore } from "@/store/normal/task/task-store";
 import Link from "next/link";
 import React from "react";
+import { dialogText } from "../../../../../../../public/text";
 
-const TaskPagination = () => {
+interface TaskPaginationProps {
+  onDelete: () => void;
+}
+
+const TaskPagination = ({ onDelete }: TaskPaginationProps) => {
   const { taskList, loadingKeys } = useTaskStore();
   const { isLoading, hasError } = useUIStore();
 
@@ -16,9 +22,17 @@ const TaskPagination = () => {
 
   return (
     <CommonPagination totalCount={taskList.meta.totalCount}>
-      <Link href={"/daily/task/add"}>
+      <Link href={"/daily/task/add"} className="flex items-center">
         <IconButton icon="Plus" />
       </Link>
+      <CheckDialog
+        title={dialogText.defaultDelete.title}
+        description={dialogText.defaultDelete.description}
+        actionLabel={dialogText.defaultDelete.actionLabel}
+        onClick={onDelete}
+      >
+        <IconButton icon="Trash2" />
+      </CheckDialog>
     </CommonPagination>
   );
 };
