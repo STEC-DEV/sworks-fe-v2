@@ -52,7 +52,7 @@ const UserInput = ({ value, onChange }: UserInputProps) => {
 
     // value에 해당하는 worker들로 selected 설정
     const selectedWorkers = reqWorker.filter((worker) =>
-      value.includes(worker.userSeq)
+      value.includes(worker.userSeq),
     );
     setSelected(selectedWorkers);
   }, [value, reqWorker]);
@@ -129,33 +129,35 @@ const UserInput = ({ value, onChange }: UserInputProps) => {
             />
           </div>
 
-          <ScrollArea>
-            <div className="flex flex-col gap-4 px-6">
-              {/* 🔄 수정: reqWorker → filteredWorkers로 변경 */}
-              {filteredWorkers && filteredWorkers.length > 0 ? (
-                filteredWorkers.map((v, i) => (
-                  <CustomCard
-                    className={`flex-row justify-between ${
-                      curSelect.find((s) => s.userSeq === v.userSeq)
-                        ? "bg-blue-50 border-blue-500"
-                        : ""
-                    }`}
-                    variant={"list"}
-                    onClick={() => handleSelect(v)}
-                    key={i}
-                  >
-                    <span className="text-sm">{v.userName}</span>
-                    <span className="text-sm text-blue-500">
-                      {v.serviceTypeName}
-                    </span>
-                  </CustomCard>
-                ))
-              ) : (
-                // ✨ 추가: 검색 결과 없을 때 메시지
-                <div className="flex items-center justify-center py-8 text-gray-400">
-                  검색 결과가 없습니다.
-                </div>
-              )}
+          <ScrollArea className="flex-1  overflow-hidden ">
+            <div className="px-6 pb-1 ">
+              <div className="flex flex-col gap-4">
+                {/* 🔄 수정: reqWorker → filteredWorkers로 변경 */}
+                {filteredWorkers && filteredWorkers.length > 0 ? (
+                  filteredWorkers.map((v, i) => (
+                    <CustomCard
+                      className={`flex-row justify-between ${
+                        curSelect.find((s) => s.userSeq === v.userSeq)
+                          ? "bg-blue-50 border-blue-500"
+                          : ""
+                      }`}
+                      variant={"list"}
+                      onClick={() => handleSelect(v)}
+                      key={i}
+                    >
+                      <span className="text-sm">{v.userName}</span>
+                      <span className="text-sm text-blue-500">
+                        {v.serviceTypeName}
+                      </span>
+                    </CustomCard>
+                  ))
+                ) : (
+                  // ✨ 추가: 검색 결과 없을 때 메시지
+                  <div className="flex items-center justify-center py-8 text-gray-400">
+                    검색 결과가 없습니다.
+                  </div>
+                )}
+              </div>
             </div>
           </ScrollArea>
           <div className="px-6">
