@@ -6,6 +6,13 @@ const nextConfig: NextConfig = {
   reactStrictMode: false,
   images: {
     remotePatterns: [
+      // 프로덕션 도메인 (HTTPS)
+      {
+        protocol: "https",
+        hostname: "s-agent.co.kr",
+        pathname: "/Images/**",
+      },
+      // 개발 환경용 (필요시 유지)
       {
         protocol: "http",
         hostname: "123.2.156.148",
