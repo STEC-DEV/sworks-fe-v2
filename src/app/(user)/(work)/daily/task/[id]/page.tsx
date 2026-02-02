@@ -23,6 +23,7 @@ import { useEffect, useState } from "react";
 import { WorkerColumns } from "./_components/worker-columns";
 import CheckDialog from "@/components/common/check-dialog";
 import { dialogText } from "../../../../../../../public/text";
+import PrevLayout from "@/components/layout/prev-layout";
 
 const Page = () => {
   const { taskDetail, getTaskDetail, patchUpdateTaskDetail, loadingKeys } =
@@ -82,21 +83,22 @@ const Page = () => {
     return <TaskDetailSkeleton />;
   if (hasError(loadingKeys.DETAIL)) return <div>에러 발생</div>;
   return (
-    <div className="flex flex-col gap-12 xl:flex-row xl:gap-12 ">
-      <div className="flex-1  flex flex-col gap-12">
-        <div className="flex flex-col gap-6">
-          <div className="flex justify-between items-center pb-4 border-b-2 border-border">
-            <AppTitle title={taskDetail.title} />
-            <div className="flex items-center gap-4">
-              <BaseDialog
-                title="업무정보 수정"
-                open={infoEditOpen}
-                setOpen={setInfoEditOpen}
-                triggerChildren={<IconButton icon="SquarePen" />}
-              >
-                <TaskInfoEditForm onSubmit={handleUpdate} />
-              </BaseDialog>
-              {/* <CheckDialog
+    <PrevLayout>
+      <div className="w-full flex flex-col gap-12 xl:flex-row xl:gap-12 ">
+        <div className="flex-1  flex flex-col gap-12">
+          <div className="flex flex-col gap-6">
+            <div className="flex justify-between items-center pb-4 border-b-2 border-border">
+              <AppTitle title={taskDetail.title} />
+              <div className="flex items-center gap-4">
+                <BaseDialog
+                  title="업무정보 수정"
+                  open={infoEditOpen}
+                  setOpen={setInfoEditOpen}
+                  triggerChildren={<IconButton icon="SquarePen" />}
+                >
+                  <TaskInfoEditForm onSubmit={handleUpdate} />
+                </BaseDialog>
+                {/* <CheckDialog
                 title={dialogText.defaultDelete.title}
                 description={dialogText.defaultDelete.description}
                 actionLabel={dialogText.defaultDelete.actionLabel}
@@ -104,62 +106,63 @@ const Page = () => {
               >
                 <IconButton icon={"Trash2"} />
               </CheckDialog> */}
+              </div>
+            </div>
+            <div className="flex flex-col gap-4">
+              <KeyValueItem
+                label="업무유형"
+                labelStyle="text-sm"
+                value={taskDetail?.serviceTypeName}
+                valueStyle="text-blue-500 text-sm font-normal"
+              />
+              <KeyValueItem
+                label="반복횟수"
+                value={`${taskDetail?.repeats.toString()}회`}
+                labelStyle="text-sm"
+                valueStyle="text-sm font-normal"
+              />
+              {duration()}
             </div>
           </div>
-          <div className="flex flex-col gap-4">
-            <KeyValueItem
-              label="업무유형"
-              labelStyle="text-sm"
-              value={taskDetail?.serviceTypeName}
-              valueStyle="text-blue-500 text-sm font-normal"
-            />
-            <KeyValueItem
-              label="반복횟수"
-              value={`${taskDetail?.repeats.toString()}회`}
-              labelStyle="text-sm"
-              valueStyle="text-sm font-normal"
-            />
-            {duration()}
+          <div className="flex flex-col gap-6">
+            <div className="flex justify-between items-center pb-4 border-b-2 border-border">
+              <AppTitle title={"평가항목"} />
+              <BaseDialog
+                title="평가항목 수정"
+                open={chkEditOpen}
+                setOpen={setChkEditOpen}
+                triggerChildren={<IconButton icon="SquarePen" />}
+              >
+                <ChkEditForm onSubmit={handleUpdate} />
+              </BaseDialog>
+            </div>
+            <div className="flex flex-col gap-4">
+              {taskDetail.mains.map((c, i) => (
+                <ChecklistAccordion key={i} data={c} />
+              ))}
+            </div>
           </div>
         </div>
-        <div className="flex flex-col gap-6">
+
+        <div className="flex-1 flex flex-col gap-6">
           <div className="flex justify-between items-center pb-4 border-b-2 border-border">
-            <AppTitle title={"평가항목"} />
+            <AppTitle title={"근무자"} />
             <BaseDialog
-              title="평가항목 수정"
-              open={chkEditOpen}
-              setOpen={setChkEditOpen}
-              triggerChildren={<IconButton icon="SquarePen" />}
+              triggerChildren={<IconButton icon={"SquarePen"} size={16} />}
+              title="근무자 수정"
+              open={workerEditOpen}
+              setOpen={setWorkerEditOpen}
             >
-              <ChkEditForm onSubmit={handleUpdate} />
+              <WorkerEditContents
+                serviceType={taskDetail.serviceTypeSeq}
+                onClose={() => setWorkerEditOpen(false)}
+              />
             </BaseDialog>
           </div>
-          <div className="flex flex-col gap-4">
-            {taskDetail.mains.map((c, i) => (
-              <ChecklistAccordion key={i} data={c} />
-            ))}
-          </div>
+          <BaseTable columns={WorkerColumns} data={taskDetail.users} />
         </div>
       </div>
-
-      <div className="flex-1 flex flex-col gap-6">
-        <div className="flex justify-between items-center pb-4 border-b-2 border-border">
-          <AppTitle title={"근무자"} />
-          <BaseDialog
-            triggerChildren={<IconButton icon={"SquarePen"} size={16} />}
-            title="근무자 수정"
-            open={workerEditOpen}
-            setOpen={setWorkerEditOpen}
-          >
-            <WorkerEditContents
-              serviceType={taskDetail.serviceTypeSeq}
-              onClose={() => setWorkerEditOpen(false)}
-            />
-          </BaseDialog>
-        </div>
-        <BaseTable columns={WorkerColumns} data={taskDetail.users} />
-      </div>
-    </div>
+    </PrevLayout>
   );
 };
 

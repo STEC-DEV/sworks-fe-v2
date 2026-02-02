@@ -4,6 +4,7 @@ import BaseSkeleton from "@/components/common/base-skeleton";
 import IconButton from "@/components/common/icon-button";
 import AppTitle from "@/components/common/label/title";
 import HistoryEdit from "@/components/form/normal/equipment/history-edit";
+import PrevLayout from "@/components/layout/prev-layout";
 import BaseDialog from "@/components/ui/custom/base-dialog";
 import { KeyValueItem } from "@/components/ui/custom/key-value";
 import { useDecodeParam } from "@/hooks/params";
@@ -69,33 +70,26 @@ const Page = () => {
   };
 
   return (
-    <div className="flex gap-2 xl:w-150 ">
-      {/* <div>
-        <IconButton
-          className="stroke-1"
-          icon="ChevronLeft"
-          size={36}
-          onClick={() => router.replace(`/equipment/${id}`)}
-        />
-      </div> */}
-
-      <div className="flex-1 base-flex-col gap-6">
-        <div className="flex justify-between pb-4 border-b-2 border-border">
-          <AppTitle title="관리이력 상세" />
-          {canWorkerEdit && (
-            <BaseDialog
-              title="수정"
-              triggerChildren={<IconButton icon="SquarePen" />}
-              open={open}
-              setOpen={setOpen}
-            >
-              <HistoryEdit setOpen={setOpen} />
-            </BaseDialog>
-          )}
+    <PrevLayout>
+      <div className="flex gap-2 xl:w-150 ">
+        <div className="flex-1 base-flex-col gap-6">
+          <div className="flex justify-between pb-4 border-b-2 border-border">
+            <AppTitle title="관리이력 상세" />
+            {canWorkerEdit && (
+              <BaseDialog
+                title="수정"
+                triggerChildren={<IconButton icon="SquarePen" />}
+                open={open}
+                setOpen={setOpen}
+              >
+                <HistoryEdit setOpen={setOpen} />
+              </BaseDialog>
+            )}
+          </div>
+          {getData()}
         </div>
-        {getData()}
       </div>
-    </div>
+    </PrevLayout>
   );
 };
 

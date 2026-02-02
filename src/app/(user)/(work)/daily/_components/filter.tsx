@@ -8,24 +8,24 @@ import {
   convertSelectOptionType,
 } from "@/utils/convert";
 import { ReceiptTextIcon, RotateCcwIcon } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
+const EMPTY_FILTERS: FilterConfig[] = [];
 
-const TaskFilter = () => {
+const TaskFilter = ({ viewMode }: { viewMode: "TASK" | "WORKER" }) => {
   const { basicCode } = useBasicStore();
-  const [filterConfig, setFilterConfig] = useState<FilterConfig[]>([]);
 
-  useEffect(() => {
-    if (!basicCode || !basicCode.contractCodes) return;
+  const filterConfig = useMemo<FilterConfig[]>(() => {
+    if (!basicCode || !basicCode.contractCodes) return EMPTY_FILTERS;
+
     const data = convertSelectOptionType(basicCode.contractCodes);
     const convertData = convertKeyValueArrayToRecord(data);
 
-    setFilterConfig((prev) => [
-      ...prev,
+    return [
       {
         key: "serviceTypeSeq",
         placeholder: "유형",
         icon: ReceiptTextIcon,
-        data: convertData, // 중괄호 제거
+        data: convertData,
       },
       {
         key: "completeYn",
@@ -34,16 +34,18 @@ const TaskFilter = () => {
         data: {
           미완료: 0,
           완료: 1,
-        }, // 중괄호 제거
+        },
       },
-    ]);
-  }, [basicCode]);
+    ];
+  }, [basicCode?.contractCodes]);
 
+  // 항상 동일한 구조 반환
   return (
-    <div>
-      <CommonFilter filters={filterConfig} />
+    <div key={"daily-filter"}>
+      <CommonFilter
+        filters={viewMode === "TASK" ? filterConfig : EMPTY_FILTERS}
+      />
     </div>
   );
 };
-
 export default TaskFilter;

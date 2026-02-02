@@ -2,6 +2,7 @@
 import BaseSkeleton from "@/components/common/base-skeleton";
 import AppTitle from "@/components/common/label/title";
 import ConstructionEditForm from "@/components/form/normal/construction/edit";
+import PrevLayout from "@/components/layout/prev-layout";
 import { useBuildingStore } from "@/store/normal/building/building";
 import { useRouter } from "next/navigation";
 import React, { useEffect } from "react";
@@ -20,14 +21,16 @@ const Page = () => {
   };
 
   return (
-    <div className="xl:w-150 flex flex-col gap-6">
-      <AppTitle title="건축물 정보 수정" isBorder />
-      {construction ? (
-        <ConstructionEditForm data={construction} onSubmit={handleSubmit} />
-      ) : (
-        <BaseSkeleton />
-      )}
-    </div>
+    <PrevLayout>
+      <div className="xl:w-150 flex flex-col gap-6">
+        <AppTitle title="건축물 정보 수정" isBorder />
+        {construction ? (
+          <ConstructionEditForm data={construction} onSubmit={handleSubmit} />
+        ) : (
+          <BaseSkeleton />
+        )}
+      </div>
+    </PrevLayout>
   );
 };
 

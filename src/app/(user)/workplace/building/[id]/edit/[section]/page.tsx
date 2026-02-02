@@ -3,6 +3,7 @@ import AppTitle from "@/components/common/label/title";
 import BuildingEditForm from "@/components/form/normal/building/edit1";
 import FacilityEditForm from "@/components/form/normal/building/edit2";
 import FireEditForm from "@/components/form/normal/building/edit3";
+import PrevLayout from "@/components/layout/prev-layout";
 import { useDecodeParam } from "@/hooks/params";
 import { useBuildingDetailStore } from "@/store/normal/building/detail";
 import { useRouter } from "next/navigation";
@@ -51,10 +52,12 @@ const Page = () => {
     console.log(section);
   }, [section]);
   return (
-    <>
-      <AppTitle title={`${title()} 수정`} />
-      {forms()}
-    </>
+    <PrevLayout>
+      <div className="flex flex-col gap-6">
+        <AppTitle title={`${title()} 수정`} />
+        {forms()}
+      </div>
+    </PrevLayout>
   );
 };
 

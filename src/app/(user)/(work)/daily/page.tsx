@@ -1,24 +1,35 @@
 "use client";
 import AppTitle from "@/components/common/label/title";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import TaskFilter from "./_components/filter";
 import { useDailyTaskStore } from "@/store/normal/task/dailyTask";
-import { useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { TaskBox } from "./_components/item";
 import BaseSkeleton from "@/components/common/base-skeleton";
 import { BriefcaseBusiness, ChevronRight } from "lucide-react";
 import Link from "next/link";
-import EmptyBox from "@/components/ui/custom/empty";
 import { usePermission } from "@/hooks/usePermission";
 import { useUIStore } from "@/store/common/ui-store";
+import { Switch } from "@/components/ui/switch";
+import DonutChart from "@/components/ui/chart/donut-chart";
+import CustomCard from "@/components/common/card";
 
 const Page = () => {
-  const { dailyTaskList, getDailyTaskList, loadingKeys } = useDailyTaskStore();
+  const {
+    dailyTaskList,
+    dailyTaskListByUser,
+    getDailyTaskList,
+    getDailyTaskListByUser,
+    loadingKeys,
+  } = useDailyTaskStore();
+  const [viewMode, setViewMode] = useState<"TASK" | "WORKER">("TASK");
   const { isLoading, hasError } = useUIStore();
   const { canWorkerEdit } = usePermission();
   const searchParams = useSearchParams();
   useEffect(() => {
-    getDailyTaskList(new URLSearchParams(searchParams));
+    viewMode === "TASK"
+      ? getDailyTaskList(new URLSearchParams(searchParams))
+      : getDailyTaskListByUser(new URLSearchParams(searchParams));
   }, [searchParams, getDailyTaskList]);
 
   const getList = () => {
@@ -45,6 +56,49 @@ const Page = () => {
     );
   };
 
+  const getWorkerList = () => {
+    const display = (total: number, complete: number) => {
+      return (
+        <div className="flex items-center gap-3 w-full flex-1 shrink-0 text-[var(--description-light)]">
+          <div className="flex items-center gap-2">
+            <span className="text-sm">전체</span>
+            <span className="text-xl font-bold">{total}</span>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <span className="text-sm">완료</span>
+            <span className="text-xl font-bold">{complete}</span>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <span className="text-sm">진행</span>
+            <span className="text-xl font-bold">{total - complete}</span>
+          </div>
+        </div>
+      );
+    };
+    return (
+      <div className="flex flex-col gap-4 xl:grid xl:grid-cols-4 xl:gap-6">
+        {dailyTaskListByUser.map((v, i) => (
+          <Link key={v.userSeq + i} href={`/daily/user/${v.userSeq}`}>
+            <CustomCard className="flex px-4 py-4 cursor-pointer hover:bg-blue-50 hover:border-blue-500">
+              <div className="flex flex-row items-center">
+                <div className="flex-1 flex flex-col gap-6">
+                  <span className="text-sm font-medium">{v.userName}</span>
+                  {display(v.total, v.complete)}
+                </div>
+
+                <DonutChart
+                  data={[{ userName: v.userName, value: v.percent }]}
+                />
+              </div>
+            </CustomCard>
+          </Link>
+        ))}
+      </div>
+    );
+  };
+
   return (
     <>
       <div className="flex justify-between items-center">
@@ -57,14 +111,17 @@ const Page = () => {
         )}
       </div>
 
-      <TaskFilter />
+      <TaskFilter viewMode={viewMode} />
+      <div className="flex justify-end">
+        <ViewModeSwitch mode={viewMode} setMode={(mode) => setViewMode(mode)} />
+      </div>
 
-      {getList()}
+      {viewMode === "TASK" ? getList() : getWorkerList()}
     </>
   );
 };
 
-const TabButton = ({ label, href }: { label: string; href: string }) => {
+export const TabButton = ({ label, href }: { label: string; href: string }) => {
   return (
     <Link href={href}>
       <div className="flex items-center gap-0.5 cursor-pointer group">
@@ -81,3 +138,28 @@ const TabButton = ({ label, href }: { label: string; href: string }) => {
 };
 
 export default Page;
+
+const ViewModeSwitch = ({
+  mode,
+  setMode,
+}: {
+  mode: "TASK" | "WORKER";
+  setMode: (mode: "TASK" | "WORKER") => void;
+}) => {
+  const handleModeChange = () => {
+    const newMode = mode === "TASK" ? "WORKER" : "TASK";
+    setMode(newMode);
+  };
+  return (
+    <div className="flex items-center gap-4">
+      <label className="text-sm text-[var(--description-light)]">
+        {mode === "TASK" ? "업무별" : "사용자별"}
+      </label>
+      <Switch
+        id="view-mode"
+        className="border-[var(--border)] cursor-pointer"
+        onClick={handleModeChange}
+      />
+    </div>
+  );
+};

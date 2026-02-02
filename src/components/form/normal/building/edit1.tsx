@@ -266,7 +266,7 @@ const BuildingEditForm = ({
           />
         </div>
         <div className="w-full flex justify-end">
-          <Button label="저장" className="xl:w-fit xl:px-4 xl:py-2 " />
+          <Button label="저장" className="" />
         </div>
       </form>
     </Form>

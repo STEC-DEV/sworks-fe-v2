@@ -7,6 +7,7 @@ import { paramsCheck } from "@/utils/param";
 import { toast } from "sonner";
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
+import { UserTask } from "./user-task";
 
 export const DAILY_TASK_LOADING_KEYS = {
   LIST: "daily_task_list",
@@ -15,7 +16,9 @@ export const DAILY_TASK_LOADING_KEYS = {
 interface DailyTaskStatus {
   loadingKeys: typeof DAILY_TASK_LOADING_KEYS;
   dailyTaskList: Task[] | null;
+  dailyTaskListByUser: UserTask[];
   getDailyTaskList: (searchParams: URLSearchParams) => Promise<void>;
+  getDailyTaskListByUser: (searchParams: URLSearchParams) => Promise<void>;
 }
 
 export const useDailyTaskStore = create<DailyTaskStatus>()(
@@ -24,6 +27,7 @@ export const useDailyTaskStore = create<DailyTaskStatus>()(
       (set, get) => ({
         loadingKeys: DAILY_TASK_LOADING_KEYS,
         dailyTaskList: null,
+        dailyTaskListByUser: [],
         getDailyTaskList: async (searchParams) => {
           const checkParams = paramsCheck(searchParams);
           const { setError, setLoading } = useUIStore.getState();
@@ -45,8 +49,25 @@ export const useDailyTaskStore = create<DailyTaskStatus>()(
             setLoading(DAILY_TASK_LOADING_KEYS.LIST, false);
           }
         },
+
+        getDailyTaskListByUser: async (searchParams) => {
+          try {
+            const res: Response<UserTask[]> = await api
+              .get("sitetask/w/sign/getusertaskcount", {
+                searchParams: searchParams,
+              })
+              .json();
+            console.log(res);
+
+            set({ dailyTaskListByUser: res.data });
+          } catch (err) {
+            console.error(err);
+            const errMessage = await handleApiError(err);
+            toast.error(errMessage);
+          }
+        },
       }),
-      { name: "daily-task-store" }
-    )
-  )
+      { name: "daily-task-store" },
+    ),
+  ),
 );

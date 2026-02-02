@@ -1,6 +1,7 @@
 "use client";
 import AppTitle from "@/components/common/label/title";
 import DayScheduleEditForm from "@/components/form/normal/schedule/day-edit";
+import PrevLayout from "@/components/layout/prev-layout";
 import { useDecodeParam } from "@/hooks/params";
 import { useScheduleStore } from "@/store/normal/schedule/shcedule-store";
 import React, { useEffect } from "react";
@@ -15,10 +16,12 @@ const Page = () => {
   }, [rawValue, getDayScheduleDetail]);
 
   return (
-    <div className="flex flex-col gap-6 w-full xl:w-150">
-      <AppTitle title="일정 수정" isBorder />
-      <DayScheduleEditForm />
-    </div>
+    <PrevLayout>
+      <div className="flex flex-col gap-6 w-full xl:w-150">
+        <AppTitle title="일정 수정" isBorder />
+        <DayScheduleEditForm />
+      </div>
+    </PrevLayout>
   );
 };
 

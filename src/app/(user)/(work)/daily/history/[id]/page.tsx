@@ -2,6 +2,7 @@
 import BaseSkeleton from "@/components/common/base-skeleton";
 import CustomCard from "@/components/common/card";
 import AppTitle from "@/components/common/label/title";
+import PrevLayout from "@/components/layout/prev-layout";
 import EmptyBox from "@/components/ui/custom/empty";
 import DialogCarousel from "@/components/ui/custom/image/size-carousel";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -20,7 +21,7 @@ const Page = () => {
   const { isLoading, hasError } = useUIStore();
   const { rawValue } = useDecodeParam("id");
   const [selectWorker, setSelectWorker] = useState<TaskHistoryWorker | null>(
-    null
+    null,
   );
   useEffect(() => {
     if (!rawValue) return;
@@ -36,16 +37,15 @@ const Page = () => {
   if (hasError(loadingKeys.DETAIL)) return <div> 에러발생</div>;
 
   return (
-    <div className="flex flex-col  xl:flex-row gap-12">
-      <div className="xl:flex-1 flex flex-col gap-6">
-        <div className="flex gap-2 items-end pb-4 border-b-2 border-border">
-          <AppTitle title={taskHistoryDetail.title} />
-          <span className="text-md font-medium text-blue-500">
-            {taskHistoryDetail.serviceTypeName}
-          </span>
-        </div>
-
-        <ScrollArea className="max-h-80 xl:flex-1 overflow-hidden">
+    <PrevLayout>
+      <div className="w-full flex-1  flex flex-col  xl:flex-row gap-12">
+        <div className="xl:flex-1 flex flex-col gap-6">
+          <div className="flex gap-2 items-end pb-4 border-b-2 border-border">
+            <AppTitle title={taskHistoryDetail.title} />
+            <span className="text-md font-medium text-blue-500">
+              {taskHistoryDetail.serviceTypeName}
+            </span>
+          </div>
           {taskHistoryDetail.users?.length > 0 ? (
             <div className="flex flex-col gap-4">
               {taskHistoryDetail.users.map((user, i) => (
@@ -55,7 +55,7 @@ const Page = () => {
                   className={cn(
                     "flex-row justify-between cursor-pointer items-center",
                     selectWorker?.userSeq === user.userSeq &&
-                      "bg-blue-50 border-blue-500"
+                      "bg-blue-50 border-blue-500",
                   )}
                   onClick={() => handleSelect(user)}
                 >
@@ -69,40 +69,41 @@ const Page = () => {
           ) : (
             <EmptyBox message="담당자가 존재하지않습니다." />
           )}
-        </ScrollArea>
-      </div>
-      <div className="xl:flex-1 clear-start flex flex-col gap-6 overflow-hidden">
-        <AppTitle title="업무이력" isBorder />
-        {selectWorker ? (
-          selectWorker.logs.length > 0 ? (
-            selectWorker.logs.map((v, i) => {
-              return (
-                <CustomCard key={i} size={"sm"}>
-                  <span className="text-xs text-[var(--description-light)] relative">
-                    {format(v.userWorkDt, "yyyy-MM-dd HH:mm:ss")}
-                  </span>
-                  <span className="text-sm">
-                    {v.issue || "업무를 수행햐였습니다."}
-                  </span>
+          {/* <ScrollArea className="max-h-80 xl:flex-1 overflow-hidden"></ScrollArea> */}
+        </div>
+        <div className="xl:flex-1 clear-start flex flex-col gap-6 overflow-hidden">
+          <AppTitle title="업무이력" isBorder />
+          {selectWorker ? (
+            selectWorker.logs.length > 0 ? (
+              selectWorker.logs.map((v, i) => {
+                return (
+                  <CustomCard key={i} size={"sm"}>
+                    <span className="text-xs text-[var(--description-light)] relative">
+                      {format(v.userWorkDt, "yyyy-MM-dd HH:mm:ss")}
+                    </span>
+                    <span className="text-sm">
+                      {v.issue || "업무를 수행햐였습니다."}
+                    </span>
 
-                  {v.attaches.length > 0 && (
-                    <DialogCarousel
-                      pathList={v.attaches
-                        .map((a) => a.logPath)
-                        .filter((path): path is string => path !== undefined)}
-                    />
-                  )}
-                </CustomCard>
-              );
-            })
+                    {v.attaches.length > 0 && (
+                      <DialogCarousel
+                        pathList={v.attaches
+                          .map((a) => a.logPath)
+                          .filter((path): path is string => path !== undefined)}
+                      />
+                    )}
+                  </CustomCard>
+                );
+              })
+            ) : (
+              <EmptyBox message="업무이력이 존재하지않습니다." />
+            )
           ) : (
-            <EmptyBox message="업무이력이 존재하지않습니다." />
-          )
-        ) : (
-          <EmptyBox message="근무자를 선택해주세요." />
-        )}
+            <EmptyBox message="근무자를 선택해주세요." />
+          )}
+        </div>
       </div>
-    </div>
+    </PrevLayout>
   );
 };
 

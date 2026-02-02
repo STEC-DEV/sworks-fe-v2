@@ -20,6 +20,7 @@ interface BuildingState {
   building: UiBuildingInfo | null;
   getBuildingDetail: (buildingSeq: string) => Promise<void>;
   patchEditBuildingDetail: (values: Record<string, any>) => Promise<void>;
+  deleteBuilding: (buildingSeq: string) => Promise<void>;
 }
 
 export const useBuildingDetailStore = create<BuildingState>()(
@@ -102,8 +103,20 @@ export const useBuildingDetailStore = create<BuildingState>()(
             toast.error("에러 발생");
           }
         },
+        deleteBuilding: async (buildingSeq) => {
+          try {
+            const res: Response<boolean> = await api
+              .delete("building/w/sign/deldong", {
+                searchParams: { delSeq: buildingSeq },
+              })
+              .json();
+          } catch (err) {
+            console.error(err);
+            toast.error("에러 발생");
+          }
+        },
       }),
-      { name: "building-detail-store" }
-    )
-  )
+      { name: "building-detail-store" },
+    ),
+  ),
 );

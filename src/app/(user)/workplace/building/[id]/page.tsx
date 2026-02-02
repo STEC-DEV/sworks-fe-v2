@@ -10,10 +10,16 @@ import { BuildingInfo, FacilityInfo, FireInfo } from "./_components/info-item";
 import Image from "next/image";
 import { useUIStore } from "@/store/common/ui-store";
 import { SingleImageBox } from "@/components/common/image-box";
+import IconButton from "@/components/common/icon-button";
+import CheckDialog from "@/components/common/check-dialog";
+import { dialogText } from "../../../../../../public/text";
+import { useRouter } from "next/navigation";
 
 const Page = () => {
   const { rawValue } = useDecodeParam("id");
-  const { building, getBuildingDetail, loadingKeys } = useBuildingDetailStore();
+  const { building, getBuildingDetail, deleteBuilding, loadingKeys } =
+    useBuildingDetailStore();
+  const router = useRouter();
   const { isLoading, hasError } = useUIStore();
 
   useEffect(() => {
@@ -25,9 +31,25 @@ const Page = () => {
     return <BuildingDetailSkeleton />;
   if (hasError(loadingKeys.DETAIL)) return <div>에러 발생</div>;
 
+  const handleDelete = async () => {
+    await deleteBuilding(building?.dongSeq.toString());
+    router.replace("/workplace");
+  };
+
   return (
     <>
-      <AppTitle title={building?.dongName} />
+      <div className="flex items-center justify-between">
+        <AppTitle title={building?.dongName} />
+        <CheckDialog
+          title={dialogText.defaultDelete.title}
+          description={dialogText.defaultDelete.description}
+          actionLabel={dialogText.defaultDelete.actionLabel}
+          onClick={handleDelete}
+        >
+          <IconButton icon="Trash2" />
+        </CheckDialog>
+      </div>
+
       <div className="w-full h-80 border rounded-[4px] shrink-0 relative">
         {building.images ? (
           <SingleImageBox path={building.images} />

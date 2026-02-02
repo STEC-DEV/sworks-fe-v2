@@ -7,6 +7,7 @@ import FileFormItem, {
 import SelectFormItem from "@/components/common/form-input/select-field";
 import { TextFormItem } from "@/components/common/form-input/text-field";
 import AppTitle from "@/components/common/label/title";
+import PrevLayout from "@/components/layout/prev-layout";
 import { Form, FormField } from "@/components/ui/form";
 import { useBasicStore } from "@/store/basic-store";
 import { useEquipmentDetailStore } from "@/store/normal/equipment/equip-detail-store";
@@ -111,153 +112,154 @@ const Page = () => {
   };
 
   return (
-    <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(handleSubmit)}
-        className="flex flex-col gap-12"
-      >
-        <AppTitle title="장비 수정" isBorder />
-        <div className="grid xl:grid-cols-2 gap-x-24 gap-y-12">
-          <FormField
-            control={form.control}
-            name="serviceTypeSeq"
-            render={({ field }) => {
-              const handleValue = (value: string) => {
-                console.log(value);
-                if (!value) return;
-                field.onChange(Number(value));
-              };
+    <PrevLayout>
+      <Form {...form}>
+        <form
+          onSubmit={form.handleSubmit(handleSubmit)}
+          className="flex flex-col gap-12 w-full"
+        >
+          <AppTitle title="장비 수정" isBorder />
+          <div className="grid xl:grid-cols-2 gap-x-24 gap-y-12">
+            <FormField
+              control={form.control}
+              name="serviceTypeSeq"
+              render={({ field }) => {
+                const handleValue = (value: string) => {
+                  console.log(value);
+                  if (!value) return;
+                  field.onChange(Number(value));
+                };
 
-              return (
-                <SelectFormItem
-                  label="유형"
-                  selectItem={
-                    basicCode.contractCodes
-                      ? convertSelectOptionType(basicCode.contractCodes)
-                      : [] // 빈 배열로 처리
-                  }
-                  onValueChange={handleValue}
-                  value={field.value?.toString()}
+                return (
+                  <SelectFormItem
+                    label="유형"
+                    selectItem={
+                      basicCode.contractCodes
+                        ? convertSelectOptionType(basicCode.contractCodes)
+                        : [] // 빈 배열로 처리
+                    }
+                    onValueChange={handleValue}
+                    value={field.value?.toString()}
+                    required
+                  />
+                );
+              }}
+            />
+            <FormField
+              control={form.control}
+              name="serial"
+              render={({ field }) => (
+                <TextFormItem
+                  label="관리번호"
+                  placeholder="관리번호"
+                  {...field}
                   required
                 />
-              );
-            }}
-          />
-          <FormField
-            control={form.control}
-            name="serial"
-            render={({ field }) => (
-              <TextFormItem
-                label="관리번호"
-                placeholder="관리번호"
-                {...field}
-                required
-              />
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="name"
-            render={({ field }) => (
-              <TextFormItem
-                label="장비명"
-                placeholder="장비명"
-                {...field}
-                required
-              />
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="capacity"
-            render={({ field }) => (
-              <TextFormItem
-                label="규격용량"
-                placeholder="규격용량"
-                {...field}
-                required
-              />
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="usage"
-            render={({ field }) => (
-              <TextFormItem
-                label="용도"
-                placeholder="용도"
-                {...field}
-                required
-              />
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="maker"
-            render={({ field }) => (
-              <TextFormItem
-                label="제조사"
-                placeholder="제조사"
-                {...field}
-                required
-              />
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="buyer"
-            render={({ field }) => (
-              <TextFormItem
-                label="구매처"
-                placeholder="구매처"
-                {...field}
-                required
-              />
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="amount"
-            render={({ field }) => (
-              <TextFormItem
-                label="수량"
-                placeholder="수량"
-                type="number"
-                min={1}
-                {...field}
-                required
-              />
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="cost"
-            render={({ field }) => (
-              <TextFormItem
-                label="비용"
-                placeholder="비용"
-                type="number"
-                min={0}
-                {...field}
-              />
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="buyDt"
-            render={({ field }) => (
-              <DateFormItem
-                label="구매일"
-                value={field.value}
-                onChange={(date) => {
-                  console.log(date);
-                  field.onChange(date);
-                }}
-                required
-              />
-            )}
-          />
-          {/* <FormField
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <TextFormItem
+                  label="장비명"
+                  placeholder="장비명"
+                  {...field}
+                  required
+                />
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="capacity"
+              render={({ field }) => (
+                <TextFormItem
+                  label="규격용량"
+                  placeholder="규격용량"
+                  {...field}
+                  required
+                />
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="usage"
+              render={({ field }) => (
+                <TextFormItem
+                  label="용도"
+                  placeholder="용도"
+                  {...field}
+                  required
+                />
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="maker"
+              render={({ field }) => (
+                <TextFormItem
+                  label="제조사"
+                  placeholder="제조사"
+                  {...field}
+                  required
+                />
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="buyer"
+              render={({ field }) => (
+                <TextFormItem
+                  label="구매처"
+                  placeholder="구매처"
+                  {...field}
+                  required
+                />
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="amount"
+              render={({ field }) => (
+                <TextFormItem
+                  label="수량"
+                  placeholder="수량"
+                  type="number"
+                  min={1}
+                  {...field}
+                  required
+                />
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="cost"
+              render={({ field }) => (
+                <TextFormItem
+                  label="비용"
+                  placeholder="비용"
+                  type="number"
+                  min={0}
+                  {...field}
+                />
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="buyDt"
+              render={({ field }) => (
+                <DateFormItem
+                  label="구매일"
+                  value={field.value}
+                  onChange={(date) => {
+                    console.log(date);
+                    field.onChange(date);
+                  }}
+                  required
+                />
+              )}
+            />
+            {/* <FormField
             control={form.control}
             name="manager"
             render={({ field }) => (
@@ -269,41 +271,42 @@ const Page = () => {
               />
             )}
           /> */}
-        </div>
-        <FormField
-          control={form.control}
-          name="images"
-          render={({ field }) => {
-            const handleRemove = () => {
-              form.setValue("removeImage", true);
-            };
+          </div>
+          <FormField
+            control={form.control}
+            name="images"
+            render={({ field }) => {
+              const handleRemove = () => {
+                form.setValue("removeImage", true);
+              };
 
-            const existingFiles = () => {
-              if (!equipmentDetail) return;
-              const isRemove = form.watch("removeImage");
-              console.log("삭제 여부 : ", isRemove);
-              console.log(isRemove ? null : equipmentDetail.images);
+              const existingFiles = () => {
+                if (!equipmentDetail) return;
+                const isRemove = form.watch("removeImage");
+                console.log("삭제 여부 : ", isRemove);
+                console.log(isRemove ? null : equipmentDetail.images);
 
-              return isRemove ? null : equipmentDetail.images;
-            };
+                return isRemove ? null : equipmentDetail.images;
+              };
 
-            return (
-              <ImageFormItem
-                label="이미지"
-                multiple={false}
-                {...field}
-                value={field.value}
-                isRemove={form.watch("removeImage")}
-                onChange={field.onChange}
-                existingFile={existingFiles()}
-                onRemoveExistingFile={handleRemove}
-              />
-            );
-          }}
-        />
-        <Button type="submit" label="저장" />
-      </form>
-    </Form>
+              return (
+                <ImageFormItem
+                  label="이미지"
+                  multiple={false}
+                  {...field}
+                  value={field.value}
+                  isRemove={form.watch("removeImage")}
+                  onChange={field.onChange}
+                  existingFile={existingFiles()}
+                  onRemoveExistingFile={handleRemove}
+                />
+              );
+            }}
+          />
+          <Button type="submit" label="저장" />
+        </form>
+      </Form>
+    </PrevLayout>
   );
 };
 
