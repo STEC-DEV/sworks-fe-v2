@@ -1,4 +1,5 @@
 export interface UserDailyTaskDetail {
+  userName: string;
   totalTaskCount: number;
   totalCompleteCount: number;
   tasks: UserDailyTaskDetailItem[];
