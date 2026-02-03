@@ -30,7 +30,7 @@ const Page = () => {
     viewMode === "TASK"
       ? getDailyTaskList(new URLSearchParams(searchParams))
       : getDailyTaskListByUser(new URLSearchParams(searchParams));
-  }, [searchParams, getDailyTaskList]);
+  }, [searchParams, getDailyTaskList, viewMode]);
 
   const getList = () => {
     if (isLoading(loadingKeys.LIST) || !dailyTaskList)

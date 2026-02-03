@@ -18,7 +18,7 @@ export const TaskBox = ({ data }: TaskBoxProps) => {
     if (data.endDt)
       return `${format(data.startDt, "yyyy/MM/dd")} ~ ${format(
         data.endDt,
-        "yyyy/MM/dd"
+        "yyyy/MM/dd",
       )}`;
     else return format(data.startDt, "yyyy/MM/dd");
   };
@@ -41,10 +41,10 @@ export const TaskBox = ({ data }: TaskBoxProps) => {
 
     const total = data.users.length;
     const done = data.users.filter(
-      (user) => user.repeats === user.counts
+      (user) => user.repeats === user.counts,
     ).length;
     const active = data.users.filter(
-      (user) => user.repeats !== user.counts
+      (user) => user.repeats !== user.counts,
     ).length;
 
     return { total, done, active };
@@ -80,20 +80,22 @@ export const TaskBox = ({ data }: TaskBoxProps) => {
       >
         <span className="text-xs text-blue-500">{data.serviceTypeName}</span>
         <div className="flex justify-between items-end">
-          <span className="text-sm">{data.title}</span>
-          <span className="text-xs text-[var(--description-dark)]">
+          <span className="text-sm font-medium">{data.title}</span>
+          {/* <span className="text-xs text-[var(--description-dark)]">
             {taskDuration()}
-          </span>
+          </span> */}
         </div>
-        {!data ? (
-          <BaseSkeleton />
-        ) : (
-          <StatusBox
-            total={statusData.total}
-            done={statusData.done}
-            active={statusData.active}
-          />
-        )}
+        <div className="flex justify-end">
+          {!data ? (
+            <BaseSkeleton />
+          ) : (
+            <StatusBox
+              total={statusData.total}
+              done={statusData.done}
+              active={statusData.active}
+            />
+          )}
+        </div>
 
         <CustomCard
           className={` md:w-50 flex-col gap-2 absolute top-0 bg-blue-50 shadow-lg z-10 ${

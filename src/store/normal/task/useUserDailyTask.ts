@@ -5,7 +5,7 @@ import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 
 interface UserDailyTaskState {
-  data: UserDailyTaskDetail[];
+  data: UserDailyTaskDetail | null;
   isLoading: boolean;
   getData: (userSeq: string) => Promise<void>;
 }
@@ -14,12 +14,12 @@ export const useUserDailyTaskStore = create<UserDailyTaskState>()(
   devtools(
     persist<UserDailyTaskState>(
       (set) => ({
-        data: [],
+        data: null,
         isLoading: false,
         getData: async (userSeq) => {
           try {
             set({ isLoading: true });
-            const res: Response<UserDailyTaskDetail[]> = await api
+            const res: Response<UserDailyTaskDetail> = await api
               .get("sitetask/w/sign/getusertaskdetail", {
                 searchParams: { userSeq },
               })
