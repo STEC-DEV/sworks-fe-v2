@@ -118,52 +118,60 @@ const Building = () => {
 
 const ConstructionBox = ({ data }: { data: Construction }) => {
   return (
-    <div className="base-flex-col gap-4 w-full  ">
+    <div className="base-flex-col gap-4 w-full ">
       <KeyValueItem
         mainStyle="flex-row justify-between"
         valueStyle="text-sm"
+        labelStyle="text-sm"
         label={"명칭"}
         value={data.buildingName}
       />
       <KeyValueItem
         mainStyle="flex-row justify-between"
         valueStyle="text-sm"
+        labelStyle="text-sm"
         label={"준공일"}
         value={format(data.completeDt, "yyyy-MM-dd")}
       />
       <KeyValueItem
         mainStyle="flex-row justify-between"
         valueStyle="text-sm"
+        labelStyle="text-sm"
         label={"주소"}
         value={data.address}
       />
       <KeyValueItem
         mainStyle="flex-row justify-between"
         valueStyle="text-sm"
+        labelStyle="text-sm"
         label={"연면적"}
         value={data.totalArea}
       />
       <KeyValueItem
         mainStyle="flex-row justify-between"
         valueStyle="text-sm"
+        labelStyle="text-sm"
         label={"건물용도"}
         value={data.usage}
       />
       <KeyValueItem
         mainStyle="flex-row justify-between"
         valueStyle="text-sm"
+        labelStyle="text-sm font-medium"
         label={"자주식 주차장"}
         value={data.selfParkingSpaces.toString()}
       />
       <KeyValueItem
         mainStyle="flex-row justify-between"
         valueStyle="text-sm"
+        labelStyle="text-sm"
         label={"기계식 주차장"}
         value={data.autoParkingSpaces.toString()}
       />
       <KeyValueItem
         mainStyle="flex-row justify-between"
         valueStyle="text-sm"
+        labelStyle="text-sm"
         label={"장애인 주차장"}
         value={data.handicapParkingSpaces.toString()}
       />

@@ -25,11 +25,14 @@ export const KeyValueItem = ({
         `flex flex-col gap-1 ${
           isHorizontal ? "flex-row justify-between items-center" : ""
         }`,
-        mainStyle
+        mainStyle,
       )}
     >
       <span
-        className={cn("text-xs text-[var(--description-light)]", labelStyle)}
+        className={cn(
+          "text-sm text-[var(--description-light)] font-medium",
+          labelStyle,
+        )}
       >
         {label}
       </span>
@@ -39,7 +42,7 @@ export const KeyValueItem = ({
         <span
           className={cn(
             "text-xs font-semibold text-[var(--description-dark)]",
-            valueStyle
+            valueStyle,
           )}
         >
           {value}

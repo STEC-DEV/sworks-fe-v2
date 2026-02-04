@@ -14,7 +14,7 @@ const Input = ({
         hover:border-[var(--primary)]
         focus:outline-none focus:ring-1 focus:ring-[var(--primary)] focus:border-[var(--primary)] focus:ring-inset 
         `,
-        className
+        className,
       )}
       type={type}
       {...props}
@@ -32,7 +32,7 @@ const InputSearch = ({
       <Input
         className={cn(
           "flex-1 px-0 border-none focus:ring-0 focus:border-none ",
-          className
+          className,
         )}
         {...props}
       />
@@ -61,7 +61,7 @@ const TextArea = ({
           resize-none
           `,
           showCount && "pb-8", // 글자수 공간 확보
-          className
+          className,
         )}
         value={value}
         maxLength={maxLength}
@@ -147,12 +147,14 @@ const PasswordInput = React.forwardRef<HTMLInputElement>(
 				`}</style>
       </div>
     );
-  }
+  },
 );
 PasswordInput.displayName = "PasswordInput";
 
-interface FileInputProps
-  extends Omit<React.ComponentProps<"input">, "value" | "onChange"> {
+interface FileInputProps extends Omit<
+  React.ComponentProps<"input">,
+  "value" | "onChange"
+> {
   className?: string;
   multiple?: boolean;
   accept?: string;
@@ -330,7 +332,7 @@ const DragNDropInput = React.forwardRef<HTMLInputElement, FileInputProps>(
           `flex flex-col gap-6 h-auto  md:flex-row  ${
             isVertical ? "md:flex-col " : null
           }`,
-          className
+          className,
         )}
       >
         <input
@@ -359,10 +361,10 @@ const DragNDropInput = React.forwardRef<HTMLInputElement, FileInputProps>(
           onClick={handleClick}
         >
           <div className={`flex flex-col items-center justify-center gap-6 `}>
-            <div className="bg-[var(--primary)] rounded-[50px] p-2">
-              <Upload className="text-white" size={20} />
+            <div className="bg-gray-200 rounded-[50px] p-3">
+              <Upload className="text-[var(--description-light)]" size={20} />
             </div>
-            <span className="text-md text-[var(--description-dark)]">
+            <span className="text-sm text-[var(--description-dark)]">
               파일을 드래그하거나 클릭하세요
             </span>
           </div>
@@ -394,7 +396,7 @@ const DragNDropInput = React.forwardRef<HTMLInputElement, FileInputProps>(
         ) : null}
       </div>
     );
-  }
+  },
 );
 
 const FileBox = ({
@@ -550,7 +552,7 @@ export const ImageDndInput = (props: UnifiedImageDndInputProps) => {
       singleProps.value || (singleProps.existingFile && !singleProps.isRemove);
     console.log(
       "hasImage : ",
-      singleProps.value || (singleProps.existingFile && !singleProps.isRemove)
+      singleProps.value || (singleProps.existingFile && !singleProps.isRemove),
     );
     const imageSource = singleProps.value
       ? URL.createObjectURL(singleProps.value)
@@ -595,7 +597,7 @@ export const ImageDndInput = (props: UnifiedImageDndInputProps) => {
   const existingFiles = multiProps.existingFiles || [];
   const removedFiles = multiProps.removedExistingFiles || [];
   const displayExistingFiles = existingFiles.filter(
-    (f) => !removedFiles.includes(f)
+    (f) => !removedFiles.includes(f),
   );
   const hasFiles = currentFiles.length > 0 || displayExistingFiles.length > 0;
 
@@ -682,10 +684,10 @@ export const DragDropZone = ({
     >
       {children || (
         <div className={`flex flex-col items-center justify-center gap-6 `}>
-          <div className="bg-[var(--primary)] rounded-[50px] p-2">
-            <Upload className="text-white" size={20} />
+          <div className="bg-gray-200 rounded-[50px] p-3">
+            <Upload className="text-[var(--description-light)]" size={20} />
           </div>
-          <span className="text-md text-[var(--description-dark)]">
+          <span className="text-sm text-[var(--description-dark)]">
             파일을 드래그하거나 클릭하세요
           </span>
         </div>
@@ -709,10 +711,10 @@ export const DragDropZoneChildren = ({
           flex flex-col items-center justify-center w-full rounded-[4px] ${
             children ? "" : "border-2 border-dashed "
           } border-[var(--icon)] hover:bg-[var(--background)] hover:cursor-pointer ${
-        isDragOver
-          ? "border-solid border-[var(--primary)] bg-[var(--background)]"
-          : ""
-      }`}
+            isDragOver
+              ? "border-solid border-[var(--primary)] bg-[var(--background)]"
+              : ""
+          }`}
       id="input-file"
       onDragEnter={dragHandlers.onDragEnter}
       onDragOver={dragHandlers.onDragOver}

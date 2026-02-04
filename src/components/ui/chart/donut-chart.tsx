@@ -8,23 +8,6 @@ import {
   RadialBarChart,
 } from "recharts";
 
-// const chartData = [
-//   {
-//     aa: "safari",
-//     value: 200,
-//     fill: "#3b82f6",
-//   },
-// ];
-// const chartConfig = {
-//   visitors: {
-//     label: "Visitors",
-//   },
-//   safari: {
-//     label: "Safari",
-//     color: "#d3d3d3",
-//   },
-// } satisfies ChartConfig;
-
 interface ChartDataProps {
   userName: string;
   value: number;
@@ -72,7 +55,12 @@ const DonutChart = ({ data }: { data: ChartDataProps[] }) => {
             className="first:fill-gray-200 last:fill-white "
             polarRadius={[54, 46]}
           />
-          <RadialBar dataKey="value" cornerRadius={3} />
+          <RadialBar
+            dataKey="value"
+            cornerRadius={3}
+            isAnimationActive
+            animationBegin={0}
+          />
           <PolarRadiusAxis tick={false} tickLine={false} axisLine={false}>
             <Label
               content={({ viewBox }) => {
@@ -87,9 +75,9 @@ const DonutChart = ({ data }: { data: ChartDataProps[] }) => {
                       <tspan
                         x={viewBox.cx}
                         y={viewBox.cy}
-                        className="fill-blue-500 text-2xl font-bold"
+                        className="fill-blue-500 text-xl font-bold"
                       >
-                        {chartData[0].value.toLocaleString()}
+                        {chartData[0].value.toLocaleString()}%
                       </tspan>
                     </text>
                   );

@@ -52,10 +52,19 @@ export const ScheduleImageFileFormItem = ({
     ScheduleAttach[]
   >([]);
 
+  console.log("🟡 ScheduleImageFileFormItem 렌더!");
+  console.log("🟡 받은 props - value:", value);
+  console.log("🟡 받은 props - existedFile:", existedFile);
+  console.log("🟡 현재 total:", total);
+
   //기존 존재파일 디스플레이 상태 업데이트
   useEffect(() => {
     setDisplayedExistedFiles(existedFile);
   }, [existedFile]);
+
+  useEffect(() => {
+    console.log("🟡 value 변경 감지! 새 value:", value);
+  }, [value]);
 
   //전체 파일수 계산
   useEffect(() => {
@@ -63,7 +72,13 @@ export const ScheduleImageFileFormItem = ({
     const newFilesCount = value.filter((v) => !isExistingAttach(v)).length;
     // 기존 파일 - 삭제된 파일
     const existedCount = existedFile.length - removeExistedFile.length;
-    setTotal(newFilesCount + existedCount);
+    const newTotal = newFilesCount + existedCount;
+    console.log("🟡 total 계산:");
+    console.log("  newFilesCount:", newFilesCount);
+    console.log("  existedCount:", existedCount);
+    console.log("  newTotal:", newTotal);
+
+    setTotal(newTotal);
   }, [value, existedFile, removeExistedFile]);
 
   // useEffect(() => {
@@ -78,11 +93,11 @@ export const ScheduleImageFileFormItem = ({
   const handleNewFileUpdate = (data: ScheduleFormAttach) => {
     if (isExistingAttach(data)) {
       setDisplayedExistedFiles((prev) =>
-        prev.map((file) => (file.attachSeq === data.attachSeq ? data : file))
+        prev.map((file) => (file.attachSeq === data.attachSeq ? data : file)),
       );
       // 기존 파일은 attachSeq로 찾기
       const existingIndex = value.findIndex(
-        (v) => isExistingAttach(v) && v.attachSeq === data.attachSeq
+        (v) => isExistingAttach(v) && v.attachSeq === data.attachSeq,
       );
 
       if (existingIndex !== -1) {
@@ -122,7 +137,11 @@ export const ScheduleImageFileFormItem = ({
 
   //파일 업로드 함수
   const handleFile = (fileList: FileList | null) => {
-    if (!fileList || fileList.length === 0) return;
+    console.log("handleFile 호출됨!", fileList);
+    if (!fileList || fileList.length === 0) {
+      console.log("파일 없음!");
+      return;
+    }
 
     const existedCount = existedFile.length || 0;
     const removeExistedCount = removeExistedFile.length || 0;
@@ -131,8 +150,19 @@ export const ScheduleImageFileFormItem = ({
     const newFilesCount = value.filter((v) => !isExistingAttach(v)).length;
     const totalCount = curExistedCount + newFilesCount;
 
-    if (totalCount + fileList.length > max)
+    console.log("📊 카운트 정보:");
+    console.log("  existedCount:", existedCount);
+    console.log("  removeExistedCount:", removeExistedCount);
+    console.log("  curExistedCount:", curExistedCount);
+    console.log("  newFilesCount:", newFilesCount);
+    console.log("  totalCount:", totalCount);
+    console.log("  max:", max);
+    console.log("  새로 추가할 파일:", fileList.length);
+
+    if (totalCount + fileList.length > max) {
+      console.log("❌ 최대 개수 초과!");
       return toast.error(`최대 ${max}개의 파일만 등록 가능합니다.`);
+    }
     const newFiles: ScheduleFormAttach[] = Array.from(fileList).map((file) => ({
       attachSeq: null,
       photoType: photoType, // 일반 파일
@@ -140,9 +170,9 @@ export const ScheduleImageFileFormItem = ({
       comments: "",
       viewYn: true,
     }));
-
-    // console.log("새로 만든 파일들:", newFiles); // 여기!
-    // console.log("onChange에 전달할 값:", [...value, ...newFiles]); // 여기!
+    console.log("✅ 새로 만든 파일:", newFiles);
+    console.log("📦 현재 value:", value);
+    console.log("🚀 onChange에 전달할 값:", [...value, ...newFiles]);
 
     // 기존 값에 새 파일 추가한 배열 전체 전달
     onChange([...value, ...newFiles]);
@@ -165,13 +195,25 @@ export const ScheduleImageFileFormItem = ({
             className="hidden"
             id={`input-file-multiple${photoType}`}
             type="file"
-            onChange={(e) => handleFile(e.target.files)}
+            onChange={(e) => {
+              console.log("📁 input onChange 이벤트!");
+              handleFile(e.target.files);
+              e.target.value = "";
+            }}
             multiple={true}
             accept="image/*"
           />
+          {(() => {
+            console.log("🎨 렌더링 분기 - total:", total);
+            return null;
+          })()}
 
           {total > 0 ? (
             <ScrollArea className="w-full overflow-hidden">
+              {(() => {
+                console.log("🎨 total > 0 렌더링");
+                return null;
+              })()}
               <div className="flex gap-6">
                 {displayedExistedFiles.map((v, i) => (
                   <ImageFileItem
@@ -181,16 +223,26 @@ export const ScheduleImageFileFormItem = ({
                     onDelete={handleRemoveFile}
                   />
                 ))}
+                {(() => {
+                  console.log(
+                    "🎨 신규 파일 개수:",
+                    value.filter((v) => !isExistingAttach(v)).length,
+                  );
+                  return null;
+                })()}
                 {value
                   .filter((v) => !isExistingAttach(v))
-                  .map((v, i) => (
-                    <ImageFileItem
-                      key={"new" + i}
-                      data={v}
-                      onChange={handleNewFileUpdate}
-                      onDelete={handleRemoveFile}
-                    />
-                  ))}
+                  .map((v, i) => {
+                    console.log("🎨 ImageFileItem 렌더링 시작:", i, v);
+                    return (
+                      <ImageFileItem
+                        key={"new" + i}
+                        data={v}
+                        onChange={handleNewFileUpdate}
+                        onDelete={handleRemoveFile}
+                      />
+                    );
+                  })}
                 {total < max ? (
                   <label
                     htmlFor={`input-file-multiple${photoType}`}
@@ -218,15 +270,21 @@ export const ScheduleImageFileFormItem = ({
               />
             </ScrollArea>
           ) : (
-            <label
-              htmlFor={`input-file-multiple${photoType}`}
-              className="block cursor-pointer"
-            >
-              <DragDropZone
-                isDragOver={isDragOver}
-                dragHandlers={dragHandlers}
-              />
-            </label>
+            <>
+              {(() => {
+                console.log("🎨 total === 0 렌더링");
+                return null;
+              })()}
+              <label
+                htmlFor={`input-file-multiple${photoType}`}
+                className="block cursor-pointer"
+              >
+                <DragDropZone
+                  isDragOver={isDragOver}
+                  dragHandlers={dragHandlers}
+                />
+              </label>
+            </>
           )}
         </div>
       </FormControl>
@@ -244,6 +302,8 @@ export const ImageFileItem = ({
   onChange: (value: ScheduleFormAttach) => void;
   onDelete: (value: ScheduleFormAttach) => void;
 }) => {
+  console.log("🖼️ ImageFileItem 내부 렌더링!", data);
+  console.log("🖼️ isExistingAttach:", isExistingAttach(data));
   const onTextChange = (value: string) => {
     // console.log("onTextChange 호출:", value);
     onChange({ ...data, comments: value });
@@ -256,13 +316,25 @@ export const ImageFileItem = ({
   const imageUrl = isExistingAttach(data)
     ? data.path
     : data.attaches
-    ? URL.createObjectURL(data.attaches)
-    : ""; // 또는 기본 이미지 URL
+      ? URL.createObjectURL(data.attaches)
+      : ""; // 또는 기본 이미지 URL
 
+  console.log("🖼️ 생성된 imageUrl:", imageUrl);
   return (
     <CustomCard className="w-50 gap-4 relative" size={"sm"}>
       <div className="relative w-full h-32 overflow-hidden rounded-[4px] border">
-        <Image fill className="object-cover" src={imageUrl} alt="이미지" />
+        {(() => {
+          console.log("🖼️ Image 컴포넌트 렌더링 직전");
+          return null;
+        })()}
+        <Image
+          fill
+          className="object-cover"
+          src={imageUrl}
+          alt="이미지"
+          onLoadingComplete={() => console.log("✅ 이미지 로드 완료!")}
+          onError={(e) => console.log("❌ 이미지 로드 실패!", e)}
+        />
       </div>
       <div className="flex flex-col gap-2">
         <span className="text-xs text-[var(--description-light)]">설명</span>

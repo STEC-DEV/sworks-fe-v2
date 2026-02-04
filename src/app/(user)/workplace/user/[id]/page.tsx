@@ -10,13 +10,35 @@ import { usePermission } from "@/hooks/usePermission";
 import { useAuthStore } from "@/store/auth/auth-store";
 import { useUIStore } from "@/store/common/ui-store";
 import { useUserDetailStore } from "@/store/normal/user/detail-store";
-import { Building2, Mail, Phone, User } from "lucide-react";
+import {
+  Building2,
+  ChevronDownIcon,
+  CircleCheckBigIcon,
+  HourglassIcon,
+  ListTodoIcon,
+  Mail,
+  Phone,
+  User,
+} from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { dialogText } from "../../../../../../public/text";
 import { useRouter } from "next/navigation";
 import UserEditForm from "@/components/form/normal/user/edit";
 import { SingleImageBox } from "@/components/common/image-box";
 import Image from "next/image";
+import { format } from "date-fns";
+import { useUserDailyTaskStore } from "@/store/normal/task/useUserDailyTask";
+import CustomAccordion from "@/components/common/accordion/custom-accordion";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import {
+  UserDailyTaskDetailItem,
+  UserDailyTaskDetailItemLog,
+} from "@/types/normal/task/user-daily-deatil";
 
 const Page = () => {
   const router = useRouter();
@@ -48,7 +70,7 @@ const Page = () => {
   if (hasError(loadingKeys.DETAIL)) return <div>에러 발생</div>;
 
   return (
-    <div className="flex flex-col gap-12 h-full xl:flex-row">
+    <div className="flex flex-col gap-12  xl:flex-row">
       <div className="flex flex-col gap-6">
         <CustomCard className="w-full xl:w-100 gap-6">
           <div className="flex gap-4 items-center px-6">
@@ -124,86 +146,224 @@ const Page = () => {
           </div>
         )}
       </div>
-
-      <div className="h-full w-full relative rounded-[4px] ">
-        {/* <Image
-          fill
-          src="/space_ai.png"
-          alt="이미지"
-          className="object-cover rounded-[4px]"
-          quality={100} // 품질 향상
-          priority // 우선 로딩
-        /> */}
-        {/* 애니메이션 그라데이션 배경 */}
-        {/* <Ani /> */}
-        {/* <Glass /> */}
-      </div>
+      {user.role === "근무자" && (
+        <div className="h-full w-full relative rounded-[4px] ">
+          <WorkerDashboard />
+        </div>
+      )}
     </div>
   );
 };
 
 export default Page;
 
-const Ani = () => {
-  return <div className="absolute inset-0 bg-gradient-to-br"></div>;
-};
-const Glass = () => {
+const WorkerDashboard = () => {
+  const { rawValue } = useDecodeParam("id");
+  const { data, getData, isLoading } = useUserDailyTaskStore();
+  const { user } = useUserDetailStore();
+
+  useEffect(() => {
+    getData(rawValue);
+  }, []);
   return (
-    <div className="absolute inset-0 ">
-      <div className="grid grid-cols-4 grid-rows-3 gap-4 h-full">
-        {/* 큰 카드 - 2x2 */}
-        <div className="col-span-2 row-span-2 backdrop-blur-xl bg-white/10 border border-white/20 rounded-2xl shadow-2xl group hover:bg-black/7 transition-all duration-300">
-          <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-transparent to-transparent opacity-50 rounded-2xl" />
-          <div className="relative z-10 p-6 h-full flex flex-col justify-end">
-            <h3 className=" text-3xl font-bold mb-2">Featured</h3>
-            <p className="text-black/70">추후 업데이트 예정!</p>
-          </div>
+    <div className="space-y-6">
+      {/* 헤더 */}
+      <div className="flex flex-col gap-6">
+        <div className="flex flex-col space-y-2">
+          <span className="text-xl text-[var(--description-dark)] font-bold">
+            {format(Date.now(), "yyyy")}년 {format(Date.now(), "MM")}월{" "}
+            {format(Date.now(), "dd")}일 업무현황
+          </span>
+          <span className="text-[var(--description-light)]">
+            {user?.userName}님의 업무 내용을 한눈에 볼 수 있어요
+          </span>
         </div>
 
-        {/* 세로 긴 카드 - 1x2 */}
-        <div className="col-span-1 row-span-2 backdrop-blur-lg bg-white/10 border border-white/20 rounded-2xl shadow-2xl group hover:bg-white/15 transition-all duration-300">
-          <div className="absolute inset-0 bg-gradient-to-br from-white/15 via-transparent to-transparent opacity-50 rounded-2xl" />
-          <div className="relative z-10 p-4 h-full flex flex-col justify-center">
-            <h4 className=" text-xl font-semibold mb-2">Stats</h4>
-            <p className="text-black/60 text-sm">Vertical card</p>
-          </div>
+        <div className="flex gap-12 justify-between">
+          <WorkItem
+            value={data?.totalTaskCount.toString() ?? "Unknown"}
+            label="전체 업무"
+            icon={
+              // <div className="p-2.5 bg-[#d3d3d3]/30 rounded-full ">
+              //   <ListTodoIcon
+              //     size={28}
+              //     className="text-[var(--description-light)]"
+              //     strokeWidth={1.5}
+              //   />
+              // </div>
+              <div className="p-2.5 bg-blue-100 rounded-full ">
+                <ListTodoIcon
+                  size={28}
+                  className="text-blue-500"
+                  strokeWidth={1.5}
+                />
+              </div>
+            }
+          />
+          <WorkItem
+            value={data?.totalCompleteCount.toString() ?? "Unknown"}
+            label="완료 업무"
+            icon={
+              // <div className="p-2.5 bg-[#d3d3d3]/30 rounded-full ">
+              //   <CircleCheckBigIcon
+              //     size={28}
+              //     className="text-[var(--description-light)]"
+              //     strokeWidth={1.5}
+              //   />
+              // </div>
+              <div className="p-2.5 bg-green-100 rounded-full ">
+                <CircleCheckBigIcon
+                  size={28}
+                  className="text-green-700"
+                  strokeWidth={1.5}
+                />
+              </div>
+            }
+          />
+          <WorkItem
+            value={
+              (
+                (data?.totalTaskCount ?? 0) - (data?.totalCompleteCount ?? 0)
+              ).toString() ?? "Unknown"
+            }
+            label="미완료 업무"
+            icon={
+              // <div className="p-2.5 bg-[#d3d3d3]/30 rounded-full ">
+              //   <HourglassIcon
+              //     size={28}
+              //     className="text-[var(--description-light)]"
+              //     strokeWidth={1.5}
+              //   />
+              // </div>
+              <div className="p-2.5 bg-orange-100 rounded-full ">
+                <HourglassIcon
+                  size={28}
+                  className="text-orange-700"
+                  strokeWidth={1.5}
+                />
+              </div>
+            }
+          />
         </div>
-
-        {/* 작은 정사각형 카드 - 1x1 */}
-        <div className="col-span-1 row-span-1 backdrop-blur-lg bg-white/10 border border-white/20 rounded-xl shadow-2xl group hover:bg-white/15 transition-all duration-300">
-          <div className="absolute inset-0 bg-gradient-to-br from-white/15 via-transparent to-transparent opacity-50 rounded-xl" />
-          <div className="relative z-10 p-4 h-full flex items-center justify-center">
-            <p className=" text-sm font-medium">Quick</p>
-          </div>
-        </div>
-
-        {/* 가로 긴 카드 - 2x1 */}
-        <div className="col-span-2 row-span-1 backdrop-blur-lg bg-white/10 border border-white/20 rounded-2xl shadow-2xl group hover:bg-white/15 transition-all duration-300">
-          <div className="absolute inset-0 bg-gradient-to-br from-white/15 via-transparent to-transparent opacity-50 rounded-2xl" />
-          <div className="relative z-10 p-4 h-full flex items-center">
-            <h4 className=" text-lg font-semibold">Horizontal Banner</h4>
-          </div>
-        </div>
-
-        {/* 작은 카드들 */}
-        <div className="col-span-1 row-span-1 backdrop-blur-lg bg-white/10 border border-white/20 rounded-xl shadow-2xl group hover:bg-white/15 transition-all duration-300">
-          <div className="absolute inset-0 bg-gradient-to-br from-white/15 via-transparent to-transparent opacity-50 rounded-xl" />
-          <div className="relative z-10 p-4 h-full flex items-center justify-center">
-            <p className=" text-sm font-medium">Area 1</p>
-          </div>
-        </div>
-
-        <div className="col-span-1 row-span-1 backdrop-blur-lg bg-white/10 border border-white/20 rounded-xl shadow-2xl group hover:bg-white/15 transition-all duration-300">
-          <div className="absolute inset-0 bg-gradient-to-br from-white/15 via-transparent to-transparent opacity-50 rounded-xl" />
-          <div className="relative z-10 p-4 h-full flex items-center justify-center">
-            <p className=" text-sm font-medium">Area 2</p>
-          </div>
-        </div>
+      </div>
+      {/* 업무 목록 */}
+      <div className="flex flex-col gap-6">
+        {data?.tasks.map((v, i) => (
+          <WorkAccordion key={v.taskSeq} data={v} />
+        ))}
       </div>
     </div>
   );
 };
 
+//헤더 현황판
+const WorkItem = ({
+  value,
+  label,
+  icon,
+}: {
+  value: string;
+  label: string;
+  icon: React.ReactNode;
+}) => {
+  return (
+    <CustomCard className="flex-row items-center w-full  px-4 py-4 min-w-60">
+      {icon}
+      <div className="flex flex-col gap-1">
+        <span className="text-[var(--description-light)]">{label}</span>
+        <span className="text-2xl font-semibold text-[var(--description-light)]">
+          {value}
+        </span>
+      </div>
+    </CustomCard>
+  );
+};
+
+//아코디언
+const WorkAccordion = ({ data }: { data: UserDailyTaskDetailItem }) => {
+  const [open, setOpen] = useState<boolean>(false);
+
+  const status = () => {
+    return data.isComplete ? (
+      <div className="bg-green-100 text-green-700 px-3 text-sm py-1 rounded-4xl">
+        완료
+      </div>
+    ) : (
+      <div className="bg-orange-100 text-orange-700 px-3 text-sm py-1 rounded-4xl">
+        미완료
+      </div>
+    );
+  };
+  return (
+    <CustomCard
+      className="flex py-0 px-0 cursor-default gap-0"
+      variant={"list"}
+    >
+      <button
+        onClick={() => setOpen(!open)}
+        className="flex justify-between gap-4 px-4 py-4 cursor-pointer"
+      >
+        <div className="flex flex-col gap-2 flex-1">
+          <div className="flex justify-between">
+            <span>{data.taskName}</span>
+            {status()}
+          </div>
+
+          <div className="flex gap-2 text-sm text-start text-[var(--description-light)]">
+            <CircleCheckBigIcon
+              className={`${data.isComplete ? "text-green-600" : ""}`}
+              size={20}
+              strokeWidth={1.5}
+            />
+            업무횟수 {data.logDetails.length} / {data.repeat}
+          </div>
+        </div>
+        <div>
+          <ChevronDownIcon
+            className={`text-[var(--icon)] ${open ? "rotate-180 " : ""} duration-150`}
+          />
+        </div>
+      </button>
+      <div
+        className={`
+          px-4 pb-4
+      grid transition-all duration-300 ease-in-out
+      ${open ? "grid-rows-[1fr] pt-4" : "grid-rows-[0fr]"}
+    `}
+      >
+        <div className="overflow-hidden">
+          <div className="border-t pt-4 space-y-4">
+            {data.logDetails.length > 0 ? (
+              data.logDetails.map((l, i) => (
+                <LogItem key={i + "log" + l.logSeq} data={l} />
+              ))
+            ) : (
+              <div className="text-sm text-[var(--description-light)]">
+                아직 업무를 수행하지 않았습니다
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </CustomCard>
+  );
+};
+
+const LogItem = ({ data }: { data: UserDailyTaskDetailItemLog }) => {
+  return (
+    <div>
+      <div className="text-sm bg-[#f5f5f5] px-4 py-2 space-x-6">
+        <span className="text-blue-600">{format(data.workDt, "HH:mm")}</span>
+        <span className="text-[var(--description-light)]">
+          {data.issue || "업무 완료!"}
+        </span>
+      </div>
+      {/* 일단 api에 파일은 없음 */}
+    </div>
+  );
+};
+
+//프로필 스켈레톤
 const ProfileSkeleton = () => {
   return (
     <CustomCard className="w-full xl:w-100 gap-6 shrink-0 h-fit">

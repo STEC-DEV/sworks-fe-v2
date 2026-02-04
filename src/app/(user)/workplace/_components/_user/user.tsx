@@ -7,7 +7,7 @@ import { Users2 } from "lucide-react";
 
 const User = () => {
   return (
-    <div className="flex-1 flex flex-col gap-6">
+    <div className="flex-1 flex flex-col gap-6 pb-12">
       <AppTitle title="근무자" icon={Users2} />
       <UserFilter />
       <UserPagination />

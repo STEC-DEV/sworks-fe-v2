@@ -81,7 +81,7 @@ const Page = () => {
       <div className="flex flex-col gap-4 xl:grid xl:grid-cols-4 xl:gap-6">
         {dailyTaskListByUser.map((v, i) => (
           <Link key={v.userSeq + i} href={`/daily/user/${v.userSeq}`}>
-            <CustomCard className="flex px-4 py-4 cursor-pointer hover:bg-blue-50 hover:border-blue-500">
+            <CustomCard className="flex px-4 py-2 cursor-pointer hover:bg-blue-50 hover:border-blue-500">
               <div className="flex flex-row items-center">
                 <div className="flex-1 flex flex-col gap-6">
                   <span className="text-sm font-medium">{v.userName}</span>
@@ -89,6 +89,7 @@ const Page = () => {
                 </div>
 
                 <DonutChart
+                  key={`${v.userSeq}-chart-${Date.now()} `}
                   data={[{ userName: v.userName, value: v.percent }]}
                 />
               </div>

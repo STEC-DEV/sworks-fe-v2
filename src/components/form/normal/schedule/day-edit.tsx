@@ -61,7 +61,7 @@ const EditSchema = z.object({
         photoType: z.number(),
         attaches: z.instanceof(File).nullable(),
         comments: z.string(),
-      })
+      }),
     ),
     fileAttaches: z.array(
       z.object({
@@ -69,7 +69,7 @@ const EditSchema = z.object({
         photoType: z.number(),
         attaches: z.instanceof(File).nullable(),
         comments: z.string(),
-      })
+      }),
     ),
   }),
 });
@@ -138,7 +138,7 @@ const DayScheduleEditForm = ({
         fileAttaches: [],
       },
     });
-  }, [schedule, form]);
+  }, [schedule]);
 
   useEffect(() => {
     return () => {
@@ -186,7 +186,7 @@ const DayScheduleEditForm = ({
                   <SelectFormItem
                     label="업무 유형"
                     selectItem={convertSelectOptionType(
-                      enteredWorkplace.contracts ?? []
+                      enteredWorkplace.contracts ?? [],
                     )}
                     onValueChange={handleValue}
                     value={field.value?.toString()}
@@ -402,15 +402,25 @@ const DayScheduleEditForm = ({
             control={form.control}
             name="logs.imageAttaches"
             render={({ field }) => {
+              console.log(
+                "🟢 FormField render 실행! field.value:",
+                field.value,
+              );
+
               const handleValue = (value: ScheduleFormAttach[]) => {
-                console.log("이전 추가한 값 : ", value);
+                console.log("🔵 부모 handleValue 호출됨! 받은 값:", value);
+                console.log("🔵 현재 field.value:", field.value);
 
                 // 다른 photoType 유지
                 const otherImages = field.value.filter(
-                  (v) => v.photoType !== 1
+                  (v) => v.photoType !== 1,
                 );
 
-                field.onChange([...otherImages, ...value]);
+                console.log("🔵 otherImages:", otherImages);
+                const newValue = [...otherImages, ...value];
+                console.log("🔵 field.onChange 호출! 전달값:", newValue);
+
+                field.onChange(newValue);
               };
 
               //신규 등록파일 삭제
@@ -427,7 +437,7 @@ const DayScheduleEditForm = ({
                 //현재 삭제된 파일을 제외한 기존파일
 
                 const currentDeleteValue = form.getValues(
-                  "logs.deleteAttaches"
+                  "logs.deleteAttaches",
                 );
                 //삭제파일 등록
                 form.setValue("logs.deleteAttaches", [
@@ -436,7 +446,7 @@ const DayScheduleEditForm = ({
                 ]);
                 //만약 기존 파일이 수정된경우 value에 포함되기떄문에 확인 후 삭제
                 const newValue = field.value.filter(
-                  (v) => v.attachSeq !== value
+                  (v) => v.attachSeq !== value,
                 );
                 field.onChange(newValue);
               };
@@ -445,7 +455,7 @@ const DayScheduleEditForm = ({
                 return (
                   schedule?.logs?.beforeImages.filter(
                     (v) =>
-                      !form.watch("logs.deleteAttaches").includes(v.attachSeq)
+                      !form.watch("logs.deleteAttaches").includes(v.attachSeq),
                   ) ?? []
                 );
               }, [
@@ -455,7 +465,7 @@ const DayScheduleEditForm = ({
 
               return (
                 <ScheduleImageFileFormItem
-                  label="작업 전 이미지"
+                  label="작업 전 이미지 "
                   photoType={1}
                   value={field.value.filter((v) => v.photoType === 1)}
                   onChange={handleValue}
@@ -475,7 +485,7 @@ const DayScheduleEditForm = ({
               const handleValue = (value: ScheduleFormAttach[]) => {
                 // 다른 photoType 유지
                 const otherImages = field.value.filter(
-                  (v) => v.photoType !== 2
+                  (v) => v.photoType !== 2,
                 );
 
                 // 합치기
@@ -495,7 +505,7 @@ const DayScheduleEditForm = ({
                 console.log("기존 삭제", value);
 
                 const currentDeleteValue = form.getValues(
-                  "logs.deleteAttaches"
+                  "logs.deleteAttaches",
                 );
                 //삭제파일 등록
                 form.setValue("logs.deleteAttaches", [
@@ -504,7 +514,7 @@ const DayScheduleEditForm = ({
                 ]);
                 //만약 기존 파일이 수정된경우 value에 포함되기떄문에 확인 후 삭제
                 const newValue = field.value.filter(
-                  (v) => v.attachSeq !== value
+                  (v) => v.attachSeq !== value,
                 );
                 field.onChange(newValue);
               };
@@ -513,7 +523,7 @@ const DayScheduleEditForm = ({
                 return (
                   schedule?.logs?.afterImages.filter(
                     (v) =>
-                      !form.watch("logs.deleteAttaches").includes(v.attachSeq)
+                      !form.watch("logs.deleteAttaches").includes(v.attachSeq),
                   ) ?? []
                 );
               }, [
