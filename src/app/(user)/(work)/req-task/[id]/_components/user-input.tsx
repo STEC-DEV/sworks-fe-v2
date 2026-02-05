@@ -94,24 +94,19 @@ const UserInput = ({ value, onChange }: UserInputProps) => {
 
   return (
     <div className="flex flex-row justify-between items-center">
-      <ScrollArea>
-        <div className="flex flex-row gap-2">
-          {selected.length === 0 ? (
-            <span className="text-sm text-[var(--placeholder)]">
-              담당자 없음
-            </span>
-          ) : null}
-          {selected.map((v, i) => (
-            <span
-              className="500 bg-blue-500 text-white px-2 rounded-2xl text-sm"
-              key={i}
-            >
-              {v.userName}
-            </span>
-          ))}
-        </div>
-        <ScrollBar orientation="horizontal" />
-      </ScrollArea>
+      <div className="flex flex-row gap-2 flex-wrap">
+        {selected.length === 0 ? (
+          <span className="text-sm text-[var(--placeholder)]">담당자 없음</span>
+        ) : null}
+        {selected.map((v, i) => (
+          <span
+            className="px-4 py-0.5  bg-blue-500 text-white  rounded-2xl text-sm"
+            key={i}
+          >
+            {v.userName}
+          </span>
+        ))}
+      </div>
 
       <BaseDialog
         title="담당자"

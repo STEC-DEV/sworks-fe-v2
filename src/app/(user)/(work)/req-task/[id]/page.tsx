@@ -23,6 +23,7 @@ import ReplyEditForm from "@/components/form/normal/request/reply-edit";
 import { useAuthStore } from "@/store/auth/auth-store";
 import EmptyBox from "@/components/ui/custom/empty";
 import { useRouter } from "next/navigation";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
 const Page = () => {
   const { getRequestDetail, loadingKeys, request } = useReqDetailStore();
@@ -199,21 +200,27 @@ const Reply = ({ data }: { data: Request }) => {
                     {format(v.logWorkDt, "yyyy-MM-dd HH:mm:ss")}
                   </span>
                 </div>
+
                 <div className="flex gap-4">
-                  <span className="text-sm text-[var(--description-light)]">
+                  <span className="text-sm text-[var(--description-light)] whitespace-nowrap">
                     담당자
                   </span>
-
-                  {v.users.map((v, i) => (
-                    <span
-                      key={i}
-                      className="px-2 rounded-xl text-sm bg-blue-500 text-white"
-                    >
-                      {v.managerName}
-                    </span>
-                  ))}
+                  <div className="flex gap-2 flex-wrap">
+                    {v.users.map((v, i) => (
+                      <span
+                        key={i}
+                        className="px-4 py-0.5 rounded-xl text-sm bg-blue-500 text-white "
+                      >
+                        {v.managerName}
+                      </span>
+                    ))}
+                  </div>
                 </div>
-                <div>
+
+                <div className="flex flex-col gap-2">
+                  <span className="text-sm text-[var(--description-light)] whitespace-nowrap">
+                    내용
+                  </span>
                   <span>{v.logContents}</span>
                 </div>
                 <DialogCarousel pathList={v.attaches.map((a) => a.path)} />
