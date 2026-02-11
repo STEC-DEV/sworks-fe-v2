@@ -55,7 +55,7 @@ const MainSection = () => {
 
 const ScheduleSection = () => {
   return (
-    <section className="relative space-y-12 h-screen bg-white xl:px-100 xl:py-25 text-center ">
+    <section className="relative space-y-12  md:h-screen bg-white px-5 xl:px-100 py-15 md:py-25 text-center ">
       <motion.div
         initial={{ opacity: 0, y: 50 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -90,7 +90,7 @@ const ScheduleSection = () => {
 
 const DailySection = () => {
   return (
-    <section className="relative space-y-12  bg-[#223377] xl:px-100 xl:py-25 text-center ">
+    <section className="relative space-y-12  bg-[#223377] px-5 xl:px-100  py-15 md:py-25 text-center ">
       <motion.div
         initial={{ opacity: 0, y: 50 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -132,7 +132,7 @@ const DailySection = () => {
 
 const VocSection = () => {
   return (
-    <section className="relative space-y-12 h-screen bg-white xl:px-100 xl:py-25 text-center ">
+    <section className="relative space-y-12 md:h-screen bg-white px-5 xl:px-100 py-15 md:py-25 text-center ">
       <motion.div
         initial={{ opacity: 0, y: 50 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -219,7 +219,14 @@ export const HeroBackground = () => {
       />
 
       {/* 가독성을 위한 노이즈나 미세한 오버레이 */}
-      <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10 mix-blend-overlay" />
+      <div
+        className="absolute inset-0 min-w-full min-h-screen opacity-5 mix-blend-overlay pointer-events-none"
+        style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 237 237' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='2.98' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
+          backgroundSize: "237px 237px", // 노이즈 패턴이 깨지지 않고 반복되도록 설정
+          backgroundRepeat: "repeat",
+        }}
+      />
     </div>
   );
 };

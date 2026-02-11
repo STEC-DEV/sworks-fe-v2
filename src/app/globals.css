@@ -107,7 +107,8 @@ img {
   --placeholder: oklch(0.552 0.016 285.938);
   --border: #e7e5e4;
   --read: #e5e8e9;
-  --icon: #8c978d;
+  /* --icon: #8c978d; */
+  --icon: #575c58;
   --default-font: #000000;
   --description-light: #4e5968;
   --description-dark: #333d4b;

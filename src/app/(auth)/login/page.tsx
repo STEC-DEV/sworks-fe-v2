@@ -25,19 +25,19 @@ const page = () => {
   return (
     <div className="flex items-center justify-center h-full relative">
       <HeroBackground />
-      <Link href={"/"}>
+      <Link href={"/"} className="z-10">
         <div className="absolute top-15 left-0 text-white text-lg font-medium bg-gray-300/40 px-12 py-2 hover:scale-110 duration-150">
           <ArrowLeft />
         </div>
       </Link>
 
-      <div className="absolute top-40 left-1/2 -translate-x-1/2 flex flex-col gap-2 px-16">
+      <div className="text-center w-full absolute top-10 md:top-40 left-1/2 -translate-x-1/2 flex flex-col gap-2">
         <span className="text-4xl font-extrabold text-white">
           Welcome S-Agent
         </span>
-        <span className=" text-gray-100">에스텍시스템 용역업무관리 플랫폼</span>
+        <span className=" text-gray-100">에스텍시스템 용역업무관리 시스템</span>
       </div>
-      <CustomCard className={`py-12 xl:w-130 `} size={"lg"}>
+      <CustomCard className={`py-12 w-[95%] md:w-[60%] xl:w-130 `} size={"lg"}>
         {/* 헤드 */}
         <div className="flex flex-col gap-2 px-12 text-2xl font-medium text-[var(--description-light)]">
           로그인
