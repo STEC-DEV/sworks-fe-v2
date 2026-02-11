@@ -200,7 +200,8 @@ img {
 
 @layer utilities {
   .side-bar-shadow {
-    box-shadow: 5px 0 12px 0px rgb(156, 156, 156),
+    box-shadow:
+      5px 0 12px 0px rgb(156, 156, 156),
       10px 0 15px 0px rgba(156, 156, 156, 0.3);
   }
 }
@@ -215,6 +216,49 @@ img {
 }
 .flex-center {
   @apply flex justify-center items-center;
+}
+
+/* 메인배너 그라데이션 애니메이션*/
+/* globals.css */
+/* @keyframes gradient-move {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.animate-gradient {
+  background-size: 200% 200%;
+  animation: gradient-move 10s ease infinite;
+} */
+
+@keyframes gradient-flow {
+  0% {
+    background-position: 0% 50%;
+  }
+  25% {
+    background-position: 50% 100%; /* 아래로 이동 */
+  }
+  50% {
+    background-position: 100% 50%; /* 오른쪽으로 이동 */
+  }
+  75% {
+    background-position: 50% 0%; /* 위로 이동 */
+  }
+  100% {
+    background-position: 0% 50%; /* 다시 원점 */
+  }
+}
+
+.animate-gradient {
+  /* 배경 크기를 더 크게 잡아야 움직임이 확보됩니다 */
+  background-size: 300% 300%;
+  animation: gradient-flow 10s ease infinite;
 }
 
 /* --background: oklch(1 0 0);

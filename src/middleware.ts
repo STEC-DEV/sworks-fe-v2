@@ -114,7 +114,7 @@ export async function middleware(req: NextRequest) {
   }
 
   //2. 인증없이 접근 가능한 경로
-  const publicPath = ["/login", "/complain", "/cancel"];
+  const publicPath = ["/", "/login", "/complain", "/cancel"];
   if (publicPath.some((path) => pathname.startsWith(path))) {
     return NextResponse.next();
   }
@@ -146,12 +146,12 @@ export async function middleware(req: NextRequest) {
     console.log(
       `${c.cyan}[${getTime()}]${c.r} ${c.bgBlue}${c.brightWhite}${
         c.bold
-      } 📍 REQUEST ${c.r} ${pathname}`
+      } 📍 REQUEST ${c.r} ${pathname}`,
     );
     console.log(
       `${c.cyan}[${getTime()}]${c.r} ${c.bgGreen}${c.black}${c.bold} 👤 User ${
         payload.UserSeq
-      } ${c.r} ${role}`
+      } ${c.r} ${role}`,
     );
 
     const loginMode =
@@ -185,7 +185,7 @@ export async function middleware(req: NextRequest) {
 
     if (config) {
       const isRestrictedBaseUrl = config.restrictedUrls.some((url) =>
-        pathname.startsWith(url)
+        pathname.startsWith(url),
       );
       const isRestrictedAction =
         !config.canAdd &&
@@ -195,7 +195,7 @@ export async function middleware(req: NextRequest) {
         console.log(
           `${c.cyan}[${getTime()}]${c.r}${c.bgRed}${
             c.bold
-          } 🚫 ACCESS BLOCKED [${pathname}] User ${userSeq} ${role} ${c.r}`
+          } 🚫 ACCESS BLOCKED [${pathname}] User ${userSeq} ${role} ${c.r}`,
         );
 
         const response = NextResponse.redirect(new URL("/schedule", req.url));
@@ -219,7 +219,7 @@ export async function middleware(req: NextRequest) {
       console.log(
         `${c.cyan}[${getTime()}]${c.r}${
           c.yellow
-        } ⚠️ 토큰 만료 - 클라이언트에서 갱신 예정${c.r}`
+        } ⚠️ 토큰 만료 - 클라이언트에서 갱신 예정${c.r}`,
       );
       // 클라이언트의 retry 로직이 작동하도록 일단 통과
       return NextResponse.next();
@@ -227,7 +227,7 @@ export async function middleware(req: NextRequest) {
 
     // ✅ refreshToken도 없거나 기타 에러 - 로그인으로
     console.log(
-      `${c.cyan}[${getTime()}]${c.r}${c.red} ❌ 인증 실패 - 로그인 필요${c.r}`
+      `${c.cyan}[${getTime()}]${c.r}${c.red} ❌ 인증 실패 - 로그인 필요${c.r}`,
     );
     const response = NextResponse.redirect(new URL("/login", req.url));
     response.cookies.delete("accessToken");

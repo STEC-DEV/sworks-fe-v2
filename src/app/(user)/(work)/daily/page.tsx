@@ -60,18 +60,18 @@ const Page = () => {
     const display = (total: number, complete: number) => {
       return (
         <div className="flex items-center gap-3 w-full flex-1 shrink-0 text-[var(--description-light)]">
-          <div className="flex items-center gap-2">
-            <span className="text-sm">전체</span>
+          <div className="flex items-center gap-2 ">
+            <span className="text-sm whitespace-nowrap">전체</span>
             <span className="text-xl font-bold">{total}</span>
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="text-sm">완료</span>
+            <span className="text-sm whitespace-nowrap">완료</span>
             <span className="text-xl font-bold">{complete}</span>
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="text-sm">진행</span>
+            <span className="text-sm whitespace-nowrap">진행</span>
             <span className="text-xl font-bold">{total - complete}</span>
           </div>
         </div>

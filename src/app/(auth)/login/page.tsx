@@ -1,7 +1,10 @@
 "use client";
+import { HeroBackground } from "@/app/page";
 import CustomCard from "@/components/common/card";
 import LoginForm from "@/components/form/login-form";
 import Cookies from "js-cookie";
+import { ArrowLeft } from "lucide-react";
+import Link from "next/link";
 import React, { useEffect } from "react";
 
 const page = () => {
@@ -16,19 +19,31 @@ const page = () => {
     Cookies.remove("accessToken");
     Cookies.remove("refreshToken");
   }, []);
-
+  {
+    /* <div className="flex items-center justify-center h-full bg-gradient-to-l from-blue-100 via-blue-300 to-blue-500"></div> */
+  }
   return (
-    <div className="flex items-center justify-center h-full bg-gradient-to-l from-blue-100 via-blue-300 to-blue-500">
-      <CustomCard className={`w-130`} size={"lg"}>
+    <div className="flex items-center justify-center h-full relative">
+      <HeroBackground />
+      <Link href={"/"}>
+        <div className="absolute top-15 left-0 text-white text-lg font-medium bg-gray-300/40 px-12 py-2 hover:scale-110 duration-150">
+          <ArrowLeft />
+        </div>
+      </Link>
+
+      <div className="absolute top-40 left-1/2 -translate-x-1/2 flex flex-col gap-2 px-16">
+        <span className="text-4xl font-extrabold text-white">
+          Welcome S-Agent
+        </span>
+        <span className=" text-gray-100">에스텍시스템 용역업무관리 플랫폼</span>
+      </div>
+      <CustomCard className={`py-12 xl:w-130 `} size={"lg"}>
         {/* 헤드 */}
-        <div className="flex flex-col gap-2 px-16">
-          <span className="text-2xl font-extrabold">Welcome S-Agent</span>
-          <span className="text-sm text-[var(--description-light)]">
-            에스텍시스템 용역업무관리 플랫폼
-          </span>
+        <div className="flex flex-col gap-2 px-12 text-2xl font-medium text-[var(--description-light)]">
+          로그인
         </div>
         {/* 바디 */}
-        <div className="px-16">
+        <div className="px-12">
           <LoginForm />
         </div>
       </CustomCard>
