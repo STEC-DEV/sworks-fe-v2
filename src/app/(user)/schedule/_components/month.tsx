@@ -12,10 +12,20 @@ import { useScheduleStore } from "@/store/normal/schedule/shcedule-store";
 import { MonthScheduleListItem } from "@/types/normal/schedule/month";
 import { useDraggable } from "@dnd-kit/core";
 import { format } from "date-fns";
-import { EllipsisVertical, GripVertical } from "lucide-react";
+import {
+  EllipsisVertical,
+  GripVertical,
+  SquarePenIcon,
+  Trash2Icon,
+} from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import React, { useCallback, useEffect, useState } from "react";
 import { dialogText } from "../../../../../public/text";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 const MonthSchedule = () => {
   const { monthSchedules, getMonthSchedule } = useScheduleStore();
@@ -31,7 +41,7 @@ const MonthSchedule = () => {
       await getMonthSchedule(new URLSearchParams({ targetDt: date }));
     } else {
       await getMonthSchedule(
-        new URLSearchParams({ targetDt: `${year}-${month}` })
+        new URLSearchParams({ targetDt: `${year}-${month}` }),
       );
     }
   }, [searchParams, getMonthSchedule]);
@@ -45,7 +55,7 @@ const MonthSchedule = () => {
     getData();
   };
   return (
-    <CustomCard className="w-full xl:w-100 h-full py-4">
+    <CustomCard className="flex flex-col w-full xl:w-80 xl:min-h-0 xl:h-full py-4">
       <div className=" px-4  flex justify-between items-center">
         <span className="text-lg font-semibold">월간일정</span>
         {canWorkerEdit && (
@@ -59,8 +69,8 @@ const MonthSchedule = () => {
           </BaseDialog>
         )}
       </div>
-      <ScrollArea className="flex-1 min-h-0" style={{ overflow: "visible" }}>
-        <div className="flex flex-col gap-2 mx-2">
+      <ScrollArea className="flex-1 min-h-0 h-full">
+        <div className="flex flex-col gap-1 ">
           {monthSchedules ? (
             monthSchedules.length > 0 ? (
               monthSchedules.map((v, i) =>
@@ -69,14 +79,8 @@ const MonthSchedule = () => {
                     <MonthScheduleItem key={i} data={v} />
                   </DraggableBox>
                 ) : (
-                  // <div
-                  //   className="pr-2 py-2 border border-border rounded-[4px]"
-                  //   key={i}
-                  // >
-                  //   <MonthScheduleItem key={i} data={v} />
-                  // </div>
                   <MonthScheduleItem key={i} data={v} />
-                )
+                ),
               )
             ) : (
               <div className="px-2">
@@ -119,64 +123,95 @@ export const MonthScheduleItem = ({
     if (!year || !month) {
       await deleteMonthSchedule(
         data.planSeq,
-        new URLSearchParams({ targetDt: format(new Date(), "yyyy-MM") })
+        new URLSearchParams({ targetDt: format(new Date(), "yyyy-MM") }),
       );
     } else {
       await deleteMonthSchedule(
         data.planSeq,
-        new URLSearchParams({ targetDt: `${year}-${month}` })
+        new URLSearchParams({ targetDt: `${year}-${month}` }),
       );
     }
   };
   return (
     <div
       className={cn(
-        `w-full flex justify-between items-center ${
+        `group h-full w-full flex  px-2  pr-4 items-center ${
           canWorkerEdit && "cursor-pointer"
-        }`,
-        className
+        } hover:bg-gray-50`,
+        className,
       )}
     >
-      <div className="flex gap-2 items-center">
-        <EllipsisVertical className="text-[var(--icon)]" strokeWidth={1.5} />
+      <div className=" self-stretch  w-0.75 bg-blue-500 mr-2" />
+      <div className="flex gap-2 items-center py-2 flex-1 ">
+        {/* <EllipsisVertical className="text-[var(--icon)]" strokeWidth={1.5} /> */}
+        <GripDots5
+          size={28}
+          className="text-gray-300 group-hover:text-gray-400"
+        />
         <div className="flex flex-col">
-          <span className="text-xs text-blue-500">{data.serviceTypeName}</span>
-          <span className="text-sm">{data.planTitle}</span>
+          <div className="w-fit leading-none px-2 bg-blue-100 rounded-[2px]">
+            <span className="text-xs text-blue-500 font-semibold ">
+              {data.serviceTypeName}
+            </span>
+          </div>
+
+          <span className="text-sm font-medium">{data.planTitle}</span>
           <span className="text-xs text-[var(--description-light)]">
             {data.description}
           </span>
         </div>
       </div>
-
+      {/* 팝오버 */}
       {!isDrag && canWorkerEdit && (
-        <div
-          onPointerDown={(e) => e.stopPropagation()}
-          // onClick={(e) => e.stopPropagation()}
-          className="flex gap-2 items-center"
-        >
-          <BaseDialog
-            title="월간일정 수정"
-            open={open}
-            setOpen={setOpen}
-            triggerChildren={
-              <IconButton
-                icon="SquarePen"
-                onClick={(e) => handleClick(e)}
-                size={16}
-              />
-            }
+        <Popover>
+          <PopoverTrigger
+            asChild
+            className="hidden group-hover:block"
+            onClick={(e) => e.stopPropagation()}
+            onPointerDown={(e) => e.stopPropagation()}
           >
-            <MonthEditForm data={data} onClose={() => setOpen(false)} />
-          </BaseDialog>
-          <CheckDialog
-            title={dialogText.defaultDelete.title}
-            description={dialogText.defaultDelete.description}
-            actionLabel={dialogText.defaultDelete.actionLabel}
-            onClick={onDelete}
-          >
-            <IconButton icon="Trash2" size={16} />
-          </CheckDialog>
-        </div>
+            <IconButton
+              icon="EllipsisVertical"
+              bgClassName="hover:bg-gray-200 rounded-[4px] px-"
+            />
+          </PopoverTrigger>
+          <PopoverContent className=" bg-white w-25 p-0 ">
+            <div
+              onPointerDown={(e) => e.stopPropagation()}
+              // onClick={(e) => e.stopPropagation()}
+              className="flex flex-col  items-start justify-center "
+            >
+              <BaseDialog
+                title="월간일정 수정"
+                open={open}
+                setOpen={setOpen}
+                triggerChildren={
+                  <div className="w-full flex  items-center gap-2 px-4 py-2 hover:bg-gray-50 cursor-pointer">
+                    <SquarePenIcon size={16} className="text-[var(--icon)]" />
+                    <span className="text-sm text-[var(--description-dark)]">
+                      수정
+                    </span>
+                  </div>
+                }
+              >
+                <MonthEditForm data={data} onClose={() => setOpen(false)} />
+              </BaseDialog>
+              <CheckDialog
+                title={dialogText.defaultDelete.title}
+                description={dialogText.defaultDelete.description}
+                actionLabel={dialogText.defaultDelete.actionLabel}
+                onClick={onDelete}
+              >
+                <div className="w-full flex  items-center gap-2 px-4 py-2 hover:bg-gray-50 cursor-pointer">
+                  <Trash2Icon size={16} className="text-red-500" />
+                  <span className="text-sm text-[var(--description-dark)]">
+                    삭제
+                  </span>
+                </div>
+              </CheckDialog>
+            </div>
+          </PopoverContent>
+        </Popover>
       )}
     </div>
   );
@@ -187,10 +222,12 @@ interface DraggableBoxProps {
   id: number;
 }
 const DraggableBox = ({ children, id }: DraggableBoxProps) => {
-  const { attributes, listeners, setNodeRef, transform } = useDraggable({
-    id: `draggable ${id}`,
-    data: { id },
-  });
+  const { attributes, listeners, setNodeRef, transform, isDragging } =
+    useDraggable({
+      id: `draggable ${id}`,
+      data: { id },
+    });
+
   const style = transform
     ? {
         transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
@@ -200,17 +237,20 @@ const DraggableBox = ({ children, id }: DraggableBoxProps) => {
   return (
     <div
       className={`
-        pr-2 py-2
-       focus-visible:outline-none
-        ${
-          transform
-            ? "bg-blue-50 opacity-60 p-2 border border-[var(--border)] rounded-[4px]"
-            : null
-        }`}
+        focus-visible:outline-none
+        ${isDragging ? "opacity-50 scale-105 z-50" : "opacity-100"}
+        transition-opacity
+      `}
       ref={setNodeRef}
       style={style}
       {...listeners}
       {...attributes}
+      onKeyDown={(e) => {
+        // Popover 내부에서 키 이벤트 발생 시 드래그 방지
+        if ((e.target as HTMLElement).closest('[role="dialog"]')) {
+          e.stopPropagation();
+        }
+      }}
     >
       {children}
     </div>
@@ -218,3 +258,18 @@ const DraggableBox = ({ children, id }: DraggableBoxProps) => {
 };
 
 export default MonthSchedule;
+
+//그립 svg요소
+const GripDots5 = ({
+  size = 16,
+  className,
+}: {
+  size?: number;
+  className?: string;
+}) => (
+  <svg width={6} height={size} viewBox="0 0 6 28" className={className}>
+    {[2, 8, 14, 20, 26].map((cy) => (
+      <circle key={cy} cx={3} cy={cy} r={1.5} fill="currentColor" />
+    ))}
+  </svg>
+);

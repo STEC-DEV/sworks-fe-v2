@@ -71,7 +71,7 @@ export const DroppableCalendar = ({}: DroppableCalendarProps) => {
 
   return (
     <Suspense>
-      <div className="w-full h-auto xl:h-full flex flex-col gap-2  min-w-0 ">
+      <div className="w-full h-auto xl:h-full flex flex-col gap-2  min-w-0 flex-1 ">
         <CalendarHeader
           date={curDate}
           focusDate={focusDate}
@@ -79,7 +79,7 @@ export const DroppableCalendar = ({}: DroppableCalendarProps) => {
           onPrevMonth={onPrev}
           onGetData={getData}
         />
-        <div className="w-full h-full border-y border-[var(--border)] rounded-[4px] ">
+        <div className="w-full h-full border-y border-[var(--calendar-border)] rounded-[4px] ">
           <CalendarContent
             weeks={weeks}
             focusDate={focusDate}
@@ -187,22 +187,25 @@ const CalendarContent = ({
   //날짜별로 그룹화
   const schedulesByDate = useMemo(() => {
     if (!schedules) return {};
-    return schedules.reduce((acc, schedule) => {
-      const dateKey = format(new Date(schedule.dates), "yyyy-MM-dd");
-      if (!acc[dateKey]) {
-        acc[dateKey] = [];
-      }
-      acc[dateKey].push(schedule);
-      return acc;
-    }, {} as Record<string, typeof schedules>);
+    return schedules.reduce(
+      (acc, schedule) => {
+        const dateKey = format(new Date(schedule.dates), "yyyy-MM-dd");
+        if (!acc[dateKey]) {
+          acc[dateKey] = [];
+        }
+        acc[dateKey].push(schedule);
+        return acc;
+      },
+      {} as Record<string, typeof schedules>,
+    );
   }, [schedules]);
 
   return (
     <div className="flex flex-col  w-full h-full xl:h-full">
-      <div className="flex border-b border-x border-[var(--border)]">
+      <div className="flex border-b border-x border-[var(--calendar-border)] rounded-t-[4px]">
         {labels.map((l, i) => (
           <div
-            className="flex-1 flex items-center justify-center border-r border-[var(--border)] last:border-r-0 first:text-red-500 last:text-red-500 "
+            className="flex-1 flex items-center justify-center border-r border-[var(--calendar-border)] last:border-r-0 first:text-red-500 last:text-red-500 "
             key={i}
           >
             <span className="text-sm ">{l}</span>
@@ -211,7 +214,10 @@ const CalendarContent = ({
       </div>
       <div className="flex-1 flex flex-col min-h-0">
         {weeks.map((w, i) => (
-          <div key={i} className="flex flex-1 min-h-0 border-b last:border-b-0">
+          <div
+            key={i}
+            className="flex flex-1 min-h-0 border-b border-[var(--calendar-border)] last:border-b-0 last:[&>*:first-child]:rounded-bl-[4px] last:[&>*:last-child]:rounded-br-[4px]"
+          >
             {w.map((d, j) => (
               <DayBox
                 date={d}
@@ -259,9 +265,7 @@ export const DayBox = ({
   return (
     <div
       className={`flex-1   h-full p-1 overflow-hidden  min-h-25
-         border-r border--[var(--border)] first:border-l
-         
-  
+         border-r border-[var(--calendar-border)]  first:border-l
          first:text-red-500 last:text-red-500 
          ${isOver ? "shadow-[inset_0_0_0_1px_rgb(239,68,68)] bg-red-50" : ""}
     ${

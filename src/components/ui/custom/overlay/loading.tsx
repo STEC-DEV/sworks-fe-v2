@@ -15,7 +15,7 @@ const LoadingOverlay = ({
 
   return (
     <div
-      className={`fixed inset-0 bg-black opacity-25 flex flex-col items-center justify-center z-100 ${
+      className={`fixed inset-0 bg-black opacity-25 flex flex-col items-center justify-center z-100 pointer-events-auto ${
         blur ? "backdrop-blur-sm" : ""
       }`}
     >

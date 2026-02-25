@@ -8,11 +8,7 @@ export const qeCol: ColumnDef<QeListItem>[] = [
     header: "업무유형",
     cell: ({ row }) => {
       const value = row.original.serviceTypeName;
-      return (
-        <span className="text-xs text-[var(--description-dark)] font-medium">
-          {value}
-        </span>
-      );
+      return <span className=" text-[var(--description-dark)] ">{value}</span>;
     },
   },
   {
@@ -20,11 +16,7 @@ export const qeCol: ColumnDef<QeListItem>[] = [
     header: "관리부문",
     cell: ({ row }) => {
       const value = row.original.divCodeName;
-      return (
-        <span className="text-xs text-[var(--description-dark)] font-medium">
-          {value}
-        </span>
-      );
+      return <span className=" text-[var(--description-dark)] ">{value}</span>;
     },
   },
   {
@@ -32,11 +24,7 @@ export const qeCol: ColumnDef<QeListItem>[] = [
     header: "관리유형",
     cell: ({ row }) => {
       const value = row.original.typeCodeName;
-      return (
-        <span className="text-xs text-[var(--description-dark)] font-medium">
-          {value}
-        </span>
-      );
+      return <span className=" text-[var(--description-dark)] ">{value}</span>;
     },
   },
   {
@@ -44,7 +32,7 @@ export const qeCol: ColumnDef<QeListItem>[] = [
     header: "평가일자",
     cell: ({ row }) => {
       const value = format(row.original.createDt, "yyyy-MM-dd");
-      return <span className="text-xs">{value}</span>;
+      return <span className="">{value}</span>;
     },
   },
   {
@@ -52,7 +40,7 @@ export const qeCol: ColumnDef<QeListItem>[] = [
     header: "평가자",
     cell: ({ row }) => {
       const value = row.original.createUser;
-      return <span className="text-xs">{value}</span>;
+      return <span className="">{value}</span>;
     },
   },
   {
@@ -64,8 +52,8 @@ export const qeCol: ColumnDef<QeListItem>[] = [
       const point = row.original.total;
       return (
         <div className="text-right">
-          <span className="text-md font-medium text-blue-500">{value} </span>
-          <span className="text-md font-medium text-[var(--description-light)]">
+          <span className="text-sm  text-blue-500">{value} </span>
+          <span className="text-sm  text-[var(--description-light)]">
             / {point}
           </span>
         </div>

@@ -14,14 +14,12 @@ export const noticeCol: ColumnDef<NoticeListItem>[] = [
     },
     cell: ({ row }) => {
       const value = row.original.serviceTypes.map(
-        (item) => item.serviceTypeName
+        (item) => item.serviceTypeName,
       );
       const isPin = row.original.isPin;
       return (
         <span
-          className={`text-xs text-blue-500 ${
-            isPin ? "font-bold" : " font-medium "
-          }`}
+          className={` text-blue-500 ${isPin ? "font-bold" : " font-medium "}`}
         >
           {value.join(", ")}
         </span>
@@ -36,11 +34,7 @@ export const noticeCol: ColumnDef<NoticeListItem>[] = [
       const value = row.original.title;
       const isPin = row.original.isPin;
       return (
-        <span
-          className={`text-xs text-[var(--description-dark)] ${
-            isPin ? "font-bold" : " font-medium "
-          }`}
-        >
+        <span className={` ${isPin ? "font-bold" : " font-medium "}`}>
           {value}
         </span>
       );
@@ -54,11 +48,7 @@ export const noticeCol: ColumnDef<NoticeListItem>[] = [
       const value = row.original.creator;
       const isPin = row.original.isPin;
       return (
-        <span
-          className={`text-xs text-[var(--description-dark)]  ${
-            isPin ? "font-bold" : " font-medium "
-          }`}
-        >
+        <span className={`  ${isPin ? "font-bold" : " font-medium "}`}>
           {value}
         </span>
       );
@@ -73,7 +63,7 @@ export const noticeCol: ColumnDef<NoticeListItem>[] = [
       const value = format(date, "yyyy-MM-dd");
       const isPin = row.original.isPin;
       return (
-        <span className={`text-xs ${isPin ? "font-bold" : " font-medium "}`}>
+        <span className={` ${isPin ? "font-bold" : " font-medium "}`}>
           {value}
         </span>
       );

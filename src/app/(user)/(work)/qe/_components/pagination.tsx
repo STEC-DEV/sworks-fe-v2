@@ -89,7 +89,7 @@ const SelectEvaluateItem = ({ onClose }: { onClose: () => void }) => {
                 <span className="text-blue-500 text-sm">
                   {e.serviceTypeName}
                 </span>
-                <span>
+                <span className="text-sm">
                   {e.divCodeName}({e.typeCodeName})
                 </span>
               </CustomCard>

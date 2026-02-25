@@ -7,11 +7,7 @@ export const mroColumns: ColumnDef<FacilityListItem>[] = [
     header: "유형",
     cell: ({ row }) => {
       const value = row.original.facilityCodeName;
-      return (
-        <span className="text-xs font-medium text-[var(--description-dark)] ">
-          {value}
-        </span>
-      );
+      return <span className="font-semibold text-blue-500 ">{value}</span>;
     },
   },
   {
@@ -19,7 +15,7 @@ export const mroColumns: ColumnDef<FacilityListItem>[] = [
     header: "반입",
     cell: ({ row }) => {
       const value = format(row.original.fromDt, "yyyy-MM-dd");
-      return <span className="text-xs ">{value}</span>;
+      return <span className=" ">{value}</span>;
     },
   },
   {
@@ -27,7 +23,7 @@ export const mroColumns: ColumnDef<FacilityListItem>[] = [
     header: "내용",
     cell: ({ row }) => {
       const value = row.original.description;
-      return <span className="text-xs">{value}</span>;
+      return <span className="">{value}</span>;
     },
   },
   {
@@ -35,7 +31,7 @@ export const mroColumns: ColumnDef<FacilityListItem>[] = [
     header: "연락처",
     cell: ({ row }) => {
       const value = row.original.tel;
-      return <span className="text-xs">{value}</span>;
+      return <span className="">{value}</span>;
     },
   },
   {
@@ -43,7 +39,7 @@ export const mroColumns: ColumnDef<FacilityListItem>[] = [
     header: "금액",
     cell: ({ row }) => {
       const value = row.original.cost;
-      return <span className="text-xs">{value}</span>;
+      return <span className="">{value}</span>;
     },
   },
 ];

@@ -5,6 +5,26 @@ import BaseToast from "@/components/common/toast/base-toast";
 import { geistMono } from "@/lib/fonts";
 import ApiErrorHandler from "@/components/layout/error";
 import RedirectError from "@/components/layout/redirect-error";
+import { Noto_Sans_KR } from "next/font/google";
+
+const notoSansKr = Noto_Sans_KR({
+  subsets: ["latin"],
+  weight: ["100", "300", "400", "500", "700", "900"],
+  display: "swap",
+  variable: "--font-noto-sans-kr",
+});
+
+const suit = localFont({
+  src: [
+    {
+      path: "../../public/font/SUIT-Variable.woff2",
+      weight: "100 900",
+      style: "normal",
+    },
+  ],
+  display: "swap",
+  variable: "--font-suit",
+});
 
 // font-family addition
 const pretendard = localFont({
@@ -29,7 +49,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${pretendard.variable} ${geistMono.variable}`}>
+    <html lang="en" className={`${suit.variable} ${geistMono.variable}`}>
       <body>
         <BaseToast />
         <ApiErrorHandler />

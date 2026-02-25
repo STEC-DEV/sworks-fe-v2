@@ -51,11 +51,8 @@ html {
 
 body {
   height: 100%;
-  font-family: var(--font-pretendard);
+  font-family: var(--font-suit);
   background: white;
-
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale; /* Firefox (macOS만 해당) */
 }
 
 /* a 링크 초기화 */
@@ -106,6 +103,7 @@ img {
   --skeleton: #e2e2e2;
   --placeholder: oklch(0.552 0.016 285.938);
   --border: #e7e5e4;
+  --calendar-border: #d3d3d3;
   --read: #e5e8e9;
   /* --icon: #8c978d; */
   --icon: #575c58;
@@ -173,9 +171,16 @@ img {
   * {
     @apply border-border outline-ring/50;
   }
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
 
   body {
     @apply bg-background text-foreground;
+    @apply font-sans;
+    letter-spacing: -0.02em;
   }
 
   /* 스크롤바 전체 */

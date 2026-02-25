@@ -6,7 +6,7 @@ import BaseDialog from "../ui/custom/base-dialog";
 import CustomCard from "./card";
 
 const buttonVariants = cva(
-  "flex items-center justify-center gap-4 text-xs text-white rounded-[4px] hover:bg-blue-600 cursor-pointer whitespace-nowrap",
+  "flex items-center justify-center gap-4 text-sm font-medium text-white rounded-[4px] hover:bg-blue-600 cursor-pointer whitespace-nowrap",
   {
     variants: {
       /**색상변경 */
@@ -30,12 +30,11 @@ const buttonVariants = cva(
       variant: "default",
       size: "default",
     },
-  }
+  },
 );
 
 interface ButtonProps
-  extends React.ComponentProps<"button">,
-    VariantProps<typeof buttonVariants> {
+  extends React.ComponentProps<"button">, VariantProps<typeof buttonVariants> {
   className?: string;
   // icon?: keyof typeof icons;
   icon?: LucideIcon;
@@ -82,7 +81,7 @@ export const TriggerButton = ({
                 hover:border-[var(--primary)] hover:cursor-pointer
                 data-[placeholder]:text-[var(--placeholder)] data-[state=open]:ring-[var(--primary)] data-[state=open]:border-[var(--primary)] data-[state=open]:ring-1 data-[state=open]:ring-inset
                 `,
-        className
+        className,
       )}
       type="button"
       {...props}

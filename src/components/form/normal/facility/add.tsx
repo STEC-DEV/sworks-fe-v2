@@ -21,12 +21,12 @@ export const facilityAddFormSchema = z.object({
   description: z.string("내용을 입력해주세요.").min(1, "내용을 입력해주세요."),
   fromDt: z.date(),
   toDt: z.date().nullable(),
-  constractor: z.string(),
+  constractor: z.string("내용을 입력해주세요.").min(1, "내용을 입력해주세요."),
   tel: z
     .string()
     .refine(
       (val) => !val || (val.length >= 9 && val.length <= 11),
-      "전화번호를 올바르게 입력해주세요."
+      "전화번호를 올바르게 입력해주세요.",
     ),
   cost: z.string(),
   files: z.array(z.instanceof(File)),

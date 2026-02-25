@@ -98,7 +98,7 @@ export const TaskBox = ({ data }: TaskBoxProps) => {
         </div>
 
         <CustomCard
-          className={` md:w-50 flex-col gap-2 absolute top-0 bg-blue-50 shadow-lg z-10 ${
+          className={`max-h-70 md:w-50 flex-col gap-2 absolute top-0 bg-blue-50 shadow-xl z-10 overflow-auto ${
             isHover ? "hidden md:flex" : "hidden"
           } ${showLeft ? "right-full mr-2" : "left-full ml-2"} `}
           variant={"list"}

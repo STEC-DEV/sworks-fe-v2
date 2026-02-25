@@ -122,7 +122,10 @@ const BaseTable = <TData, TValue>({
                   onClick={() => onRowClick?.(row.original)}
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id} className={cn("py-3", padding)}>
+                    <TableCell
+                      key={cell.id}
+                      className={cn("py-3 text-xs font-medium", padding)}
+                    >
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext(),

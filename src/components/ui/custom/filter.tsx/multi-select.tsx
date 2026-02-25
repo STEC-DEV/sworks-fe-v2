@@ -52,7 +52,7 @@ const MultiSelect = <T extends Record<string, string>>({
           icon={Icon ?? Filter}
           variant={"filter"}
           className={`font-medium
-            text-nowrap text-xs bg-white border  hover:bg-gray-50 ${
+            text-nowrap text-[13px] bg-white border  hover:bg-gray-50 ${
               selected.length > 0
                 ? "text-black border-blue-500"
                 : "text-[var(--description-dark)]"

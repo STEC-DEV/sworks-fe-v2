@@ -51,7 +51,7 @@ export const taskCol: ColumnDef<Task>[] = [
           "yyyy/MM/dd",
         )}`;
 
-      return <span className="text-xs font-medium ">{value}</span>;
+      return <span className="  ">{value}</span>;
     },
   },
 
@@ -60,7 +60,7 @@ export const taskCol: ColumnDef<Task>[] = [
     header: "유형",
     cell: ({ row }) => {
       const value = row.original.serviceTypeName;
-      return <span className="text-xs text-blue-500 font-medium">{value}</span>;
+      return <span className=" text-blue-500 font-semibold">{value}</span>;
     },
   },
   {
@@ -68,7 +68,7 @@ export const taskCol: ColumnDef<Task>[] = [
     header: "제목",
     cell: ({ row }) => {
       const value = row.original.title;
-      return <span className="text-xs">{value}</span>;
+      return <span className="">{value}</span>;
     },
   },
   {
@@ -76,7 +76,7 @@ export const taskCol: ColumnDef<Task>[] = [
     header: "반복횟수",
     cell: ({ row }) => {
       const value = row.original.repeat;
-      return <span className="text-xs">{`${value.toString()}회`}</span>;
+      return <span className="">{`${value.toString()}회`}</span>;
     },
   },
   {
@@ -87,7 +87,7 @@ export const taskCol: ColumnDef<Task>[] = [
       const users = row.original.users;
       const value = users.map((user) => user.userName);
 
-      return <span className="text-xs">{value.length}명</span>;
+      return <span className="">{value.length}명</span>;
     },
   },
 ];
@@ -101,7 +101,7 @@ const UserList = ({ data }: { data: string[] }) => {
   };
   return (
     <div>
-      <span className="text-xs text-[var(--description-dark)]">{value()}</span>
+      <span className=" text-[var(--description-dark)]">{value()}</span>
     </div>
   );
 };

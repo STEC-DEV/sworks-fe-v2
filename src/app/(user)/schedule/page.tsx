@@ -41,7 +41,7 @@ const Page = () => {
     if (e.over === null || !e.active) return;
     // //월간일정 -> 일간일정 등록요청 로직
     // console.log("전송 데이터");
-    console.log("월간일정 시퀀스 : ", e.active.data.current?.id);
+
     const monthSeq = e.active.data.current?.id;
     const date = e.over.data.current as Date;
     console.log(date);
@@ -52,17 +52,6 @@ const Page = () => {
 
     await postMonthToDay(schedule, date);
     await getDaySchedule(currentYearMonth);
-
-    // console.log(
-    //   "월간일정 데이터 : ",
-    //   monthSchedules.find((item) => item.monthSeq === e.active.data.current?.id)
-    // );
-    // console.log(
-    //   "변경날짜 : ",
-    //   e.over?.data.current
-    //     ? format(new Date(e.over?.data.current as Date), "yyyy-MM-dd")
-    //     : null
-    // );
   };
   /**
    * 드래그 시작
@@ -74,28 +63,68 @@ const Page = () => {
     setActiveId(e.active.data.current?.id);
   };
   return (
-    <div className="flex flex-col gap-4 xl:h-full">
-      <AppTitle title="일정" icon={CalendarDays} />
-      <DndContext
-        onDragEnd={handleDragEnd}
-        onDragStart={handleDragStart}
-        // autoScroll={false} 반응형 시 스크롤이 필요함
-      >
-        <div className="flex flex-col  xl:flex-row gap-12  xl:h-full">
-          <DroppableCalendar />
-          <MonthSchedule />
+    <div className="xl:fixed xl:inset-0 xl:left-[280px] xl:overflow-hidden">
+      {/* xl에서 fixed로 전체 화면 차지 */}
+      <div className="flex flex-col gap-6 xl:px-12 xl:py-12 h-full min-h-screen xl:min-h-0">
+        {/* 부모 레이아웃과 동일한 패딩 적용 */}
+        <div className="flex flex-col gap-4 flex-1 min-h-0">
+          <AppTitle title="일정" icon={CalendarDays} />
+          <DndContext onDragEnd={handleDragEnd} onDragStart={handleDragStart}>
+            <div className="flex flex-col xl:flex-row gap-12 flex-1 min-h-0">
+              <DroppableCalendar />
+              <MonthSchedule />
+            </div>
+            <DragOverlay
+              className="cursor-grabbing"
+              dropAnimation={{
+                duration: 200,
+                easing: "cubic-bezier(0.18, 0.67, 0.6, 1.22)",
+              }}
+            >
+              {activeId && activeItem ? (
+                <div className="bg-white shadow-2xl rounded-lg border border-gray-100 ring-2 ring-blue-500/20 overflow-hidden opacity-80">
+                  <MonthScheduleItem
+                    data={activeItem}
+                    isDrag={activeId === activeItem.planSeq}
+                  />
+                </div>
+              ) : null}
+            </DragOverlay>
+          </DndContext>
         </div>
-        <DragOverlay className="bg-blue-50  p-2 border border-[var(--border)] rounded-[4px]">
-          {activeId && activeItem ? (
-            <MonthScheduleItem
-              data={activeItem}
-              isDrag={activeId === activeItem.planSeq}
-            />
-          ) : null}
-        </DragOverlay>
-      </DndContext>
+      </div>
     </div>
   );
 };
 
 export default Page;
+
+// <div className="flex flex-col gap-4 flex-1">
+//   <AppTitle title="일정" icon={CalendarDays} />
+//   <DndContext
+//     onDragEnd={handleDragEnd}
+//     onDragStart={handleDragStart}
+//     // autoScroll={false} 반응형 시 스크롤이 필요함
+//   >
+//     <div className="flex flex-col xl:flex-row gap-12 flex-1 min-h-0">
+//       <DroppableCalendar />
+//       <MonthSchedule />
+//     </div>
+//     <DragOverlay
+//       className=" cursor-grabbing"
+//       dropAnimation={{
+//         duration: 200,
+//         easing: "cubic-bezier(0.18, 0.67, 0.6, 1.22)",
+//       }}
+//     >
+//       {activeId && activeItem ? (
+//         <div className="bg-white shadow-2xl rounded-lg border border-gray-100 ring-2 ring-blue-500/20 overflow-hidden opacity-80">
+//           <MonthScheduleItem
+//             data={activeItem}
+//             isDrag={activeId === activeItem.planSeq}
+//           />
+//         </div>
+//       ) : null}
+//     </DragOverlay>
+//   </DndContext>
+// </div>
