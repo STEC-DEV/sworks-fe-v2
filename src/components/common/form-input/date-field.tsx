@@ -27,9 +27,7 @@ export const DateFormItem = ({
     <FormItem className="gap-2 w-full">
       <div className="flex">
         {label ? (
-          <span className="text-xs text-[var(--description-light)]">
-            {label}
-          </span>
+          <span className="text-sm text-description">{label}</span>
         ) : null}
         {required ? <span className="text-xs text-red-500">*</span> : null}
       </div>
@@ -86,9 +84,7 @@ export const AlarmTimeFormItem = ({
     <FormItem>
       <div className="flex">
         {label ? (
-          <span className="text-xs text-[var(--description-light)]">
-            {label}
-          </span>
+          <span className="text-sm text-description">{label}</span>
         ) : null}
         {required ? <span className="text-xs text-red-500">*</span> : null}
       </div>

@@ -6,7 +6,12 @@ import { useDailyTaskStore } from "@/store/normal/task/dailyTask";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { TaskBox } from "./_components/item";
 import BaseSkeleton from "@/components/common/base-skeleton";
-import { BriefcaseBusiness, ChevronRight } from "lucide-react";
+import {
+  BriefcaseBusiness,
+  ChevronRight,
+  LayoutList,
+  Users,
+} from "lucide-react";
 import Link from "next/link";
 import { usePermission } from "@/hooks/usePermission";
 import { useUIStore } from "@/store/common/ui-store";
@@ -103,7 +108,7 @@ const Page = () => {
   return (
     <>
       <div className="flex justify-between items-center">
-        <AppTitle title="일일 업무" icon={BriefcaseBusiness} />
+        <AppTitle title="일일업무" />
         {canWorkerEdit && (
           <div className="flex gap-6">
             <TabButton label="과거이력" href="/daily/history" />
@@ -111,9 +116,11 @@ const Page = () => {
           </div>
         )}
       </div>
+      <div className="flex gap-4">
+        <div className="flex-1">
+          <TaskFilter viewMode={viewMode} />
+        </div>
 
-      <TaskFilter viewMode={viewMode} />
-      <div className="flex justify-end">
         <ViewModeSwitch mode={viewMode} setMode={(mode) => setViewMode(mode)} />
       </div>
 
@@ -125,13 +132,13 @@ const Page = () => {
 export const TabButton = ({ label, href }: { label: string; href: string }) => {
   return (
     <Link href={href}>
-      <div className="flex items-center gap-0.5 cursor-pointer group">
-        <span className="text-sm text-[var(--description-light)] group-hover:text-blue-500">
+      <div className="flex items-center gap-0.5 cursor-pointer group ">
+        <span className="text-sm font-medium text-description group-hover:text-primary group-hover:font-bold duration-150">
           {label}
         </span>
         <ChevronRight
           size={16}
-          className="text-[var(--icon)] group-hover:text-blue-500"
+          className="text-description group-hover:text-primary"
         />
       </div>
     </Link>
@@ -147,20 +154,35 @@ const ViewModeSwitch = ({
   mode: "TASK" | "WORKER";
   setMode: (mode: "TASK" | "WORKER") => void;
 }) => {
-  const handleModeChange = () => {
-    const newMode = mode === "TASK" ? "WORKER" : "TASK";
-    setMode(newMode);
-  };
   return (
-    <div className="flex items-center gap-4">
-      <label className="text-sm text-[var(--description-light)]">
-        {mode === "TASK" ? "업무별" : "사용자별"}
-      </label>
-      <Switch
-        id="view-mode"
-        className="border-[var(--border)] cursor-pointer"
-        onClick={handleModeChange}
-      />
+    <div className="flex items-start h-fit xl:h-full xl:items-center gap-1 rounded-lg border border-border bg-background p-0.5">
+      <button
+        type="button"
+        onClick={() => setMode("TASK")}
+        className={`flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium transition-all duration-200 cursor-pointer
+          ${
+            mode === "TASK"
+              ? "bg-surface text-primary shadow-sm border border-border"
+              : "text-description hover:text-description-strong"
+          }`}
+      >
+        <LayoutList size={16} />
+        업무별
+      </button>
+
+      <button
+        type="button"
+        onClick={() => setMode("WORKER")}
+        className={`flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium transition-all duration-200 cursor-pointer
+          ${
+            mode === "WORKER"
+              ? "bg-surface text-primary shadow-sm border border-border"
+              : "text-description hover:text-description-strong"
+          }`}
+      >
+        <Users size={16} />
+        사용자별
+      </button>
     </div>
   );
 };

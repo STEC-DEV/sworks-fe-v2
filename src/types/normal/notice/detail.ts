@@ -4,6 +4,7 @@ export interface Notice {
   noticeSeq: number;
   title: string;
   description: string;
+  creator: string;
   endDt: Date;
   viewYn: boolean;
   serviceTypes: ServiceType[];

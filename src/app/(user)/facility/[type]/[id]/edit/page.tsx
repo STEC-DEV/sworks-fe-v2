@@ -8,7 +8,7 @@ const Page = () => {
   const { decodeValue: title } = useDecodeParam("type");
   return (
     <>
-      <AppTitle title={`${title} 이력 수정`} isBorder />
+      <AppTitle title={`${title} 이력 수정`} isPrev />
       <FacilityDetailEditForm />
     </>
   );

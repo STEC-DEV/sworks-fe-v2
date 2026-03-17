@@ -42,8 +42,8 @@ const WorkplaceCard = ({
 }: WorkplaceCardProps) => {
   return (
     <CustomCard
-      className={`hover:bg-blue-50 hover:border-blue-500 ${
-        isCheck ? "bg-blue-50 border-blue-500" : null
+      className={`hover:bg-primary-background hover:border-primary ${
+        isCheck ? "bg-primary-background border-primary" : null
       }`}
       variant={"list"}
       onClick={() => onClick?.(item)}
@@ -53,9 +53,7 @@ const WorkplaceCard = ({
           <span className="text-sm font-bold">{item.siteName}</span>
           <span className="text-xs">{item.siteAddress}</span>
         </div>
-        <span className="text-xs text-[var(--description-light)]">
-          {item.siteTel}
-        </span>
+        <span className="text-xs text-description">{item.siteTel}</span>
       </div>
       {/**
        * 업무유형
@@ -64,8 +62,11 @@ const WorkplaceCard = ({
         <div className="flex gap-2">
           {item.contracts.map((c, i) => {
             return (
-              <div key={i} className="rounded-[4px] bg-blue-50 px-4">
-                <span className="text-xs text-blue-500">
+              <div
+                key={i}
+                className="rounded-DEFAULT px-4 border border-border-strong bg-surface shadow-sm "
+              >
+                <span className="text-xs font-semibold text-primary">
                   {c.serviceTypeName}
                 </span>
               </div>

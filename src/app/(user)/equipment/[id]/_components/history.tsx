@@ -18,6 +18,7 @@ import HistoryPagination from "./paginaion";
 import Link from "next/link";
 import EmptyBox from "@/components/ui/custom/empty";
 import { useUIStore } from "@/store/common/ui-store";
+import { OptionSectionWrapper } from "@/components/common/option-wrapper";
 
 const EquipmentHistory = () => {
   const { historyList, getHistoryList, loadingKeys } =
@@ -41,15 +42,20 @@ const EquipmentHistory = () => {
     return historyList.data.length > 0 ? (
       historyList.data.map((h, i) => <HistoryCard key={i} data={h} />)
     ) : (
-      <EmptyBox />
+      <CustomCard className="">
+        <EmptyBox message="관리이력이 없어요" />
+      </CustomCard>
     );
   };
 
   return (
     <>
       <AppTitle title="관리이력" />
-      <HistoryFilter />
-      <HistoryPagination />
+      <OptionSectionWrapper>
+        <HistoryFilter />
+        <HistoryPagination />
+      </OptionSectionWrapper>
+
       {getList()}
     </>
   );
@@ -60,25 +66,20 @@ const HistoryCard = ({ data }: { data: EquipmentHistoryListItem }) => {
   return (
     <Link href={`${id}/${data.detailSeq}`}>
       <CustomCard
-        className="flex-col gpa-2  md:flex-row md:gap-6 md:items-center hover:border-blue-500 hover:bg-blue-50"
+        className="flex-col gpa-2  md:flex-row md:gap-6 md:items-center hover:border-primary hover:bg-primary-background"
         variant={"list"}
       >
-        <div className="tabular-nums flex gap-2 items-center px-2 py-1 text-xs bg-[var(--primary)] bg-blue-500 text-white rounded-[50px] w-fit ">
+        <div className="tabular-nums flex gap-2 items-center px-2 py-1 text-xs bg-primary text-white rounded-[50px] w-fit ">
           <ClockIcon size={16} />
           {format(data.detailDt, "yyyy-MM-dd")}
         </div>
         <div className="flex flex-1 justify-between items-center">
           <div className="flex-1">
-            <span className="text-xs">{data.contents}</span>
+            <span className="text-base font-medium">{data.contents}</span>
           </div>
-          <span className="text-xs text-[var(--description-dark)]">
-            {data.remark}
-          </span>
+          <span className="text-sm text-description">{data.remark}</span>
           <div>
-            <ChevronRightIcon
-              className="text-[var(--icon)]"
-              strokeWidth={1.5}
-            />
+            <ChevronRightIcon className="text-icon" strokeWidth={1.5} />
           </div>
         </div>
       </CustomCard>

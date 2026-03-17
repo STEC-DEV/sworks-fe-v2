@@ -1,9 +1,11 @@
 import BaseSkeleton from "@/components/common/base-skeleton";
+import Button from "@/components/common/button";
 import IconButton from "@/components/common/icon-button";
 import CommonPagination from "@/components/ui/custom/pagination/common-pagination";
 import { usePermission } from "@/hooks/usePermission";
 import { useUIStore } from "@/store/common/ui-store";
 import { useNoticeStore } from "@/store/normal/notice/notice-store";
+import { Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React from "react";
 
@@ -18,7 +20,13 @@ const NoticePagination = () => {
   return (
     <CommonPagination totalCount={noticeList.meta.totalCount}>
       {canWorkerEdit && (
-        <IconButton icon="Plus" onClick={() => router.push(`/notice/add`)} />
+        <Button
+          size={"sm"}
+          label="새 일정"
+          icon={<Plus size={16} />}
+          onClick={() => router.push(`/notice/add`)}
+        />
+        //  <IconButton icon="Plus" onClick={() => router.push(`/notice/add`)} />
       )}
     </CommonPagination>
   );

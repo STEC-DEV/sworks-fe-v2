@@ -128,28 +128,40 @@ const MenuItem = ({ item }: { item: MenuItem }) => {
     }
   };
 
+  const isActive = item.path && pathName?.includes(item.path);
+
   return (
     <div
-      className={`flex gap-2 py-2 items-center text-white group ${
-        item.isGroup ? "px-4" : "px-6 hover:font-bold hover:cursor-pointer"
-      } `}
+      className={`flex gap-2 py-2 items-center group
+    ${
+      item.isGroup
+        ? "px-4 text-sidebar-subtle cursor-default"
+        : `px-6 cursor-pointer transition-colors duration-150
+         ${
+           isActive
+             ? "text-sidebar-foreground bg-sidebar-active-bg"
+             : "text-sidebar-muted hover:text-sidebar-foreground"
+         }`
+    }
+  `}
       onClick={onMove}
     >
       {SelectLucideIcon && (
         <SelectLucideIcon
-          className={`stroke-1 w-5 h-5 group-hover:stroke-2 ${
-            item.path && pathName?.includes(item.path) ? "stroke-2" : null
-          }`}
+          className={`w-5 h-5 transition-all duration-150
+        ${isActive ? "stroke-2" : "stroke-1 group-hover:stroke-2"}
+      `}
         />
       )}
 
       <span
-        className={`text-sm ${
-          item.path && pathName?.includes(item.path) ? "font-bold" : null
-        }`}
+        className={`text-sm transition-all duration-150
+      ${isActive ? "font-bold" : "group-hover:font-bold"}
+    `}
       >
         {item.title}
       </span>
+
       {alarm()}
     </div>
   );
@@ -239,7 +251,7 @@ const SideBar = ({ loginMode }: SideBarProps) => {
   };
 
   return (
-    <div className="flex flex-col w-70 h-full bg-[var(--primary)] relative">
+    <div className="flex flex-col w-70 h-full bg-sidebar-bg relative ">
       {/**
        * 헤더
        * 로고, 프로필
@@ -251,6 +263,7 @@ const SideBar = ({ loginMode }: SideBarProps) => {
         >
           S-Agent
         </div>
+
         {loginMode === "NORMAL" &&
           !(
             loginProfile?.role === "시스템관리자" ||
@@ -259,8 +272,9 @@ const SideBar = ({ loginMode }: SideBarProps) => {
             loginProfile?.role === "계약 담당자"
           ) && <Noti />}
       </div>
-
+      <div className="w-full h-0.5 bg-sidebar-border" />
       {returnProfile()}
+      <div className="w-full h-0.5 bg-sidebar-border" />
       <ScrollArea className="overflow-hidden">
         {/**
          * 바디
@@ -489,10 +503,10 @@ const Profile = ({
     ));
   };
   return (
-    <div className="flex flex-col gap-2 px-6 py-4 bg-white ">
+    <div className="flex flex-col gap-2 px-6 py-4 ">
       {loginMode === "NORMAL" && workplace ? (
         <div className="flex justify-between items-center">
-          <span className="text-sm text-[var(--primary)] font-bold">
+          <span className="text-sm text-sidebar-foreground font-extrabold">
             {workplace}
           </span>
           {permission === "마스터" ||
@@ -502,7 +516,13 @@ const Profile = ({
               title="사업장 변경"
               open={open}
               setOpen={setOpen}
-              triggerChildren={<IconButton icon={"RefreshCcw"} />}
+              triggerChildren={
+                <IconButton
+                  icon={"RefreshCcw"}
+                  bgClassName="bg-sidebar-item-bg hover:bg-sidebar-active-bg"
+                  className="text-sidebar-muted hover:text-sidebar-foreground group-hover:stroke-[2.5]"
+                />
+              }
             >
               <div className="flex flex-col gap-6 w-full">
                 <ScrollArea className="overflow-hidden flex-1">
@@ -518,23 +538,18 @@ const Profile = ({
       ) : null}
       <div className="flex flex-col gap-1 ">
         <div className="flex gap-1 items-end ">
-          <span className="text-sm font-medium">{name}</span>
-          <span className="shrink-0 text-xs text-[var(--description-dark)] font-medium">
+          <span className="text-sm text-sidebar-foreground font-medium">
+            {name}
+          </span>
+          <span className="shrink-0 text-xs text-sidebar-muted font-medium">
             {job}
           </span>
+          <span className="text-xs text-sidebar-muted">·</span>
+          <span className="text-xs text-sidebar-muted">{permission}</span>
         </div>
-
-        <span className="text-xs text-[var(--description-light)]">
-          {permission}
-        </span>
       </div>
 
-      <Button
-        className="hover:text-red-500 hover:font-bold "
-        variant={"login"}
-        onClick={() => logout()}
-        label={"로그아웃"}
-      />
+      <Button variant={"login"} onClick={() => logout()} label={"로그아웃"} />
     </div>
   );
 };

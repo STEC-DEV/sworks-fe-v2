@@ -19,6 +19,7 @@ import { useUIStore } from "@/store/common/ui-store";
 import { logout } from "@/app/server-action/auth/auth-action";
 import Image from "next/image";
 import { SingleImageBox } from "@/components/common/image-box";
+import AppTitle from "@/components/common/label/title";
 
 const ProfileCard = () => {
   const { canEdit } = usePermission();
@@ -64,6 +65,7 @@ const ProfileCard = () => {
 
   return (
     <div className="flex flex-col gap-6">
+      <AppTitle title="관리자 정보" isPrev />
       <CustomCard className="w-full xl:w-100 gap-6">
         <div className="flex gap-4 items-center px-6">
           <div className="relative flex items-end justify-center w-20 h-20  rounded-[50px] border border-[var(--border)] bg-[var(--background)] overflow-hidden">
@@ -76,11 +78,9 @@ const ProfileCard = () => {
           <div className="flex flex-col gap-2">
             <div className="flex items-end gap-2">
               <span className="text-xl font-semibold">{admin.userName}</span>
-              <span className="text-sm text-blue-500">{admin.role}</span>
+              <span className="text-sm text-primary">{admin.role}</span>
             </div>
-            <span className="text-sm text-[var(--description-light)]">
-              {admin.loginId}
-            </span>
+            <span className="text-sm text-description">{admin.loginId}</span>
           </div>
         </div>
         <div className="flex flex-col gap-4">
@@ -117,7 +117,7 @@ const ProfileCard = () => {
             title={dialogText.passwordReset.title}
             description={dialogText.passwordReset.description}
             actionLabel={dialogText.passwordReset.actionLabel}
-            buttonColor="bg-blue-500 hover:bg-blue-600"
+            buttonColor="bg-primary hover:bg-primary-hover"
             onClick={handleReset}
           >
             <Button label="비밀번호 초기화" variant={"prev"} size={"sm"} />
@@ -155,10 +155,10 @@ export const KeyValue = ({ icon, label, value }: KeyValueProps) => {
   const LucideIcon = icon;
   return (
     <div className="flex gap-4 items-center px-6">
-      <LucideIcon className="text-[var(--icon)]" size={20} />
+      <LucideIcon className="text-description" size={20} strokeWidth={1.5} />
       <div className="flex flex-col gap-1">
-        <span className="text-xs text-[var(--description-light)]">{label}</span>
-        <span className="text-sm text-[var(--description-dark)]">
+        <span className="text-xs font-medium text-description">{label}</span>
+        <span className="text-sm font-medium text-description-strong">
           {value || "내용없음"}
         </span>
       </div>

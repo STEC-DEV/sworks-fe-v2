@@ -9,9 +9,7 @@ export const taskHistoryCol: ColumnDef<TaskHistoryListItem>[] = [
     cell: ({ row }) => {
       const value = row.original.targetDt;
       return (
-        <span className="text-xs font-medium">
-          {format(value, "yyyy-MM-dd")}
-        </span>
+        <span className=" font-medium">{format(value, "yyyy-MM-dd")}</span>
       );
     },
   },
@@ -20,11 +18,7 @@ export const taskHistoryCol: ColumnDef<TaskHistoryListItem>[] = [
     header: "업무유형",
     cell: ({ row }) => {
       const value = row.original.serviceTypeName;
-      return (
-        <span className="text-xs text-[var(--description-dark)] font-medium">
-          {value}
-        </span>
-      );
+      return <span className=" text-primary font-bold">{value}</span>;
     },
   },
   {
@@ -32,7 +26,7 @@ export const taskHistoryCol: ColumnDef<TaskHistoryListItem>[] = [
     header: "업무명",
     cell: ({ row }) => {
       const value = row.original.title;
-      return <span className="text-xs font-medium">{value}</span>;
+      return <span className=" font-medium">{value}</span>;
     },
   },
   {
@@ -46,8 +40,8 @@ export const taskHistoryCol: ColumnDef<TaskHistoryListItem>[] = [
       const progress = (totalUserCount / totalCount) * 100;
 
       return (
-        <span className="text-[var(--description-dark)]">{`${progress.toFixed(
-          0
+        <span className="text-sm font-bold text-primary">{`${progress.toFixed(
+          0,
         )}%`}</span>
       );
     },

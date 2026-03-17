@@ -104,7 +104,7 @@ const QeAddForm = () => {
         sub.details.forEach((detail, detailIdx) => {
           if (detail.score === undefined) {
             unscored.push(
-              `${main.chkMainTitle} > ${sub.chkSubTitle} > ${detail.chkDetailTitle}`
+              `${main.chkMainTitle} > ${sub.chkSubTitle} > ${detail.chkDetailTitle}`,
             );
           }
         });
@@ -145,7 +145,7 @@ const QeAddForm = () => {
             </span>
           </div>
 
-          <div className="space-y-6">
+          <div className="space-y-6 bg-surface border p-4 shadow-sm rounded-DEFAULT">
             {currentMain.subs.map((sub, subIndex) => (
               <QeSubSection
                 key={sub.chkSubSeq}
@@ -189,11 +189,11 @@ const QeAddForm = () => {
           <CustomCard className="xl:w-150 px-6">
             <AppTitle title="미평가 항목" />
             <div className="flex">
-              <span className="text-md font-bold">
-                {unscoredDialog.items.length}
+              <span className="text-destructive text-md font-bold">
+                {unscoredDialog.items.length}개
               </span>
               <span className="text-md">
-                개 항목이 아직 평가되지 않았습니다
+                &nbsp;항목이 아직 평가되지 않았습니다
               </span>
             </div>
 
@@ -233,7 +233,7 @@ export const QeDetailItem = ({
   const handleScore = (score: number) => {
     form.setValue(
       `mains.${mainIdx}.subs.${subIdx}.details.${detailIdx}.score`,
-      score
+      score,
     );
 
     const subs = form.getValues(`mains.${mainIdx}.subs`);
@@ -251,8 +251,8 @@ export const QeDetailItem = ({
     form.setValue(`mains.${mainIdx}.chkMainTotal`, mainTotal);
   };
   return (
-    <div className="flex flex-col gap-1 xl:gap-0">
-      <span className=" text-[var(--description-light)]">
+    <div className="flex flex-col gap-1 xl:gap-0 pb-4 border-b">
+      <span className="text-sm font-medium text-description">
         {detail.chkDetailTitle}
       </span>
       <div className="flex flex-col gap-4 xl:flex-row xl:justify-between xl:items-center">
@@ -269,7 +269,7 @@ export const QeDetailItem = ({
             return (
               <FormItem>
                 <FormControl>
-                  <div className="flex gap-4">
+                  <div className="flex gap-4 ">
                     {Array.from({ length: detail.chkPoint + 1 }, (_, score) => {
                       return (
                         <div
@@ -277,12 +277,10 @@ export const QeDetailItem = ({
                           onClick={() => {
                             handleScore(score);
                           }}
-                          className={`w-10 h-10 aspect-square rounded-4xl border border-b flex items-center justify-center
-                         text-sm bg-blue-50 text-[var(--description-dark)] 
-                         cursor-pointer hover:bg-blue-500 hover:text-white ease-in-out duration-150
-                         ${
-                           field.value === score ? "bg-blue-500 text-white" : ""
-                         }
+                          className={`w-10 h-10 aspect-square rounded-4xl border-2 border-b flex items-center justify-center
+                         text-sm font-bold bg-background text-description-strong
+                         cursor-pointer  ease-in-out duration-150
+                         ${field.value === score ? "bg-primary text-white" : " hover:bg-primary-background hover:border-primary"}
                          `}
                         >
                           {score}
@@ -315,7 +313,7 @@ export const QeSubSection = ({
   return (
     <div className="flex flex-col gap-4">
       <div className="flex gap-2 items-center">
-        <CheckIcon className="text-blue-500" />
+        <CheckIcon className="text-primary" />
         <span className="text-lg font-semibold ">{sub.chkSubTitle}</span>
       </div>
 

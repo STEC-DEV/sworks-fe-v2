@@ -10,9 +10,9 @@ const Input = ({
   return (
     <input
       className={cn(
-        `text-sm px-3 py-1 h-9 rounded-[4px] border border-[var(--border)] transition-[border,box-shadow] duration-300 bg-white
-        hover:border-[var(--primary)]
-        focus:outline-none focus:ring-1 focus:ring-[var(--primary)] focus:border-[var(--primary)] focus:ring-inset 
+        `text-sm px-3 py-1 h-9 rounded-DEFAULT border border-border-strong transition-[border,box-shadow] duration-300 bg-surface
+        hover:border-primary
+        focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary focus:ring-inset 
         `,
         className,
       )}
@@ -28,7 +28,7 @@ const InputSearch = ({
 }: React.ComponentProps<"input">) => {
   return (
     <div className="flex gap-2 items-center justify-center border-b">
-      <Search size={24} className="text-[var(--icon)]" />
+      <Search size={24} className="text-icon" />
       <Input
         className={cn(
           "flex-1 px-0 border-none focus:ring-0 focus:border-none ",
@@ -55,9 +55,9 @@ const TextArea = ({
     <div className="relative w-full">
       <textarea
         className={cn(
-          `text-sm px-3 py-1 h-40 rounded-[4px] border border-[var(--border)] transition-[border,box-shadow] duration-300 bg-white w-full
-          hover:border-[var(--primary)]
-          focus:outline-none focus:ring-1 focus:ring-[var(--primary)] focus:border-[var(--primary)] focus:ring-inset 
+          `text-sm px-3 py-1 h-40 rounded-DEFAULT border border-border-strong transition-[border,box-shadow] duration-300 bg-surface w-full
+          hover:border-primary
+          focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary focus:ring-inset 
           resize-none
           `,
           showCount && "pb-8", // 글자수 공간 확보
@@ -122,7 +122,7 @@ const PasswordInput = React.forwardRef<HTMLInputElement>(
           type="button"
           variant="ghost"
           size="sm"
-          className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent hover:cursor-pointer"
+          className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent cursor-pointer"
           onClick={() => setShowPassword((prev) => !prev)}
           disabled={disabled}
         >
@@ -349,9 +349,9 @@ const DragNDropInput = React.forwardRef<HTMLInputElement, FileInputProps>(
             value.length > 0
               ? `md:w-1/2 ${isVertical ? "md:w-full" : null}`
               : ""
-          } h-32 flex flex-col items-center xl:p-0 py-6 justify-center   w-full rounded-[4px] border-2 border-dashed border-[var(--icon)] hover:bg-[var(--background)] hover:cursor-pointer ${
+          } bg-background h-32 flex flex-col items-center xl:p-0 py-6 justify-center   w-full rounded-DEFAULT border-2 border-dashed border-border-strong  hover:bg-primary-background cursor-pointer ${
             isDragOver
-              ? "border-solid border-[var(--primary)] bg-[var(--background)]"
+              ? "border-solid border-primary bg-primary-background"
               : ""
           }`}
           onDragEnter={handleDragEnter}
@@ -362,9 +362,9 @@ const DragNDropInput = React.forwardRef<HTMLInputElement, FileInputProps>(
         >
           <div className={`flex flex-col items-center justify-center gap-6 `}>
             <div className="bg-gray-200 rounded-[50px] p-3">
-              <Upload className="text-[var(--description-light)]" size={20} />
+              <Upload className="text-description-light" size={20} />
             </div>
-            <span className="text-sm text-[var(--description-dark)]">
+            <span className="text-sm text-description">
               파일을 드래그하거나 클릭하세요
             </span>
           </div>
@@ -671,11 +671,11 @@ export const DragDropZone = ({
   return (
     <div
       className={`
-          flex flex-col items-center justify-center h-32  w-full rounded-[4px] border-2 border-dashed border-[var(--icon)] hover:bg-[var(--background)] hover:cursor-pointer ${
-            isDragOver
-              ? "border-solid border-[var(--primary)] bg-[var(--background)]"
-              : ""
-          }`}
+           bg-background flex flex-col items-center justify-center h-32  w-full rounded-DEFAULT border-2 border-dashed border-border-strong hover:bg-primary-background cursor-pointer ${
+             isDragOver
+               ? "border-solid border-primary bg-primary-background"
+               : ""
+           }`}
       id="input-file"
       onDragEnter={dragHandlers.onDragEnter}
       onDragOver={dragHandlers.onDragOver}
@@ -685,9 +685,9 @@ export const DragDropZone = ({
       {children || (
         <div className={`flex flex-col items-center justify-center gap-6 `}>
           <div className="bg-gray-200 rounded-[50px] p-3">
-            <Upload className="text-[var(--description-light)]" size={20} />
+            <Upload className="text-description-light" size={20} />
           </div>
-          <span className="text-sm text-[var(--description-dark)]">
+          <span className="text-sm text-description">
             파일을 드래그하거나 클릭하세요
           </span>
         </div>
@@ -708,12 +708,10 @@ export const DragDropZoneChildren = ({
   return (
     <div
       className={`
-          flex flex-col items-center justify-center w-full rounded-[4px] ${
+          flex flex-col items-center justify-center w-full rounded-DEFAULT ${
             children ? "" : "border-2 border-dashed "
-          } border-[var(--icon)] hover:bg-[var(--background)] hover:cursor-pointer ${
-            isDragOver
-              ? "border-solid border-[var(--primary)] bg-[var(--background)]"
-              : ""
+          } border-border-strong  cursor-pointer ${
+            isDragOver ? "border-solid border-primary bg-primary-hover" : ""
           }`}
       id="input-file"
       onDragEnter={dragHandlers.onDragEnter}
@@ -724,9 +722,9 @@ export const DragDropZoneChildren = ({
       {children || (
         <div className={`flex flex-col items-center justify-center gap-6 `}>
           <div className="bg-[var(--primary)] rounded-[50px] p-2">
-            <Upload className="text-white" size={20} />
+            <Upload className="text-description-light" size={20} />
           </div>
-          <span className="text-md text-[var(--description-dark)]">
+          <span className="text-md text-description">
             파일을 드래그하거나 클릭하세요
           </span>
         </div>

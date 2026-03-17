@@ -1,10 +1,12 @@
 "use client";
 import BaseSkeleton from "@/components/common/base-skeleton";
+import Button from "@/components/common/button";
 import IconButton from "@/components/common/icon-button";
 import CommonPagination from "@/components/ui/custom/pagination/common-pagination";
 import { usePermission } from "@/hooks/usePermission";
 import { useWorkplaceListStore } from "@/store/admin/workplace/workplace-list-store";
 import { useUIStore } from "@/store/common/ui-store";
+import { PlusIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 import React from "react";
@@ -21,8 +23,9 @@ const WorkplacePagination = () => {
   return (
     <CommonPagination totalCount={workplaceList.meta.totalCount}>
       {canEdit && (
-        <IconButton
-          icon={"Plus"}
+        <Button
+          label="사업장 생성"
+          icon={<PlusIcon />}
           onClick={() => router.push("workplace/add")}
         />
       )}

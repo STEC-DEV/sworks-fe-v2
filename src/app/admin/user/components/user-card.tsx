@@ -49,28 +49,22 @@ interface AdminCardProps {
 const AdminCard = ({ item, isCheck, onClick }: AdminCardProps) => {
   return (
     <CustomCard
-      className={`flex-row items-center justify-between hover:bg-blue-50 py-2 ${
-        isCheck ? "bg-blue-50 border-blue-500" : null
+      className={`flex-row items-center justify-between hover:bg-primary-background hover:border-primary py-2 ${
+        isCheck ? "bg-primary-background border-primary" : null
       }`}
       variant={"list"}
       onClick={() => onClick?.(item)}
     >
       <div className="flex gap-4 items-center">
         <div className="flex flex-col gap-1 min-w-20">
-          <span className="text-sm">{item.userName}</span>
-          <span className="text-xs text-[var(--description-light)]">
-            {item.sabun}
-          </span>
+          <span className="text-sm font-semibold">{item.userName}</span>
+          <span className="text-xs text-description">{item.sabun}</span>
         </div>
         <div className="min-w-20">
-          <span className="text-sm text-[var(--description-light)]">
-            {item.role}
-          </span>
+          <span className="text-sm text-description">{item.role}</span>
         </div>
         <div className="min-w-20">
-          <span className="text-xs text-[var(--description-light)]">
-            {item.phone}
-          </span>
+          <span className="text-xs text-description">{item.phone}</span>
         </div>
       </div>
       <span className="text-sm text-[var(--description-dark)]">

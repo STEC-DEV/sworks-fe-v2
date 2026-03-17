@@ -17,7 +17,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
         className="w-full h-full overflow-hidden "
         style={{ height: "100%" }}
       >
-        <div className="flex flex-col gap-6 px-6 py-6 xl:px-12 xl:py-12 w-full h-full overflow-auto">
+        <div className="bg-background flex flex-col gap-6 px-6 py-6 xl:px-8 xl:py-12 w-full min-h-full ">
           <div className="flex justify-between items-center xl:hidden pt-1">
             <span className=" px-2 py-1 rounded-[4px] font-bold  tracking-tighter">
               S-Agent

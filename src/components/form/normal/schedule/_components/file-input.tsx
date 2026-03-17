@@ -183,9 +183,7 @@ export const ScheduleImageFileFormItem = ({
     <FormItem className="w-full flex-1 flex flex-col gap-2 ">
       <div className="flex">
         {label ? (
-          <span className="text-xs text-[var(--description-light)]">
-            {label}
-          </span>
+          <span className="text-sm text-description">{label}</span>
         ) : null}
         {required ? <span className="text-xs text-red-500">*</span> : null}
       </div>
@@ -257,7 +255,7 @@ export const ScheduleImageFileFormItem = ({
                           isDragOver={isDragOver}
                           dragHandlers={dragHandlers}
                         >
-                          <PlusIcon className="text-[var(--icon)]" />
+                          <PlusIcon className="text-icon" />
                         </DragDropZoneChildren>
                       </>
                     </CustomCard>
@@ -337,7 +335,7 @@ export const ImageFileItem = ({
         />
       </div>
       <div className="flex flex-col gap-2">
-        <span className="text-xs text-[var(--description-light)]">설명</span>
+        <span className="text-sm text-description">설명</span>
         <Input
           type="text"
           name="comments"
@@ -353,7 +351,7 @@ export const ImageFileItem = ({
       <div className="absolute right-0 top-0">
         <IconButton
           icon="X"
-          bgClassName=" hover:bg-red-50"
+          bgClassName="border hover:bg-red-50"
           className="text-red-500"
           onClick={() => {
             onDelete(data);

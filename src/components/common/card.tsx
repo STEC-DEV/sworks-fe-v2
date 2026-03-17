@@ -5,7 +5,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const appCardVariants = cva(
-  "border border-[var(--border)] bg-white rounded-[4px] px-0",
+  "border border-border bg-surface !rounded-DEFAULT px-0 shadow-sm overflow-hidden",
   {
     variants: {
       variant: {
@@ -23,12 +23,11 @@ const appCardVariants = cva(
       variant: "default",
       size: "default",
     },
-  }
+  },
 );
 
 interface CardProps
-  extends React.ComponentProps<"div">,
-    VariantProps<typeof appCardVariants> {
+  extends React.ComponentProps<"div">, VariantProps<typeof appCardVariants> {
   className?: string;
 }
 

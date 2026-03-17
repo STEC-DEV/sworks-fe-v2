@@ -1,5 +1,6 @@
 "use client";
 import BaseSkeleton from "@/components/common/base-skeleton";
+import Button from "@/components/common/button";
 import IconButton from "@/components/common/icon-button";
 import ExcelAddForm from "@/components/form/normal/user/excel-add";
 import BaseDialog from "@/components/ui/custom/base-dialog";
@@ -8,6 +9,7 @@ import { usePermission } from "@/hooks/usePermission";
 import api from "@/lib/api/api-manager";
 import { useUIStore } from "@/store/common/ui-store";
 import { useUserMainStore } from "@/store/normal/user/main-store";
+import { Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { toast } from "sonner";
@@ -29,22 +31,30 @@ const UserPagination = () => {
         {canWorkerEdit && (
           <>
             <IconButton
-              icon={"Plus"}
-              onClick={() => router.push("/workplace/add-user")}
-            />
-            <IconButton
               icon="FileDown"
               tooltip="사용자 추가 양식"
+              bgClassName="border border-border-strong shadow-sm !rounded-DEFAULT bg-surface hover:border-primary"
               onClick={downloadExcel}
             />
             <BaseDialog
               title="사용자 밀어넣기"
-              triggerChildren={<IconButton icon="Upload" />}
+              triggerChildren={
+                <IconButton
+                  icon="Upload"
+                  bgClassName="border border-border-strong shadow-sm !rounded-DEFAULT bg-surface hover:border-primary"
+                />
+              }
               open={open}
               setOpen={setOpen}
             >
               <ExcelAddForm onClose={() => setOpen(false)} />
             </BaseDialog>
+            <Button
+              label="근무자 생성"
+              size={"sm"}
+              icon={<Plus size={16} />}
+              onClick={() => router.push("/workplace/add-user")}
+            />
           </>
         )}
       </CommonPagination>

@@ -80,17 +80,23 @@ const DeptCard = ({ data }: { data: Department }) => {
   };
   return (
     <CustomCard
-      className="flex-row justify-between items-center cursor-auto"
+      className="flex-row justify-between items-center cursor-auto bg-background"
       variant={"list"}
       size={"sm"}
     >
-      <span className="text-sm">{data.deptName}</span>
+      <span className="text-sm font-medium">{data.deptName}</span>
       <div className="flex items-center gap-2">
         <BaseDialog
           title="부서수정"
           open={open}
           setOpen={setOpen}
-          triggerChildren={<IconButton icon="SquarePen" />}
+          triggerChildren={
+            <IconButton
+              icon="SquarePen"
+              size={16}
+              bgClassName="p-1 w-8 h-8 !rounded-DEFAULT border border-border-strong shadow-sm hover:bg-primary-background"
+            />
+          }
         >
           <DeptEditForm
             id={data.deptSeq}
@@ -104,7 +110,12 @@ const DeptCard = ({ data }: { data: Department }) => {
           actionLabel={dialogText.defaultDelete.actionLabel}
           onClick={onDelete}
         >
-          <IconButton icon="Trash2" />
+          <IconButton
+            icon="Trash2"
+            size={16}
+            bgClassName="p-1 w-8 h-8 !rounded-DEFAULT border border-border-strong shadow-sm hover:bg-red-50 hover:border-destructive"
+            className="group-hover:text-destructive"
+          />
         </CheckDialog>
       </div>
     </CustomCard>

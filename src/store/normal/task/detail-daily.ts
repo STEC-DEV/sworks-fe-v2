@@ -68,6 +68,7 @@ export const useDailyTaskDetailStore = create<DailyTaskDetailState>()(
         patchUpdateLogs: async (logSeq, data) => {
           const lastData = { ...data, logSeq };
           const formData = objectToFormData(lastData);
+          console.log("수정 데이터", lastData);
           try {
             const res = await api
               .patch(`sitetask/w/sign/updatelogs`, {
@@ -81,7 +82,7 @@ export const useDailyTaskDetailStore = create<DailyTaskDetailState>()(
           }
         },
       }),
-      { name: "dailytask-detail-store" }
-    )
-  )
+      { name: "dailytask-detail-store" },
+    ),
+  ),
 );

@@ -27,19 +27,13 @@ export const userColumns: ColumnDef<AdminListItem>[] = [
               />
             ) : (
               <div className=" p-2 w-full h-full flex items-center justify-center">
-                <UserIcon
-                  className="text-[var(--icon)]"
-                  strokeWidth={1.5}
-                  size={50}
-                />
+                <UserIcon className="text-icon" strokeWidth={1.5} size={50} />
               </div>
             )}
           </div>
           <div className="flex flex-col gap-1">
             <span className="text-sm font-medium">{name}</span>
-            <span className="text-xs text-[var(--description-light)]">
-              {sabun}
-            </span>
+            <span className=" text-description">{sabun}</span>
           </div>
         </div>
       );
@@ -50,7 +44,7 @@ export const userColumns: ColumnDef<AdminListItem>[] = [
     header: "권한",
     cell: ({ row }) => {
       const value = row.original.role;
-      return <span className="text-xs text-blue-500 font-medium">{value}</span>;
+      return <span className="text-primary font-bold">{value}</span>;
     },
   },
   {
@@ -58,7 +52,7 @@ export const userColumns: ColumnDef<AdminListItem>[] = [
     header: "전화번호",
     cell: ({ row }) => {
       const value = row.original.phone;
-      return <span className="text-xs ">{value}</span>;
+      return <span className="">{value}</span>;
     },
   },
   {
@@ -66,7 +60,7 @@ export const userColumns: ColumnDef<AdminListItem>[] = [
     header: "부서",
     cell: ({ row }) => {
       const value = row.original.deptName;
-      return <span className="text-xs">{value}</span>;
+      return <span className="">{value}</span>;
     },
   },
 ];

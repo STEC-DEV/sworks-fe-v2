@@ -22,6 +22,8 @@ import {
 } from "../date-input/useCalendarV2";
 import { useScheduleStore } from "@/store/normal/schedule/shcedule-store";
 import { usePermission } from "@/hooks/usePermission";
+import Button from "../button";
+import { PlusIcon } from "lucide-react";
 
 interface DroppableCalendarProps {}
 
@@ -71,7 +73,7 @@ export const DroppableCalendar = ({}: DroppableCalendarProps) => {
 
   return (
     <Suspense>
-      <div className="w-full h-auto xl:h-full flex flex-col gap-2  min-w-0 flex-1 ">
+      <div className="shadow-sm w-full h-auto xl:h-full flex flex-col  min-w-0 flex-1 ">
         <CalendarHeader
           date={curDate}
           focusDate={focusDate}
@@ -79,7 +81,7 @@ export const DroppableCalendar = ({}: DroppableCalendarProps) => {
           onPrevMonth={onPrev}
           onGetData={getData}
         />
-        <div className="w-full h-full border-y border-[var(--calendar-border)] rounded-[4px] ">
+        <div className="w-full h-full ">
           <CalendarContent
             weeks={weeks}
             focusDate={focusDate}
@@ -116,7 +118,7 @@ const CalendarHeader = ({
     onGetData();
   };
   return (
-    <div className="flex items-center justify-between">
+    <div className="flex items-center justify-between bg-surface  py-4 px-4 border-x border-t border-border rounded-t-DEFAULT">
       <CalendarRemote
         date={date}
         onNextMonth={onNextMonth}
@@ -124,9 +126,17 @@ const CalendarHeader = ({
       />
       {canWorkerEdit && (
         <div>
+          {/* triggerChildren={<IconButton icon="Plus" />} */}
           <BaseDialog
             title="일정 생성"
-            triggerChildren={<IconButton icon="Plus" />}
+            triggerChildren={
+              <Button
+                variant={"default"}
+                size={"sm"}
+                label="일정 생성"
+                icon={<PlusIcon color="white" size={24} />}
+              />
+            }
             open={open}
             setOpen={setOpen}
           >
@@ -157,7 +167,9 @@ const CalendarRemote = ({
         onClick={onPrevMonth}
         className=" stroke-[1.5]"
       />
-      <span className="text-lg tabular-nums">{format(date, "yyyy / MM")}</span>
+      <span className="text-lg tabular-nums font-bold">
+        {format(date, "yyyy / MM")}
+      </span>
       <IconButton
         icon="ChevronRight"
         size={24}
@@ -201,22 +213,22 @@ const CalendarContent = ({
   }, [schedules]);
 
   return (
-    <div className="flex flex-col  w-full h-full xl:h-full">
-      <div className="flex border-b border-x border-[var(--calendar-border)] rounded-t-[4px]">
+    <div className="bg-surface rounded-DEFAULT flex flex-col  w-full h-full xl:h-full">
+      <div className="flex py-2 border-y  border-y-calendar-border border-x border-x-border ">
         {labels.map((l, i) => (
           <div
-            className="flex-1 flex items-center justify-center border-r border-[var(--calendar-border)] last:border-r-0 first:text-red-500 last:text-red-500 "
+            className="flex-1 flex items-center justify-center border-r border-calendar-border last:border-r-0 first:text-red-500 last:text-red-500 "
             key={i}
           >
             <span className="text-sm ">{l}</span>
           </div>
         ))}
       </div>
-      <div className="flex-1 flex flex-col min-h-0">
+      <div className="flex-1 flex flex-col min-h-0 border-b border-b-border border-x border-x-border rounded-bl-DEFAULT rounded-br-DEFAULT">
         {weeks.map((w, i) => (
           <div
             key={i}
-            className="flex flex-1 min-h-0 border-b border-[var(--calendar-border)] last:border-b-0 last:[&>*:first-child]:rounded-bl-[4px] last:[&>*:last-child]:rounded-br-[4px]"
+            className="flex flex-1 min-h-0 border-b border-calendar-border last:border-b-0 last:[&>*:first-child]:rounded-bl-DEFAULT last:[&>*:last-child]:rounded-br-DEFAULT"
           >
             {w.map((d, j) => (
               <DayBox
@@ -265,7 +277,8 @@ export const DayBox = ({
   return (
     <div
       className={`flex-1   h-full p-1 overflow-hidden  min-h-25
-         border-r border-[var(--calendar-border)]  first:border-l
+         border-r border-calendar-border  first:border-l-0
+         last:border-r-0
          first:text-red-500 last:text-red-500 
          ${isOver ? "shadow-[inset_0_0_0_1px_rgb(239,68,68)] bg-red-50" : ""}
     ${
@@ -280,7 +293,7 @@ export const DayBox = ({
       {...props}
     >
       <span
-        className={`text-xs tabular-nums flex items-center justify-center w-fit md:text-sm  rounded-full aspect-square mb-2 leading-0 p-1 
+        className={`text-xs tabular-nums font-semibold flex items-center justify-center w-fit md:text-sm  rounded-full aspect-square mb-2 leading-0 p-1 
             ${isSameDay(date, new Date()) ? "text-white bg-primary" : ""}
             ${!isSameMonth(date, curDate) ? "text-gray-400" : ""}
          `}

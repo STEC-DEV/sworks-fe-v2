@@ -4,7 +4,7 @@ import Building from "./_components/construction/item";
 
 const Page = () => {
   return (
-    <div className="flex flex-col gap-12 h-full">
+    <div className="flex flex-col gap-12  flex-1">
       <Building />
       <User />
     </div>

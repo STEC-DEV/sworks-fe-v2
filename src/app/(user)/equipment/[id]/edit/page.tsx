@@ -7,6 +7,7 @@ import FileFormItem, {
 import SelectFormItem from "@/components/common/form-input/select-field";
 import { TextFormItem } from "@/components/common/form-input/text-field";
 import AppTitle from "@/components/common/label/title";
+import { FormCard } from "@/components/layout/form/form-container";
 import PrevLayout from "@/components/layout/prev-layout";
 import { Form, FormField } from "@/components/ui/form";
 import { useBasicStore } from "@/store/basic-store";
@@ -112,38 +113,33 @@ const Page = () => {
   };
 
   return (
-    <PrevLayout>
-      <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(handleSubmit)}
-          className="flex flex-col gap-12 w-full"
-        >
-          <AppTitle title="장비 수정" isBorder />
-          <div className="grid xl:grid-cols-2 gap-x-24 gap-y-12">
+    <Form {...form}>
+      <form
+        onSubmit={form.handleSubmit(handleSubmit)}
+        className="flex flex-col gap-6 w-full"
+      >
+        <AppTitle title="장비정보 수정" isPrev />
+        {/* 기본정보 카드 */}
+        <FormCard title="기본정보">
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 xl:gap-x-12">
             <FormField
               control={form.control}
               name="serviceTypeSeq"
-              render={({ field }) => {
-                const handleValue = (value: string) => {
-                  console.log(value);
-                  if (!value) return;
-                  field.onChange(Number(value));
-                };
-
-                return (
-                  <SelectFormItem
-                    label="유형"
-                    selectItem={
-                      basicCode.contractCodes
-                        ? convertSelectOptionType(basicCode.contractCodes)
-                        : [] // 빈 배열로 처리
-                    }
-                    onValueChange={handleValue}
-                    value={field.value?.toString()}
-                    required
-                  />
-                );
-              }}
+              render={({ field }) => (
+                <SelectFormItem
+                  label="유형"
+                  selectItem={
+                    basicCode.contractCodes
+                      ? convertSelectOptionType(basicCode.contractCodes)
+                      : []
+                  }
+                  onValueChange={(value) =>
+                    value && field.onChange(Number(value))
+                  }
+                  value={field.value?.toString()}
+                  required
+                />
+              )}
             />
             <FormField
               control={form.control}
@@ -205,6 +201,12 @@ const Page = () => {
                 />
               )}
             />
+          </div>
+        </FormCard>
+
+        {/* 구매정보 카드 */}
+        <FormCard title="구매정보">
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 xl:gap-x-12">
             <FormField
               control={form.control}
               name="buyer"
@@ -213,6 +215,18 @@ const Page = () => {
                   label="구매처"
                   placeholder="구매처"
                   {...field}
+                  required
+                />
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="buyDt"
+              render={({ field }) => (
+                <DateFormItem
+                  label="구매일"
+                  value={field.value}
+                  onChange={(date) => field.onChange(date)}
                   required
                 />
               )}
@@ -244,69 +258,41 @@ const Page = () => {
                 />
               )}
             />
-            <FormField
-              control={form.control}
-              name="buyDt"
-              render={({ field }) => (
-                <DateFormItem
-                  label="구매일"
-                  value={field.value}
-                  onChange={(date) => {
-                    console.log(date);
-                    field.onChange(date);
-                  }}
-                  required
-                />
-              )}
-            />
-            {/* <FormField
-            control={form.control}
-            name="manager"
-            render={({ field }) => (
-              <TextFormItem
-                label="관리부서"
-                placeholder="관리부서"
-                {...field}
-                required
-              />
-            )}
-          /> */}
           </div>
+        </FormCard>
+
+        {/* 이미지 카드 */}
+        <FormCard title="이미지">
           <FormField
             control={form.control}
             name="images"
             render={({ field }) => {
-              const handleRemove = () => {
-                form.setValue("removeImage", true);
-              };
-
-              const existingFiles = () => {
-                if (!equipmentDetail) return;
-                const isRemove = form.watch("removeImage");
-                console.log("삭제 여부 : ", isRemove);
-                console.log(isRemove ? null : equipmentDetail.images);
-
-                return isRemove ? null : equipmentDetail.images;
-              };
+              const handleRemove = () => form.setValue("removeImage", true);
+              const existingFile = form.watch("removeImage")
+                ? null
+                : equipmentDetail?.images;
 
               return (
                 <ImageFormItem
-                  label="이미지"
+                  label=""
                   multiple={false}
                   {...field}
                   value={field.value}
                   isRemove={form.watch("removeImage")}
                   onChange={field.onChange}
-                  existingFile={existingFiles()}
+                  existingFile={existingFile}
                   onRemoveExistingFile={handleRemove}
                 />
               );
             }}
           />
-          <Button type="submit" label="저장" />
-        </form>
-      </Form>
-    </PrevLayout>
+        </FormCard>
+
+        <div className="flex justify-end">
+          <Button type="submit" label="저장" size="sm" />
+        </div>
+      </form>
+    </Form>
   );
 };
 

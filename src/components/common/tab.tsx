@@ -3,42 +3,11 @@
 import { cn } from "@/lib/utils";
 import React, { useState } from "react";
 
-export interface TabConfig {
+type TabConfig = {
   tabTitle: string;
   render: React.ReactNode;
   options?: React.ReactNode;
   size?: "lg" | "md" | "sm";
-}
-
-const Tab = ({ configs }: { configs: TabConfig[] }) => {
-  const [curIdx, setCurIdx] = useState<number>(0);
-  return (
-    <div className="flex flex-col gap-6">
-      <div className="flex justify-between items-center border-b-2">
-        <div className="flex gap-4  ">
-          {configs.map((c, i) => (
-            <TabBox
-              key={i}
-              className={`${
-                curIdx === i
-                  ? "text-primary font-bold  border-b-2 border-primary "
-                  : null
-              }`}
-              title={c.tabTitle}
-              size={c.size}
-              onClick={() => setCurIdx(i)}
-            />
-          ))}
-        </div>
-        {configs[curIdx].options}
-      </div>
-
-      {/* <div key={curIdx}>
-        {configs[curIdx].render}
-      </div> */}
-      {configs[curIdx].render}
-    </div>
-  );
 };
 
 const TabBox = ({
@@ -53,16 +22,17 @@ const TabBox = ({
   size?: "lg" | "md" | "sm";
 }) => {
   const sizeStyles = {
-    lg: "px-4 pb-4 text-md",
-    md: "px-3 pb-3 text-sm",
-    sm: "px-2 pb-2 text-xs",
+    lg: "px-4 py-2 text-sm",
+    md: "px-3 py-1.5 text-xs",
+    sm: "px-2 py-1 text-xs",
   };
+
   return (
     <div
       className={cn(
-        "px-4 pb-4 text-[var(--description-light)] cursor-pointer",
+        "rounded-lg text-description cursor-pointer font-medium transition-all duration-150 select-none",
         sizeStyles[size],
-        className
+        className,
       )}
       onClick={onClick}
     >
@@ -71,4 +41,40 @@ const TabBox = ({
   );
 };
 
+export const Tab = ({ configs }: { configs: TabConfig[] }) => {
+  const [curIdx, setCurIdx] = useState<number>(0);
+
+  return (
+    <div className="flex flex-col gap-5">
+      {/* 탭 헤더 */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-1 bg-surface border border-border rounded-xl p-1 shadow-sm w-fit">
+          {configs.map((c, i) => (
+            <TabBox
+              key={i}
+              title={c.tabTitle}
+              size={c.size}
+              onClick={() => setCurIdx(i)}
+              className={
+                curIdx === i
+                  ? "bg-primary text-primary-foreground font-semibold shadow-sm"
+                  : "hover:bg-background hover:text-description-strong"
+              }
+            />
+          ))}
+        </div>
+
+        {/* 현재 탭의 옵션 (있을 때만) */}
+        {configs[curIdx].options && (
+          <div className="flex items-center gap-2">
+            {configs[curIdx].options}
+          </div>
+        )}
+      </div>
+
+      {/* 탭 컨텐츠 */}
+      {configs[curIdx].render}
+    </div>
+  );
+};
 export default Tab;

@@ -5,11 +5,11 @@ import { FieldValues } from "react-hook-form";
 
 interface FileFormItemProps<
   T extends FieldValues,
-  Multiple extends boolean = true
+  Multiple extends boolean = true,
 > extends Omit<
-    React.InputHTMLAttributes<HTMLInputElement>,
-    "onChange" | "value"
-  > {
+  React.InputHTMLAttributes<HTMLInputElement>,
+  "onChange" | "value"
+> {
   label?: string;
   required?: boolean;
   multiple?: Multiple;
@@ -55,9 +55,7 @@ const FileFormItem = <T extends FieldValues, Multiple extends boolean = true>({
     <FormItem className="w-full">
       <div>
         {label ? (
-          <span className="text-xs text-[var(--description-light)]">
-            {label}
-          </span>
+          <span className="text-sm text-description">{label}</span>
         ) : null}
         {required ? <span className="text-xs text-red-500">*</span> : null}
       </div>
@@ -81,11 +79,10 @@ const FileFormItem = <T extends FieldValues, Multiple extends boolean = true>({
   );
 };
 
-interface UnitImageFormItemProps<T extends FieldValues>
-  extends Omit<
-    React.InputHTMLAttributes<HTMLInputElement>,
-    "onChange" | "value"
-  > {
+interface UnitImageFormItemProps<T extends FieldValues> extends Omit<
+  React.InputHTMLAttributes<HTMLInputElement>,
+  "onChange" | "value"
+> {
   label?: string;
   required?: boolean;
   maxSize?: number;
@@ -99,19 +96,19 @@ interface UnitImageFormItemProps<T extends FieldValues>
 }
 
 //공통Props
-interface BaseImageFormItemProps<T extends FieldValues>
-  extends Omit<
-    React.InputHTMLAttributes<HTMLInputElement>,
-    "onChange" | "value"
-  > {
+interface BaseImageFormItemProps<T extends FieldValues> extends Omit<
+  React.InputHTMLAttributes<HTMLInputElement>,
+  "onChange" | "value"
+> {
   label?: string;
   required?: boolean;
   maxSize?: number;
 }
 
 //단일Props
-interface SingleImageFormItemProps<T extends FieldValues>
-  extends BaseImageFormItemProps<T> {
+interface SingleImageFormItemProps<
+  T extends FieldValues,
+> extends BaseImageFormItemProps<T> {
   multiple?: false;
   value: File | null;
   existingFile?: string | null;
@@ -122,8 +119,9 @@ interface SingleImageFormItemProps<T extends FieldValues>
 }
 
 //멀티Props
-interface MultiImageFormItemProps<T extends FieldValues>
-  extends BaseImageFormItemProps<T> {
+interface MultiImageFormItemProps<
+  T extends FieldValues,
+> extends BaseImageFormItemProps<T> {
   multiple?: true;
   value: File[];
   existingFiles?: string[];
@@ -139,7 +137,7 @@ type UnifiedImageFormItemProps<T extends FieldValues> =
   | MultiImageFormItemProps<T>;
 
 export const ImageFormItem = <T extends FieldValues>(
-  props: UnifiedImageFormItemProps<T>
+  props: UnifiedImageFormItemProps<T>,
 ) => {
   const { label, required, maxSize, multiple = false, ...restProps } = props;
 
@@ -152,9 +150,7 @@ export const ImageFormItem = <T extends FieldValues>(
     <FormItem className="w-full">
       <div>
         {label ? (
-          <span className="text-xs text-[var(--description-light)]">
-            {label}
-          </span>
+          <span className="text-sm text-description">{label}</span>
         ) : null}
         {required ? <span className="text-xs text-red-500">*</span> : null}
       </div>

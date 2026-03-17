@@ -4,7 +4,7 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "../../dropdown-menu";
-import { Check, Filter, LucideIcon } from "lucide-react";
+import { Check, Filter, FilterIcon, LucideIcon } from "lucide-react";
 
 interface MultiSelectProps<T extends Record<string, string>> {
   placeholder: string;
@@ -44,43 +44,53 @@ const MultiSelect = <T extends Record<string, string>>({
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild className="hover:cursor-pointer">
+      <DropdownMenuTrigger asChild className="cursor-pointer">
         <Button
           label={`${placeholder} ${
             selected.length > 0 ? `(${selected.length})` : ""
           }`}
-          icon={Icon ?? Filter}
+          icon={
+            <FilterIcon
+              className={`${
+                selected.length > 0
+                  ? "text-primary font-bold"
+                  : "text-description"
+              }`}
+              size={16}
+              strokeWidth={1.5}
+            />
+          }
           variant={"filter"}
-          className={`font-medium
-            text-nowrap text-[13px] bg-white border  hover:bg-gray-50 ${
+          className={`h-9 font-medium
+            border-border-strong shadow-sm  text-nowrap text-sm bg-surface border  hover:bg-gray-50 ${
               selected.length > 0
-                ? "text-black border-blue-500"
-                : "text-[var(--description-dark)]"
+                ? "text-primary border-primary font-bold"
+                : "text-description"
             }
           focus-visible:outline-none focus-visible:ring-0
           `}
         />
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="rounded-[4px] bg-white">
+      <DropdownMenuContent className="rounded-DEFAULT bg-surface">
         <div
-          className="flex gap-2 items-center justify-between px-4 py-2 hover:cursor-pointer hover:bg-gray-50 rounded-[4px]"
+          className="flex gap-2 items-center justify-between px-4 py-2 cursor-pointer hover:bg-gray-50 rounded-[4px]"
           onClick={() => handleAllCheck()}
         >
           <span className="text-xs">전체</span>
           {selected.length === Object.keys(data).length ? (
-            <Check className="w-4 h-4 text-blue-500" />
+            <Check className="w-4 h-4 text-primary" />
           ) : null}
         </div>
         {Object.entries(data).map(([key, value], i) => {
           return (
             <div
-              className="flex gap-2 items-center justify-between px-4 py-2 hover:cursor-pointer hover:bg-gray-50 rounded-[4px]"
+              className="flex gap-2 items-center justify-between px-4 py-2 cursor-pointer hover:bg-gray-50 rounded-[4px]"
               key={i}
               onClick={() => handleCheck(value)}
             >
               <span className="text-xs">{key}</span>
               {selected.some((i) => i === value) ? (
-                <Check className="w-4 h-4 text-blue-500" />
+                <Check className="w-4 h-4 text-primary" />
               ) : null}
             </div>
           );

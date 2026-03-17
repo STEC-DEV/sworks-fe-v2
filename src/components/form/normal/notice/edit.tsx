@@ -1,5 +1,6 @@
 "use client";
 import Button from "@/components/common/button";
+import CheckFormItem from "@/components/common/form-input/check-field";
 import { DateFormItem } from "@/components/common/form-input/date-field";
 import FileFormItem from "@/components/common/form-input/file-field";
 import { MultiSelectFormItem } from "@/components/common/form-input/select-field";
@@ -8,6 +9,7 @@ import {
   TextFormItem,
 } from "@/components/common/form-input/text-field";
 import { CheckBox } from "@/components/common/input";
+import { FormCard } from "@/components/layout/form/form-container";
 import { Form, FormField } from "@/components/ui/form";
 import { useBasicStore } from "@/store/basic-store";
 import { useNoticeDetailStore } from "@/store/normal/notice/notice-detail-store";
@@ -94,7 +96,7 @@ const NoticeEditForm = () => {
       } else {
         form.setValue(
           "serviceTypeSeq",
-          code.map((c) => parseInt(c.value.toString()))
+          code.map((c) => parseInt(c.value.toString())),
         );
       }
     };
@@ -122,115 +124,139 @@ const NoticeEditForm = () => {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(handleSubmit)}
-        className="flex flex-col gap-6"
+        className="flex flex-col gap-4"
       >
-        {allNotice()}
-        {!all && (
+        {/* 공지 설정 카드 */}
+        <FormCard title="공지 설정">
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 xl:gap-x-12">
+            {allNotice()}
+            {!all && (
+              <FormField
+                control={form.control}
+                name="serviceTypeSeq"
+                render={({ field }) => {
+                  const handleSelect = (value: string[]) => {
+                    const v = value.map((v) => parseInt(v));
+                    field.onChange(v);
+                    if (value.length === 5) setAll(true);
+                  };
+                  return (
+                    <MultiSelectFormItem
+                      label="업무유형"
+                      value={field.value.map((v) => v.toString())}
+                      onValueChange={handleSelect}
+                      selectItem={userClassification ?? []}
+                      required
+                    />
+                  );
+                }}
+              />
+            )}
+            {/* 25.11.26 주요공지사항 필수 유지 */}
+            <FormField
+              control={form.control}
+              name="endDt"
+              render={({ field }) => (
+                <DateFormItem
+                  label="공지기간"
+                  value={field.value}
+                  onChange={field.onChange}
+                  required
+                />
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="title"
+              render={({ field }) => (
+                <TextFormItem
+                  label="제목"
+                  placeholder="제목"
+                  required
+                  {...field}
+                />
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="viewYn"
+              render={({ field }) => (
+                <CheckFormItem
+                  label="비공개"
+                  description="계약 담당자 비공개 여부"
+                  checked={!field.value}
+                  {...field}
+                  onChange={(e) => field.onChange(!e.target.checked)}
+                />
+              )}
+            />
+          </div>
+        </FormCard>
+
+        {/* 내용 카드 */}
+        <FormCard title="내용">
           <FormField
             control={form.control}
-            name="serviceTypeSeq"
+            name="description"
+            render={({ field }) => (
+              <TextAreaFormItem
+                className="h-60"
+                label="공지사항 본문"
+                placeholder="내용을 입력해주세요."
+                required
+                showCount
+                {...field}
+              />
+            )}
+          />
+        </FormCard>
+
+        {/* 첨부파일 카드 */}
+        <FormCard title="첨부파일">
+          <FormField
+            control={form.control}
+            name="insertAttaches"
             render={({ field }) => {
-              const handleSelect = (value: string[]) => {
-                const v = value.map((v) => parseInt(v));
-                field.onChange(v);
-                if (value.length === 5) setAll(true);
+              const handleRemoveExistFiles = (data: string) => {
+                const curRemoveFiles = form.getValues("deleteAttaches") || [];
+                form.setValue("deleteAttaches", [
+                  ...curRemoveFiles,
+                  parseInt(data),
+                ]);
               };
+
+              const existedFile = () => {
+                const removeFiles = form.watch("deleteAttaches");
+                if (!notice) return;
+                const allFiles = [
+                  ...notice.imageAttaches,
+                  ...notice.fileAttaches,
+                ];
+                return allFiles
+                  .filter((v) => !removeFiles.includes(v.attachSeq))
+                  .map((v) => v.attachSeq.toString());
+              };
+
               return (
-                <MultiSelectFormItem
-                  label="업무유형"
-                  value={field.value.map((v) => v.toString())}
-                  onValueChange={handleSelect}
-                  selectItem={userClassification ?? []}
-                  required
+                <FileFormItem
+                  label=""
+                  accept="accept"
+                  multiple={true}
+                  max={3}
+                  {...field}
+                  value={field.value}
+                  onChange={field.onChange}
+                  isVertical
+                  existingFiles={existedFile()}
+                  onRemoveExitedFiles={handleRemoveExistFiles}
                 />
               );
             }}
           />
-        )}
-        {/* 
-        25.11.26
-        주요공지사항이 필수면 안되지않냐라고 의견전달 했으나 필수로하자고 해서 따름
-         */}
-        <FormField
-          control={form.control}
-          name="endDt"
-          render={({ field }) => {
-            return (
-              <DateFormItem
-                label="공지기간"
-                value={field.value}
-                onChange={field.onChange}
-                required
-              />
-            );
-          }}
-        />
+        </FormCard>
 
-        <FormField
-          control={form.control}
-          name="title"
-          render={({ field }) => (
-            <TextFormItem label="제목" placeholder="제목" required {...field} />
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="description"
-          render={({ field }) => (
-            <TextAreaFormItem
-              className="h-100"
-              label="내용"
-              placeholder="내용"
-              required
-              showCount
-              {...field}
-            />
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="insertAttaches"
-          render={({ field }) => {
-            const handleRemoveExistFiles = (data: string) => {
-              //현재 이름을 넘겨서 기존파일에서 이름같은거 찾은 후 seq뽐아야함
-              console.log("삭제 : ", data);
-              const curRemoveFiles = form.getValues("deleteAttaches") || [];
-
-              form.setValue("deleteAttaches", [
-                ...curRemoveFiles,
-                parseInt(data),
-              ]);
-            };
-
-            const existedFile = () => {
-              const removeFiles = form.watch("deleteAttaches");
-              if (!notice) return;
-              const allFiles = [
-                ...notice.imageAttaches,
-                ...notice.fileAttaches,
-              ];
-              return allFiles
-                .filter((v) => !removeFiles.includes(v.attachSeq))
-                .map((v) => v.attachSeq.toString());
-            };
-            return (
-              <FileFormItem
-                label="첨부파일"
-                accept="accept"
-                multiple={true}
-                max={3}
-                {...field}
-                value={field.value}
-                onChange={field.onChange}
-                isVertical
-                existingFiles={existedFile()}
-                onRemoveExitedFiles={handleRemoveExistFiles}
-              />
-            );
-          }}
-        />
         <div className="flex justify-end">
-          <Button label="등록" size={"sm"} />
+          <Button label="저장" size="sm" />
         </div>
       </form>
     </Form>

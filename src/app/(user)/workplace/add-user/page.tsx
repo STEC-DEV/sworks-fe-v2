@@ -5,16 +5,17 @@ import UserTypeSelectForm, {
 import UserAddForm, {
   UserAddFormType,
 } from "@/components/form/normal/user/add2";
-import FormLayout from "@/components/layout/form-layout";
+import { FormLayout } from "@/components/layout/form/form-layout";
+// import FormLayout from "@/components/layout/form-layout";
 import ResultDialog from "@/components/ui/custom/form/result-dialog";
 import { useUserMainStore } from "@/store/normal/user/main-store";
 import React, { useEffect, useState } from "react";
 
 const Page = () => {
-  const [formResult, setFormResult] = useState<boolean>(false);
   // const [newSeq, setNewSeq] = useState<number>(-1);
-  const [curStep, setCurStep] = useState<number>(1);
+  // const [curStep, setCurStep] = useState<number>(1);
   const [open, setOpen] = useState<boolean>(false);
+  const [formResult, setFormResult] = useState<boolean>(false);
   const {
     updateCreateUser,
     resetCreateUser,
@@ -30,14 +31,14 @@ const Page = () => {
     };
   }, [getCreateUserClassification, resetCreateUser]);
 
-  const handleNext = (values: UserTypeSelectFormType) => {
-    updateCreateUser(values);
-    setCurStep((prev) => prev + 1);
-  };
+  // const handleNext = (values: UserTypeSelectFormType) => {
+  //   updateCreateUser(values);
+  //   setCurStep((prev) => prev + 1);
+  // };
 
-  const handlePrev = () => {
-    setCurStep((prev) => prev - 1);
-  };
+  // const handlePrev = () => {
+  //   setCurStep((prev) => prev - 1);
+  // };
 
   const handleSubmit = async (values: UserAddFormType) => {
     updateCreateUser(values);
@@ -45,22 +46,54 @@ const Page = () => {
     if (!check) return;
     const res = await postAddUser();
     setFormResult(res.data);
-    setCurStep((prev) => prev + 1);
+    // setCurStep((prev) => prev + 1);
     setOpen(true);
     resetCreateUser();
   };
 
-  const formsConfig = {
-    titles: ["사용자유형", "기본정보"],
-    forms: [
-      <UserTypeSelectForm onNext={handleNext} key={1} />,
-      <UserAddForm onPrev={handlePrev} onNext={handleSubmit} key={2} />,
-    ],
-  };
+  // const formsConfig = {
+  //   titles: ["사용자유형", "기본정보"],
+  //   forms: [
+  //     <UserTypeSelectForm onNext={handleNext} key={1} />,
+  //     <UserAddForm onPrev={handlePrev} onNext={handleSubmit} key={2} />,
+  //   ],
+  // };
 
   return (
     <>
       <FormLayout
+        title="사용자 생성"
+        steps={[
+          {
+            label: "사용자 유형",
+            description: "현장관리자·근무자 유형 선택",
+            form: (nav) => (
+              <UserTypeSelectForm
+                onNext={(values) => {
+                  updateCreateUser(values);
+                  nav.next();
+                }}
+              />
+            ),
+          },
+          {
+            label: "기본정보",
+            description: "기본 계정정보 입력",
+            form: (nav) => (
+              <UserAddForm onPrev={nav.prev} onNext={handleSubmit} />
+            ),
+          },
+        ]}
+      />
+      <ResultDialog
+        result={formResult}
+        open={open}
+        setOpen={setOpen}
+        successUrl={"/workplace"}
+        // successSubUrl={"/workplace"}
+        failedUrl={"/workplace"}
+      />
+      {/* <FormLayout
         steps={formsConfig}
         title="사용자 생성"
         description="사용자정보"
@@ -73,7 +106,7 @@ const Page = () => {
         successUrl={"/workplace"}
         // successSubUrl={"/workplace"}
         failedUrl={"/workplace"}
-      />
+      /> */}
     </>
   );
 };

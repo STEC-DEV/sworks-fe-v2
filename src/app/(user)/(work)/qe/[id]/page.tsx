@@ -1,6 +1,7 @@
 "use client";
 import CustomAccordion from "@/components/common/accordion/custom-accordion";
 import BaseSkeleton from "@/components/common/base-skeleton";
+import CustomCard from "@/components/common/card";
 import IconButton from "@/components/common/icon-button";
 import AppTitle from "@/components/common/label/title";
 import QeEditForm from "@/components/form/normal/qe/edit";
@@ -46,14 +47,14 @@ const Page = () => {
 
   const totalPoint = qeDetail.mains.reduce(
     (acc, value) => acc + value.chkMainTotalPoint,
-    0
+    0,
   );
 
   return (
     <>
       <div className="flex flex-col gap-6 xl:w-150">
         <AppTitle title="품질평가" isBorder />
-        <div className="flex flex-col gap-4 w-full xl:w-150">
+        <CustomCard className="gap-4 w-full xl:w-150 p-4">
           <KeyValueItem
             label={"업무유형"}
             value={qeDetail.serviceTypeName}
@@ -89,22 +90,22 @@ const Page = () => {
             valueStyle="font-medium text-sm"
             mainStyle=" flex-row justify-between"
           />
-        </div>
+        </CustomCard>
       </div>
       <div className="flex flex-col gap-6">
         <AppTitle title="평가항목" isBorder />
-        <div className="flex gap-2 items-center">
-          <span className="text-md text-[var(--description-light)]">총점</span>
+        <CustomCard className="flex-row gap-2 items-center w-fit p-4 border-border-strong">
+          <span className="text-md text-description">총점</span>
           <div className="flex items-center gap-1">
-            <span className="text-lg font-semibold text-blue-500 ">
+            <span className="text-lg font-bold text-primary ">
               {qeDetail.totalScore}
             </span>
-            <span className="text-md text-[var(--description-light)]">/</span>
-            <span className="text-lg font-semibold text-[var(--description-light)] ">
+            <span className="text-md text-description">/</span>
+            <span className="text-lg font-semibold text-description ">
               {totalPoint}
             </span>
           </div>
-        </div>
+        </CustomCard>
 
         <div className="space-y-4">
           {qeDetail.mains.map((main, idx) => (
@@ -126,12 +127,12 @@ const QeChkAccordion = ({ main }: { main: QeViewMain }) => {
       label={`${main.chkMainTitle}`}
       labelOptions={
         <div className="flex items-center gap-1">
-          <span className="text-md text-blue-500">
+          <span className="text-md font-bold text-primary">
             {main.chkMainTotalScore}
           </span>
-          <span className="text-md text-[var(--description-light)]">/</span>
+          <span className="text-md font-bold text-description">/</span>
 
-          <span className="text-md text-[var(--description-light)]">
+          <span className="text-md font-bold text-description">
             {main.chkMainTotalPoint}
           </span>
         </div>
@@ -157,10 +158,13 @@ const QeChkAccordion = ({ main }: { main: QeViewMain }) => {
         })}
         {main.chkMainSumYn && (
           <div className="flex gap-2 justify-center items-center border-t-1 border-border py-2">
-            <span className="text-sm ">소계</span>
-            <span className="text-lg text-blue-500 ">
-              {main.chkMainTotalScore}
-            </span>
+            <span className="text-base">소계</span>
+            <div className="flex items-center gap-1">
+              <span className="text-lg text-primary font-extrabold">
+                {main.chkMainTotalScore}
+              </span>
+              <span className="text-sm text-description font-bold">점</span>
+            </div>
           </div>
         )}
       </>
@@ -171,9 +175,7 @@ const QeChkAccordion = ({ main }: { main: QeViewMain }) => {
 const QeChkSubSection = ({ sub }: { sub: QeSub }) => {
   return (
     <div>
-      <span className="block px-4 py-2 bg-[var(--background)]">
-        {sub.chkSubTitle}
-      </span>
+      <span className="block px-4 py-2 bg-background">{sub.chkSubTitle}</span>
       <div className="flex flex-col gap-4 p-4">
         {sub.details.map((detail, idx) => {
           return <QeChkDetailItem key={idx} detail={detail} />;
@@ -181,8 +183,13 @@ const QeChkSubSection = ({ sub }: { sub: QeSub }) => {
       </div>
       {sub.chkSubSumYn && (
         <div className="flex gap-2 justify-center items-center border-t-1 border-border py-2">
-          <span className="text-sm ">소계</span>
-          <span className="text-lg text-blue-500 ">{sub.chkSubTotal}</span>
+          <span className="text-sm">소계</span>
+          <div className="flex items-center gap-1">
+            <span className="text-base text-primary font-bold">
+              {sub.chkSubTotal}
+            </span>
+            <span className="text-sm text-description font-bold">점</span>
+          </div>
         </div>
       )}
     </div>
@@ -198,7 +205,7 @@ const QeChkDetailItem = ({ detail }: { detail: QeDetail }) => {
         </span>
         <span className="text-sm ">{detail.chkDetailItem}</span>
       </div>
-      <span className="text-md font-medium text-blue-500 whitespace-nowrap">
+      <span className="text-md font-bold text-primary whitespace-nowrap">
         {detail.score}점
       </span>
     </div>

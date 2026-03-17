@@ -133,9 +133,11 @@ const PageItemButton = ({
 }) => {
   return (
     <div
-      className={` border border-[var(--border)] text-xs px-2 py-2 rounded-[4px] w-7 h-7 flex items-center justify-center hover:bg-background cursor-pointer  ${
-        isActive ? "bg-[var(--background)] font-bold" : "bg-white"
-      } md:w-9 md:h-9`}
+      className={` border border-border-strong shadow-sm  text-xs px-2 py-2 rounded-DEFAULT w-9 h-9 flex items-center justify-center  cursor-pointer  ${
+        isActive
+          ? "bg-primary text-surface font-bold"
+          : "bg-surface hover:bg-primary-background hover:border-primary"
+      } `}
       onClick={onClick}
     >
       {page}
@@ -152,7 +154,7 @@ const PageActionButton = ({
 }) => {
   return (
     <div
-      className="border border-[var(--border)] px-2 py-2 rounded-[4px] w-7 h-7 md:w-9 md:h-9 flex items-center justify-center hover:bg-accent cursor-pointer bg-white"
+      className="border border-border-strong shadow-sm px-2 py-2 rounded-DEFAULT w-9 h-9 flex items-center justify-center hover:bg-primary-background hover:border-primary cursor-pointer bg-white"
       onClick={onClick}
     >
       <Icon className="w-4" />

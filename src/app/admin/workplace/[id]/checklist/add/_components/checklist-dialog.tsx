@@ -26,7 +26,7 @@ const ChecklistDialog = ({
   const { id, types } = useParams();
   const [search, setSearch] = useState<string>("");
   const [selectedChecklist, setSelectedChecklist] = useState<Checklist[]>(
-    selectedAvailableChecklistItem ?? []
+    selectedAvailableChecklistItem ?? [],
   );
 
   useEffect(() => {
@@ -53,7 +53,7 @@ const ChecklistDialog = ({
 
   const isChecked = (item: Checklist) => {
     return selectedChecklist.some(
-      (selected) => selected.chkMainSeq === item.chkMainSeq
+      (selected) => selected.chkMainSeq === item.chkMainSeq,
     );
   };
 
@@ -61,11 +61,11 @@ const ChecklistDialog = ({
   const handleCheck = (item: Checklist) => {
     setSelectedChecklist((prev) => {
       const isSelected = prev.some(
-        (selected) => selected.chkMainSeq === item.chkMainSeq
+        (selected) => selected.chkMainSeq === item.chkMainSeq,
       );
       if (isSelected) {
         return prev.filter(
-          (selected) => selected.chkMainSeq !== item.chkMainSeq
+          (selected) => selected.chkMainSeq !== item.chkMainSeq,
         );
       } else {
         return [...prev, item];
@@ -121,12 +121,12 @@ const ChecklistCard = ({ item, isChecked, onClick }: ChecklistCardProps) => {
   return (
     <CustomCard
       className={`${
-        isChecked ? "border-blue-500 bg-blue-50" : null
+        isChecked ? "border-primary bg-primary-background" : null
       } flex-row items-center`}
       variant={"list"}
       onClick={() => onClick(item)}
     >
-      <CircleCheck className="text-blue-500" strokeWidth={1.5} />
+      <CircleCheck className="text-primary" strokeWidth={1.5} />
       <span className="text-sm ">{item.chkMainTitle}</span>
     </CustomCard>
   );

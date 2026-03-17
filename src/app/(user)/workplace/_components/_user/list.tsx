@@ -26,7 +26,7 @@ const UserList = () => {
   }, [fetchData]);
 
   if (isLoading(loadingKeys.LIST) || !userList)
-    return <BaseSkeleton className="flex-1" />;
+    return <BaseSkeleton className="flex-1 h-full" />;
   if (hasError(loadingKeys.LIST)) return <div>에러 발생</div>;
 
   return (
@@ -38,6 +38,8 @@ const UserList = () => {
     />
   );
 };
+
+export default UserList;
 
 const UserListCard = ({ data }: { data: UserListItem }) => {
   return (
@@ -66,5 +68,3 @@ const UserListCard = ({ data }: { data: UserListItem }) => {
     </CustomCard>
   );
 };
-
-export default UserList;

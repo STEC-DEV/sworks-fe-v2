@@ -3,7 +3,7 @@ import ChecklistDialog from "@/app/admin/workplace/[id]/checklist/add/_component
 import DraggableCheckAccordion from "@/app/admin/workplace/[id]/checklist/add/_components/chk-drag-accordion";
 import IconButton from "@/components/common/icon-button";
 import BaseDialog from "@/components/ui/custom/base-dialog";
-import CommonFormContainer from "@/components/ui/custom/form/form-container";
+
 import { useWorkplaceDetailStore } from "@/store/admin/workplace/workplace-detail-store";
 import { zodResolver } from "@hookform/resolvers/zod";
 import React, { useEffect, useState } from "react";
@@ -28,6 +28,11 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { useWorkplaceDetailChecklistStore } from "@/store/admin/workplace/checklist-store";
+import {
+  CommonFormContainer,
+  FormCard,
+} from "@/components/layout/form/form-container";
+import EmptyBox from "@/components/ui/custom/empty";
 
 const formSchema = z.object({
   chkMainSeq: z
@@ -68,7 +73,7 @@ const ChecklistAddForm = ({ onPrev, onNext }: ChecklistAddFormProps) => {
     setItems(selectedAvailableChecklistItem);
     form.setValue(
       "chkMainSeq",
-      selectedAvailableChecklistItem.map((v) => v.chkMainSeq)
+      selectedAvailableChecklistItem.map((v) => v.chkMainSeq),
     );
   }, [selectedAvailableChecklistItem]);
 
@@ -76,7 +81,7 @@ const ChecklistAddForm = ({ onPrev, onNext }: ChecklistAddFormProps) => {
     useSensor(MouseSensor, { activationConstraint: { distance: 5 } }),
     useSensor(TouchSensor, {
       activationConstraint: { delay: 150, tolerance: 5 },
-    })
+    }),
   );
 
   //드래그
@@ -95,7 +100,7 @@ const ChecklistAddForm = ({ onPrev, onNext }: ChecklistAddFormProps) => {
       updateSelectedAvailableChecklistItem(newItems);
       form.setValue(
         "chkMainSeq",
-        newItems.map((i) => i.chkMainSeq)
+        newItems.map((i) => i.chkMainSeq),
       );
     }
   };
@@ -107,50 +112,61 @@ const ChecklistAddForm = ({ onPrev, onNext }: ChecklistAddFormProps) => {
 
   return (
     <CommonFormContainer
-      title="평가항목"
+      title=""
       form={form}
       nextLabel="생성"
       onNext={onNext}
       onPrev={onPrev}
-      titleOptionChildren={
-        <BaseDialog
-          triggerChildren={<IconButton icon={"SquarePen"} size={16} />}
-          title="평가항목 수정"
-          open={open}
-          setOpen={setOpen}
-        >
-          <ChecklistDialog setOpen={setOpen} />
-          {/* onChange={handleFormFieldChange} */}
-        </BaseDialog>
-      }
     >
-      <FormField
-        control={form.control}
-        name="chkMainSeq"
-        render={({ field }) => (
-          <FormItem>
-            <FormMessage className="text-red-500" />
-            <FormControl>
-              <DndContext
-                sensors={sensors}
-                collisionDetection={closestCenter}
-                onDragStart={handleDragStart}
-                onDragEnd={handleDragEnd}
-              >
-                <div className="flex flex-col gap-2">
-                  {items ? (
-                    <SortableContext items={items.map((c) => c.chkMainSeq)}>
-                      {items.map((c, i) => (
-                        <DraggableCheckAccordion key={i} data={c} />
-                      ))}
-                    </SortableContext>
-                  ) : null}
-                </div>
-              </DndContext>
-            </FormControl>
-          </FormItem>
-        )}
-      />
+      <FormCard
+        title="평가항목"
+        titleOptionChildren={
+          <BaseDialog
+            triggerChildren={
+              <IconButton
+                icon={"SquarePen"}
+                size={16}
+                bgClassName="!rounded-DEFAULT border border-border-strong shadow-sm hover:bg-primary-background"
+              />
+            }
+            title="평가항목 수정"
+            open={open}
+            setOpen={setOpen}
+          >
+            <ChecklistDialog setOpen={setOpen} />
+          </BaseDialog>
+        }
+      >
+        <FormField
+          control={form.control}
+          name="chkMainSeq"
+          render={({ field }) => (
+            <FormItem>
+              <FormMessage className="text-red-500" />
+              <FormControl>
+                <DndContext
+                  sensors={sensors}
+                  collisionDetection={closestCenter}
+                  onDragStart={handleDragStart}
+                  onDragEnd={handleDragEnd}
+                >
+                  <div className="flex flex-col gap-2">
+                    {items.length > 0 ? (
+                      <SortableContext items={items.map((c) => c.chkMainSeq)}>
+                        {items.map((c, i) => (
+                          <DraggableCheckAccordion key={i} data={c} />
+                        ))}
+                      </SortableContext>
+                    ) : (
+                      <EmptyBox message="평가항목이 없어요" />
+                    )}
+                  </div>
+                </DndContext>
+              </FormControl>
+            </FormItem>
+          )}
+        />
+      </FormCard>
     </CommonFormContainer>
   );
 };

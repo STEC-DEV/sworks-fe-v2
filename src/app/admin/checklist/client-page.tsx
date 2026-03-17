@@ -9,6 +9,7 @@ import BaseSkeleton from "@/components/common/base-skeleton";
 import { useRouter, useSearchParams } from "next/navigation";
 import BaseTable from "@/components/common/base-table";
 import { useUIStore } from "@/store/common/ui-store";
+import { OptionSectionWrapper } from "@/components/common/option-wrapper";
 
 const ClientPage = () => {
   const searchParams = useSearchParams();
@@ -24,7 +25,7 @@ const ClientPage = () => {
 
   const getList = () => {
     if (isLoading(loadingKeys.LIST) || !commonChecklist)
-      return <BaseSkeleton />;
+      return <BaseSkeleton className="flex-1" />;
     if (hasError(loadingKeys.LIST)) return <div>에러 발생</div>;
 
     return (
@@ -40,8 +41,11 @@ const ClientPage = () => {
 
   return (
     <>
-      <ChecklistFilter />
-      <ChecklistPagination />
+      <OptionSectionWrapper>
+        <ChecklistFilter />
+        <ChecklistPagination />
+      </OptionSectionWrapper>
+
       {getList()}
     </>
   );

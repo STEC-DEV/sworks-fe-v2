@@ -203,7 +203,7 @@ export const FireInfo = () => {
       case 1:
         return "R형";
       case 2:
-        return "p형";
+        return "P형";
       default:
         return "";
     }

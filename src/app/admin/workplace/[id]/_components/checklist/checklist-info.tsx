@@ -68,16 +68,16 @@ const ChecklistCard = ({ data }: { data: WorkplaceChecklist }) => {
       parseInt(rawValue),
       data.serviceTypeSeq,
       data.divCodeSeq,
-      data.typeCodeSeq
+      data.typeCodeSeq,
     );
     await getChecklist(rawValue);
   };
   return (
     <CustomCard
-      className="w-full  gap-0 py-4 hover:cursor-pointer hover:border-blue-500"
+      className="w-full  gap-2 py-4 hover:cursor-pointer hover:border-primary bg-background"
       onClick={() =>
         router.push(
-          `/admin/workplace/${id}/checklist/${data.serviceTypeSeq}-${data.divCodeSeq}-${data.typeCodeSeq}`
+          `/admin/workplace/${id}/checklist/${data.serviceTypeSeq}-${data.divCodeSeq}-${data.typeCodeSeq}`,
         )
       }
     >
@@ -92,14 +92,21 @@ const ChecklistCard = ({ data }: { data: WorkplaceChecklist }) => {
             actionLabel={dialogText.defaultDelete.actionLabel}
             onClick={onDelete}
           >
-            <IconButton icon="Trash2" size={16} />
+            <IconButton
+              icon="Trash2"
+              size={16}
+              bgClassName="w-8 h-8 p-1 !rounded-DEFAULT border border-border-strong shadow-sm hover:bg-red-50 hover:border-destructive"
+              className="group-hover:text-destructive"
+            />
           </CheckDialog>
         </div>
       )}
 
       <div className="flex justify-between items-center px-4">
-        <span className="text-blue-500">{data.serviceTypeName}</span>
-        <span>
+        <span className="text-primary font-semibold">
+          {data.serviceTypeName}
+        </span>
+        <span className="text-description-strong">
           {data.divCodeName}({data.typeCodeName})
         </span>
       </div>

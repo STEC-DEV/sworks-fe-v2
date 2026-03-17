@@ -8,6 +8,7 @@ import { useSearchParams } from "next/navigation";
 import TaskList from "./_components/list";
 import { FileText } from "lucide-react";
 import { toast } from "sonner";
+import { OptionSectionWrapper } from "@/components/common/option-wrapper";
 
 const Page = () => {
   const { getTaskList, deleteTask } = useTaskStore();
@@ -31,9 +32,12 @@ const Page = () => {
 
   return (
     <>
-      <AppTitle title="업무" icon={FileText} />
-      <TaskFilter />
-      <TaskPagination onDelete={handleDelete} />
+      <AppTitle title="업무" isPrev prevPath="/daily" />
+      <OptionSectionWrapper>
+        <TaskFilter />
+        <TaskPagination onDelete={handleDelete} />
+      </OptionSectionWrapper>
+
       <TaskList onSelectionChange={setSelectedTasks} />
     </>
   );

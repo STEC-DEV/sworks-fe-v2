@@ -10,6 +10,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { useUIStore } from "@/store/common/ui-store";
 import { useQeStore } from "@/store/normal/qe/qe-store";
 import { EvaluateListItem } from "@/types/normal/qe/qe";
+import { PlusIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -30,7 +31,9 @@ const QePagination = () => {
         description="평가할 체크리스트를 선택해주세요."
         open={open}
         setOpen={setOpen}
-        triggerChildren={<IconButton icon="Plus" />}
+        triggerChildren={
+          <Button label="평가진행" icon={<PlusIcon size={20} />} size={"sm"} />
+        }
       >
         <SelectEvaluateItem onClose={() => setOpen(false)} />
       </BaseDialog>
@@ -74,31 +77,44 @@ const SelectEvaluateItem = ({ onClose }: { onClose: () => void }) => {
 
   return (
     <div className="flex flex-col gap-6 w-full">
-      <ScrollArea className="overflow-hidden">
-        <div className="px-6 pb-2">
-          <div className="flex flex-col gap-4">
-            {evaluateList.map((e, i) => (
-              <CustomCard
-                className={`flex-row gap-4 items-center p-4 cursor-pointer ${
-                  selectItem === e && "border-blue-500 bg-blue-50"
-                } hover:bg-blue-50 hover:border-blue-500`}
-                key={i}
-                size={"sm"}
-                onClick={() => setSelectItem(e)}
-              >
-                <span className="text-blue-500 text-sm">
-                  {e.serviceTypeName}
-                </span>
-                <span className="text-sm">
-                  {e.divCodeName}({e.typeCodeName})
-                </span>
-              </CustomCard>
-            ))}
+      {evaluateList.length > 0 ? (
+        <ScrollArea className="overflow-hidden">
+          <div className="px-6 pb-2">
+            <div className="flex flex-col gap-4">
+              {evaluateList.map((e, i) => (
+                <CustomCard
+                  className={`flex-row gap-4 items-center p-4 cursor-pointer ${
+                    selectItem === e && "border-primary bg-primary-background"
+                  } hover:bg-primary-background hover:border-primary`}
+                  key={i}
+                  size={"sm"}
+                  onClick={() => setSelectItem(e)}
+                >
+                  <span className="text-primary text-sm font-bold">
+                    {e.serviceTypeName}
+                  </span>
+                  <span className="text-sm">
+                    {e.divCodeName}({e.typeCodeName})
+                  </span>
+                </CustomCard>
+              ))}
+            </div>
           </div>
+        </ScrollArea>
+      ) : (
+        <div className="px-6">
+          <span className="text-description-light">
+            평가할 수 있는 체크리스트가 없어요
+          </span>
         </div>
-      </ScrollArea>
+      )}
+
       <div className="shrink-0 px-6">
-        <Button label="평가" onClick={handleEvaluate} />
+        <Button
+          variant={selectItem ? "default" : "disabled"}
+          label="평가"
+          onClick={handleEvaluate}
+        />
       </div>
     </div>
   );

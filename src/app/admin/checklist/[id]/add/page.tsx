@@ -1,6 +1,7 @@
 "use client";
 import ChecklistItemAddForm from "@/components/form/admin/checklist/add";
-import FormLayout from "@/components/layout/form-layout";
+import { FormLayout } from "@/components/layout/form/form-layout";
+
 import ResultDialog from "@/components/ui/custom/form/result-dialog";
 import { useChecklistDetailStore } from "@/store/admin/checklist/checklist-detail-store";
 import { useParams } from "next/navigation";
@@ -9,7 +10,7 @@ import React, { useState } from "react";
 const Page = () => {
   const [formResult, setFormResult] = useState<boolean>(false);
   const [newSeq, setNewSeq] = useState<number>(-1);
-  const [curStep, setCurStep] = useState<number>(1);
+
   const [open, setOpen] = useState<boolean>(false);
   const { postAddChecklistItem } = useChecklistDetailStore();
   const { id } = useParams();
@@ -18,7 +19,7 @@ const Page = () => {
     const result = await postAddChecklistItem(values);
     result.code !== 200 ? setFormResult(false) : setFormResult(true);
     setNewSeq(result.data);
-    setCurStep((prev) => prev + 1);
+
     setOpen(true);
   };
   const formsConfig = {
@@ -30,9 +31,13 @@ const Page = () => {
     <>
       <FormLayout
         title="평가항목 생성"
-        description="평가항목 정보"
-        steps={formsConfig}
-        curStep={curStep}
+        steps={[
+          {
+            label: "평가항목",
+            description: "평가항목 입력",
+            form: (nav) => <ChecklistItemAddForm onNext={handleSubmit} />,
+          },
+        ]}
       />
       <ResultDialog
         result={formResult}

@@ -96,11 +96,11 @@ const UserInput = ({ value, onChange }: UserInputProps) => {
     <div className="flex flex-row justify-between items-center">
       <div className="flex flex-row gap-2 flex-wrap">
         {selected.length === 0 ? (
-          <span className="text-sm text-[var(--placeholder)]">담당자 없음</span>
+          <span className="text-sm text-placeholder">담당자 없음</span>
         ) : null}
         {selected.map((v, i) => (
           <span
-            className="px-4 py-0.5  bg-blue-500 text-white  rounded-2xl text-sm"
+            className="px-4 py-0.5  bg-primary text-white  rounded-DEFAULT text-sm"
             key={i}
           >
             {v.userName}
@@ -110,7 +110,12 @@ const UserInput = ({ value, onChange }: UserInputProps) => {
 
       <BaseDialog
         title="담당자"
-        triggerChildren={<IconButton icon="SquarePen" />}
+        triggerChildren={
+          <IconButton
+            icon="SquarePen"
+            bgClassName="!rounded-DEFAULT border border-border-strong "
+          />
+        }
         open={open}
         setOpen={setOpen}
       >
@@ -123,8 +128,8 @@ const UserInput = ({ value, onChange }: UserInputProps) => {
               onChange={(e) => setSearch(e.target.value)}
             />
           </div>
-
-          <ScrollArea className="flex-1  overflow-hidden ">
+          {/* <ScrollArea className=" flex-1  overflow-hidden "></ScrollArea> */}
+          <ScrollArea className="h-100  overflow-hidden ">
             <div className="px-6 pb-1 ">
               <div className="flex flex-col gap-4">
                 {/* 🔄 수정: reqWorker → filteredWorkers로 변경 */}
@@ -133,7 +138,7 @@ const UserInput = ({ value, onChange }: UserInputProps) => {
                     <CustomCard
                       className={`flex-row justify-between ${
                         curSelect.find((s) => s.userSeq === v.userSeq)
-                          ? "bg-blue-50 border-blue-500"
+                          ? "bg-primary-background border-primary"
                           : ""
                       }`}
                       variant={"list"}
@@ -141,7 +146,7 @@ const UserInput = ({ value, onChange }: UserInputProps) => {
                       key={i}
                     >
                       <span className="text-sm">{v.userName}</span>
-                      <span className="text-sm text-blue-500">
+                      <span className="text-sm text-primary">
                         {v.serviceTypeName}
                       </span>
                     </CustomCard>
@@ -179,7 +184,7 @@ export const UserInputFormItem = ({
   return (
     <FormItem className="flex flex-col gap-2 w-full">
       <div className="flex">
-        <span className="text-xs text-[var(--description-light)]">담당자</span>
+        <span className="text-sm text-description">담당자</span>
 
         {required ? <span className="text-xs text-red-500">*</span> : null}
       </div>

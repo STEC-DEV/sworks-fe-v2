@@ -16,8 +16,8 @@ export const ProcessBadge = ({
   return (
     <div
       className={cn(
-        `flex gap-2 text-white py-0.5 justify-center items-center  rounded-[50px]`,
-        style
+        `flex gap-2 text-white py-0.5 justify-center items-center  rounded-[50px] `,
+        style,
       )}
     >
       <Icon size={16} />

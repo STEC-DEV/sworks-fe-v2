@@ -3,7 +3,12 @@ import {
   TextAreaFormItem,
   TextFormItem,
 } from "@/components/common/form-input/text-field";
-import CommonFormContainer from "@/components/ui/custom/form/form-container";
+import AppTitle from "@/components/common/label/title";
+import {
+  CommonFormContainer,
+  FormCard,
+} from "@/components/layout/form/form-container";
+
 import { FormField } from "@/components/ui/form";
 import { useDecodeParam } from "@/hooks/params";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -61,45 +66,46 @@ const EquipmentHistoryAddForm = ({ onNext }: EquipmentHistoryAddFormProps) => {
     onNext(submitData);
   };
   return (
-    <CommonFormContainer
-      title="기본정보"
-      form={form}
-      nextLabel="생성"
-      onNext={handleSubmit}
-    >
-      <div className="form-layout">
+    <CommonFormContainer form={form} onNext={handleSubmit} nextLabel="생성">
+      <AppTitle title="관리이력 생성" isPrev />
+      <FormCard title="기본정보">
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 xl:gap-x-12">
+          <FormField
+            name="detailDt"
+            control={form.control}
+            render={({ field }) => (
+              <DateFormItem
+                label="관리일"
+                value={field.value}
+                onChange={(date) => field.onChange(date)}
+                required
+              />
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="remark"
+            render={({ field }) => (
+              <TextFormItem label="비고" placeholder="비고" {...field} />
+            )}
+          />
+        </div>
+      </FormCard>
+
+      <FormCard title="내용">
         <FormField
-          name="detailDt"
           control={form.control}
+          name="contents"
           render={({ field }) => (
-            <DateFormItem
-              label="관리일"
-              value={field.value}
-              onChange={(date) => field.onChange(date)}
+            <TextAreaFormItem
+              label="내용"
+              placeholder="내용을 입력해주세요."
+              {...field}
               required
             />
           )}
         />
-        <FormField
-          control={form.control}
-          name="remark"
-          render={({ field }) => (
-            <TextFormItem label="비고" placeholder="비고" {...field} />
-          )}
-        />
-      </div>
-      <FormField
-        control={form.control}
-        name="contents"
-        render={({ field }) => (
-          <TextAreaFormItem
-            label="내용"
-            placeholder="내용"
-            {...field}
-            required
-          />
-        )}
-      />
+      </FormCard>
     </CommonFormContainer>
   );
 };

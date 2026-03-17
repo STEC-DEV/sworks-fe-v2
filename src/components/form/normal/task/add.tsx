@@ -1,5 +1,10 @@
 import SelectFormItem from "@/components/common/form-input/select-field";
-import CommonFormContainer from "@/components/ui/custom/form/form-container";
+import {
+  CommonFormContainer,
+  FormCard,
+} from "@/components/layout/form/form-container";
+
+// import CommonFormContainer from "@/components/ui/custom/form/form-container";
 import { FormField } from "@/components/ui/form";
 import { useAuthStore } from "@/store/auth/auth-store";
 import { useTaskStore } from "@/store/normal/task/task-store";
@@ -34,13 +39,8 @@ const DailyTaskAddForm = ({
   }, [createTask]);
 
   return (
-    <CommonFormContainer
-      form={form}
-      title="업무정보"
-      nextLabel="다음"
-      onNext={onNext}
-    >
-      <div>
+    <CommonFormContainer form={form} nextLabel="다음" onNext={onNext}>
+      <FormCard title="업무유형">
         <FormField
           control={form.control}
           name="serviceTypeSeq"
@@ -55,13 +55,13 @@ const DailyTaskAddForm = ({
                 value={field.value?.toString()}
                 onValueChange={handleValue}
                 selectItem={convertSelectOptionType(
-                  enteredWorkplace?.contracts ?? []
+                  enteredWorkplace?.contracts ?? [],
                 )}
               />
             );
           }}
         />
-      </div>
+      </FormCard>
     </CommonFormContainer>
   );
 };

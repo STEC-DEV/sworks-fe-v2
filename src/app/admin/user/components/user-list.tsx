@@ -19,7 +19,8 @@ const AdminList = () => {
     getAdminList(new URLSearchParams(searchParams));
   }, [searchParams]);
 
-  if (isLoading(loadingKeys.LIST) || !adminList) return <BaseSkeleton />;
+  if (isLoading(loadingKeys.LIST) || !adminList)
+    return <BaseSkeleton className="flex-1" />;
   if (hasError(loadingKeys.LIST)) return <div>에러 발생</div>;
 
   return (

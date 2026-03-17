@@ -126,15 +126,15 @@ const ColorPicker = ({ value, onChange }: ColorPickerProps) => {
       onValueChange={(value) => onChange(value)}
     >
       <SelectTrigger
-        className={`w-fit text-sm  rounded-[4px] border border-[var(--border)] shadow-none transition duration-300
-                          focus-visible:border-[var(--primary)] focus-visible:border-1 focus-visible:ring-1 focus-visible:ring-[var(--primary)]
-                          hover:border-[var(--primary)] hover:cursor-pointer
-                          data-[placeholder]:text-[var(--placeholder)] data-[state=open]:ring-[var(--primary)] data-[state=open]:border-[var(--primary)] data-[state=open]:ring-1 data-[state=open]:ring-inset
+        className={`w-fit text-sm !rounded-DEFAULT border border-border-strong shadow-none transition duration-300
+                          focus-visible:border-primary focus-visible:border-1 focus-visible:ring-1 focus-visible:ring-primary
+                          hover:border-primary hover:cursor-pointer
+                          data-[placeholder]:text-placeholder data-[state=open]:ring-primary data-[state=open]:border-primary data-[state=open]:ring-1 data-[state=open]:ring-inset
                           `}
       >
         <SelectValue placeholder={"색상을 선택해주세요."} />
       </SelectTrigger>
-      <SelectContent className="bg-white">
+      <SelectContent className="bg-surface">
         <div className="grid grid-cols-2">
           {scheduleColors.map((v, i) => (
             <SelectItem

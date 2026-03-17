@@ -1,6 +1,7 @@
 "use client";
 import AppTitle from "@/components/common/label/title";
 import ChecklistItemEditForm from "@/components/form/admin/checklist/edit";
+import { useDecodeParam } from "@/hooks/params";
 import { useChecklistDetailStore } from "@/store/admin/checklist/checklist-detail-store";
 import { useParams } from "next/navigation";
 import React, { useEffect } from "react";
@@ -8,6 +9,7 @@ import React, { useEffect } from "react";
 const Page = () => {
   const { setEditChecklistItem, resetEditChecklistItem } =
     useChecklistDetailStore();
+  const { rawValue } = useDecodeParam("id");
   const { chkSeq } = useParams();
   useEffect(() => {
     setItem();
@@ -24,7 +26,11 @@ const Page = () => {
 
   return (
     <>
-      <AppTitle title="평가항목 수정" />
+      <AppTitle
+        title="평가항목 수정"
+        isPrev
+        prevPath={`/admin/checklist/${rawValue}`}
+      />
       <ChecklistItemEditForm />
     </>
   );

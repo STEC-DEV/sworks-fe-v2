@@ -94,13 +94,11 @@ export const WorkplaceBox = ({
   return (
     <CustomCard
       variant={"list"}
-      className="gap-1 px-3 py-3 hover:border-blue-500 hover:bg-blue-50"
+      className="gap-1 px-3 py-3 hover:border-primary hover:bg-primary-background"
       onClick={() => onClick(data)}
     >
       <span className="text-sm">{data.siteName}</span>
-      <span className="text-xs text-[var(--description-light)]">
-        {data.siteAddress}
-      </span>
+      <span className="text-xs text-description">{data.siteAddress}</span>
     </CustomCard>
   );
 };

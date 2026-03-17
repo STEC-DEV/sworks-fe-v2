@@ -2,8 +2,9 @@ import { FormControl, FormItem, FormMessage } from "@/components/ui/form";
 import { FieldValues } from "react-hook-form";
 import Input, { PasswordInput, TextArea } from "../input";
 
-interface TextFormItemProps<T extends FieldValues>
-  extends React.ComponentProps<"input"> {
+interface TextFormItemProps<
+  T extends FieldValues,
+> extends React.ComponentProps<"input"> {
   label?: string;
   required?: boolean;
 }
@@ -20,9 +21,7 @@ export const TextFormItem = <T extends FieldValues>({
     <FormItem className="flex flex-col gap-2 w-full min-w-0">
       <div className="flex">
         {label ? (
-          <span className="text-xs text-[var(--description-light)]">
-            {label}
-          </span>
+          <span className="text-sm text-description">{label}</span>
         ) : null}
         {required ? <span className="text-xs text-red-500">*</span> : null}
       </div>
@@ -35,8 +34,9 @@ export const TextFormItem = <T extends FieldValues>({
   );
 };
 
-interface TextAreaFormItemProps<T extends FieldValues>
-  extends React.ComponentProps<"textarea"> {
+interface TextAreaFormItemProps<
+  T extends FieldValues,
+> extends React.ComponentProps<"textarea"> {
   label?: string;
   required?: boolean;
   showCount?: boolean;
@@ -56,9 +56,7 @@ export const TextAreaFormItem = <T extends FieldValues>({
     <FormItem className="flex flex-col gap-2 ">
       <div className="flex">
         {label ? (
-          <span className="text-xs text-[var(--description-light)]">
-            {label}
-          </span>
+          <span className="text-sm text-description">{label}</span>
         ) : null}
         {required ? <span className="text-xs text-red-500">*</span> : null}
       </div>

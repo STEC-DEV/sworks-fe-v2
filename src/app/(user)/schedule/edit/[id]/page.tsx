@@ -16,12 +16,13 @@ const Page = () => {
   }, [rawValue, getDayScheduleDetail]);
 
   return (
-    <PrevLayout>
-      <div className="flex flex-col gap-6 w-full xl:w-150">
-        <AppTitle title="일정 수정" isBorder />
-        <DayScheduleEditForm />
-      </div>
-    </PrevLayout>
+    <>
+      {/* <div className="flex flex-col gap-6 w-full ">
+       
+      </div> */}
+      <AppTitle title="일정 수정" isPrev prevPath="/schedule" />
+      <DayScheduleEditForm />
+    </>
   );
 };
 

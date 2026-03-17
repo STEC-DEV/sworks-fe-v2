@@ -1,6 +1,7 @@
 "use client";
 
 import BaseSkeleton from "@/components/common/base-skeleton";
+import CustomCard from "@/components/common/card";
 import IconButton from "@/components/common/icon-button";
 import AppTitle from "@/components/common/label/title";
 import HistoryEdit from "@/components/form/normal/equipment/history-edit";
@@ -42,21 +43,23 @@ const Page = () => {
       );
     if (hasError(loadingKeys.INFO)) return <div>에러 발생</div>;
     return (
-      <div className="base-flex-col gap-4">
-        <KeyValueItem
-          labelStyle="text-sm"
-          valueStyle="text-md font-normal"
-          label={"점검일자"}
-          value={format(historyDetail.detailDt, "yyyy-MM-dd")}
-        />
-        {historyDetail.remark && (
+      <CustomCard className="h-fit gap-4 p-4 divide-y divide-border">
+        <div className="pb-4">
           <KeyValueItem
             labelStyle="text-sm"
-            valueStyle="text-md font-normal"
-            label={"비고"}
-            value={historyDetail.remark}
+            valueStyle="text-md font-medium"
+            label={"점검일자"}
+            value={format(historyDetail.detailDt, "yyyy-MM-dd")}
           />
-        )}
+          {historyDetail.remark && (
+            <KeyValueItem
+              labelStyle="text-sm"
+              valueStyle="text-md font-normal"
+              label={"비고"}
+              value={historyDetail.remark}
+            />
+          )}
+        </div>
 
         <KeyValueItem
           labelStyle="text-sm"
@@ -65,7 +68,7 @@ const Page = () => {
           value={historyDetail.contents}
           isTextArea
         />
-      </div>
+      </CustomCard>
     );
   };
 
@@ -78,7 +81,12 @@ const Page = () => {
             {canWorkerEdit && (
               <BaseDialog
                 title="수정"
-                triggerChildren={<IconButton icon="SquarePen" />}
+                triggerChildren={
+                  <IconButton
+                    icon="SquarePen"
+                    bgClassName="!rounded-DEFAULT border border-border-strong"
+                  />
+                }
                 open={open}
                 setOpen={setOpen}
               >

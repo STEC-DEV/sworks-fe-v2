@@ -11,7 +11,7 @@ export const vocListCol: ColumnDef<VocListItem>[] = [
     cell: ({ row }) => {
       const value = row.original.division;
       return (
-        <span className="text-[var(--description-dark)]">
+        <span className="text-description-strong">
           {value ? "수기입력" : "모바일"}
         </span>
       );
@@ -30,7 +30,7 @@ export const vocListCol: ColumnDef<VocListItem>[] = [
     header: "유형",
     cell: ({ row }) => {
       const value = row.original.serviceTypeName;
-      return <span className=" text-blue-500 font-semibold">{value}</span>;
+      return <span className=" text-primary font-bold">{value}</span>;
     },
   },
   {

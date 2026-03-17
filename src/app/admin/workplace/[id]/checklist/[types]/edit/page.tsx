@@ -15,25 +15,26 @@ const Page = () => {
   return (
     <div className="flex gap-2">
       <div className="w-full xl:w-150 flex flex-col gap-4">
-        <AppTitle title="체크리스트 수정" />
-
+        <AppTitle title="체크리스트 수정" isPrev />
         {checklistDetail ? (
-          <div className="flex flex-col gap-2">
-            <KeyValue
-              label={"업무 분야"}
-              value={checklistDetail?.serviceTypeName}
-            />
-            <KeyValue
-              label={"관리 부문"}
-              value={checklistDetail?.divCodeName}
-            />
-            <KeyValue
-              label={"관리 유형"}
-              value={checklistDetail?.typeCodeName}
-            />
+          <div className="bg-surface rounded-DEFAULT border border-border-strong p-4 flex flex-col gap-2">
+            <div className="flex flex-col gap-2">
+              <KeyValue
+                label={"업무 분야"}
+                value={checklistDetail?.serviceTypeName}
+              />
+              <KeyValue
+                label={"관리 부문"}
+                value={checklistDetail?.divCodeName}
+              />
+              <KeyValue
+                label={"관리 유형"}
+                value={checklistDetail?.typeCodeName}
+              />
+            </div>
           </div>
         ) : (
-          <BaseSkeleton className="w-full h-50" />
+          <BaseSkeleton className="w-full h-[110px]" />
         )}
 
         <WorkplaceChecklistEditForm />

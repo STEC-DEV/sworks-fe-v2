@@ -8,6 +8,7 @@ import React, { useEffect } from "react";
 import NoticeFilter from "./_components/filter";
 import NoticePagination from "./_components/pagination";
 import NoticeList from "./_components/list";
+import { OptionSectionWrapper } from "@/components/common/option-wrapper";
 
 const Page = () => {
   const { getNotice } = useNoticeStore();
@@ -20,9 +21,12 @@ const Page = () => {
 
   return (
     <>
-      <AppTitle title="공지사항" icon={AudioLines} />
-      <NoticeFilter />
-      <NoticePagination />
+      <AppTitle title="공지사항" />
+      <OptionSectionWrapper>
+        <NoticeFilter />
+        <NoticePagination />
+      </OptionSectionWrapper>
+
       <NoticeList />
     </>
   );

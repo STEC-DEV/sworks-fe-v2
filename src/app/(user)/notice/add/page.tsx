@@ -5,7 +5,7 @@ import React from "react";
 const Page = () => {
   return (
     <div className="flex flex-col gap-6">
-      <AppTitle title="공지사항 생성" isBorder />
+      <AppTitle title="공지사항 생성" isPrev prevPath="/notice" />
       <NoticeAddForm />
     </div>
   );

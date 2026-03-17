@@ -7,6 +7,7 @@ import { useVocStore } from "@/store/normal/voc/voc-store";
 import { useSearchParams } from "next/navigation";
 import VocList from "./_components/list";
 import { Headset } from "lucide-react";
+import { OptionSectionWrapper } from "@/components/common/option-wrapper";
 
 const Page = () => {
   const { getVocList } = useVocStore();
@@ -17,9 +18,12 @@ const Page = () => {
   }, [searchParams, getVocList]);
   return (
     <>
-      <AppTitle title="민원" icon={Headset} />
-      <VocFilter />
-      <VocPagination />
+      <AppTitle title="민원" />
+      <OptionSectionWrapper>
+        <VocFilter />
+        <VocPagination />
+      </OptionSectionWrapper>
+
       <VocList />
     </>
   );

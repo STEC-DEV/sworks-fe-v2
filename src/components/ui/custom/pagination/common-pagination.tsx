@@ -13,7 +13,7 @@ interface CommonPaginationProps {
 const CommonPagination = ({ totalCount, children }: CommonPaginationProps) => {
   const { pageFilter, handlePage, handleView } = usePagination();
   return (
-    <div className="w-full flex flex-col gap-4 md:flex-row md:justify-between">
+    <div className="flex-1 w-full flex  gap-4 justify-end h-fit">
       <Pagination
         activePage={parseInt(pageFilter.pageNumber)}
         totalItemCount={totalCount}
@@ -21,7 +21,7 @@ const CommonPagination = ({ totalCount, children }: CommonPaginationProps) => {
         onChange={(page) => handlePage(page)}
         pageRangeDisplayed={5}
       />
-      <div className="flex justify-between items-center md:gap-2">
+      <div className="flex justify-between md:gap-2">
         <ViewSelect
           value={pageFilter.pageSize}
           onChange={(view) => handleView(view)}

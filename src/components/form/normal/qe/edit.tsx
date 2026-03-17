@@ -78,7 +78,7 @@ const QeEditForm = ({
 
   const convertViewChecklistToChecklist = (
     viewChecklist: QeViewChecklist,
-    updatedMain?: QeMain
+    updatedMain?: QeMain,
   ): QeEditChecklist => {
     return {
       siteSeq: viewChecklist.siteSeq,
@@ -142,7 +142,7 @@ const QeEditForm = ({
         </ScrollArea>
         <div className="flex gap-2 justify-center items-center border-t-1 border-border py-4 ">
           <span className="text-sm">총점</span>
-          <span className="text-lg text-blue-500 font-medium">
+          <span className="text-lg text-primary font-medium">
             {form.watch("chkMainTotal")}
           </span>
         </div>
@@ -186,14 +186,12 @@ export const QeEditDetailItem = ({
     form.setValue("chkMainTotal", mainTotal);
   };
   return (
-    <div className="flex flex-col gap-1 xl:gap-0">
-      <span className="text-[var(--description-light)]">
-        {detail.chkDetailTitle}
-      </span>
+    <div className="flex flex-col gap-1 xl:gap-0 pb-6 last:pb-0">
+      <span className="text-description">{detail.chkDetailTitle}</span>
       <div className="flex flex-col gap-4">
         <div className="flex items-end gap-2">
           <span className="font-medium">{detail.chkDetailItem}</span>
-          <span className="whitespace-nowrap text-[var(--description-light)]">
+          <span className="whitespace-nowrap text-description">
             ({detail.chkPoint}점)
           </span>
         </div>
@@ -204,7 +202,7 @@ export const QeEditDetailItem = ({
             return (
               <FormItem>
                 <FormControl>
-                  <div className="flex gap-4">
+                  <div className="flex gap-4 ">
                     {Array.from({ length: detail.chkPoint + 1 }, (_, score) => {
                       return (
                         <div
@@ -214,11 +212,9 @@ export const QeEditDetailItem = ({
                           //   }}
                           onClick={() => handleScoreChange(score)}
                           className={`w-10 h-10 aspect-square rounded-4xl border border-b flex items-center justify-center
-                         text-sm bg-blue-50 text-[var(--description-dark)] 
-                         cursor-pointer hover:bg-blue-500 hover:text-white ease-in-out duration-150
-                         ${
-                           field.value === score ? "bg-blue-500 text-white" : ""
-                         }
+                         text-sm bg-primary-background text-description-strong 
+                         cursor-pointer hover:bg-primary hover:text-white ease-in-out duration-150
+                         ${field.value === score ? "!bg-primary text-white" : ""}
                          `}
                         >
                           {score}
@@ -248,11 +244,11 @@ export const QeEditSubSection = ({
   return (
     <div className="flex flex-col gap-4">
       <div className="flex gap-2 items-center">
-        <CheckIcon className="text-blue-500" />
+        <CheckIcon className="text-primary" />
         <span className="text-lg font-semibold">{sub.chkSubTitle}</span>
       </div>
 
-      <div className="flex flex-col gap-12">
+      <div className="flex flex-col gap-6 divide-y divide-border">
         {sub.details.map((detail, detailIdx) => (
           <QeEditDetailItem
             key={detail.chkDetailSeq}

@@ -72,12 +72,18 @@ const ContractCard = ({ data }: { data: Contract }) => {
     await getContractList(id);
   };
   return (
-    <CustomCard className="w-full items-end gap-0 py-4 ">
+    <CustomCard className="w-full items-end gap-0 py-4 bg-background">
       {canEdit && (
-        <div className="flex gap-2">
+        <div className="flex gap-2 px-4">
           <BaseDialog
             title="계약정보 수정"
-            triggerChildren={<IconButton icon="SquarePen" size={16} />}
+            triggerChildren={
+              <IconButton
+                icon="SquarePen"
+                size={16}
+                bgClassName="w-8 h-8 p-1 !rounded-DEFAULT border border-border-strong shadow-sm hover:bg-primary-background"
+              />
+            }
             open={editOpen}
             setOpen={setEditOpen}
           >
@@ -89,13 +95,20 @@ const ContractCard = ({ data }: { data: Contract }) => {
             actionLabel="삭제"
             onClick={handleDelete}
           >
-            <IconButton icon="Trash2" size={16} />
+            <IconButton
+              icon="Trash2"
+              size={16}
+              bgClassName="w-8 h-8 p-1  !rounded-DEFAULT border border-border-strong shadow-sm hover:bg-red-50 hover:border-destructive"
+              className="group-hover:text-destructive"
+            />
           </CheckDialog>
         </div>
       )}
 
       <div className="flex flex-col gap-4 w-full px-4">
-        <span className="text-sm text-blue-500">{data.contractTypeName}</span>
+        <span className="text-sm text-primary font-semibold">
+          {data.contractTypeName}
+        </span>
         <div className="flex flex-col gap-2 justify-center">
           <KeyValue
             label={"담당자"}
@@ -131,8 +144,8 @@ interface KeyValueProps {
 const KeyValue = ({ label, value }: KeyValueProps) => {
   return (
     <div className="flex justify-between items-center">
-      <span className="text-xs text-[var(--description-light)]">{label}</span>
-      <span className="text-xs text-[var(--description-dark)] font-semibold">
+      <span className="text-xs text-description">{label}</span>
+      <span className="text-xs text-description-strong font-semibold">
         {value}
       </span>
     </div>

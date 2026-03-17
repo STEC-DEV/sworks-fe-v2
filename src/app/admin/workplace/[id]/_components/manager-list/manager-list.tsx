@@ -13,6 +13,7 @@ import BaseSkeleton from "@/components/common/base-skeleton";
 import { useWorkplaceManagerStore } from "@/store/admin/workplace/manager-store";
 import { useUIStore } from "@/store/common/ui-store";
 import { useDecodeParam } from "@/hooks/params";
+import { OptionSectionWrapper } from "@/components/common/option-wrapper";
 
 const ManagerList = () => {
   const router = useRouter();
@@ -43,8 +44,11 @@ const ManagerList = () => {
   return (
     <div className="flex flex-col gap-6">
       <AppTitle title="담당 관리자" />
-      <ManagerFilter />
-      <ManagerPagination />
+      <OptionSectionWrapper>
+        <ManagerFilter />
+        <ManagerPagination />
+      </OptionSectionWrapper>
+
       {getList()}
     </div>
   );

@@ -4,7 +4,10 @@ import {
   PasswordTextFormItem,
   TextFormItem,
 } from "@/components/common/form-input/text-field";
-import CommonFormContainer from "@/components/ui/custom/form/form-container";
+import {
+  CommonFormContainer,
+  FormCard,
+} from "@/components/layout/form/form-container";
 import { FormField } from "@/components/ui/form";
 import { useDeptStore } from "@/store/admin/dept/dept-store";
 import { convertSelectOptionType } from "@/utils/convert";
@@ -66,87 +69,95 @@ const AdminAddForm = ({ onNext, onPrev }: AdminAddFormProps) => {
   return (
     <CommonFormContainer
       title="기본정보"
+      prevPath="/admin/user"
       form={form}
       nextLabel="생성"
       onNext={onNext}
       onPrev={onPrev}
     >
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-x-24 gap-y-12">
-        <FormField
-          control={form.control}
-          name="userName"
-          render={({ field }) => (
-            <TextFormItem label="이름" placeholder="이름" required {...field} />
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="sabun"
-          render={({ field }) => (
-            <TextFormItem
-              label="사번"
-              placeholder="사번"
-              required
-              {...field}
-              onChange={(e) => {
-                const filtered = e.target.value.replace(/[^0-9]/g, "");
-                field.onChange(filtered);
-              }}
-            />
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="email"
-          render={({ field }) => (
-            <TextFormItem label="이메일" placeholder="이메일" {...field} />
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="phone"
-          render={({ field }) => (
-            <TextFormItem
-              label="전화번호"
-              placeholder="전화번호 ( - 제외)"
-              required
-              {...field}
-              onChange={(e) => {
-                const filtered = e.target.value.replace(/[^0-9]/g, "");
-                field.onChange(filtered);
-              }}
-            />
-          )}
-        />
-        {departmentList ? (
+      <FormCard title="관리자 기본정보">
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-x-6 gap-y-12">
           <FormField
             control={form.control}
-            name="deptSeq"
-            render={({ field }) => {
-              const handleValue = (value: string) => {
-                field.onChange(Number(value));
-              };
-              return (
-                <SelectFormItem
-                  label="부서"
-                  selectItem={convertSelectOptionType(departmentList)}
-                  onValueChange={handleValue}
-                  value={field.value?.toString()}
-                  required
-                />
-              );
-            }}
+            name="userName"
+            render={({ field }) => (
+              <TextFormItem
+                label="이름"
+                placeholder="이름"
+                required
+                {...field}
+              />
+            )}
           />
-        ) : null}
-        <FormField
-          control={form.control}
-          name="job"
-          render={({ field }) => (
-            <TextFormItem label="직책" placeholder="직책" {...field} />
-          )}
-        />
-      </div>
+          <FormField
+            control={form.control}
+            name="sabun"
+            render={({ field }) => (
+              <TextFormItem
+                label="사번"
+                placeholder="사번"
+                required
+                {...field}
+                onChange={(e) => {
+                  const filtered = e.target.value.replace(/[^0-9]/g, "");
+                  field.onChange(filtered);
+                }}
+              />
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <TextFormItem label="이메일" placeholder="이메일" {...field} />
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="phone"
+            render={({ field }) => (
+              <TextFormItem
+                label="전화번호"
+                placeholder="전화번호 ( - 제외)"
+                required
+                {...field}
+                onChange={(e) => {
+                  const filtered = e.target.value.replace(/[^0-9]/g, "");
+                  field.onChange(filtered);
+                }}
+              />
+            )}
+          />
+          {departmentList ? (
+            <FormField
+              control={form.control}
+              name="deptSeq"
+              render={({ field }) => {
+                const handleValue = (value: string) => {
+                  field.onChange(Number(value));
+                };
+                return (
+                  <SelectFormItem
+                    label="부서"
+                    selectItem={convertSelectOptionType(departmentList)}
+                    onValueChange={handleValue}
+                    value={field.value?.toString()}
+                    required
+                  />
+                );
+              }}
+            />
+          ) : null}
+          <FormField
+            control={form.control}
+            name="job"
+            render={({ field }) => (
+              <TextFormItem label="직책" placeholder="직책" {...field} />
+            )}
+          />
+        </div>
+      </FormCard>
     </CommonFormContainer>
   );
 };

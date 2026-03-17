@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+@plugin "@tailwindcss/typography";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -31,8 +32,8 @@
   --color-muted: var(--muted);
   --color-secondary-foreground: var(--secondary-foreground);
   --color-secondary: var(--secondary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-primary: var(--primary);
+  /* --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary); */
   --color-popover-foreground: var(--popover-foreground);
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
@@ -41,6 +42,89 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+
+  /* Primary */
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary-background: var(--primary-background);
+
+  /* Background */
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+
+  /* Semantic */
+  --color-success: var(--success);
+  --color-success-hover: var(--success-hover);
+  --color-success-foreground: var(--success-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-hover: var(--destructive-hover);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+
+  /* Background */
+  --color-background: var(--background);
+  --color-background-dark: var(--background-dark);
+  --color-surface: var(--surface);
+
+  /* Border */
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-calendar-border: var(--calendar-border);
+
+  /* Text */
+  --color-foreground: var(--foreground);
+  --color-description: var(--description);
+  --color-description-light: var(--description-light);
+  --color-description-strong: var(--description-strong);
+  --color-placeholder: var(--placeholder);
+
+  /* Icon */
+  --color-icon: var(--icon);
+  --color-icon-muted: var(--icon-muted);
+
+  /* Misc */
+  --color-skeleton: var(--skeleton);
+  --color-read: var(--read);
+  --radius-DEFAULT: var(--radius);
+
+  /* Side-Bar */
+
+  --color-sidebar-bg: var(--sidebar-bg);
+  --background-image-sidebar-gradient: var(--sidebar-bg);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-muted: var(--sidebar-muted);
+  --color-sidebar-subtle: var(--sidebar-subtle);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-item-bg: var(--sidebar-item-bg);
+  --color-sidebar-active-bg: var(--sidebar-active-bg);
+
+  /* 일정 컬러 팔레트 */
+  --color-sch-red: var(--sch-red);
+  --color-sch-orange: var(--sch-orange);
+  --color-sch-amber-dark: var(--sch-amber-dark);
+  --color-sch-amber: var(--sch-amber);
+  --color-sch-amber-light: var(--sch-amber-light);
+  --color-sch-lime: var(--sch-lime);
+  --color-sch-green: var(--sch-green);
+  --color-sch-green-dark: var(--sch-green-dark);
+  --color-sch-teal: var(--sch-teal);
+  --color-sch-cyan: var(--sch-cyan);
+  --color-sch-blue-light: var(--sch-blue-light);
+  --color-sch-blue: var(--sch-blue);
+  --color-sch-indigo: var(--sch-indigo);
+  --color-sch-deep-purple: var(--sch-deep-purple);
+  --color-sch-purple: var(--sch-purple);
+  --color-sch-pink: var(--sch-pink);
+  --color-sch-pink-dark: var(--sch-pink-dark);
+  --color-sch-brown: var(--sch-brown);
+  --color-sch-blue-grey: var(--sch-blue-grey);
+
+  /* shadow */
+  --shadow-sm: 0 1px 6px rgba(34, 51, 119, 0.05);
+  --shadow-md: 0 4px 16px rgba(34, 51, 119, 0.1);
+  --shadow-lg: 0 8px 32px rgba(34, 51, 119, 0.14);
 }
 
 html {
@@ -87,50 +171,124 @@ img {
 /*shadcn scrollarea 영역 하위 div 높이 설정*/
 [data-radix-scroll-area-viewport] > div {
   height: 100%;
-  display: block !important; /* 또는 display: flex */
+  display: block !important;
 }
 
 :root {
-  --radius: 0.625rem;
-  --primary: #223377;
-  --primary-hover: #1f2f6f;
-  --primary-background: #f4f7ff;
-  --success: #3b82f6;
-  --success-hover: #3182ce;
-  --failed: #ef4444;
-  --background: #f5f5f4;
-  --background-dark: #d0d1d4;
-  --skeleton: #e2e2e2;
-  --placeholder: oklch(0.552 0.016 285.938);
-  --border: #e7e5e4;
-  --calendar-border: #d3d3d3;
-  --read: #e5e8e9;
-  /* --icon: #8c978d; */
-  --icon: #575c58;
-  --default-font: #000000;
-  --description-light: #4e5968;
-  --description-dark: #333d4b;
+  /* ─────────────────────────────────────────
+       Brand / Primary
+       메인 브랜드 컬러 (#223377 네이비 계열)
+    ───────────────────────────────────────── */
+  --primary: #223377; /* 기본 버튼, 액센트, 핵심 UI 요소 */
+  --primary-hover: #3348a5; /* primary 호버 상태 (밝게) */
+  --primary-foreground: #ffffff; /* primary 위에 올라가는 텍스트 */
+  --primary-background: #f0f3ff; /* primary 계열 연한 배경 (뱃지, 하이라이트) */
 
-  /* 일정 */
-  --sch-red: #d32f2f;
-  --sch-orange600: #e64a19;
-  --sch-orange700: #f57c00;
-  --sch-amber800: #f9a825;
-  --sch-amber700: #fbc02d;
-  --sch-lime700: #c0ca33;
-  --sch-green600: #388e3c;
-  --sch-green800: #2e7d32;
-  --sch-teal600: #00897b;
-  --sch-cyan: #00acc1;
-  --sch-lightBlue: #039be5;
-  --sch-blue700: #1976d2;
-  --sch-indigo600: #3949ab;
-  --sch-deppPurple600: #5e35b1;
-  --sch-purple600: #8e24aa;
-  --sch-pink600: #d81b60;
-  --sch-pink800: #ad1457;
-  --sch-brown: #6d4c41;
-  --sch-blueGrey600: #546e7a;
+  /* ─────────────────────────────────────────
+     Background
+     페이지 및 컴포넌트 배경
+  ───────────────────────────────────────── */
+  --background: #f4f6fa; /* 전체 페이지 기본 배경 (컨텐츠 영역) */
+  --surface: #ffffff; /* 카드 / 패널 / 모달 배경 */
+
+  /* ─────────────────────────────────────────
+       Semantic Colors
+       상태 표현용 (성공 / 실패 / 경고)
+    ───────────────────────────────────────── */
+  --success: #3b82f6; /* 완료 / 처리완료 상태 */
+  --success-hover: #3182ce; /* success 호버 */
+  --success-foreground: #ffffff;
+
+  --destructive: #ef4444; /* 삭제 / 오류 / 실패 상태 (기존 --failed) */
+  --destructive-hover: #dc2626;
+  --destructive-foreground: #ffffff;
+
+  --warning: #f59e0b; /* 경고 / 주의 상태 (신규 추가) */
+  --warning-foreground: #ffffff;
+
+  /* ─────────────────────────────────────────
+       Border
+       테두리 및 구분선
+    ───────────────────────────────────────── */
+  --border: #e7e5e4; /* 기본 테두리 */
+  --border-strong: #c8d0e8; /* 강조 테두리 (primary 계열 섹션 구분) */
+  --calendar-border: #eef0f8; /* 캘린더 셀 구분선 */
+
+  /* ─────────────────────────────────────────
+       Text / Typography
+       텍스트 계층 구조
+    ───────────────────────────────────────── */
+  --foreground: #1a2040; /* 기본 텍스트 (기존 --default-font) */
+  --description: #4e5968; /* 보조 설명 텍스트 - 연한 (기존 --description-light) */
+  --description-light: #9aa3be;
+  --description-strong: #333d4b; /* 보조 설명 텍스트 - 진한 (기존 --description-dark) */
+  --placeholder: oklch(0.552 0.016 285.938); /* input placeholder */
+
+  /* ─────────────────────────────────────────
+       Icon
+       아이콘 기본 색상
+    ───────────────────────────────────────── */
+  --icon: #575c58; /* 기본 아이콘 색 */
+  --icon-muted: #8c978d; /* 비활성 / 약한 아이콘 색 */
+
+  /* ─────────────────────────────────────────
+       Misc / UI
+       기타 UI 요소
+    ───────────────────────────────────────── */
+  --radius: 0.25rem; /* 기본 border-radius (10px) */
+  --skeleton: #e2e2e2; /* 스켈레톤 로딩 배경 */
+  --read: #e5e8e9; /* 읽음 처리된 항목 배경 */
+
+  /* Sidebar */
+  --sidebar-bg: #223377;
+  --sidebar-foreground: rgba(255, 255, 255, 0.9); /* 활성 메뉴 */
+  --sidebar-muted: rgba(255, 255, 255, 0.8); /* 비활성 메뉴 (현재 sb-item) */
+  --sidebar-subtle: rgba(255, 255, 255, 0.97); /* 섹션 라벨 */
+  --sidebar-border: rgba(255, 255, 255, 0.1); /* 사이드바 내부 구분선 */
+  --sidebar-item-bg: rgba(
+    255,
+    255,
+    255,
+    0.1
+  ); /* 로그아웃 버튼, 보조 버튼 배경 */
+  --sidebar-active-bg: rgba(255, 255, 255, 0.13); /* 활성 메뉴 배경 */
+
+  /* ─────────────────────────────────────────
+       Schedule Colors (일정 라벨 색상 팔레트)
+       캘린더 일정 카테고리별 색상
+       머티리얼 디자인 기반 컬러 체계
+    ───────────────────────────────────────── */
+
+  /* 🔴 Red / Orange 계열 */
+  --sch-red: #d32f2f; /* 긴급 / 중요 일정 */
+  --sch-orange: #e64a19; /* 주의 필요 일정 */
+  --sch-amber-dark: #f57c00; /* 마감 임박 일정 */
+
+  /* 🟡 Amber / Lime 계열 */
+  --sch-amber: #f9a825; /* 일반 주의 일정 */
+  --sch-amber-light: #fbc02d; /* 보조 일정 */
+  --sch-lime: #c0ca33; /* 낮은 우선순위 일정 */
+
+  /* 🟢 Green / Teal 계열 */
+  --sch-green: #388e3c; /* 완료 예정 / 정기 일정 */
+  --sch-green-dark: #2e7d32; /* 완료 확정 일정 */
+  --sch-teal: #00897b; /* 외부 미팅 / 협업 일정 */
+
+  /* 🔵 Blue 계열 */
+  --sch-cyan: #00acc1; /* 알림 / 공지 일정 */
+  --sch-blue-light: #039be5; /* 개인 일정 */
+  --sch-blue: #1976d2; /* 업무 일정 */
+
+  /* 🟣 Indigo / Purple 계열 */
+  --sch-indigo: #3949ab; /* 프로젝트 일정 */
+  --sch-deep-purple: #5e35b1; /* 중장기 계획 */
+  --sch-purple: #8e24aa; /* 기타 중요 일정 */
+
+  /* 🩷 Pink / Brown / Grey 계열 */
+  --sch-pink: #d81b60; /* 이벤트 / 행사 일정 */
+  --sch-pink-dark: #ad1457; /* 기념일 / 특별 일정 */
+  --sch-brown: #6d4c41; /* 시설 / 인프라 관련 일정 */
+  --sch-blue-grey: #546e7a; /* 기본값 / 미분류 일정 */
 }
 
 .dark {
@@ -224,25 +382,6 @@ img {
   @apply flex justify-center items-center;
 }
 
-/* 메인배너 그라데이션 애니메이션*/
-/* globals.css */
-/* @keyframes gradient-move {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
-}
-
-.animate-gradient {
-  background-size: 200% 200%;
-  animation: gradient-move 10s ease infinite;
-} */
-
 @keyframes gradient-flow {
   0% {
     background-position: 0% 50%;
@@ -267,34 +406,6 @@ img {
   animation: gradient-flow 10s ease infinite;
 }
 
-/* --background: oklch(1 0 0);
-  --foreground: oklch(0.141 0.005 285.823);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.141 0.005 285.823);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.141 0.005 285.823);
-  --primary: oklch(0.21 0.006 285.885);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.967 0.001 286.375);
-  --secondary-foreground: oklch(0.21 0.006 285.885);
-  --muted: oklch(0.967 0.001 286.375);
-  --muted-foreground: oklch(0.552 0.016 285.938);
-  --accent: oklch(0.967 0.001 286.375);
-  --accent-foreground: oklch(0.21 0.006 285.885);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.92 0.004 286.32);
-  --input: oklch(0.92 0.004 286.32);
-  --ring: oklch(0.705 0.015 286.067);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.141 0.005 285.823);
-  --sidebar-primary: oklch(0.21 0.006 285.885);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.967 0.001 286.375);
-  --sidebar-accent-foreground: oklch(0.21 0.006 285.885);
-  --sidebar-border: oklch(0.92 0.004 286.32);
-  --sidebar-ring: oklch(0.705 0.015 286.067); */
+.animate-float {
+  animation: floatAnim 3s ease-in-out infinite;
+}

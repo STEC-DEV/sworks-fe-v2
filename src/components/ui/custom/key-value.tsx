@@ -28,12 +28,7 @@ export const KeyValueItem = ({
         mainStyle,
       )}
     >
-      <span
-        className={cn(
-          "text-sm text-[var(--description-light)] font-medium",
-          labelStyle,
-        )}
-      >
+      <span className={cn("text-sm text-description font-medium", labelStyle)}>
         {label}
       </span>
       {isTextArea ? (
@@ -41,7 +36,7 @@ export const KeyValueItem = ({
       ) : (
         <span
           className={cn(
-            "text-xs font-semibold text-[var(--description-dark)]",
+            "text-xs font-semibold text-description-strong",
             valueStyle,
           )}
         >

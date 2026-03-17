@@ -3,7 +3,8 @@
 import EquipmentHistoryAddForm, {
   HistoryAddType,
 } from "@/components/form/normal/equipment/history-add";
-import FormLayout from "@/components/layout/form-layout";
+import { FormLayout } from "@/components/layout/form/form-layout";
+// import FormLayout from "@/components/layout/form-layout";
 import ResultDialog from "@/components/ui/custom/form/result-dialog";
 import { useDecodeParam } from "@/hooks/params";
 import { useEquipmentHistoryMainStore } from "@/store/normal/equipment/history/list-store";
@@ -12,13 +13,13 @@ import React, { useState } from "react";
 const Page = () => {
   const { rawValue } = useDecodeParam("id");
   const [formResult, setFormResult] = useState<boolean>(false);
-  const [curStep, setCurStep] = useState<number>(1);
   const [open, setOpen] = useState<boolean>(false);
   const { postAddHistory } = useEquipmentHistoryMainStore();
+
   const handleSubmit = async (values: HistoryAddType) => {
     const res = await postAddHistory(values);
     setFormResult(res.data);
-    setCurStep((prev) => prev + 1);
+
     setOpen(true);
   };
 
@@ -29,10 +30,14 @@ const Page = () => {
   return (
     <>
       <FormLayout
-        steps={formsConfig}
         title="관리이력 생성"
-        description="관리이력정보"
-        curStep={curStep}
+        steps={[
+          {
+            label: "관리이력",
+            description: "장비 관리이력 정보 입력",
+            form: (nav) => <EquipmentHistoryAddForm onNext={handleSubmit} />,
+          },
+        ]}
       />
       <ResultDialog
         result={formResult}

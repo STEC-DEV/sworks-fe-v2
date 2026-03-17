@@ -47,14 +47,11 @@ const CommonFilter = ({
   };
 
   return (
-    <div
-      className={`flex flex-col gap-4 xl:flex-row justify-between border-y-2 border-[var(--border)] py-4 ${
-        !search ? "justify-end" : ""
-      }`}
-    >
+    <div className={`flex-1 shrink-0 flex flex-col gap-4 xl:flex-row `}>
       {search ? (
         <Input
           placeholder="검색"
+          className="border-border-strong shadow-sm"
           onChange={(e) => setSearchValue(e.target.value)}
           onKeyDown={(e) => handleKeyDown(e, handleSearchEnter)}
           value={searchValue}

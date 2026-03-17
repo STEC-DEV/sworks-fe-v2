@@ -30,8 +30,9 @@ import {
 import { cn } from "@/lib/utils";
 import ColorPicker from "../color-picker";
 
-interface TextFormItemProps<TField extends FieldValues = FieldValues>
-  extends SelectProps {
+interface TextFormItemProps<
+  TField extends FieldValues = FieldValues,
+> extends SelectProps {
   label?: string;
   required?: boolean;
   onValueChange: (value: string) => void;
@@ -47,17 +48,11 @@ const SelectFormItem = <T extends FieldValues>({
   value,
   ...props
 }: TextFormItemProps<T>) => {
-  // useEffect(() => {
-  //   console.log("값 :", value);
-  //   console.log(selectItem.find((i) => i.value.toString() === value));
-  // }, [value]);
   return (
     <FormItem className="flex flex-col gap-2 w-full">
       <div className="flex">
         {label ? (
-          <span className="text-xs text-[var(--description-light)]">
-            {label}
-          </span>
+          <span className="text-sm text-description">{label}</span>
         ) : null}
         {required ? <span className="text-xs text-red-500">*</span> : null}
       </div>
@@ -71,23 +66,23 @@ const SelectFormItem = <T extends FieldValues>({
       >
         <FormControl>
           <SelectTrigger
-            className={`bg-white w-full text-sm  rounded-[4px] border border-[var(--border)] shadow-none transition duration-300
-                focus-visible:border-[var(--primary)] focus-visible:border-1 focus-visible:ring-1 focus-visible:ring-[var(--primary)]
-                hover:border-[var(--primary)] hover:cursor-pointer
-                data-[placeholder]:text-[var(--placeholder)] data-[state=open]:ring-[var(--primary)] data-[state=open]:border-[var(--primary)] data-[state=open]:ring-1 data-[state=open]:ring-inset
+            className={`bg-white w-full text-sm  !rounded-DEFAULT border border-border-strong shadow-none transition duration-300
+                focus-visible:border-primary focus-visible:border-1 focus-visible:ring-1 focus-visible:ring-primary
+                hover:border-primary cursor-pointer
+                data-[placeholder]:text-placeholder data-[state=open]:ring-primary data-[state=open]:border-primary data-[state=open]:ring-1 data-[state=open]:ring-inset
                 `}
           >
             <SelectValue placeholder={label} />
           </SelectTrigger>
         </FormControl>
         <FormMessage className="text-xs text-red-500" />
-        <SelectContent className="rounded-[4px] bg-white">
+        <SelectContent className="!rounded-DEFAULT bg-surface">
           {selectItem.length > 0 ? (
             selectItem.map((v, i) => (
               <SelectItem
                 className={`
-                 rounded-[4px]
-                hover:cursor-pointer hover:hover:bg-[var(--background)]
+                 rounded-DEFAULT
+                cursor-pointer hover:hover:bg-primary-background
                 `}
                 key={v.value}
                 value={v.value.toString()}
@@ -96,7 +91,7 @@ const SelectFormItem = <T extends FieldValues>({
               </SelectItem>
             ))
           ) : (
-            <span className="px-2 py-1.5 text-sm text-[var(--placeholder)] ">
+            <span className="px-2 py-1.5 text-sm text-placeholder">
               no result
             </span>
           )}
@@ -126,9 +121,7 @@ export const MultiSelectFormItem = ({
     <FormItem>
       <div className="flex">
         {label ? (
-          <span className="text-xs text-[var(--description-light)]">
-            {label}
-          </span>
+          <span className="text-sm text-description">{label}</span>
         ) : null}
         {required ? <span className="text-xs text-red-500">*</span> : null}
       </div>
@@ -144,8 +137,9 @@ export const MultiSelectFormItem = ({
   );
 };
 
-interface SelectFormItemProps<TField extends FieldValues = FieldValues>
-  extends SelectProps {
+interface SelectFormItemProps<
+  TField extends FieldValues = FieldValues,
+> extends SelectProps {
   label?: string;
   required?: boolean;
   onValueChange: (value: string) => void;
@@ -227,7 +221,7 @@ export const ComboboxFormItem = ({
                         "ml-auto",
                         item.value.toString() === value
                           ? "opacity-100"
-                          : "opacity-0"
+                          : "opacity-0",
                       )}
                     />
                   </CommandItem>
@@ -261,9 +255,7 @@ export const SelectColorFormItem = ({
     <FormItem>
       <div className="flex">
         {label ? (
-          <span className="text-xs text-[var(--description-light)]">
-            {label}
-          </span>
+          <span className="text-sm text-description">{label}</span>
         ) : null}
         {required ? <span className="text-xs text-red-500">*</span> : null}
       </div>

@@ -8,6 +8,7 @@ import { useSearchParams } from "next/navigation";
 import QeFilter from "./_components/filter";
 import QeList from "./_components/list";
 import { BadgeCheck } from "lucide-react";
+import { OptionSectionWrapper } from "@/components/common/option-wrapper";
 
 const Page = () => {
   const { getQeList } = useQeStore();
@@ -19,9 +20,11 @@ const Page = () => {
   }, [searchParams]);
   return (
     <>
-      <AppTitle title="품질평가" icon={BadgeCheck} />
-      <QeFilter />
-      <QePagination />
+      <AppTitle title="품질평가" />
+      <OptionSectionWrapper>
+        <QeFilter />
+        <QePagination />
+      </OptionSectionWrapper>
       <QeList />
     </>
   );

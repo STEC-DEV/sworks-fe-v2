@@ -53,13 +53,13 @@ const CustomDatetimePicker = ({
         <Button
           variant="outline"
           className={cn(
-            `justify-start text-sm font-normal px-3 py-1 h-9 rounded-[4px] border border-[var(--border)] transition-[border,box-shadow] duration-300 bg-white
-        hover:border-[var(--primary)] hover:cursor-pointer
-        focus:outline-none focus:ring-1 focus:ring-[var(--primary)] focus:border-[var(--primary)] focus:ring-inset `,
-            !value && "text-lightgray-50"
+            `justify-start text-sm font-normal px-3 py-1 h-9 rounded-DEFAULT border border-border-strong transition-[border,box-shadow] duration-300 bg-surface
+        hover:border-primary hover:cursor-pointer
+        focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary focus:ring-inset `,
+            !value && "text-lightgray-50",
           )}
         >
-          <CalendarIcon className="mr-2 h-4 w-4 text-[var(--placeholder)]" />
+          <CalendarIcon className="mr-2 h-4 w-4 text-icon" />
           {value ? (
             setHour === true ? (
               format(value, "yyyy/MM/dd HH:mm")
@@ -67,17 +67,17 @@ const CustomDatetimePicker = ({
               format(value, "yyyy/MM/dd")
             )
           ) : setHour === true ? (
-            <span className="text-sm font-normal text-[var(--placeholder)]">
+            <span className="text-sm font-normal text-placeholder">
               년/월/일 시:분
             </span>
           ) : (
-            <span className="text-sm font-normal text-[var(--placeholder)]">
+            <span className="text-sm font-normal text-placeholder">
               년/월/일
             </span>
           )}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-fit p-0 overflow-y-hidden h-full bg-white">
+      <PopoverContent className="w-fit p-0 overflow-y-hidden h-full bg-surface">
         <div className="flex h-full">
           <SimpleCalendar
             defaultValue={value === null ? undefined : value}
@@ -91,7 +91,7 @@ const CustomDatetimePicker = ({
                     return (
                       <div
                         key={i}
-                        className={`flex justify-center items-center aspect-square shrink-0 text-xs w-9 h-9  hover:cursor-pointer hover:bg-gray-200 dark:hover:bg-[#535353] ${
+                        className={`flex justify-center items-center aspect-square shrink-0 text-xs w-9 h-9  cursor-pointer hover:bg-blue-100 dark:hover:bg-[#535353] ${
                           value &&
                           hour.toString() === getHours(value).toString()
                             ? "bg-blue-100 dark:bg-[#535353]"
@@ -115,7 +115,7 @@ const CustomDatetimePicker = ({
                   {Array.from({ length: 12 }, (_, i) => i * 5).map((m, i) => (
                     <div
                       key={i}
-                      className={`flex justify-center items-center aspect-square shrink-0 text-xs w-9 h-9 p-2 hover:cursor-pointer hover:bg-gray-200 dark:hover:bg-[#535353] ${
+                      className={`flex justify-center items-center aspect-square shrink-0 text-xs w-9 h-9 p-2 cursor-pointer hover:bg-blue-100 dark:hover:bg-[#535353] ${
                         value && m.toString() === getMinutes(value).toString()
                           ? "bg-blue-100 dark:bg-[#535353]"
                           : ""

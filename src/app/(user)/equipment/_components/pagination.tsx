@@ -1,10 +1,12 @@
 "use client";
 import BaseSkeleton from "@/components/common/base-skeleton";
+import Button from "@/components/common/button";
 import IconButton from "@/components/common/icon-button";
 import CommonPagination from "@/components/ui/custom/pagination/common-pagination";
 import { usePermission } from "@/hooks/usePermission";
 import { useUIStore } from "@/store/common/ui-store";
 import { useEquipmentMainStore } from "@/store/normal/equipment/equip-main-store";
+import { PlusIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, { useEffect } from "react";
 
@@ -26,8 +28,10 @@ const EquipmentPagination = () => {
       <div className="flex gap-4 items-center">
         <CommonPagination totalCount={equipmentList.meta.totalCount}>
           {canWorkerEdit && (
-            <IconButton
-              icon="Plus"
+            <Button
+              label="장비 생성"
+              icon={<PlusIcon size={20} />}
+              size={"sm"}
               onClick={() => router.push("equipment/add")}
             />
           )}

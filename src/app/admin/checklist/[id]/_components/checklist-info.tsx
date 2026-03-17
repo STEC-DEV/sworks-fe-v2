@@ -21,7 +21,7 @@ const ChecklistInfo = () => {
       );
     if (hasError(loadingKeys.INFO)) return <div>에러 발생</div>;
     return (
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-2 border border-border-strong rounded-DEFAULT p-4 bg-surface">
         <KeyValue
           label={"업무 분야"}
           value={checklistDetail?.serviceTypeName}
@@ -34,7 +34,7 @@ const ChecklistInfo = () => {
 
   return (
     <div className="w-full xl:w-150 flex flex-col gap-4">
-      <AppTitle title="체크리스트 기본정보" />
+      <AppTitle title="체크리스트 기본정보" isPrev />
       {getData()}
     </div>
   );
@@ -51,8 +51,8 @@ export const KeyValue = ({
 }) => {
   return (
     <div className="flex justify-between items-center">
-      <span className="text-xs text-[var(--description-light)]">{label}</span>
-      <span className={cn("text-sm text-[var(--description-dark)]", valueSize)}>
+      <span className="text-xs text-description">{label}</span>
+      <span className={cn("text-sm text-description-strong", valueSize)}>
         {value}
       </span>
     </div>

@@ -50,7 +50,7 @@ const Page = () => {
     <>
       <div className="flex flex-col gap-6 xl:w-150">
         <AppTitle title="품질평가" isBorder />
-        <div className="flex flex-col gap-4 w-full xl:w-150">
+        <div className="bg-surface flex flex-col gap-4 w-full xl:w-150 p-4 border shadow-sm rounded-DEFAULT">
           <KeyValueItem
             label={"업무유형"}
             value={evaluateChecklist.serviceTypeName}

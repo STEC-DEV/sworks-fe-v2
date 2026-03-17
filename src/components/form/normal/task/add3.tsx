@@ -1,7 +1,11 @@
 import { MultiCheckBoxFormItem } from "@/components/common/form-input/check-field";
 import { DateFormItem } from "@/components/common/form-input/date-field";
 import { TextFormItem } from "@/components/common/form-input/text-field";
-import CommonFormContainer from "@/components/ui/custom/form/form-container";
+import {
+  CommonFormContainer,
+  FormCard,
+} from "@/components/layout/form/form-container";
+// import CommonFormContainer from "@/components/ui/custom/form/form-container";
 import { FormField, FormItem } from "@/components/ui/form";
 import useDateValidation from "@/hooks/date/useDateSet";
 import { useTaskStore } from "@/store/normal/task/task-store";
@@ -67,101 +71,79 @@ const TaskInfoAddForm = ({
   return (
     <CommonFormContainer
       form={form}
-      title="업무내용"
       nextLabel="생성"
       onPrev={onPrev}
       onNext={handleSubmit}
     >
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-x-24 gap-y-12">
-        <FormField
-          control={form.control}
-          name="title"
-          render={({ field }) => (
-            <TextFormItem
-              label="업무명"
-              placeholder="업무명"
-              {...field}
-              required
-            />
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="termType"
-          render={({ field }) => {
-            const checklist: SelectOption[] = [
-              {
-                key: "매일",
-                value: 0,
-              },
-              {
-                key: "특정일",
-                value: 1,
-              },
-              {
-                key: "기간",
-                value: 2,
-              },
-            ];
-            const handleChange = (value: number) => {
-              field.onChange(value);
-              if (value !== 2) {
-                form.setValue("endDt", null);
-                return;
-              }
-              if (value === 2) {
-                form.setValue("endDt", form.getValues("startDt"));
-              }
-            };
-            return (
-              <MultiCheckBoxFormItem
-                label="업무주기"
-                data={checklist}
-                {...field}
-                value={field.value.toString()}
-                onChange={(e) => handleChange(parseInt(e.target.value))}
-                required
-              />
-            );
-          }}
-        />
-        <FormField
-          control={form.control}
-          name="startDt"
-          render={({ field }) => {
-            const handleChange = (date: Date) => {
-              if (form.watch("termType") === 2) {
-                handleDateChange("start", date, field.onChange);
-                return;
-              }
-
-              field.onChange(date);
-            };
-            return (
-              <DateFormItem
-                label="시작일"
-                value={field.value}
-                onChange={(date) => {
-                  handleChange(date);
-                }}
-                required
-              />
-            );
-          }}
-        />
-        {form.watch("termType") === 2 ? (
+      <FormCard title="업무내용">
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-x-24 gap-y-12">
           <FormField
             control={form.control}
-            name="endDt"
+            name="title"
+            render={({ field }) => (
+              <TextFormItem
+                label="업무명"
+                placeholder="업무명"
+                {...field}
+                required
+              />
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="termType"
             render={({ field }) => {
-              const handleChange = (date: Date) => {
-                if (form.watch("termType") === 2) {
-                  handleDateChange("end", date, field.onChange);
+              const checklist: SelectOption[] = [
+                {
+                  key: "매일",
+                  value: 0,
+                },
+                {
+                  key: "특정일",
+                  value: 1,
+                },
+                {
+                  key: "기간",
+                  value: 2,
+                },
+              ];
+              const handleChange = (value: number) => {
+                field.onChange(value);
+                if (value !== 2) {
+                  form.setValue("endDt", null);
+                  return;
+                }
+                if (value === 2) {
+                  form.setValue("endDt", form.getValues("startDt"));
                 }
               };
               return (
+                <MultiCheckBoxFormItem
+                  label="업무주기"
+                  data={checklist}
+                  {...field}
+                  value={field.value.toString()}
+                  onChange={(e) => handleChange(parseInt(e.target.value))}
+                  required
+                />
+              );
+            }}
+          />
+          <FormField
+            control={form.control}
+            name="startDt"
+            render={({ field }) => {
+              const handleChange = (date: Date) => {
+                if (form.watch("termType") === 2) {
+                  handleDateChange("start", date, field.onChange);
+                  return;
+                }
+
+                field.onChange(date);
+              };
+              return (
                 <DateFormItem
-                  label="종료일"
+                  label="시작일"
                   value={field.value}
                   onChange={(date) => {
                     handleChange(date);
@@ -171,27 +153,50 @@ const TaskInfoAddForm = ({
               );
             }}
           />
-        ) : null}
-        <FormField
-          control={form.control}
-          name="repeat"
-          render={({ field }) => (
-            <TextFormItem
-              label="반복횟수"
-              placeholder="반복횟수"
-              type="number"
-              {...field}
-              value={field.value === 0 ? "" : field.value}
-              onChange={(e) => {
-                const value =
-                  e.target.value === "" ? 0 : parseInt(e.target.value) || 0;
-                field.onChange(value);
+          {form.watch("termType") === 2 ? (
+            <FormField
+              control={form.control}
+              name="endDt"
+              render={({ field }) => {
+                const handleChange = (date: Date) => {
+                  if (form.watch("termType") === 2) {
+                    handleDateChange("end", date, field.onChange);
+                  }
+                };
+                return (
+                  <DateFormItem
+                    label="종료일"
+                    value={field.value}
+                    onChange={(date) => {
+                      handleChange(date);
+                    }}
+                    required
+                  />
+                );
               }}
-              required
             />
-          )}
-        />
-      </div>
+          ) : null}
+          <FormField
+            control={form.control}
+            name="repeat"
+            render={({ field }) => (
+              <TextFormItem
+                label="반복횟수"
+                placeholder="반복횟수"
+                type="number"
+                {...field}
+                value={field.value === 0 ? "" : field.value}
+                onChange={(e) => {
+                  const value =
+                    e.target.value === "" ? 0 : parseInt(e.target.value) || 0;
+                  field.onChange(value);
+                }}
+                required
+              />
+            )}
+          />
+        </div>
+      </FormCard>
     </CommonFormContainer>
   );
 };

@@ -4,7 +4,11 @@ import FileFormItem, {
 } from "@/components/common/form-input/file-field";
 import SelectFormItem from "@/components/common/form-input/select-field";
 import { TextFormItem } from "@/components/common/form-input/text-field";
-import CommonFormContainer from "@/components/ui/custom/form/form-container";
+import {
+  CommonFormContainer,
+  FormCard,
+} from "@/components/layout/form/form-container";
+// import CommonFormContainer from "@/components/ui/custom/form/form-container";
 import { FormField } from "@/components/ui/form";
 import { useBasicStore } from "@/store/basic-store";
 import { convertSelectOptionType } from "@/utils/convert";
@@ -66,168 +70,176 @@ const EquipmentAddForm = ({ onNext }: EquipmentAddFormProps) => {
   });
 
   return (
-    <CommonFormContainer
-      title="기본정보"
-      form={form}
-      nextLabel="생성"
-      onNext={onNext}
-    >
-      <div className="form-layout">
-        {basicCode.contractCodes ? (
-          <FormField
-            control={form.control}
-            name="serviceTypeSeq"
-            render={({ field }) => {
-              const handleValue = (value: string) => {
-                field.onChange(Number(value));
-              };
-              return (
+    <CommonFormContainer form={form} onNext={onNext}>
+      {/* 기본정보 카드 */}
+      <FormCard title="기본정보">
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 xl:gap-x-12">
+          {basicCode.contractCodes && (
+            <FormField
+              control={form.control}
+              name="serviceTypeSeq"
+              render={({ field }) => (
                 <SelectFormItem
                   label="유형"
                   selectItem={convertSelectOptionType(
-                    basicCode.contractCodes ?? []
+                    basicCode.contractCodes ?? [],
                   )}
-                  onValueChange={handleValue}
+                  onValueChange={(value) => field.onChange(Number(value))}
                   value={field.value?.toString()}
                   required
                 />
-              );
-            }}
+              )}
+            />
+          )}
+          <FormField
+            control={form.control}
+            name="serial"
+            render={({ field }) => (
+              <TextFormItem
+                label="관리번호"
+                placeholder="관리번호"
+                {...field}
+                required
+              />
+            )}
           />
-        ) : null}
+          <FormField
+            control={form.control}
+            name="name"
+            render={({ field }) => (
+              <TextFormItem
+                label="장비명"
+                placeholder="장비명"
+                {...field}
+                required
+              />
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="capacity"
+            render={({ field }) => (
+              <TextFormItem
+                label="규격용량"
+                placeholder="규격용량"
+                {...field}
+                required
+              />
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="usage"
+            render={({ field }) => (
+              <TextFormItem
+                label="용도"
+                placeholder="용도"
+                {...field}
+                required
+              />
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="maker"
+            render={({ field }) => (
+              <TextFormItem
+                label="제조사"
+                placeholder="제조사"
+                {...field}
+                required
+              />
+            )}
+          />
+        </div>
+      </FormCard>
+
+      {/* 구매정보 카드 */}
+      <FormCard title="구매정보">
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 xl:gap-x-12">
+          <FormField
+            control={form.control}
+            name="buyer"
+            render={({ field }) => (
+              <TextFormItem
+                label="구매처"
+                placeholder="구매처"
+                {...field}
+                required
+              />
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="buyDt"
+            render={({ field }) => (
+              <DateFormItem
+                label="구매일"
+                value={field.value}
+                onChange={(date) => field.onChange(date)}
+                required
+              />
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="amount"
+            render={({ field }) => (
+              <TextFormItem
+                label="수량"
+                placeholder="수량"
+                type="number"
+                min={1}
+                {...field}
+                required
+              />
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="cost"
+            render={({ field }) => (
+              <TextFormItem
+                label="비용"
+                placeholder="비용"
+                type="number"
+                min={0}
+                {...field}
+              />
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="manager"
+            render={({ field }) => (
+              <TextFormItem
+                label="관리부서"
+                placeholder="관리부서"
+                {...field}
+                required
+              />
+            )}
+          />
+        </div>
+      </FormCard>
+
+      {/* 이미지 카드 */}
+      <FormCard title="이미지">
         <FormField
           control={form.control}
-          name="serial"
+          name="images"
           render={({ field }) => (
-            <TextFormItem
-              label="관리번호"
-              placeholder="관리번호"
+            <ImageFormItem
+              label=""
+              multiple={false}
               {...field}
-              required
-            />
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="name"
-          render={({ field }) => (
-            <TextFormItem
-              label="장비명"
-              placeholder="장비명"
-              {...field}
-              required
-            />
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="capacity"
-          render={({ field }) => (
-            <TextFormItem
-              label="규격용량"
-              placeholder="규격용량"
-              {...field}
-              required
-            />
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="usage"
-          render={({ field }) => (
-            <TextFormItem label="용도" placeholder="용도" {...field} required />
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="maker"
-          render={({ field }) => (
-            <TextFormItem
-              label="제조사"
-              placeholder="제조사"
-              {...field}
-              required
-            />
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="buyer"
-          render={({ field }) => (
-            <TextFormItem
-              label="구매처"
-              placeholder="구매처"
-              {...field}
-              required
-            />
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="amount"
-          render={({ field }) => (
-            <TextFormItem
-              label="수량"
-              placeholder="수량"
-              type="number"
-              min={1}
-              {...field}
-              required
-            />
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="cost"
-          render={({ field }) => (
-            <TextFormItem
-              label="비용"
-              placeholder="비용"
-              type="number"
-              min={0}
-              {...field}
-            />
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="buyDt"
-          render={({ field }) => (
-            <DateFormItem
-              label="구매일"
               value={field.value}
-              onChange={(date) => field.onChange(date)}
-              required
+              isRemove
+              onChange={field.onChange}
             />
           )}
         />
-        <FormField
-          control={form.control}
-          name="manager"
-          render={({ field }) => (
-            <TextFormItem
-              label="관리부서"
-              placeholder="관리부서"
-              {...field}
-              required
-            />
-          )}
-        />
-      </div>
-      <FormField
-        control={form.control}
-        name="images"
-        render={({ field }) => (
-          <ImageFormItem
-            label="이미지"
-            multiple={false}
-            {...field}
-            value={field.value}
-            isRemove
-            onChange={field.onChange}
-          />
-        )}
-      />
+      </FormCard>
     </CommonFormContainer>
   );
 };

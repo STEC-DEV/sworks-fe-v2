@@ -42,16 +42,17 @@ const Page = () => {
   return (
     <div className="w-full xl:w-150 flex flex-col gap-4">
       <div className="flex items-center justify-between">
-        <AppTitle title="체크리스트" />
+        <AppTitle title="체크리스트" isPrev />
         {canEdit && (
           <IconButton
             icon="SquarePen"
             size={16}
+            bgClassName="!rounded-DEFAULT border border-border-strong shadow-sm hover:bg-primary-background"
             onClick={() => router.push(`${types}/edit`)}
           />
         )}
       </div>
-      <div className="flex flex-col gap-2">
+      <div className="bg-surface rounded-DEFAULT border border-border-strong p-4 flex flex-col gap-2">
         <KeyValue
           label={"업무 분야"}
           value={checklistDetail?.serviceTypeName}

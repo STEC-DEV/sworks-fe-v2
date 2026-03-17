@@ -4,13 +4,18 @@ import CustomCard from "@/components/common/card";
 import IconButton from "@/components/common/icon-button";
 import { CheckBox } from "@/components/common/input";
 import {
+  CommonFormContainer,
+  FormCard,
+} from "@/components/layout/form/form-container";
+import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import BaseDialog from "@/components/ui/custom/base-dialog";
-import CommonFormContainer from "@/components/ui/custom/form/form-container";
+import EmptyBox from "@/components/ui/custom/empty";
+// import CommonFormContainer from "@/components/ui/custom/form/form-container";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useTaskStore } from "@/store/normal/task/task-store";
 import {
@@ -67,12 +72,12 @@ const ChecklistAddForm = ({
     const display = taskChecklist
       .filter((item) =>
         selectedChecklist.some(
-          (select) => select.chkMainSeq === item.chkMainSeq
-        )
+          (select) => select.chkMainSeq === item.chkMainSeq,
+        ),
       )
       .map((item) => {
         const selectItem = selectedChecklist.find(
-          (select) => select.chkMainSeq === item.chkMainSeq
+          (select) => select.chkMainSeq === item.chkMainSeq,
         );
         const subItem =
           selectItem?.chkSubs.length === 0
@@ -80,8 +85,8 @@ const ChecklistAddForm = ({
             : item.subs.filter((displaySub) =>
                 selectItem?.chkSubs.some(
                   (selectedSub) =>
-                    selectedSub.chkSubSeq === displaySub.chkSubSeq
-                )
+                    selectedSub.chkSubSeq === displaySub.chkSubSeq,
+                ),
               );
         return {
           ...item,
@@ -99,29 +104,42 @@ const ChecklistAddForm = ({
   return (
     <CommonFormContainer
       form={form}
-      title="평가항목"
       nextLabel="다음"
       onPrev={onPrev}
       onNext={handleSubmit}
-      titleOptionChildren={
-        <BaseDialog
-          triggerChildren={<IconButton icon={"SquarePen"} size={16} />}
-          title="평가항목 수정"
-          open={open}
-          setOpen={setOpen}
-        >
-          <ChecklistEditContents
-            value={selectedChecklist}
-            onChange={handleSelected}
-          />
-        </BaseDialog>
-      }
     >
-      <div className="flex flex-col gap-4">
-        {displaySelectedChecklist.map((item, i) => (
-          <DisPlayTaskChecklistAccordion key={i} data={item} />
-        ))}
-      </div>
+      <FormCard
+        title="평가항목"
+        titleOptionChildren={
+          <BaseDialog
+            triggerChildren={
+              <IconButton
+                icon={"SquarePen"}
+                size={16}
+                bgClassName="!rounded-DEFAULT border border-border-strong shadow-sm hover:bg-primary-background"
+              />
+            }
+            title="평가항목 수정"
+            open={open}
+            setOpen={setOpen}
+          >
+            <ChecklistEditContents
+              value={selectedChecklist}
+              onChange={handleSelected}
+            />
+          </BaseDialog>
+        }
+      >
+        <div className="flex flex-col gap-4">
+          {displaySelectedChecklist.length > 0 ? (
+            displaySelectedChecklist.map((item, i) => (
+              <DisPlayTaskChecklistAccordion key={i} data={item} />
+            ))
+          ) : (
+            <EmptyBox message="평가항목이 없어요" />
+          )}
+        </div>
+      </FormCard>
     </CommonFormContainer>
   );
 };
@@ -317,7 +335,7 @@ const ChecklistEditContents = ({
                     chkSubTitle: s.chkSubTitle,
                   })),
                 }
-              : item
+              : item,
           );
         }
 
@@ -335,7 +353,7 @@ const ChecklistEditContents = ({
         ];
       });
     },
-    []
+    [],
   );
 
   const handleSubCheck = useCallback(
@@ -368,7 +386,7 @@ const ChecklistEditContents = ({
 
             if (isCheck) {
               const subExists = item.chkSubs.some(
-                (s) => s.chkSubSeq === sub.chkSubSeq
+                (s) => s.chkSubSeq === sub.chkSubSeq,
               );
               if (subExists) return item;
 
@@ -384,7 +402,7 @@ const ChecklistEditContents = ({
               };
             } else {
               const updatedSubs = item.chkSubs.filter(
-                (s) => s.chkSubSeq !== sub.chkSubSeq
+                (s) => s.chkSubSeq !== sub.chkSubSeq,
               );
 
               if (updatedSubs.length === 0) {
@@ -400,7 +418,7 @@ const ChecklistEditContents = ({
           .filter((item) => item !== null) as SelectTaskChecklist[];
       });
     },
-    []
+    [],
   );
 
   const handleSave = () => {
@@ -408,12 +426,12 @@ const ChecklistEditContents = ({
     const display = checklist
       .filter((item) =>
         selectedChecklist.some(
-          (select) => select.chkMainSeq === item.chkMainSeq
-        )
+          (select) => select.chkMainSeq === item.chkMainSeq,
+        ),
       )
       .map((item) => {
         const selectItem = selectedChecklist.find(
-          (select) => select.chkMainSeq === item.chkMainSeq
+          (select) => select.chkMainSeq === item.chkMainSeq,
         );
         const subItem =
           selectItem?.chkSubs.length === 0
@@ -421,8 +439,8 @@ const ChecklistEditContents = ({
             : item.subs.filter((displaySub) =>
                 selectItem?.chkSubs.some(
                   (selectedSub) =>
-                    selectedSub.chkSubSeq === displaySub.chkSubSeq
-                )
+                    selectedSub.chkSubSeq === displaySub.chkSubSeq,
+                ),
               );
         return {
           ...item,
@@ -470,13 +488,13 @@ export const ChecklistSelectAccordion = ({
   onSubChange: (
     isCheck: boolean,
     data: TaskChecklistSub,
-    main: TaskChecklist
+    main: TaskChecklist,
   ) => void;
 }) => {
   // Main 체크 상태 계산
   const isMainCheck = useMemo(() => {
     const selected = selectedValue.find(
-      (v) => v.chkMainSeq === data.chkMainSeq
+      (v) => v.chkMainSeq === data.chkMainSeq,
     );
 
     if (!selected) return false;
@@ -486,7 +504,7 @@ export const ChecklistSelectAccordion = ({
 
     // 모든 sub의 seq가 일치하는지 확인
     return data.subs.every((sub) =>
-      selected.chkSubs.some((s) => s.chkSubSeq === sub.chkSubSeq)
+      selected.chkSubs.some((s) => s.chkSubSeq === sub.chkSubSeq),
     );
   }, [selectedValue, data.chkMainSeq, data.subs]);
 
@@ -494,22 +512,22 @@ export const ChecklistSelectAccordion = ({
   const isSubChecked = useCallback(
     (sub: TaskChecklistSub) => {
       const select = selectedValue.find(
-        (item) => item.chkMainSeq === data.chkMainSeq
+        (item) => item.chkMainSeq === data.chkMainSeq,
       );
 
       if (!select) return false;
       // if (select.chkSubs.length === 0) return true; // 전체 선택
       return select.chkSubs.some((item) => item.chkSubSeq === sub.chkSubSeq);
     },
-    [selectedValue, data.chkMainSeq]
+    [selectedValue, data.chkMainSeq],
   );
 
   return (
     <Accordion
       type="single"
       collapsible
-      className={`border border-[var(--border)] rounded-[4px] shadow-sm bg-white w-full ${
-        isMainCheck ? "border-blue-500 !bg-blue-50" : null
+      className={`border  rounded-DEFAULT shadow-sm bg-surface w-full ${
+        isMainCheck ? "border-primary !bg-primary-background" : null
       }`}
     >
       <AccordionItem value={data.chkMainTitle.toString()}>
@@ -531,13 +549,13 @@ export const ChecklistSelectAccordion = ({
         <AccordionContent className="flex flex-col gap-2">
           {data.subs.map((sub, i) => {
             const select = selectedValue.find(
-              (item) => item.chkMainSeq === data.chkMainSeq
+              (item) => item.chkMainSeq === data.chkMainSeq,
             );
 
             return (
               <div
                 key={`${sub.chkSubTitle}-${sub.chkSubSeq}`}
-                className="px-6 flex items-center gap-4 text-[var(--description-dark)]"
+                className="px-6 flex items-center gap-4 text-description-strong"
               >
                 <CheckBox
                   checked={isSubChecked(sub)}
@@ -558,7 +576,7 @@ const DisPlayTaskChecklistAccordion = ({ data }: { data: TaskChecklist }) => {
     <Accordion
       type="single"
       collapsible
-      className={`border border-[var(--border)] rounded-[4px] shadow-sm bg-white w-full `}
+      className={`border border-[var(--border)] rounded-[4px] shadow-sm bg-surface w-full `}
     >
       <AccordionItem value={data.chkMainTitle.toString()}>
         <AccordionTrigger
@@ -568,7 +586,7 @@ const DisPlayTaskChecklistAccordion = ({ data }: { data: TaskChecklist }) => {
         >
           <div className="flex items-center gap-4">
             <CircleCheckBig
-              className="w-5 h-5 text-blue-500 "
+              className="w-5 h-5 text-primary "
               strokeWidth={1.5}
             />
             <span className="text-sm">{data.chkMainTitle}</span>
@@ -579,7 +597,7 @@ const DisPlayTaskChecklistAccordion = ({ data }: { data: TaskChecklist }) => {
             return (
               <div
                 key={`${sub.chkSubTitle}-${sub.chkSubSeq}`}
-                className="px-6 flex items-center gap-4 text-[var(--description-dark)]"
+                className="px-6 flex items-center gap-4 text-description-strong"
               >
                 <span>{sub.chkSubTitle}</span>
               </div>

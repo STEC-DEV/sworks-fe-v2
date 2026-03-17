@@ -7,6 +7,8 @@ import { useTaskStore } from "@/store/normal/task/task-store";
 import Link from "next/link";
 import React from "react";
 import { dialogText } from "../../../../../../../public/text";
+import Button from "@/components/common/button";
+import { PlusIcon } from "lucide-react";
 
 interface TaskPaginationProps {
   onDelete: () => void;
@@ -23,7 +25,7 @@ const TaskPagination = ({ onDelete }: TaskPaginationProps) => {
   return (
     <CommonPagination totalCount={taskList.meta.totalCount}>
       <Link href={"/daily/task/add"} className="flex items-center">
-        <IconButton icon="Plus" />
+        <Button label="업무 생성" icon={<PlusIcon />} size={"sm"} />
       </Link>
       <CheckDialog
         title={dialogText.defaultDelete.title}
@@ -31,7 +33,11 @@ const TaskPagination = ({ onDelete }: TaskPaginationProps) => {
         actionLabel={dialogText.defaultDelete.actionLabel}
         onClick={onDelete}
       >
-        <IconButton icon="Trash2" />
+        <IconButton
+          icon="Trash2"
+          bgClassName="border border-border-strong shadow-sm bg-surface !rounded-DEFAULT hover:border-destructive hover:bg-red-50"
+          className="text-destructive"
+        />
       </CheckDialog>
     </CommonPagination>
   );

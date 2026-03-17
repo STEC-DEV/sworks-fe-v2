@@ -10,6 +10,7 @@ import BaseSkeleton from "@/components/common/base-skeleton";
 import BaseTable from "@/components/common/base-table";
 import { useUIStore } from "@/store/common/ui-store";
 import { MessageSquareReply } from "lucide-react";
+import { OptionSectionWrapper } from "@/components/common/option-wrapper";
 
 const Page = () => {
   const { reqTaskList, getRequestTask, loadingKeys } = useRequestTaskStore();
@@ -37,9 +38,12 @@ const Page = () => {
   };
   return (
     <>
-      <AppTitle title="업무요청" icon={MessageSquareReply} />
-      <ReqFilter />
-      <ReqPagination />
+      <AppTitle title="업무요청" />
+      <OptionSectionWrapper>
+        <ReqFilter />
+        <ReqPagination />
+      </OptionSectionWrapper>
+
       {getList()}
     </>
   );

@@ -31,7 +31,7 @@ const CustomAccordion = ({
     <Accordion
       type="single"
       collapsible
-      className="border border-[var(--border)] rounded-[4px] shadow-sm bg-white w-full"
+      className="border border-border-strong  !rounded-DEFAULT shadow-sm bg-surface w-full"
     >
       <AccordionItem value="item-1">
         <AccordionTrigger
@@ -42,7 +42,7 @@ const CustomAccordion = ({
           <div className="flex justify-between items-center w-full">
             <div className="flex gap-4 items-center">
               {Icon ? (
-                <Icon className="w-5 h-5 text-blue-500 " strokeWidth={1.5} />
+                <Icon className="w-5 h-5 text-primary " strokeWidth={1.5} />
               ) : null}
 
               <span className="text-sm font-normal">{label}</span>

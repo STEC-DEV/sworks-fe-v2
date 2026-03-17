@@ -60,7 +60,7 @@ export const taskCol: ColumnDef<Task>[] = [
     header: "유형",
     cell: ({ row }) => {
       const value = row.original.serviceTypeName;
-      return <span className=" text-blue-500 font-semibold">{value}</span>;
+      return <span className=" text-primary font-bold">{value}</span>;
     },
   },
   {

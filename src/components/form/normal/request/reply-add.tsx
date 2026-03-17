@@ -30,6 +30,108 @@ const formSchema = z.object({
 
 type ReplyAddFormSchema = z.infer<typeof formSchema>;
 
+// const ReplyAddForm = () => {
+//   const { postAddReply, getRequestDetail } = useReqDetailStore();
+//   const { rawValue } = useDecodeParam("id");
+//   const form = useForm<ReplyAddFormSchema>({
+//     resolver: zodResolver(formSchema),
+//     defaultValues: {
+//       requestSeq: undefined,
+//       contents: "",
+//       status: 0,
+//       userSeq: [],
+//       images: [],
+//     },
+//   });
+
+//   useEffect(() => {
+//     if (!rawValue) return;
+//     form.setValue("requestSeq", parseInt(rawValue));
+//   }, [rawValue]);
+
+//   const handleSubmit = async (values: ReplyAddFormSchema) => {
+//     const formData = convertRecordDataToFormData(values);
+//     const res = await postAddReply(formData);
+//     await getRequestDetail(rawValue);
+//     form.reset();
+//   };
+
+//   return (
+//     <Form {...form}>
+//       <form
+//         onSubmit={form.handleSubmit(handleSubmit, (err) => console.log(err))}
+//         className="flex flex-col gap-4"
+//       >
+//         <FormField
+//           control={form.control}
+//           name="status"
+//           render={({ field }) => {
+//             const handleChange = (value: string) => {
+//               if (!value) return;
+
+//               field.onChange(parseInt(value));
+//             };
+//             return (
+//               <SelectFormItem
+//                 label="처리상태"
+//                 selectItem={convertSelectOptionType(ProcessStatus)}
+//                 onValueChange={handleChange}
+//                 value={field.value?.toString()}
+//               />
+//             );
+//           }}
+//         />
+//         <FormField
+//           control={form.control}
+//           name="userSeq"
+//           render={({ field }) => {
+//             return (
+//               <UserInputFormItem
+//                 {...field}
+//                 value={field.value}
+//                 onValueChange={field.onChange}
+//                 required
+//               />
+//             );
+//           }}
+//         />
+
+//         <FormField
+//           control={form.control}
+//           name="contents"
+//           render={({ field }) => (
+//             <TextAreaFormItem
+//               className="h-20"
+//               label="내용"
+//               placeholder="내용"
+//               {...field}
+//               required
+//             />
+//           )}
+//         />
+//         <FormField
+//           control={form.control}
+//           name="images"
+//           render={({ field }) => (
+//             <ImageFormItem
+//               id="reply"
+//               label="이미지"
+//               multiple={true}
+//               {...field}
+//               value={field.value}
+//               onChange={field.onChange}
+//               max={3}
+//             />
+//           )}
+//         />
+//         <div className="flex justify-end">
+//           <Button label="등록" size={"sm"} />
+//         </div>
+//       </form>
+//     </Form>
+//   );
+// };
+
 const ReplyAddForm = () => {
   const { postAddReply, getRequestDetail } = useReqDetailStore();
   const { rawValue } = useDecodeParam("id");
@@ -51,7 +153,7 @@ const ReplyAddForm = () => {
 
   const handleSubmit = async (values: ReplyAddFormSchema) => {
     const formData = convertRecordDataToFormData(values);
-    const res = await postAddReply(formData);
+    await postAddReply(formData);
     await getRequestDetail(rawValue);
     form.reset();
   };
@@ -65,37 +167,29 @@ const ReplyAddForm = () => {
         <FormField
           control={form.control}
           name="status"
-          render={({ field }) => {
-            const handleChange = (value: string) => {
-              if (!value) return;
-
-              field.onChange(parseInt(value));
-            };
-            return (
-              <SelectFormItem
-                label="처리상태"
-                selectItem={convertSelectOptionType(ProcessStatus)}
-                onValueChange={handleChange}
-                value={field.value?.toString()}
-              />
-            );
-          }}
+          render={({ field }) => (
+            <SelectFormItem
+              label="처리상태"
+              selectItem={convertSelectOptionType(ProcessStatus)}
+              onValueChange={(value) =>
+                value && field.onChange(parseInt(value))
+              }
+              value={field.value?.toString()}
+            />
+          )}
         />
         <FormField
           control={form.control}
           name="userSeq"
-          render={({ field }) => {
-            return (
-              <UserInputFormItem
-                {...field}
-                value={field.value}
-                onValueChange={field.onChange}
-                required
-              />
-            );
-          }}
+          render={({ field }) => (
+            <UserInputFormItem
+              {...field}
+              value={field.value}
+              onValueChange={field.onChange}
+              required
+            />
+          )}
         />
-
         <FormField
           control={form.control}
           name="contents"
@@ -125,11 +219,10 @@ const ReplyAddForm = () => {
           )}
         />
         <div className="flex justify-end">
-          <Button label="등록" size={"sm"} />
+          <Button label="등록" size="sm" />
         </div>
       </form>
     </Form>
   );
 };
-
 export default ReplyAddForm;

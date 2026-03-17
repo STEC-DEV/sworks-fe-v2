@@ -8,7 +8,7 @@ export const facilityColumns: ColumnDef<FacilityListItem>[] = [
     header: "유형",
     cell: ({ row }) => {
       const value = row.original.facilityCodeName;
-      return <span className="font-semibold text-blue-500 ">{value}</span>;
+      return <span className="font-bold text-primary ">{value}</span>;
     },
   },
   {

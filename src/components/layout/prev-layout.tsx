@@ -12,9 +12,10 @@ const PrevLayout = ({ children }: { children: React.ReactNode }) => {
       <div className="xl:hidden">{children}</div>
 
       {/* xl 이상: 전체 레이아웃 표시 */}
-      <div className="hidden xl:flex flex-row gap-4">
+      <div className="hidden xl:flex flex-row gap-4 flex-1">
         <IconButton
           icon="ChevronLeft"
+          bgClassName="border border-border-strong !rounded-DEFAULT shadow-sm"
           size={28}
           onClick={() => router.back()}
         />

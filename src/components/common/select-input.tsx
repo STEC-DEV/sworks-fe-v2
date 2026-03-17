@@ -68,7 +68,7 @@ export const MultiSelect = ({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <div className="relative border h-9 px-3 py-1 flex items-center rounded-[4px] border-[var(--border)]">
+        <div className="relative border h-9 px-3 py-1 flex items-center rounded-DEFAULT bg-surface border-border-strong">
           <div className="flex-1 text-left">
             {selected.length > 0 ? (
               <span className="text-sm">
@@ -78,9 +78,7 @@ export const MultiSelect = ({
                   .join(", ")}
               </span>
             ) : (
-              <span className="text-[var(--placeholder)] text-sm ">
-                {placeholder}
-              </span>
+              <span className="text-placeholder text-sm ">{placeholder}</span>
             )}
           </div>
 
@@ -95,24 +93,24 @@ export const MultiSelect = ({
       >
         <ScrollArea className="max-h-80">
           <div
-            className="flex gap-2 items-center justify-between px-4 py-2 hover:cursor-pointer hover:bg-gray-50 rounded-[4px]"
+            className="flex gap-2 items-center justify-between px-4 py-2 hover:cursor-pointer hover:bg-primary-background rounded-DEFAULT"
             onClick={() => handleAllCheck()}
           >
             <span className="text-xs">전체</span>
             {selected.length === selectItemList.length ? (
-              <Check className="w-4 h-4 text-blue-500" />
+              <Check className="w-4 h-4 text-primary" />
             ) : null}
           </div>
           {selectItemList.map((v, i) => {
             return (
               <div
                 key={i}
-                className="flex gap-2 items-center justify-between px-4 py-2 hover:cursor-pointer hover:bg-gray-50 rounded-[4px]"
+                className="flex gap-2 items-center justify-between px-4 py-2 hover:cursor-pointer hover:bg-primary-background rounded-DEFAULT"
                 onClick={() => handleCheck(v)}
               >
                 <span className="text-xs">{v.key}</span>
                 {selected.includes(v.value.toString()) ? (
-                  <Check className="w-4 h-4 text-blue-500" />
+                  <Check className="w-4 h-4 text-primary" />
                 ) : null}
               </div>
             );

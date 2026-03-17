@@ -133,7 +133,7 @@ const DayScheduleAddForm = ({
                       <SelectFormItem
                         label="업무 유형"
                         selectItem={convertSelectOptionType(
-                          enteredWorkplace.contracts ?? []
+                          enteredWorkplace.contracts ?? [],
                         )}
                         onValueChange={handleValue}
                         value={field.value?.toString()}
@@ -185,12 +185,10 @@ const DayScheduleAddForm = ({
 
                     return (
                       <div className="flex flex-col gap-2">
-                        <span className="text-xs text-[var(--description-light)]">
-                          종일
-                        </span>
+                        <span className="text-sm text-description">종일</span>
                         <div className="flex-1 flex items-center">
                           <Switch
-                            className="ring ring-[var(--border)]  hover:cursor-pointer data-[state=checked]:bg-blue-500 data-[state=unchecked]:bg-[var(--background)] [&_[data-slot=switch-thumb]]:bg-white focus-visible:ring-0 focus-visible:outline-none"
+                            className="ring ring-border hover:cursor-pointer data-[state=checked]:bg-primary data-[state=unchecked]:bg-[var(--background)] [&_[data-slot=switch-thumb]]:bg-surface focus-visible:ring-0 focus-visible:outline-none"
                             checked={field.value}
                             onCheckedChange={handleAllDay}
                           />

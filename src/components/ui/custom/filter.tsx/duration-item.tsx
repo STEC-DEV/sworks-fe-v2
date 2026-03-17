@@ -8,7 +8,7 @@ import Button from "@/components/common/button";
 import { format } from "date-fns";
 import CustomDatetimePicker from "@/components/common/date-input/date-picker";
 import IconButton from "@/components/common/icon-button";
-import { Calendar, CalendarDays } from "lucide-react";
+import { Calendar, CalendarDays, CalendarDaysIcon } from "lucide-react";
 
 interface DurationItemProps {
   value: Record<string, Date | null>;
@@ -32,15 +32,21 @@ const DurationItem = ({
       <DropdownMenuTrigger asChild className="hover:cursor-pointer">
         <Button
           className={`
-            text-black text-nowrap text-xs bg-white border  hover:bg-gray-50
+            text-black text-nowrap text-xs bg-surface border border-border-strong shadow-sm  hover:bg-primary-background
             ${
               value[startName] || value[endName]
-                ? "text-black border-blue-500"
-                : "text-[var(--description-dark)]"
+                ? "text-black border-primary"
+                : "text-description"
             }
              focus-visible:outline-none focus-visible:ring-0
             `}
-          icon={CalendarDays}
+          icon={
+            <CalendarDaysIcon
+              className="text-icon"
+              size={20}
+              strokeWidth={1.5}
+            />
+          }
           variant={"filter"}
           label={
             value[startName] || value[endName]

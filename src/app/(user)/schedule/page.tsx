@@ -68,7 +68,7 @@ const Page = () => {
       <div className="flex flex-col gap-6 xl:px-12 xl:py-12 h-full min-h-screen xl:min-h-0">
         {/* 부모 레이아웃과 동일한 패딩 적용 */}
         <div className="flex flex-col gap-4 flex-1 min-h-0">
-          <AppTitle title="일정" icon={CalendarDays} />
+          <AppTitle title="일정" />
           <DndContext onDragEnd={handleDragEnd} onDragStart={handleDragStart}>
             <div className="flex flex-col xl:flex-row gap-12 flex-1 min-h-0">
               <DroppableCalendar />

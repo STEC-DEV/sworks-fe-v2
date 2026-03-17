@@ -1,5 +1,9 @@
 import SelectFormItem from "@/components/common/form-input/select-field";
-import CommonFormContainer from "@/components/ui/custom/form/form-container";
+import {
+  CommonFormContainer,
+  FormCard,
+} from "@/components/layout/form/form-container";
+// import CommonFormContainer from "@/components/ui/custom/form/form-container";
 import { FormField } from "@/components/ui/form";
 import { useBasicStore } from "@/store/basic-store";
 import { useUserMainStore } from "@/store/normal/user/main-store";
@@ -30,13 +34,8 @@ const UserTypeSelectForm = ({ onNext }: UserTypeSelectFormProps) => {
     },
   });
   return (
-    <CommonFormContainer
-      title="사용자 유형"
-      form={form}
-      nextLabel="다음"
-      onNext={onNext}
-    >
-      <div>
+    <CommonFormContainer form={form} onNext={onNext}>
+      <FormCard title="사용자 유형">
         {createUserClassification ? (
           <FormField
             control={form.control}
@@ -49,7 +48,7 @@ const UserTypeSelectForm = ({ onNext }: UserTypeSelectFormProps) => {
                 <SelectFormItem
                   label="사용자 유형"
                   selectItem={convertSelectOptionType(
-                    createUserClassification.userTypes ?? []
+                    createUserClassification.userTypes ?? [],
                   )}
                   onValueChange={handleValue}
                   value={field.value?.toString()}
@@ -59,8 +58,39 @@ const UserTypeSelectForm = ({ onNext }: UserTypeSelectFormProps) => {
             }}
           />
         ) : null}
-      </div>
+      </FormCard>
     </CommonFormContainer>
+    // <CommonFormContainer
+    //   title="사용자 유형"
+    //   form={form}
+    //   nextLabel="다음"
+    //   onNext={onNext}
+    // >
+    //   <div>
+    //     {createUserClassification ? (
+    //       <FormField
+    //         control={form.control}
+    //         name="codeSeq"
+    //         render={({ field }) => {
+    //           const handleValue = (value: string) => {
+    //             field.onChange(Number(value));
+    //           };
+    //           return (
+    //             <SelectFormItem
+    //               label="사용자 유형"
+    //               selectItem={convertSelectOptionType(
+    //                 createUserClassification.userTypes ?? []
+    //               )}
+    //               onValueChange={handleValue}
+    //               value={field.value?.toString()}
+    //               required
+    //             />
+    //           );
+    //         }}
+    //       />
+    //     ) : null}
+    //   </div>
+    // </CommonFormContainer>
   );
 };
 

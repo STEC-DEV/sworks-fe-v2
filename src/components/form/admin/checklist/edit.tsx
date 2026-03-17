@@ -3,6 +3,7 @@ import Button from "@/components/common/button";
 import CheckFormItem from "@/components/common/form-input/check-field";
 import { TextFormItem } from "@/components/common/form-input/text-field";
 import IconButton from "@/components/common/icon-button";
+import { FormCard } from "@/components/layout/form/form-container";
 
 import { Form, FormField } from "@/components/ui/form";
 import { useChecklistDetailStore } from "@/store/admin/checklist/checklist-detail-store";
@@ -26,9 +27,9 @@ const formSchema = z.object({
           chkDetailTitle: z.string().min(1, "세부항목명을 입력해주세요."),
           chkItem: z.string().min(1, "세부내용을 입력해주세요."),
           chkDetailPoint: z.number().min(0, "0점 이상 입력해주세요."),
-        })
+        }),
       ),
-    })
+    }),
   ),
 });
 
@@ -122,12 +123,15 @@ const ChecklistItemEditForm = () => {
             <IconButton
               icon="Plus"
               onClick={() => appendDetail(detailInit)}
+              bgClassName="!rounded-DEFAULT border border-border-strong shadow-sm hover:bg-primary-background"
               size={16}
             />
             {subFields.length >= 2 ? (
               <IconButton
                 icon="Trash2"
                 size={16}
+                bgClassName="!rounded-DEFAULT border border-border-strong shadow-sm hover:bg-red-50 hover:border-destructive"
+                className="group-hover:text-destructive"
                 onClick={() => removeSub(idx)}
               />
             ) : null}
@@ -158,6 +162,8 @@ const ChecklistItemEditForm = () => {
                         icon="Trash2"
                         size={16}
                         onClick={() => removeDetail(i)}
+                        bgClassName="p-1 w-8 h-8 !rounded-DEFAULT border border-border-strong shadow-sm hover:bg-red-50 hover:border-destructive"
+                        className="group-hover:text-destructive"
                       />
                     ) : null}
                   </div>
@@ -248,53 +254,56 @@ const ChecklistItemEditForm = () => {
         className="flex flex-col gap-6"
         onSubmit={form.handleSubmit(handleSubmit, handleError)}
       >
-        <div className="flex flex-col gap-2 ">
-          <div className="flex justify-between items-center">
-            <span className="text-sm font-bold">평가항목</span>
+        <FormCard
+          title="평가항목"
+          titleOptionChildren={
             <IconButton
               icon="Plus"
               size={16}
               onClick={() => appendSub(subInit)}
+              bgClassName="!rounded-DEFAULT border border-border-strong shadow-sm hover:bg-primary-background"
             />
+          }
+        >
+          <div className="flex flex-col gap-2 ">
+            <div className="flex flex-col gap-6 p-6 border border-[var(--border)] bg-[var(--background)]">
+              <FormField
+                control={form.control}
+                name="chkMainTitle"
+                render={({ field }) => (
+                  <TextFormItem
+                    label="평가항목명"
+                    placeholder="평가항목명"
+                    required
+                    {...field}
+                  />
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="sumYn"
+                render={({ field }) => (
+                  <CheckFormItem
+                    label="평가항목 소계 사용"
+                    description="평가항목 소계 미사용 시 자동 점검항목 소계사용"
+                    checked={field.value}
+                    onChange={field.onChange}
+                    onBlur={field.onBlur}
+                    name={field.name}
+                    ref={field.ref}
+                  />
+                )}
+              />
+              {/* //소계 체크 */}
+              {subFields.map((v, i) => (
+                <SubItem key={i} idx={i} />
+              ))}
+            </div>
           </div>
-
-          <div className="flex flex-col gap-6 p-6 border border-[var(--border)] bg-[var(--background)]">
-            <FormField
-              control={form.control}
-              name="chkMainTitle"
-              render={({ field }) => (
-                <TextFormItem
-                  label="평가항목명"
-                  placeholder="평가항목명"
-                  required
-                  {...field}
-                />
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="sumYn"
-              render={({ field }) => (
-                <CheckFormItem
-                  label="평가항목 소계 사용"
-                  description="평가항목 소계 미사용 시 자동 점검항목 소계사용"
-                  checked={field.value}
-                  onChange={field.onChange}
-                  onBlur={field.onBlur}
-                  name={field.name}
-                  ref={field.ref}
-                />
-              )}
-            />
-            {/* //소계 체크 */}
-            {subFields.map((v, i) => (
-              <SubItem key={i} idx={i} />
-            ))}
+          <div className="flex justify-end">
+            <Button label="저장" size={"sm"} />
           </div>
-        </div>
-        <div className="flex justify-end">
-          <Button label="저장" size={"sm"} />
-        </div>
+        </FormCard>
       </form>
     </Form>
   );

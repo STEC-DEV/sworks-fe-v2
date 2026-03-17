@@ -1,5 +1,9 @@
 import SelectFormItem from "@/components/common/form-input/select-field";
-import CommonFormContainer from "@/components/ui/custom/form/form-container";
+import {
+  CommonFormContainer,
+  FormCard,
+} from "@/components/layout/form/form-container";
+
 import { FormField } from "@/components/ui/form";
 import { useCheckMultiTypeSelect } from "@/hooks/select/casecading-select";
 import { useWorkplaceDetailChecklistStore } from "@/store/admin/workplace/checklist-store";
@@ -27,19 +31,19 @@ const formSchema = z
     (data) => {
       return data.serviceTypeSeq !== undefined;
     },
-    { message: "항목을 선택해주세요", path: ["serviceSeq"] }
+    { message: "항목을 선택해주세요", path: ["serviceSeq"] },
   )
   .refine(
     (data) => {
       return data.divCodeSeq !== undefined;
     },
-    { message: "항목을 선택해주세요", path: ["divCodeSeq"] }
+    { message: "항목을 선택해주세요", path: ["divCodeSeq"] },
   )
   .refine(
     (data) => {
       return data.typeCodeSeq !== undefined;
     },
-    { message: "항목을 선택해주세요", path: ["typeCodeSeq"] }
+    { message: "항목을 선택해주세요", path: ["typeCodeSeq"] },
   );
 
 export type TypeAddFormType = z.infer<typeof formSchema>;
@@ -81,21 +85,22 @@ const ChecklistTypeAddForm = ({
 
   return (
     <CommonFormContainer
-      title="기본정보"
       form={form}
       nextLabel="다음"
       onNext={onNext}
       onPrev={onPrev}
+      title="사업장 체크리스트 생성"
+      prevPath={`/admin/workplace/${id}`}
     >
       {checklistMultiType ? (
-        <>
+        <FormCard title="기본정보">
           <FormField
             control={form.control}
             name="serviceTypeSeq"
             render={({ field }) => {
               const handleValue = (value: string) => {
                 const serviceType = checklistMultiType.find(
-                  (t) => t.serviceTypeSeq === parseInt(value)
+                  (t) => t.serviceTypeSeq === parseInt(value),
                 );
                 if (serviceType) handleServiceSelect(serviceType);
 
@@ -107,7 +112,7 @@ const ChecklistTypeAddForm = ({
                 <SelectFormItem
                   label="계약유형"
                   selectItem={convertSelectOptionType(
-                    checklistMultiType as ServiceType[]
+                    checklistMultiType as ServiceType[],
                   )}
                   onValueChange={handleValue}
                   value={field.value?.toString()}
@@ -124,7 +129,7 @@ const ChecklistTypeAddForm = ({
               render={({ field }) => {
                 const handleValue = (value: string) => {
                   const divType = selectedService.divs.find(
-                    (t) => t.divCodeSeq === parseInt(value)
+                    (t) => t.divCodeSeq === parseInt(value),
                   );
                   if (divType) handleDivSelect(divType);
                   field.onChange(Number(value));
@@ -140,7 +145,7 @@ const ChecklistTypeAddForm = ({
                     }`}
                     label="관리부문"
                     selectItem={convertSelectOptionType(
-                      (selectedService?.divs as DivCodeType[]) ?? []
+                      (selectedService?.divs as DivCodeType[]) ?? [],
                     )}
                     onValueChange={handleValue}
                     value={currentDivValue?.toString() || ""}
@@ -166,7 +171,7 @@ const ChecklistTypeAddForm = ({
                     key={`type-${selectedDiv?.divCodeSeq || "none"}`}
                     label="관리유형"
                     selectItem={convertSelectOptionType(
-                      (selectedDiv?.types as TypeCodeType[]) ?? []
+                      (selectedDiv?.types as TypeCodeType[]) ?? [],
                     )}
                     onValueChange={handleValue}
                     value={currentTypeValue?.toString()}
@@ -176,7 +181,7 @@ const ChecklistTypeAddForm = ({
               }}
             />
           ) : null}
-        </>
+        </FormCard>
       ) : null}
     </CommonFormContainer>
   );

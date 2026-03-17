@@ -18,11 +18,7 @@ export const noticeCol: ColumnDef<NoticeListItem>[] = [
       );
       const isPin = row.original.isPin;
       return (
-        <span
-          className={` text-blue-500 ${isPin ? "font-bold" : " font-medium "}`}
-        >
-          {value.join(", ")}
-        </span>
+        <span className={` text-primary font-bold`}>{value.join(", ")}</span>
       );
     },
   },

@@ -11,6 +11,7 @@ import BaseSkeleton from "@/components/common/base-skeleton";
 import { workplaceColumns } from "./components/workplace-colums";
 import BaseTable from "../../../components/common/base-table";
 import { useUIStore } from "@/store/common/ui-store";
+import { OptionSectionWrapper } from "@/components/common/option-wrapper";
 
 const ClientPage = () => {
   const searchParams = useSearchParams();
@@ -28,7 +29,7 @@ const ClientPage = () => {
   const getList = () => {
     const loadingKey = loadingKeys.LIST;
     if (isLoading(loadingKey) || !workplaceList)
-      return <BaseSkeleton className="h-full" />;
+      return <BaseSkeleton className="flex-1" />;
     if (hasError(loadingKey)) return <div>에러발생</div>;
 
     return (
@@ -44,9 +45,12 @@ const ClientPage = () => {
 
   return (
     <>
-      <WorkplaceFilter />
-      <WorkplacePagination />
-      <div className="flex flex-col gap-2 h-full">{getList()}</div>
+      <OptionSectionWrapper>
+        <WorkplaceFilter />
+        <WorkplacePagination />
+      </OptionSectionWrapper>
+
+      {getList()}
     </>
   );
 };

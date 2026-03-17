@@ -26,6 +26,7 @@ interface DataTableProps<TData, TValue> {
   enableRowSelection?: boolean;
   onSelectionChange?: (selectedRows: TData[]) => void;
   getRowId?: (row: TData) => string;
+  className?: string;
 }
 
 const BaseTable = <TData, TValue>({
@@ -36,6 +37,7 @@ const BaseTable = <TData, TValue>({
   enableRowSelection = false,
   onSelectionChange,
   getRowId,
+  className,
 }: DataTableProps<TData, TValue>) => {
   const [rowSelection, setRowSelection] = useState<Record<string, boolean>>({});
 
@@ -72,8 +74,83 @@ const BaseTable = <TData, TValue>({
   }, [rowSelection, enableRowSelection, onSelectionChange, table]);
 
   return (
-    <div className=" rounded-md ">
+    <div
+      className={cn(
+        "flex-1 border border-border-strong bg-surface  rounded-DEFAULT overflow-hidden shadow-sm flex flex-col",
+        className,
+      )}
+    >
       <Table>
+        <TableHeader className="bg-background">
+          {table.getHeaderGroups().map((headerGroup) => (
+            <TableRow key={headerGroup.id}>
+              {headerGroup.headers.map((header) => (
+                <TableHead
+                  key={header.id}
+                  className={cn(
+                    "font-semibold text-primary text-xs py-3",
+                    padding,
+                  )}
+                  style={{ width: header.getSize() }}
+                >
+                  {header.isPlaceholder
+                    ? null
+                    : flexRender(
+                        header.column.columnDef.header,
+                        header.getContext(),
+                      )}
+                </TableHead>
+              ))}
+            </TableRow>
+          ))}
+        </TableHeader>
+
+        {/* 데이터 있을 때만 TableBody */}
+        {table.getRowModel().rows?.length ? (
+          <TableBody className="bg-white">
+            {table.getRowModel().rows.map((row) => {
+              const firstCell = row.getVisibleCells()[0];
+              const meta = firstCell?.column.columnDef.meta as any;
+              const rowStyle = meta?.getRowStyle?.(row.original);
+              const hasCustomBg =
+                rowStyle?.backgroundColor && rowStyle.backgroundColor !== null;
+
+              return (
+                <TableRow
+                  key={row.id}
+                  data-state={row.getIsSelected() && "selected"}
+                  className={cn(
+                    "cursor-pointer",
+                    !hasCustomBg && "hover:bg-blue-50",
+                  )}
+                  style={hasCustomBg ? rowStyle : undefined}
+                  onClick={() => onRowClick?.(row.original)}
+                >
+                  {row.getVisibleCells().map((cell) => (
+                    <TableCell
+                      key={cell.id}
+                      className={cn("py-3 text-xs font-medium", padding)}
+                    >
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext(),
+                      )}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              );
+            })}
+          </TableBody>
+        ) : null}
+      </Table>
+
+      {/* Table 완전 바깥 — EmptyBox */}
+      {!table.getRowModel().rows?.length && (
+        <div className="flex-1 flex items-center justify-center bg-white">
+          <EmptyBox />
+        </div>
+      )}
+      {/* <Table>
         <TableHeader className="bg-background ">
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>
@@ -82,7 +159,7 @@ const BaseTable = <TData, TValue>({
                   <TableHead
                     key={header.id}
                     className={cn(
-                      "font-medium text-[var(--description-dark)] text-xs  py-3",
+                      "font-semibold text-primary text-xs  py-3",
                       padding,
                     )}
                     style={{ width: header.getSize() }}
@@ -99,7 +176,7 @@ const BaseTable = <TData, TValue>({
             </TableRow>
           ))}
         </TableHeader>
-        <TableBody>
+        <TableBody className="bg-white">
           {table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map((row) => {
               const firstCell = row.getVisibleCells()[0];
@@ -136,14 +213,17 @@ const BaseTable = <TData, TValue>({
               );
             })
           ) : (
-            <TableRow>
-              <TableCell colSpan={columns.length} className="text-center">
+            <TableRow className="h-full">
+              <TableCell
+                colSpan={columns.length}
+                className="h-full text-center"
+              >
                 <EmptyBox />
               </TableCell>
             </TableRow>
           )}
         </TableBody>
-      </Table>
+      </Table> */}
     </div>
   );
 };

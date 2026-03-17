@@ -23,6 +23,7 @@ import {
 import Button from "@/components/common/button";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { FormCard } from "@/components/layout/form/form-container";
 
 export const facilityEditFormSchema = z.object({
   facilitySeq: z.number(),
@@ -130,139 +131,149 @@ const FacilityDetailEditForm = () => {
     router.replace(window.location.pathname.replace("/edit", ""));
   };
 
+  const isMro = decodeValue === "MRO";
+
   return (
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(handleSubmit)}
-        className="flex flex-col gap-12"
+        className="flex flex-col gap-4"
       >
-        <div className="grid xl:grid-cols-2 gap-x-24 gap-y-12">
-          {basicCode.typeCodes ? (
-            <FormField
-              control={form.control}
-              name="facilityCodeSeq"
-              render={({ field }) => {
-                const handleValue = (value: string) => {
-                  field.onChange(Number(value));
-                };
-                return (
+        {/* 기본정보 카드 */}
+        <FormCard title="기본정보">
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 xl:gap-x-12">
+            {basicCode.typeCodes && (
+              <FormField
+                control={form.control}
+                name="facilityCodeSeq"
+                render={({ field }) => (
                   <SelectFormItem
                     label="유형"
                     selectItem={convertSelectOptionType(code ?? [])}
-                    onValueChange={handleValue}
+                    onValueChange={(value) => field.onChange(Number(value))}
                     value={field.value?.toString()}
                     required
                   />
-                );
-              }}
-            />
-          ) : null}
-          <FormField
-            control={form.control}
-            name="description"
-            render={({ field }) => (
-              <TextFormItem
-                label="내용"
-                placeholder="내용"
-                {...field}
-                required
+                )}
               />
             )}
-          />
-          <FormField
-            control={form.control}
-            name="fromDt"
-            render={({ field }) => (
-              <DateFormItem
-                label={decodeValue === "MRO" ? "반입일" : "시작일"}
-                value={field.value}
-                onChange={(date) =>
-                  handleDateChange("start", date, field.onChange)
-                }
-                required
-              />
-            )}
-          />
-          {decodeValue !== "MRO" ? (
             <FormField
               control={form.control}
-              name="toDt"
+              name="description"
               render={({ field }) => (
-                <DateFormItem
-                  label="해약일"
-                  value={field.value}
-                  onChange={(date) =>
-                    handleDateChange("end", date, field.onChange)
-                  }
+                <TextFormItem
+                  label="내용"
+                  placeholder="내용"
+                  {...field}
+                  required
                 />
               )}
             />
-          ) : null}
-
-          <FormField
-            control={form.control}
-            name="constractor"
-            render={({ field }) => (
-              <TextFormItem
-                label="업체"
-                placeholder="업체"
-                {...field}
-                required
+            <FormField
+              control={form.control}
+              name="fromDt"
+              render={({ field }) => (
+                <DateFormItem
+                  label={isMro ? "반입일" : "시작일"}
+                  value={field.value}
+                  onChange={(date) =>
+                    handleDateChange("start", date, field.onChange)
+                  }
+                  required
+                />
+              )}
+            />
+            {!isMro && (
+              <FormField
+                control={form.control}
+                name="toDt"
+                render={({ field }) => (
+                  <DateFormItem
+                    label="해약일"
+                    value={field.value}
+                    onChange={(date) =>
+                      handleDateChange("end", date, field.onChange)
+                    }
+                  />
+                )}
               />
             )}
-          />
+          </div>
+        </FormCard>
+
+        {/* 업체정보 카드 */}
+        <FormCard title="업체정보">
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 xl:gap-x-12">
+            <FormField
+              control={form.control}
+              name="constractor"
+              render={({ field }) => (
+                <TextFormItem
+                  label="업체"
+                  placeholder="업체"
+                  {...field}
+                  required
+                />
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="tel"
+              render={({ field }) => (
+                <TextFormItem label="연락처" placeholder="연락처" {...field} />
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="cost"
+              render={({ field }) => (
+                <TextFormItem label="비용" placeholder="비용" {...field} />
+              )}
+            />
+          </div>
+        </FormCard>
+
+        {/* 첨부파일 카드 */}
+        <FormCard title="첨부파일">
           <FormField
             control={form.control}
-            name="tel"
-            render={({ field }) => (
-              <TextFormItem label="연락처" placeholder="연락처" {...field} />
-            )}
+            name="insertAttaches"
+            render={({ field }) => {
+              const handleRemoveExistFiles = (data: string) => {
+                const curRemoveFiles = form.getValues("removeAttaches") || [];
+                form.setValue("removeAttaches", [
+                  ...curRemoveFiles,
+                  parseInt(data),
+                ]);
+              };
+
+              const existedFiles = () => {
+                const removeFiles = form.watch("removeAttaches");
+                if (!facilityDetail) return;
+                return facilityDetail.attaches
+                  .filter((v) => !removeFiles.includes(v.attachSeq))
+                  .map((v) => v.attachSeq.toString());
+              };
+
+              return (
+                <FileFormItem
+                  label=""
+                  accept="accept"
+                  multiple={true}
+                  {...field}
+                  value={field.value}
+                  existingFiles={existedFiles()}
+                  onChange={field.onChange}
+                  onRemoveExitedFiles={handleRemoveExistFiles}
+                />
+              );
+            }}
           />
-          <FormField
-            control={form.control}
-            name="cost"
-            render={({ field }) => (
-              <TextFormItem label="비용" placeholder="비용" {...field} />
-            )}
-          />
+        </FormCard>
+
+        <div className="flex justify-end">
+          <Button type="submit" label="저장" size="sm" />
         </div>
-        <FormField
-          control={form.control}
-          name="insertAttaches"
-          render={({ field }) => {
-            const handleRemoveExistFiles = (data: string) => {
-              console.log("삭제 : ", data);
-              const curRemoveFiles = form.getValues("removeAttaches") || [];
-
-              form.setValue("removeAttaches", [
-                ...curRemoveFiles,
-                parseInt(data),
-              ]);
-            };
-
-            const existedFiles = () => {
-              const removeFiles = form.watch("removeAttaches");
-              if (!facilityDetail) return;
-              return facilityDetail?.attaches
-                .filter((v) => !removeFiles.includes(v.attachSeq))
-                .map((v) => v.attachSeq.toString());
-            };
-
-            return (
-              <FileFormItem
-                label="첨부파일"
-                accept="accept"
-                multiple={true}
-                {...field}
-                value={field.value}
-                existingFiles={existedFiles()}
-                onChange={field.onChange}
-                onRemoveExitedFiles={handleRemoveExistFiles}
-              />
-            );
-          }}
-        />
-        <Button type="submit" label="저장" />
       </form>
     </Form>
   );

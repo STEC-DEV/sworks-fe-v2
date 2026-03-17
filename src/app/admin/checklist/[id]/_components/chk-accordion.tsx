@@ -32,6 +32,7 @@ const ChkAccordion = ({ data }: { data: Checklist }) => {
             <IconButton
               icon="SquarePen"
               size={16}
+              bgClassName="p-1 w-8 h-8 !rounded-DEFAULT border border-border-strong hover:bg-primary-background shadow-sm"
               onClick={() => router.push(`${id}/${data.chkMainSeq}`)}
             />
             <CheckDialog
@@ -40,7 +41,12 @@ const ChkAccordion = ({ data }: { data: Checklist }) => {
               actionLabel={dialogText.checklistItemDelete.actionLabel}
               onClick={onDelete}
             >
-              <IconButton icon="Trash2" size={16} />
+              <IconButton
+                icon="Trash2"
+                size={16}
+                bgClassName="p-1 w-8 h-8 !rounded-DEFAULT border border-border-strong hover:bg-red-50 hover:border-destructive shadow-sm"
+                className="group-hover:text-destructive"
+              />
             </CheckDialog>
           </div>
         )
@@ -70,7 +76,7 @@ export const ChecklistAccordion = ({
       optionChildren={optionChildren}
       isPaddingBottom={false}
     >
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col ">
         {data.subs.map((v, i) => (
           <CheckItemWrapper key={i} data={v} />
         ))}
@@ -82,10 +88,10 @@ export const ChecklistAccordion = ({
 export const CheckItemWrapper = ({ data }: { data: ChecklistItem }) => {
   return (
     <div>
-      <span className="block px-4 py-2 bg-[var(--background)]">
+      <span className="block px-4 py-2 bg-background text-primary font-medium">
         {data.chkSubTitle}
       </span>
-      <div className="flex flex-col gap-4 px-4 py-4">
+      <div className="flex flex-col gap-4 px-4 py-4 divide-y divide-border">
         {data.details.map((v, i) => (
           <CheckItem key={i} item={v} />
         ))}
@@ -96,15 +102,17 @@ export const CheckItemWrapper = ({ data }: { data: ChecklistItem }) => {
 
 export const CheckItem = ({ item }: { item: ChecklistItemDetail }) => {
   return (
-    <div className="flex justify-between items-center ">
-      <div className="flex flex-col gap-1">
-        <span className="text-sm">{item.chkDetailTitle}</span>
-        <span className="text-xs text-[var(--description-light)]">
-          {item.chkItem}
-        </span>
+    <div className="flex justify-between items-center pb-4 last:pb-0">
+      <div className="flex flex-col gap-1 ">
+        <span className="text-sm font-semibold ">{item.chkDetailTitle}</span>
+        {item.chkItem && (
+          <span className="text-xs text-description font-medium">
+            {item.chkItem}
+          </span>
+        )}
       </div>
       {item.chkDetailPoint ? (
-        <div className="whitespace-nowrap px-4 py-1 bg-blue-500 text-white text-sm rounded-[4px]">
+        <div className="whitespace-nowrap px-4 py-1 bg-primary text-white text-sm rounded-DEFAULT">
           {item.chkDetailPoint}점
         </div>
       ) : null}

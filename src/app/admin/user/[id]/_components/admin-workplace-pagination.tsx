@@ -31,7 +31,13 @@ const AdminWorkplacePagination = () => {
       <CommonPagination totalCount={adminWorkplaceList.meta.totalCount} />
       {(canEdit || admin?.userSeq === loginProfile?.userSeq) && (
         <BaseDialog
-          triggerChildren={<IconButton icon={"SquarePen"} size={16} />}
+          triggerChildren={
+            <IconButton
+              icon={"SquarePen"}
+              size={16}
+              bgClassName="!rounded-DEFAULT border border-border-strong hover:bg-primary-background shadow-sm"
+            />
+          }
           title="담당 사업장 수정"
           open={open}
           setOpen={setOpen}
@@ -80,7 +86,7 @@ const EditAdminWorkplaceContents = ({
     setOpen(false);
     await getAdminWorkplaceList(
       new URLSearchParams(searchParams),
-      id.toString()
+      id.toString(),
     );
   };
 
@@ -102,7 +108,7 @@ const EditAdminWorkplaceContents = ({
         />
       </div>
 
-      <ScrollArea className="overflow-hidden">
+      <ScrollArea className="overflow-hidden h-[90vh]">
         <div className="flex flex-col gap-2 px-6 pb-1">
           {filteredSites && filteredSites.length > 0 ? (
             filteredSites.map((v, i) => (

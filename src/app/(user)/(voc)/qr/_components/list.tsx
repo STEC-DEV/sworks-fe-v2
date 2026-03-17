@@ -72,12 +72,16 @@ const QrItemBox = ({ data }: { data: QRListItem }) => {
   };
 
   return (
-    <CustomCard size={"sm"} className="gap-2 pl-4 ">
+    <CustomCard size={"sm"} className="gap-2 pl-4 !rounded-DEFAULT !shadow-sm">
       <div className="flex justify-between items-center">
-        <span className="text-xs text-blue-500">{data.serviceTypeName}</span>
+        <span className="text-xs text-primary font-bold">
+          {data.serviceTypeName}
+        </span>
         <div className="flex gap-2 items-center">
           <BaseDialog
-            triggerChildren={<IconButton icon="SquarePen" size={16} />}
+            triggerChildren={
+              <IconButton icon="SquarePen" size={16} bgClassName="border" />
+            }
             title={`${data.name} QR 수정`}
             open={open}
             setOpen={setOpen}
@@ -90,7 +94,12 @@ const QrItemBox = ({ data }: { data: QRListItem }) => {
             actionLabel={dialogText.defaultDelete.actionLabel}
             onClick={handleDelete}
           >
-            <IconButton icon="Trash2" size={16} />
+            <IconButton
+              icon="Trash2"
+              size={16}
+              bgClassName="border hover:border-destructive hover:bg-red-50"
+              className="group-hover:text-destructive"
+            />
           </CheckDialog>
         </div>
       </div>
@@ -98,15 +107,16 @@ const QrItemBox = ({ data }: { data: QRListItem }) => {
         <div className="flex flex-col gap-1">
           <span className="text-md  ">{data.name}</span>
           {data.comments ? (
-            <span className="text-xs text-[var(--description-dark)]">
+            <span className="text-xs text-description-strong">
               {data.comments}
             </span>
           ) : null}
         </div>
         <IconButton
-          bgClassName="hover:bg-blue-50 "
+          bgClassName="hover:bg-primary-background  w-12 h-12 !rounded-DEFAULT "
+          className="group-hover:stroke-2"
           icon="QrCode"
-          size={24}
+          size={32}
           onClick={handleQRDownload}
         />
       </div>

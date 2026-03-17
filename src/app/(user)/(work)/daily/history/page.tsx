@@ -7,6 +7,7 @@ import TaskHistoryFilter from "./_components/filter";
 import TaskHistoryPagination from "./_components/pagination";
 import TaskHistoryList from "./_components/list";
 import { FileClock } from "lucide-react";
+import { OptionSectionWrapper } from "@/components/common/option-wrapper";
 
 const Page = () => {
   const { getTaskHistoryList } = useTaskHistoryStore();
@@ -18,9 +19,12 @@ const Page = () => {
 
   return (
     <>
-      <AppTitle title="일일업무 이력" icon={FileClock} />
-      <TaskHistoryFilter />
-      <TaskHistoryPagination />
+      <AppTitle title="일일업무 이력" isPrev prevPath="/daily" />
+      <OptionSectionWrapper>
+        <TaskHistoryFilter />
+        <TaskHistoryPagination />
+      </OptionSectionWrapper>
+
       <TaskHistoryList />
     </>
   );

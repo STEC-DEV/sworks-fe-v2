@@ -10,6 +10,7 @@ import { ChevronRight, DotIcon, Users2 } from "lucide-react";
 import BaseDialog from "@/components/ui/custom/base-dialog";
 import Department from "./components/dept";
 import { usePermission } from "@/hooks/usePermission";
+import { OptionSectionWrapper } from "@/components/common/option-wrapper";
 
 const Page = () => {
   const [open, setOpen] = useState<boolean>(false);
@@ -17,7 +18,7 @@ const Page = () => {
   return (
     <>
       <div className="flex justify-between items-center ">
-        <AppTitle title="관리자" icon={Users2} />
+        <AppTitle title="관리자" />
         {canEdit && (
           <BaseDialog
             title="부서"
@@ -25,12 +26,12 @@ const Page = () => {
             setOpen={setOpen}
             triggerChildren={
               <div className="flex gap-1 items-center group cursor-pointer">
-                <span className="text-sm text-[var(--description-light)] group-hover:text-blue-500 ">
+                <span className="text-sm text-description group-hover:text-primary group-hover:font-semibold ">
                   부서관리
                 </span>
                 <ChevronRight
                   size={16}
-                  className="text-[var(--icon)] group-hover:text-blue-500"
+                  className="text-description group-hover:text-primary group-hover:stroke-[2.5]"
                 />
               </div>
             }
@@ -39,9 +40,11 @@ const Page = () => {
           </BaseDialog>
         )}
       </div>
+      <OptionSectionWrapper>
+        <AdminFilter />
+        <AdminPagination />
+      </OptionSectionWrapper>
 
-      <AdminFilter />
-      <AdminPagination />
       <AdminList />
     </>
   );

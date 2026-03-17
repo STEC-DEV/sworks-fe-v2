@@ -52,8 +52,6 @@ const ChkEditForm = ({
           })),
       }));
 
-    console.log(selectedMain);
-
     //isMainStatus - false
     const selectedSubs: SelectTaskChecklist[] = updateChkClassification
       .filter((m) => !m.isMainStatus)
@@ -87,113 +85,111 @@ const ChkEditForm = ({
   if (hasError(loadingKeys.UPDATE_CHK_CLASSIFICATION))
     return <div>에러 발생</div>;
 
-  const handleMainCheck = useCallback(
-    (isCheck: boolean, data: TaskChecklist) => {
-      setSelectedChecklist((prev) => {
-        const exists = prev.find((item) => item.chkMainSeq === data.chkMainSeq);
+  const handleMainCheck = (isCheck: boolean, data: TaskChecklist) => {
+    setSelectedChecklist((prev) => {
+      const exists = prev.find((item) => item.chkMainSeq === data.chkMainSeq);
 
-        // 체크 해제
-        if (!isCheck) {
-          return prev.filter((item) => item.chkMainSeq !== data.chkMainSeq);
-        }
+      // 체크 해제
+      if (!isCheck) {
+        return prev.filter((item) => item.chkMainSeq !== data.chkMainSeq);
+      }
 
-        // 체크
-        if (exists) {
-          // 이미 있으면 모든 subs로 업데이트
-          return prev.map((item) =>
-            item.chkMainSeq === data.chkMainSeq
-              ? {
-                  ...item,
-                  chkSubs: data.subs.map((s) => ({
-                    chkSubSeq: s.chkSubSeq,
-                    chkSubTitle: s.chkSubTitle,
-                  })),
-                }
-              : item
-          );
-        }
-
-        // 새로 추가
-        return [
-          ...prev,
-          {
-            chkMainSeq: data.chkMainSeq,
-            chkMainTitle: data.chkMainTitle,
-            chkSubs: data.subs.map((s) => ({
-              chkSubSeq: s.chkSubSeq,
-              chkSubTitle: s.chkSubTitle,
-            })),
-          },
-        ];
-      });
-    },
-    []
-  );
-
-  const handleSubCheck = useCallback(
-    (isCheck: boolean, sub: TaskChecklistSub, main: TaskChecklist) => {
-      setSelectedChecklist((prev) => {
-        const exists = prev.find((item) => item.chkMainSeq === main.chkMainSeq);
-
-        if (!exists) {
-          if (isCheck) {
-            return [
-              ...prev,
-              {
-                chkMainSeq: main.chkMainSeq,
-                chkMainTitle: main.chkMainTitle,
-                chkSubs: [
-                  {
-                    chkSubSeq: sub.chkSubSeq,
-                    chkSubTitle: sub.chkSubTitle,
-                  },
-                ],
-              },
-            ];
-          }
-          return prev;
-        }
-
-        return prev
-          .map((item) => {
-            if (item.chkMainSeq !== main.chkMainSeq) return item;
-
-            if (isCheck) {
-              const subExists = item.chkSubs.some(
-                (s) => s.chkSubSeq === sub.chkSubSeq
-              );
-              if (subExists) return item;
-
-              return {
+      // 체크
+      if (exists) {
+        // 이미 있으면 모든 subs로 업데이트
+        return prev.map((item) =>
+          item.chkMainSeq === data.chkMainSeq
+            ? {
                 ...item,
-                chkSubs: [
-                  ...item.chkSubs,
-                  {
-                    chkSubSeq: sub.chkSubSeq,
-                    chkSubTitle: sub.chkSubTitle,
-                  },
-                ],
-              };
-            } else {
-              const updatedSubs = item.chkSubs.filter(
-                (s) => s.chkSubSeq !== sub.chkSubSeq
-              );
-
-              if (updatedSubs.length === 0) {
-                return null;
+                chkSubs: data.subs.map((s) => ({
+                  chkSubSeq: s.chkSubSeq,
+                  chkSubTitle: s.chkSubTitle,
+                })),
               }
+            : item,
+        );
+      }
 
-              return {
-                ...item,
-                chkSubs: updatedSubs,
-              };
+      // 새로 추가
+      return [
+        ...prev,
+        {
+          chkMainSeq: data.chkMainSeq,
+          chkMainTitle: data.chkMainTitle,
+          chkSubs: data.subs.map((s) => ({
+            chkSubSeq: s.chkSubSeq,
+            chkSubTitle: s.chkSubTitle,
+          })),
+        },
+      ];
+    });
+  };
+
+  const handleSubCheck = (
+    isCheck: boolean,
+    sub: TaskChecklistSub,
+    main: TaskChecklist,
+  ) => {
+    setSelectedChecklist((prev) => {
+      const exists = prev.find((item) => item.chkMainSeq === main.chkMainSeq);
+
+      if (!exists) {
+        if (isCheck) {
+          return [
+            ...prev,
+            {
+              chkMainSeq: main.chkMainSeq,
+              chkMainTitle: main.chkMainTitle,
+              chkSubs: [
+                {
+                  chkSubSeq: sub.chkSubSeq,
+                  chkSubTitle: sub.chkSubTitle,
+                },
+              ],
+            },
+          ];
+        }
+        return prev;
+      }
+
+      return prev
+        .map((item) => {
+          if (item.chkMainSeq !== main.chkMainSeq) return item;
+
+          if (isCheck) {
+            const subExists = item.chkSubs.some(
+              (s) => s.chkSubSeq === sub.chkSubSeq,
+            );
+            if (subExists) return item;
+
+            return {
+              ...item,
+              chkSubs: [
+                ...item.chkSubs,
+                {
+                  chkSubSeq: sub.chkSubSeq,
+                  chkSubTitle: sub.chkSubTitle,
+                },
+              ],
+            };
+          } else {
+            const updatedSubs = item.chkSubs.filter(
+              (s) => s.chkSubSeq !== sub.chkSubSeq,
+            );
+
+            if (updatedSubs.length === 0) {
+              return null;
             }
-          })
-          .filter((item) => item !== null) as SelectTaskChecklist[];
-      });
-    },
-    []
-  );
+
+            return {
+              ...item,
+              chkSubs: updatedSubs,
+            };
+          }
+        })
+        .filter((item) => item !== null) as SelectTaskChecklist[];
+    });
+  };
 
   const handleSave = async () => {
     //display

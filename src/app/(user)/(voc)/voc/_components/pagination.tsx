@@ -1,5 +1,6 @@
 "use client";
 import BaseSkeleton from "@/components/common/base-skeleton";
+import Button from "@/components/common/button";
 import IconButton from "@/components/common/icon-button";
 import VocAddForm from "@/components/form/normal/voc/add";
 import BaseDialog from "@/components/ui/custom/base-dialog";
@@ -8,6 +9,7 @@ import { usePermission } from "@/hooks/usePermission";
 import { useUIStore } from "@/store/common/ui-store";
 import { useVocStore } from "@/store/normal/voc/voc-store";
 import { convertRecordDataToFormData } from "@/utils/convert";
+import { PlusIcon } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import React, { useState } from "react";
 
@@ -32,7 +34,13 @@ const VocPagination = () => {
     <CommonPagination totalCount={vocList.meta.totalCount}>
       {canWorkerEdit && (
         <BaseDialog
-          triggerChildren={<IconButton icon={"Plus"} />}
+          triggerChildren={
+            <Button
+              label="민원 접수"
+              size={"sm"}
+              icon={<PlusIcon size={20} />}
+            />
+          }
           title="민원 접수"
           open={open}
           setOpen={setOpen}

@@ -1,10 +1,12 @@
 import BaseSkeleton from "@/components/common/base-skeleton";
+import Button from "@/components/common/button";
 import IconButton from "@/components/common/icon-button";
 import CommonPagination from "@/components/ui/custom/pagination/common-pagination";
 import { useDecodeParam } from "@/hooks/params";
 import { usePermission } from "@/hooks/usePermission";
 import { useUIStore } from "@/store/common/ui-store";
 import { useEquipmentHistoryMainStore } from "@/store/normal/equipment/history/list-store";
+import { Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React from "react";
 
@@ -21,7 +23,12 @@ const HistoryPagination = () => {
   return (
     <CommonPagination totalCount={20}>
       {canWorkerEdit && (
-        <IconButton icon="Plus" onClick={() => router.push(`${id}/add`)} />
+        <Button
+          label="이력생성"
+          icon={<Plus />}
+          onClick={() => router.push(`${id}/add`)}
+          size={"sm"}
+        />
       )}
     </CommonPagination>
   );

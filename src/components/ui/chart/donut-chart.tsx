@@ -16,7 +16,7 @@ interface ChartDataProps {
 const DonutChart = ({ data }: { data: ChartDataProps[] }) => {
   const chartData = data.map((item) => ({
     ...item,
-    fill: "#3b82f6", // 기본 파란색
+    fill: "#223377", // 기본 파란색
   }));
 
   const chartConfig = {
@@ -28,7 +28,7 @@ const DonutChart = ({ data }: { data: ChartDataProps[] }) => {
       (acc, item) => {
         acc[item.userName] = {
           label: item.userName,
-          color: "#3b82f6",
+          color: "#223377",
         };
         return acc;
       },
@@ -75,7 +75,7 @@ const DonutChart = ({ data }: { data: ChartDataProps[] }) => {
                       <tspan
                         x={viewBox.cx}
                         y={viewBox.cy}
-                        className="fill-blue-500 text-xl font-bold"
+                        className="fill-primary text-xl font-bold"
                       >
                         {chartData[0].value.toLocaleString()}%
                       </tspan>

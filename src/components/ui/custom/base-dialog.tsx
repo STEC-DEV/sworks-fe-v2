@@ -34,8 +34,8 @@ const BaseDialog = ({
       <DialogTrigger asChild>{triggerChildren}</DialogTrigger>
       <DialogContent
         className={cn(
-          " bg-white overflow-hidden px-0 flex flex-col gap-6 max-h-[90vh] xl:max-h-[80vh] min-h-0",
-          className
+          " bg-white w-300 overflow-hidden px-0 flex flex-col gap-6 max-h-[90vh] xl:max-h-[80vh] min-h-0",
+          className,
         )}
       >
         <DialogHeader className="px-6 flex-shrink-0">

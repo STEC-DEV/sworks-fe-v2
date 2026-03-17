@@ -13,6 +13,7 @@ import { workplaceColumns } from "@/app/admin/workplace/components/workplace-col
 import BaseTable from "@/components/common/base-table";
 import { useDecodeParam } from "@/hooks/params";
 import { useUIStore } from "@/store/common/ui-store";
+import { OptionSectionWrapper } from "@/components/common/option-wrapper";
 
 const AdminWorkplaceList = () => {
   const router = useRouter();
@@ -46,8 +47,11 @@ const AdminWorkplaceList = () => {
   return (
     <div className="w-full flex flex-col gap-4">
       <AppTitle title="담당 사업장" />
-      <AdminWorkplaceFilter />
-      <AdminWorkplacePagination />
+      <OptionSectionWrapper>
+        <AdminWorkplaceFilter />
+        <AdminWorkplacePagination />
+      </OptionSectionWrapper>
+
       {dataList()}
     </div>
   );

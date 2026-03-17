@@ -53,7 +53,7 @@ const EquipmentBox = ({ item }: { item: EquipmentListItem }) => {
   };
   return (
     <div
-      className="flex flex-col border border-[var(--border)] rounded-[4px] hover:cursor-pointer hover:border-blue-500 overflow-hidden"
+      className="bg-surface shadow-sm flex flex-col border rounded-DEFAULT cursor-pointer hover:border-primary overflow-hidden"
       onClick={handleOnClick}
     >
       {item.images ? (
@@ -66,17 +66,17 @@ const EquipmentBox = ({ item }: { item: EquipmentListItem }) => {
           />
         </div>
       ) : (
-        <div className="flex items-center justify-center h-25 bg-[var(--background)]">
-          <ImageIcon className="text-[var(--icon)]" size={24} />
+        <div className="flex items-center justify-center h-25 bg-primary-background">
+          <ImageIcon className="text-icon" size={24} />
         </div>
       )}
 
       <div className="flex flex-col gap-2 px-4 py-2">
         <div className="flex justify-between">
-          <span className="text-xs text-[var(--description-light)] ">
-            {item.serial}
+          <span className="text-xs text-description-light ">{item.serial}</span>
+          <span className=" text-sm text-primary font-semibold">
+            {item.serviceTypeName}
           </span>
-          <span className=" text-sm text-blue-500">{item.serviceTypeName}</span>
         </div>
         <span className="text-sm font-medium">{item.name}</span>
         <div className="flex flex-col gap-1">

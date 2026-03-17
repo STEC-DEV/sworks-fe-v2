@@ -197,7 +197,7 @@ const DayBox = ({
 } & React.HTMLProps<HTMLDivElement>) => {
   return (
     <div
-      className={`flex-1  overflow-hidden w-8 h-8 text-xs flex items-center justify-center hover:cursor-pointer hover:bg-gray-200 dark:hover:bg-[#535353]
+      className={`flex-1  overflow-hidden w-8 h-8 text-xs flex items-center justify-center cursor-pointer hover:bg-blue-100 dark:hover:bg-[#535353]
         ${
           format(focusDate, "yyyy/MM/dd") === format(day, "yyyy/MM/dd")
             ? "bg-blue-100 dark:bg-[#535353]"
@@ -238,7 +238,7 @@ const SimpleCalendarYear = ({ date, onYearClick }: SimpleCalendarYearProps) => {
             <div
               key={year}
               className={`flex-1 h-16 flex items-center justify-center 
-                hover:cursor-pointer hover:bg-gray-200 dark:hover:bg-[#535353]
+                hover:cursor-pointer hover:bg-blue-100 dark:hover:bg-[#535353]
                 text-sm rounded
                 ${year === currentYear ? "bg-blue-100 dark:bg-[#535353] font-medium" : ""}
               `}

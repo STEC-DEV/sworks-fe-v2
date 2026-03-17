@@ -1,10 +1,12 @@
 "use client";
 import BaseSkeleton from "@/components/common/base-skeleton";
+import Button from "@/components/common/button";
 import IconButton from "@/components/common/icon-button";
 import CommonPagination from "@/components/ui/custom/pagination/common-pagination";
 import { usePermission } from "@/hooks/usePermission";
 import { useAdminListStore } from "@/store/admin/admin/admin-list-store";
 import { useUIStore } from "@/store/common/ui-store";
+import { PlusIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 import React from "react";
@@ -21,7 +23,11 @@ const AdminPagination = () => {
   return (
     <CommonPagination totalCount={adminList.meta.totalCount}>
       {canEdit && (
-        <IconButton icon={"Plus"} onClick={() => router.push("user/add")} />
+        <Button
+          label="관리자 생성"
+          icon={<PlusIcon />}
+          onClick={() => router.push("user/add")}
+        />
       )}
     </CommonPagination>
   );

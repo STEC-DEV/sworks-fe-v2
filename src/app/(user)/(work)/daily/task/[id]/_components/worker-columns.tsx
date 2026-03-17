@@ -9,20 +9,19 @@ export const WorkerColumns: ColumnDef<Worker>[] = [
     enableResizing: false,
     cell: ({ row }) => {
       const name = row.original.userName;
+
       //   const job = row.original.job;
       return (
         <div className="flex gap-2 w-fit">
           <div className="p-2 border-2xl border border-border bg-background rounded-[4px]">
-            <UserIcon className="text-[var(--icon)]" strokeWidth={1.5} />
+            <UserIcon className="text-icon" strokeWidth={1.5} />
           </div>
-          <div className="flex flex-col gap-1">
+          <div className="flex flex-col gap-1 justify-center">
             <span className="text-sm font-medium">{name}</span>
-            {/* <span className="text-xs text-[var(--description-light)]">
+            {/* <span className=" text-[var(--description-light)]">
               {job ?? "job"}
             </span> */}
-            <span className="text-xs text-[var(--description-light)]">
-              {"job"}
-            </span>
+            {/* <span className=" text-description">{"job"}</span> */}
           </div>
         </div>
       );
@@ -33,7 +32,7 @@ export const WorkerColumns: ColumnDef<Worker>[] = [
   //     header: "권한",
   //     cell: ({ row }) => {
   //       const value = row.original.role;
-  //       return <span className="text-xs text-blue-500 font-medium">{value}</span>;
+  //       return <span className=" text-blue-500 font-medium">{value}</span>;
   //     },
   //   },
   {
@@ -41,7 +40,7 @@ export const WorkerColumns: ColumnDef<Worker>[] = [
     header: "전화번호",
     cell: ({ row }) => {
       const value = row.original.phone;
-      return <span className="text-xs ">{value ?? "01012345678"}</span>;
+      return <span className=" ">{value ?? "01012345678"}</span>;
     },
   },
   {
@@ -50,7 +49,7 @@ export const WorkerColumns: ColumnDef<Worker>[] = [
     cell: ({ row }) => {
       const values = row.original.serviceTypeName;
       return (
-        <span className="px-4 py-0.5 text-xs font-semibold text-blue-500  bg-blue-50 rounded-[4px] border border-blue-500 ">
+        <span className="px-4 py-0.5  font-semibold text-primary  bg-primary-background rounded-DEFAULT border border-primary ">
           {values}
         </span>
       );

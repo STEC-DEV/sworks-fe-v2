@@ -40,6 +40,7 @@ const ChecklistArea = () => {
             icon="Plus"
             size={16}
             onClick={() => router.push(`${id}/add`)}
+            bgClassName="!rounded-DEFAULT  border border-border-strong hover:bg-primary-background shadow-sm"
           />
         )}
       </div>

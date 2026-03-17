@@ -8,7 +8,7 @@ export const qeCol: ColumnDef<QeListItem>[] = [
     header: "업무유형",
     cell: ({ row }) => {
       const value = row.original.serviceTypeName;
-      return <span className=" text-[var(--description-dark)] ">{value}</span>;
+      return <span className="  ">{value}</span>;
     },
   },
   {
@@ -16,7 +16,7 @@ export const qeCol: ColumnDef<QeListItem>[] = [
     header: "관리부문",
     cell: ({ row }) => {
       const value = row.original.divCodeName;
-      return <span className=" text-[var(--description-dark)] ">{value}</span>;
+      return <span className="  ">{value}</span>;
     },
   },
   {
@@ -24,7 +24,7 @@ export const qeCol: ColumnDef<QeListItem>[] = [
     header: "관리유형",
     cell: ({ row }) => {
       const value = row.original.typeCodeName;
-      return <span className=" text-[var(--description-dark)] ">{value}</span>;
+      return <span className="  ">{value}</span>;
     },
   },
   {
@@ -52,8 +52,8 @@ export const qeCol: ColumnDef<QeListItem>[] = [
       const point = row.original.total;
       return (
         <div className="text-right">
-          <span className="text-sm  text-blue-500">{value} </span>
-          <span className="text-sm  text-[var(--description-light)]">
+          <span className="text-base  text-primary font-bold">{value} </span>
+          <span className="text-base  text-description-light font-bold">
             / {point}
           </span>
         </div>

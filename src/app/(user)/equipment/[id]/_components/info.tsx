@@ -55,12 +55,14 @@ const EquipmentInfoCard = () => {
   return (
     <CustomCard className="xl:flex-row p-0 gap-0 ">
       {data.images ? (
-        <div className="h-40 xl:w-80 xl:h-59 overflow-hidden relative rounded-l-[4px] ">
+        <div className="h-40 xl:w-80 xl:h-59 overflow-hidden relative rounded-DEFAULT p-4">
           <SingleImageBox path={data.images} />
         </div>
       ) : (
-        <div className="w-80 bg-[var(--background)] flex items-center justify-center ">
-          <ImageIcon size={24} className="text-[var(--icon)]" />
+        <div className="p-4">
+          <div className="w-80 bg-background flex items-center justify-center h-full rounded-DEFAULT ">
+            <ImageIcon size={24} className="text-icon" />
+          </div>
         </div>
       )}
 
@@ -68,72 +70,71 @@ const EquipmentInfoCard = () => {
         {/* 헤더 */}
         <div className="flex justify-between items-center">
           <div className="flex gap-4 items-center">
-            <span className="text-sm text-[var(--description-light)]">
-              {data?.serial}
-            </span>
-            <span className="text-sm text-blue-500">
+            <span className="text-sm text-primary bg-primary-background px-2 py-0.5">
               {data?.serviceTypeName}
             </span>
+            <span className="text-sm text-description">{data?.serial}</span>
           </div>
           {canWorkerEdit && (
             <IconButton
               icon="SquarePen"
+              bgClassName="!rounded-DEFAULT border border-border-strong"
               onClick={() => router.push(`${rawValue}/edit`)}
             />
           )}
         </div>
         {/* 바디 */}
         <div className="flex flex-col gap-6 ">
-          <span className="text-lg">{data.name}</span>
+          <span className="text-lg text-primary font-medium">{data.name}</span>
           <div className="grid grid-cols-2 xl:grid-cols-4 gap-4">
             <IconKeyValue
               icon={CalendarDaysIcon}
               label="구매일"
               value={format(data.buyDt, "yyyy-MM-dd")}
-              bgColor="bg-blue-50"
-              mainColor="text-blue-600"
+              bgColor="blue-50"
+              mainColor="blue-600"
             />
             <IconKeyValue
               icon={StoreIcon}
               label="구매처"
               value={data.buyer}
-              bgColor="bg-orange-50"
-              mainColor="text-orange-600"
+              bgColor="orange-50"
+              mainColor="orange-600"
             />
             <IconKeyValue
               icon={TargetIcon}
               label="용도"
               value={data.usage}
-              bgColor="bg-purple-50"
-              mainColor="text-purple-600"
+              bgColor="purple-50"
+              mainColor="purple-600"
             />
             <IconKeyValue
               icon={DollarSignIcon}
               label="비용"
               value={data.cost.toString()}
-              bgColor="bg-green-50"
-              mainColor="text-green-600"
+              bgColor="green-50"
+              mainColor="green-600"
             />
             <IconKeyValue
               icon={FactoryIcon}
               label="제조사"
               value={data.maker}
-              bgColor="bg-indigo-50"
-              mainColor="text-indigo-600"
+              bgColor="indigo-50"
+              mainColor="indigo-600"
             />
             <IconKeyValue
               icon={GaugeIcon}
               label="규격용량"
               value={data.capacity}
-              bgColor="bg-rose-50"
-              mainColor="text-rose-600"
+              bgColor="rose-50"
+              mainColor="rose-600"
             />
             <IconKeyValue
               icon={HashIcon}
               label="수량"
               value={data.amount.toString()}
-              bgColor="bg-gray-50"
-              mainColor="text-gray-600"
+              bgColor="gray-50"
+              mainColor="gray-600"
             />
           </div>
         </div>
@@ -157,15 +158,17 @@ const IconKeyValue = ({
 }) => {
   const Icon = icon;
   return (
-    <div className="flex items-center gap-4 ">
+    <div className="flex items-center gap-4  rounded-DEFAULT ">
       <div
-        className={`flex items-center justify-center rounded-[4px] w-10 h-10 ${bgColor}`}
+        className={`flex items-center justify-center rounded-[4px] w-10 h-10 bg-${bgColor} border `}
       >
-        <Icon size={20} className={`${mainColor}`} strokeWidth={1.5} />
+        <Icon size={20} className={`text-${mainColor}`} strokeWidth={1.5} />
       </div>
       <div className="flex flex-col gap-1">
-        <span className="text-sm text-[var(--description-light)]">{label}</span>
-        <span className="text-sm text-[var(--description-dark)]">{value}</span>
+        <span className="text-xs text-description">{label}</span>
+        <span className="text-sm text-description-strong font-semibold">
+          {value}
+        </span>
       </div>
     </div>
   );

@@ -1,4 +1,5 @@
 import BaseSkeleton from "@/components/common/base-skeleton";
+import Button from "@/components/common/button";
 import IconButton from "@/components/common/icon-button";
 import RequestAddForm from "@/components/form/normal/request/add";
 import BaseDialog from "@/components/ui/custom/base-dialog";
@@ -7,6 +8,7 @@ import { usePermission } from "@/hooks/usePermission";
 import { useAuthStore } from "@/store/auth/auth-store";
 import { useUIStore } from "@/store/common/ui-store";
 import { useRequestTaskStore } from "@/store/normal/req/main";
+import { PlusIcon } from "lucide-react";
 import React, { useState } from "react";
 
 const ReqPagination = () => {
@@ -27,7 +29,9 @@ const ReqPagination = () => {
           title="업무요청"
           open={open}
           setOpen={setOpen}
-          triggerChildren={<IconButton icon="Plus" />}
+          triggerChildren={
+            <Button label="업무요청" icon={<PlusIcon />} size={"sm"} />
+          }
         >
           <RequestAddForm onClose={() => setOpen(false)} />
         </BaseDialog>

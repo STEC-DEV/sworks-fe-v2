@@ -167,389 +167,351 @@ const DayScheduleEditForm = ({
   return (
     <Form {...form}>
       <form
-        className="flex flex-col gap-4 w-full"
-        onSubmit={form.handleSubmit(handleSubmit, (err) => {
-          console.log(err);
-        })}
+        className="flex flex-col gap-6 w-full"
+        onSubmit={form.handleSubmit(handleSubmit, (err) => console.log(err))}
       >
-        <div className="flex flex-col gap-4 h-full pb-1">
-          {enteredWorkplace?.contracts ? (
-            <FormField
-              control={form.control}
-              name="serviceTypeSeq"
-              render={({ field }) => {
-                const handleValue = (value: string) => {
-                  field.onChange(Number(value));
-                };
-
-                return (
-                  <SelectFormItem
-                    label="업무 유형"
-                    selectItem={convertSelectOptionType(
-                      enteredWorkplace.contracts ?? [],
-                    )}
-                    onValueChange={handleValue}
-                    value={field.value?.toString()}
-                    required
-                  />
-                );
-              }}
-            />
-          ) : null}
-          <FormField
-            control={form.control}
-            name="title"
-            render={({ field }) => (
-              <TextFormItem
-                label="제목"
-                placeholder="제목"
-                {...field}
-                required
-              />
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="description"
-            render={({ field }) => (
-              <TextAreaFormItem
-                label="설명"
-                className="h-20"
-                placeholder="설명"
-                {...field}
-              />
-            )}
-          />
-
-          <div className="flex flex-col xl:flex-row gap-6">
-            <FormField
-              control={form.control}
-              name="isAllDay"
-              render={({ field }) => {
-                //종일선택 시 날짜 값 초기화
-                const handleAllDay = (values: boolean) => {
-                  if (values) {
-                    form.setValue("startDt", new Date());
-                    form.setValue("endDt", new Date());
-                  }
-
-                  field.onChange(values);
-                };
-
-                return (
-                  <div className="flex flex-col gap-2">
-                    <span className="text-xs text-[var(--description-light)]">
-                      종일
-                    </span>
-                    <div className="flex-1 flex items-center">
-                      <Switch
-                        className="ring ring-[var(--border)]  hover:cursor-pointer data-[state=checked]:bg-blue-500 data-[state=unchecked]:bg-[var(--background)] [&_[data-slot=switch-thumb]]:bg-white focus-visible:ring-0 focus-visible:outline-none"
-                        checked={field.value}
-                        onCheckedChange={handleAllDay}
+        {/* 2열 그리드 */}
+        <div className="grid grid-cols-2 gap-6 h-full">
+          {/* ── 왼쪽: 기본정보 + 일정 ── */}
+          <div className="flex flex-col gap-6">
+            {/* 기본정보 카드 */}
+            <div className="bg-surface rounded-xl border border-border shadow-sm overflow-hidden">
+              <div className="flex items-center gap-2 px-4 py-3 border-b border-border bg-background">
+                <span className="text-xs font-bold text-primary">
+                  기본 정보
+                </span>
+              </div>
+              <div className="flex flex-col gap-4 p-4">
+                {enteredWorkplace?.contracts && (
+                  <FormField
+                    control={form.control}
+                    name="serviceTypeSeq"
+                    render={({ field }) => (
+                      <SelectFormItem
+                        label="업무 유형"
+                        selectItem={convertSelectOptionType(
+                          enteredWorkplace.contracts ?? [],
+                        )}
+                        onValueChange={(value) => field.onChange(Number(value))}
+                        value={field.value?.toString()}
+                        required
                       />
+                    )}
+                  />
+                )}
+                <FormField
+                  control={form.control}
+                  name="title"
+                  render={({ field }) => (
+                    <TextFormItem
+                      label="제목"
+                      placeholder="제목"
+                      {...field}
+                      required
+                    />
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="description"
+                  render={({ field }) => (
+                    <TextAreaFormItem
+                      label="설명"
+                      className="h-20"
+                      placeholder="설명"
+                      {...field}
+                    />
+                  )}
+                />
+                <div className="grid grid-cols-2 gap-3">
+                  <FormField
+                    control={form.control}
+                    name="viewColor"
+                    render={({ field }) => (
+                      <SelectColorFormItem
+                        label="색상"
+                        value={field.value}
+                        onChange={field.onChange}
+                        required
+                      />
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="alarmDt"
+                    render={({ field }) => (
+                      <AlarmTimeFormItem
+                        label="알람"
+                        value={field.value}
+                        onChange={field.onChange}
+                        isAlarm={form.watch("alarmYn")}
+                        onAlarmChange={(alarm) => {
+                          form.setValue("alarmYn", alarm);
+                          field.onChange(alarm ? "08:00:00" : null);
+                        }}
+                        offsetDay={form.watch("alarmOffSetDays")}
+                        onOffsetDayChange={(day) =>
+                          form.setValue("alarmOffSetDays", day)
+                        }
+                      />
+                    )}
+                  />
+                </div>
+                <FormField
+                  control={form.control}
+                  name="logs.logComments"
+                  render={({ field }) => (
+                    <TextAreaFormItem
+                      label="특이사항"
+                      className="h-20"
+                      placeholder="특이사항"
+                      {...field}
+                    />
+                  )}
+                />
+              </div>
+            </div>
+
+            {/* 일정 카드 */}
+            <div className="bg-surface rounded-xl border border-border shadow-sm overflow-hidden">
+              <div className="flex items-center gap-2 px-4 py-3 border-b border-border bg-background">
+                <span className="text-xs font-bold text-primary">일정</span>
+              </div>
+              <div className="flex flex-col gap-4 p-4">
+                <FormField
+                  control={form.control}
+                  name="isAllDay"
+                  render={({ field }) => (
+                    <div className="flex items-center gap-2">
+                      <Switch
+                        className="ring ring-border-strong cursor-pointer data-[state=checked]:bg-primary data-[state=unchecked]:bg-skeleton [&_[data-slot=switch-thumb]]:bg-surface focus-visible:ring-0 focus-visible:outline-none"
+                        checked={field.value}
+                        onCheckedChange={(values) => {
+                          if (values) {
+                            form.setValue("startDt", new Date());
+                            form.setValue("endDt", new Date());
+                          }
+                          field.onChange(values);
+                        }}
+                      />
+                      <span className="text-sm text-description">종일</span>
                     </div>
-                  </div>
-                );
-              }}
-            />
-            <FormField
-              control={form.control}
-              name="startDt"
-              render={({ field }) => {
-                const allDay = !form.watch("isAllDay");
-                return (
-                  <DateFormItem
-                    label="시작"
-                    value={field.value}
-                    onChange={(date) => {
-                      console.log(date);
-                      handleDateChange("start", date, field.onChange);
-                    }}
-                    setHour={allDay}
-                    required
+                  )}
+                />
+                <div className="grid grid-cols-2 gap-3">
+                  <FormField
+                    control={form.control}
+                    name="startDt"
+                    render={({ field }) => (
+                      <DateFormItem
+                        label="시작"
+                        value={field.value}
+                        onChange={(date) =>
+                          handleDateChange("start", date, field.onChange)
+                        }
+                        setHour={!form.watch("isAllDay")}
+                        required
+                      />
+                    )}
                   />
-                );
-              }}
-            />
-            <FormField
-              control={form.control}
-              name="endDt"
-              render={({ field }) => {
-                const allDay = !form.watch("isAllDay");
-                return (
-                  <DateFormItem
-                    label="종료"
-                    value={field.value}
-                    onChange={(date) =>
-                      handleDateChange("end", date, field.onChange)
-                    }
-                    setHour={allDay}
+                  <FormField
+                    control={form.control}
+                    name="endDt"
+                    render={({ field }) => (
+                      <DateFormItem
+                        label="종료"
+                        value={field.value}
+                        onChange={(date) =>
+                          handleDateChange("end", date, field.onChange)
+                        }
+                        setHour={!form.watch("isAllDay")}
+                      />
+                    )}
                   />
-                );
-              }}
-            />
+                </div>
+              </div>
+            </div>
           </div>
 
-          <FormField
-            control={form.control}
-            name="alarmDt"
-            render={({ field }) => {
-              const handleValue = (value: string) => {
-                field.onChange(Number(value));
-              };
+          {/* ── 오른쪽: 첨부파일 ── */}
+          <div className="flex flex-col gap-4">
+            <div className="bg-surface rounded-xl border border-border shadow-sm overflow-hidden flex flex-col ">
+              <div className="flex items-center gap-2 px-4 py-3 border-b border-border bg-background">
+                <span className="text-xs font-bold text-primary">
+                  첨부파일 & 이미지
+                </span>
+              </div>
+              <div className="flex flex-col gap-5 p-4">
+                <FormField
+                  name="logs.fileAttaches"
+                  control={form.control}
+                  render={({ field }) => {
+                    // 기존 로직 동일
+                    const handleRemoveExistFiles = (data: string) => {
+                      const curRemoveFiles =
+                        form.getValues("logs.deleteAttaches") || [];
+                      form.setValue("logs.deleteAttaches", [
+                        ...curRemoveFiles,
+                        parseInt(data),
+                      ]);
+                    };
+                    const existedFiles = () => {
+                      const removeFiles =
+                        form.watch("logs.deleteAttaches") || [];
+                      if (!schedule?.logs?.files) return [];
+                      return schedule.logs.files
+                        .filter((v) => !removeFiles.includes(v.attachSeq))
+                        .map((v) => v.attachSeq.toString());
+                    };
+                    const fileValue = useMemo(() => {
+                      if (!field.value) return [];
+                      return field.value
+                        .map((v) => v.attaches)
+                        .filter((file): file is File => file !== null);
+                    }, [field.value]);
+                    const handleFileChange = (files: File[]) => {
+                      field.onChange(
+                        files.map((file) => ({
+                          attachSeq: null,
+                          photoType: 3,
+                          attaches: file,
+                          comments: "",
+                        })),
+                      );
+                    };
 
-              return (
-                <AlarmTimeFormItem
-                  label="알람"
-                  value={field.value}
-                  onChange={field.onChange}
-                  isAlarm={form.watch("alarmYn")}
-                  onAlarmChange={(alarm) => {
-                    form.setValue("alarmYn", alarm);
-                    if (!alarm) field.onChange(null);
-                    else {
-                      field.onChange("08:00:00");
-                    }
+                    return (
+                      <FileFormItem
+                        label="첨부파일"
+                        accept="accept"
+                        multiple={true}
+                        {...field}
+                        value={fileValue}
+                        existingFiles={existedFiles()}
+                        onChange={handleFileChange}
+                        onRemoveExitedFiles={handleRemoveExistFiles}
+                        isVertical
+                      />
+                    );
                   }}
-                  offsetDay={form.watch("alarmOffSetDays")}
-                  onOffsetDayChange={(day) =>
-                    form.setValue("alarmOffSetDays", day)
-                  }
                 />
-              );
-            }}
-          />
-          <FormField
-            control={form.control}
-            name="viewColor"
-            render={({ field }) => (
-              <SelectColorFormItem
-                label="색상"
-                value={field.value}
-                onChange={field.onChange}
-                required
+
+                {/* 작업전/후 이미지 — 나란히 */}
+                <FormField
+                  control={form.control}
+                  name="logs.imageAttaches"
+                  render={({ field }) => {
+                    const handleValue = (value: ScheduleFormAttach[]) => {
+                      field.onChange([
+                        ...field.value.filter((v) => v.photoType !== 1),
+                        ...value,
+                      ]);
+                    };
+                    const handleDelete = (value: ScheduleFormAttach) => {
+                      field.onChange(field.value.filter((v) => v !== value));
+                    };
+                    const handleExistDelete = (value: number) => {
+                      form.setValue("logs.deleteAttaches", [
+                        ...form.getValues("logs.deleteAttaches"),
+                        value,
+                      ]);
+                      field.onChange(
+                        field.value.filter((v) => v.attachSeq !== value),
+                      );
+                    };
+                    const existedBeforeImages = useMemo(() => {
+                      return (
+                        schedule?.logs?.beforeImages.filter(
+                          (v) =>
+                            !form
+                              .watch("logs.deleteAttaches")
+                              .includes(v.attachSeq),
+                        ) ?? []
+                      );
+                    }, [
+                      schedule?.logs?.beforeImages,
+                      form.watch("logs.deleteAttaches"),
+                    ]);
+
+                    return (
+                      <ScheduleImageFileFormItem
+                        label="작업 전 이미지"
+                        photoType={1}
+                        value={field.value.filter((v) => v.photoType === 1)}
+                        onChange={handleValue}
+                        existedFile={existedBeforeImages}
+                        removeExistedFile={[]}
+                        onExistedFileRemove={handleExistDelete}
+                        onDeleteFile={handleDelete}
+                      />
+                    );
+                  }}
+                />
+                <FormField
+                  control={form.control}
+                  name="logs.imageAttaches"
+                  render={({ field }) => {
+                    const handleValue = (value: ScheduleFormAttach[]) => {
+                      field.onChange([
+                        ...field.value.filter((v) => v.photoType !== 2),
+                        ...value,
+                      ]);
+                    };
+                    const handleDelete = (value: ScheduleFormAttach) => {
+                      field.onChange(field.value.filter((v) => v !== value));
+                    };
+                    const handleExistDelete = (value: number) => {
+                      form.setValue("logs.deleteAttaches", [
+                        ...form.getValues("logs.deleteAttaches"),
+                        value,
+                      ]);
+                      field.onChange(
+                        field.value.filter((v) => v.attachSeq !== value),
+                      );
+                    };
+                    const existedAfterImages = useMemo(() => {
+                      return (
+                        schedule?.logs?.afterImages.filter(
+                          (v) =>
+                            !form
+                              .watch("logs.deleteAttaches")
+                              .includes(v.attachSeq),
+                        ) ?? []
+                      );
+                    }, [
+                      schedule?.logs?.afterImages,
+                      form.watch("logs.deleteAttaches"),
+                    ]);
+
+                    return (
+                      <ScheduleImageFileFormItem
+                        label="작업 후 이미지"
+                        photoType={2}
+                        value={field.value.filter((v) => v.photoType === 2)}
+                        onChange={handleValue}
+                        existedFile={existedAfterImages}
+                        removeExistedFile={[]}
+                        onExistedFileRemove={handleExistDelete}
+                        onDeleteFile={handleDelete}
+                      />
+                    );
+                  }}
+                />
+              </div>
+            </div>
+
+            {/* 저장 버튼 — 오른쪽 하단 정렬 */}
+            <div className="flex justify-end gap-2 shrink-0">
+              <Button
+                type="button"
+                variant={"prev"}
+                size={"sm"}
+                label="취소"
+                onClick={() => router.push("/schedule")}
               />
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="logs.logComments"
-            render={({ field }) => (
-              <TextAreaFormItem
-                label="특이사항"
-                className="h-20"
-                placeholder="특이사항"
-                {...field}
-              />
-            )}
-          />
-          <FormField
-            name="logs.fileAttaches"
-            control={form.control}
-            render={({ field }) => {
-              const handleRemoveExistFiles = (data: string) => {
-                const curRemoveFiles =
-                  form.getValues("logs.deleteAttaches") || [];
-
-                form.setValue("logs.deleteAttaches", [
-                  ...curRemoveFiles,
-                  parseInt(data),
-                ]);
-              };
-
-              const existedFiles = () => {
-                const removeFiles = form.watch("logs.deleteAttaches") || [];
-                if (!schedule?.logs?.files) return [];
-                return schedule?.logs.files
-                  .filter((v) => !removeFiles.includes(v.attachSeq))
-                  .map((v) => v.attachSeq.toString());
-              };
-
-              const fileValue = useMemo(() => {
-                if (!field.value) return [];
-                return field.value
-                  .map((v) => v.attaches)
-                  .filter((file): file is File => file !== null);
-              }, [field.value]);
-
-              const handleFileChange = (files: File[]) => {
-                const newValue = files.map((file) => ({
-                  attachSeq: null,
-                  photoType: 3, // 기본값 설정
-                  attaches: file,
-                  comments: "",
-                }));
-                field.onChange(newValue);
-              };
-
-              return (
-                <FileFormItem
-                  label="첨부파일"
-                  accept="accept"
-                  multiple={true}
-                  {...field}
-                  value={fileValue}
-                  existingFiles={existedFiles()}
-                  onChange={handleFileChange}
-                  onRemoveExitedFiles={handleRemoveExistFiles}
-                  isVertical
-                />
-              );
-            }}
-          />
-
-          <FormField
-            control={form.control}
-            name="logs.imageAttaches"
-            render={({ field }) => {
-              console.log(
-                "🟢 FormField render 실행! field.value:",
-                field.value,
-              );
-
-              const handleValue = (value: ScheduleFormAttach[]) => {
-                console.log("🔵 부모 handleValue 호출됨! 받은 값:", value);
-                console.log("🔵 현재 field.value:", field.value);
-
-                // 다른 photoType 유지
-                const otherImages = field.value.filter(
-                  (v) => v.photoType !== 1,
-                );
-
-                console.log("🔵 otherImages:", otherImages);
-                const newValue = [...otherImages, ...value];
-                console.log("🔵 field.onChange 호출! 전달값:", newValue);
-
-                field.onChange(newValue);
-              };
-
-              //신규 등록파일 삭제
-              const handleDelete = (value: ScheduleFormAttach) => {
-                // console.log("신규 삭제 : ", value);
-
-                const delValue = field.value.filter((v) => v !== value);
-                field.onChange(delValue);
-              };
-
-              //기존 등록파일 삭제
-              const handleExistDelete = (value: number) => {
-                console.log("기존 삭제", value);
-                //현재 삭제된 파일을 제외한 기존파일
-
-                const currentDeleteValue = form.getValues(
-                  "logs.deleteAttaches",
-                );
-                //삭제파일 등록
-                form.setValue("logs.deleteAttaches", [
-                  ...currentDeleteValue,
-                  value,
-                ]);
-                //만약 기존 파일이 수정된경우 value에 포함되기떄문에 확인 후 삭제
-                const newValue = field.value.filter(
-                  (v) => v.attachSeq !== value,
-                );
-                field.onChange(newValue);
-              };
-
-              const existedBeforeImages = useMemo(() => {
-                return (
-                  schedule?.logs?.beforeImages.filter(
-                    (v) =>
-                      !form.watch("logs.deleteAttaches").includes(v.attachSeq),
-                  ) ?? []
-                );
-              }, [
-                schedule?.logs?.beforeImages,
-                form.watch("logs.deleteAttaches"),
-              ]);
-
-              return (
-                <ScheduleImageFileFormItem
-                  label="작업 전 이미지 "
-                  photoType={1}
-                  value={field.value.filter((v) => v.photoType === 1)}
-                  onChange={handleValue}
-                  existedFile={existedBeforeImages}
-                  removeExistedFile={[]}
-                  onExistedFileRemove={handleExistDelete}
-                  onDeleteFile={handleDelete}
-                />
-              );
-            }}
-          />
-
-          <FormField
-            control={form.control}
-            name="logs.imageAttaches"
-            render={({ field }) => {
-              const handleValue = (value: ScheduleFormAttach[]) => {
-                // 다른 photoType 유지
-                const otherImages = field.value.filter(
-                  (v) => v.photoType !== 2,
-                );
-
-                // 합치기
-                field.onChange([...otherImages, ...value]);
-              };
-
-              //신규 등록파일 삭제
-              const handleDelete = (value: ScheduleFormAttach) => {
-                // console.log("신규 삭제 : ", value);
-
-                const delValue = field.value.filter((v) => v !== value);
-                field.onChange(delValue);
-              };
-
-              //기존 등록파일 삭제
-              const handleExistDelete = (value: number) => {
-                console.log("기존 삭제", value);
-
-                const currentDeleteValue = form.getValues(
-                  "logs.deleteAttaches",
-                );
-                //삭제파일 등록
-                form.setValue("logs.deleteAttaches", [
-                  ...currentDeleteValue,
-                  value,
-                ]);
-                //만약 기존 파일이 수정된경우 value에 포함되기떄문에 확인 후 삭제
-                const newValue = field.value.filter(
-                  (v) => v.attachSeq !== value,
-                );
-                field.onChange(newValue);
-              };
-
-              const existedAfterImages = useMemo(() => {
-                return (
-                  schedule?.logs?.afterImages.filter(
-                    (v) =>
-                      !form.watch("logs.deleteAttaches").includes(v.attachSeq),
-                  ) ?? []
-                );
-              }, [
-                schedule?.logs?.afterImages,
-                form.watch("logs.deleteAttaches"),
-              ]);
-
-              return (
-                <ScheduleImageFileFormItem
-                  label="작업 후 이미지"
-                  key={"일까"}
-                  photoType={2}
-                  value={field.value.filter((v) => v.photoType === 2)}
-                  onChange={handleValue}
-                  existedFile={existedAfterImages}
-                  removeExistedFile={[]}
-                  onExistedFileRemove={handleExistDelete}
-                  onDeleteFile={handleDelete}
-                />
-              );
-            }}
-          />
-        </div>
-
-        <div className="shrink-0 ">
-          <Button label="저장" />
+              <Button type="submit" size={"sm"} label="저장" />
+            </div>
+          </div>
         </div>
       </form>
     </Form>

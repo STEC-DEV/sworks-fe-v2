@@ -5,6 +5,7 @@ import Button from "@/components/common/button";
 import IconButton from "@/components/common/icon-button";
 import Input, { InputSearch } from "@/components/common/input";
 import BaseDialog from "@/components/ui/custom/base-dialog";
+import EmptyBox from "@/components/ui/custom/empty";
 import CommonPagination from "@/components/ui/custom/pagination/common-pagination";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useDecodeParam } from "@/hooks/params";
@@ -29,7 +30,13 @@ const ManagerPagination = () => {
       <CommonPagination totalCount={managers.meta.totalCount} />
       {canEdit && (
         <BaseDialog
-          triggerChildren={<IconButton icon={"SquarePen"} size={16} />}
+          triggerChildren={
+            <IconButton
+              icon={"SquarePen"}
+              size={16}
+              bgClassName="!rounded-DEFAULT border border-border-strong shadow-sm hover:bg-primary-background"
+            />
+          }
           title="담당 사업장 수정"
           open={open}
           setOpen={setOpen}
@@ -98,7 +105,7 @@ const EditManagerContents = ({
     if (!id) return;
     await putManagerList(
       id?.toString(),
-      select.map((v) => v.userSeq)
+      select.map((v) => v.userSeq),
     );
     setOpen(false);
     await getManagers(id, new URLSearchParams(searchParams));
@@ -115,7 +122,7 @@ const EditManagerContents = ({
         />
       </div>
 
-      <ScrollArea className="overflow-hidden px-6">
+      <ScrollArea className="overflow-hidden px-6 h-[90vh]">
         <div className="flex flex-col gap-2 pb-1">
           {/* 🔄 수정: allManagerList → filteredManagers */}
           {filteredManagers && filteredManagers.length > 0 ? (

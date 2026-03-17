@@ -11,6 +11,7 @@ import { TextFormItem } from "@/components/common/form-input/text-field";
 import { DateFormItem } from "@/components/common/form-input/date-field";
 import Button from "@/components/common/button";
 import z from "zod";
+import { FormCard } from "@/components/layout/form/form-container";
 
 export const buildingSchema = z.object({
   // buildingSeq: z.number(),
@@ -73,203 +74,390 @@ const BuildingEditForm = ({
     });
   }, [building, form]);
 
+  const numericChange =
+    (onChange: (v: number) => void) =>
+    (e: React.ChangeEvent<HTMLInputElement>) =>
+      onChange(e.target.value === "" ? 0 : Number(e.target.value));
+
   return (
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="flex flex-col gap-6"
+        className="flex flex-col gap-4"
       >
-        <div className="flex flex-col gap-6 xl:grid xl:grid-cols-2 xl: gap-x-24 xl:gap-y-12 ">
-          <FormField
-            control={form.control}
-            name="dongName"
-            render={({ field }) => (
-              <TextFormItem
-                label="명칭"
-                placeholder="명칭"
-                {...field}
-                required
-              />
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="address"
-            render={({ field }) => (
-              <TextFormItem
-                label="위치"
-                placeholder="위치"
-                {...field}
-                required
-              />
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="totalArea"
-            render={({ field }) => (
-              <TextFormItem
-                label="연면적"
-                placeholder="연면적"
-                {...field}
-                required
-              />
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="completeDt"
-            render={({ field }) => (
-              <DateFormItem
-                label="준공일"
-                value={field.value}
-                onChange={field.onChange}
-                required
-              />
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="usage"
-            render={({ field }) => (
-              <TextFormItem
-                label="건물용도"
-                placeholder="건물용도"
-                {...field}
-                required
-              />
-            )}
-          />
-        </div>
-        <div className="base-flex-col gap-6 !h-auto">
-          <span className="text-md font-bold">주차장</span>
-          <div className=" flex flex-col gap-6 xl:flex xl:flex-row xl:gap-12">
+        {/* 건물정보 카드 */}
+        <FormCard title="건물정보">
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 xl:gap-x-12">
             <FormField
               control={form.control}
-              name="selfParkingSpaces"
+              name="dongName"
               render={({ field }) => (
                 <TextFormItem
-                  label="자주식"
-                  placeholder="자주식"
-                  type="number"
+                  label="명칭"
+                  placeholder="명칭"
                   {...field}
-                  onChange={(e) => {
-                    const value =
-                      e.target.value === "" ? 0 : Number(e.target.value);
-                    field.onChange(value);
-                  }}
+                  required
                 />
               )}
             />
             <FormField
               control={form.control}
-              name="autoParkingSpaces"
+              name="address"
               render={({ field }) => (
                 <TextFormItem
-                  label="기계식"
-                  placeholder="기계식"
-                  type="number"
+                  label="위치"
+                  placeholder="위치"
                   {...field}
-                  onChange={(e) => {
-                    const value =
-                      e.target.value === "" ? 0 : Number(e.target.value);
-                    field.onChange(value);
-                  }}
+                  required
                 />
               )}
             />
             <FormField
               control={form.control}
-              name="handicapParkingSpaces"
+              name="totalArea"
               render={({ field }) => (
                 <TextFormItem
-                  label="장애인"
-                  placeholder="장애인"
-                  type="number"
+                  label="연면적"
+                  placeholder="연면적"
                   {...field}
-                  onChange={(e) => {
-                    const value =
-                      e.target.value === "" ? 0 : Number(e.target.value);
-                    field.onChange(value);
-                  }}
+                  required
+                />
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="completeDt"
+              render={({ field }) => (
+                <DateFormItem
+                  label="준공일"
+                  value={field.value}
+                  onChange={field.onChange}
+                  required
+                />
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="usage"
+              render={({ field }) => (
+                <TextFormItem
+                  label="건물용도"
+                  placeholder="건물용도"
+                  {...field}
+                  required
                 />
               )}
             />
           </div>
+        </FormCard>
+
+        {/* 주차장 + 층 2열 카드 */}
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+          <FormCard title="주차장">
+            <div className="grid grid-cols-3 gap-4">
+              <FormField
+                control={form.control}
+                name="selfParkingSpaces"
+                render={({ field }) => (
+                  <TextFormItem
+                    label="자주식"
+                    placeholder="0"
+                    type="number"
+                    {...field}
+                    onChange={numericChange(field.onChange)}
+                  />
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="autoParkingSpaces"
+                render={({ field }) => (
+                  <TextFormItem
+                    label="기계식"
+                    placeholder="0"
+                    type="number"
+                    {...field}
+                    onChange={numericChange(field.onChange)}
+                  />
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="handicapParkingSpaces"
+                render={({ field }) => (
+                  <TextFormItem
+                    label="장애인"
+                    placeholder="0"
+                    type="number"
+                    {...field}
+                    onChange={numericChange(field.onChange)}
+                  />
+                )}
+              />
+            </div>
+          </FormCard>
+
+          <FormCard title="층">
+            <div className="grid grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="basementFloors"
+                render={({ field }) => (
+                  <TextFormItem
+                    label="지하"
+                    placeholder="0"
+                    type="number"
+                    {...field}
+                    onChange={numericChange(field.onChange)}
+                  />
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="groundFloors"
+                render={({ field }) => (
+                  <TextFormItem
+                    label="지상"
+                    placeholder="0"
+                    type="number"
+                    {...field}
+                    onChange={numericChange(field.onChange)}
+                  />
+                )}
+              />
+            </div>
+          </FormCard>
         </div>
-        <div className="base-flex-col gap-6 !h-auto">
-          <span className="text-md font-bold">층</span>
-          <div className="flex flex-col gap-6 xl:flex xl:flex-row xl:gap-12">
-            <FormField
-              control={form.control}
-              name="basementFloors"
-              render={({ field }) => (
-                <TextFormItem
-                  label="지하"
-                  placeholder="지하"
-                  type="number"
-                  {...field}
-                  onChange={(e) => {
-                    const value =
-                      e.target.value === "" ? 0 : Number(e.target.value);
-                    field.onChange(value);
-                  }}
-                />
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="groundFloors"
-              render={({ field }) => (
-                <TextFormItem
-                  label="지상"
-                  placeholder="지상"
-                  type="number"
-                  {...field}
-                  onChange={(e) => {
-                    const value =
-                      e.target.value === "" ? 0 : Number(e.target.value);
-                    field.onChange(value);
-                  }}
-                />
-              )}
-            />
-          </div>
+
+        {/* 이미지 카드 */}
+        <FormCard title="이미지">
           <FormField
             control={form.control}
             name="images"
             render={({ field }) => {
-              const handleRemove = () => {
-                form.setValue("removeImage", true);
-              };
-              const existingFiles = () => {
-                if (!building) return;
-                const isRemove = form.watch("removeImage");
-                console.log("삭제 여부 : ", isRemove);
-                console.log(isRemove ? null : building.images);
+              const handleRemove = () => form.setValue("removeImage", true);
+              const existingFile = form.watch("removeImage")
+                ? null
+                : building?.images;
 
-                return isRemove ? null : building.images;
-              };
               return (
                 <ImageFormItem
-                  label="이미지"
+                  label=""
                   multiple={false}
                   {...field}
                   value={field.value}
                   isRemove={form.watch("removeImage")}
                   onChange={field.onChange}
-                  existingFile={existingFiles()}
+                  existingFile={existingFile}
                   onRemoveExistingFile={handleRemove}
                 />
               );
             }}
           />
-        </div>
-        <div className="w-full flex justify-end">
-          <Button label="저장" className="" />
+        </FormCard>
+
+        {/* 저장 버튼 */}
+        <div className="flex justify-end">
+          <Button label="저장" size="sm" />
         </div>
       </form>
     </Form>
+    // <Form {...form}>
+    //   <form
+    //     onSubmit={form.handleSubmit(onSubmit)}
+    //     className="flex flex-col gap-6"
+    //   >
+    //     <div className="flex flex-col gap-6 xl:grid xl:grid-cols-2 xl: gap-x-24 xl:gap-y-12 ">
+    //       <FormField
+    //         control={form.control}
+    //         name="dongName"
+    //         render={({ field }) => (
+    //           <TextFormItem
+    //             label="명칭"
+    //             placeholder="명칭"
+    //             {...field}
+    //             required
+    //           />
+    //         )}
+    //       />
+    //       <FormField
+    //         control={form.control}
+    //         name="address"
+    //         render={({ field }) => (
+    //           <TextFormItem
+    //             label="위치"
+    //             placeholder="위치"
+    //             {...field}
+    //             required
+    //           />
+    //         )}
+    //       />
+    //       <FormField
+    //         control={form.control}
+    //         name="totalArea"
+    //         render={({ field }) => (
+    //           <TextFormItem
+    //             label="연면적"
+    //             placeholder="연면적"
+    //             {...field}
+    //             required
+    //           />
+    //         )}
+    //       />
+    //       <FormField
+    //         control={form.control}
+    //         name="completeDt"
+    //         render={({ field }) => (
+    //           <DateFormItem
+    //             label="준공일"
+    //             value={field.value}
+    //             onChange={field.onChange}
+    //             required
+    //           />
+    //         )}
+    //       />
+    //       <FormField
+    //         control={form.control}
+    //         name="usage"
+    //         render={({ field }) => (
+    //           <TextFormItem
+    //             label="건물용도"
+    //             placeholder="건물용도"
+    //             {...field}
+    //             required
+    //           />
+    //         )}
+    //       />
+    //     </div>
+    //     <div className="base-flex-col gap-6 !h-auto">
+    //       <span className="text-md font-bold">주차장</span>
+    //       <div className=" flex flex-col gap-6 xl:flex xl:flex-row xl:gap-12">
+    //         <FormField
+    //           control={form.control}
+    //           name="selfParkingSpaces"
+    //           render={({ field }) => (
+    //             <TextFormItem
+    //               label="자주식"
+    //               placeholder="자주식"
+    //               type="number"
+    //               {...field}
+    //               onChange={(e) => {
+    //                 const value =
+    //                   e.target.value === "" ? 0 : Number(e.target.value);
+    //                 field.onChange(value);
+    //               }}
+    //             />
+    //           )}
+    //         />
+    //         <FormField
+    //           control={form.control}
+    //           name="autoParkingSpaces"
+    //           render={({ field }) => (
+    //             <TextFormItem
+    //               label="기계식"
+    //               placeholder="기계식"
+    //               type="number"
+    //               {...field}
+    //               onChange={(e) => {
+    //                 const value =
+    //                   e.target.value === "" ? 0 : Number(e.target.value);
+    //                 field.onChange(value);
+    //               }}
+    //             />
+    //           )}
+    //         />
+    //         <FormField
+    //           control={form.control}
+    //           name="handicapParkingSpaces"
+    //           render={({ field }) => (
+    //             <TextFormItem
+    //               label="장애인"
+    //               placeholder="장애인"
+    //               type="number"
+    //               {...field}
+    //               onChange={(e) => {
+    //                 const value =
+    //                   e.target.value === "" ? 0 : Number(e.target.value);
+    //                 field.onChange(value);
+    //               }}
+    //             />
+    //           )}
+    //         />
+    //       </div>
+    //     </div>
+    //     <div className="base-flex-col gap-6 !h-auto">
+    //       <span className="text-md font-bold">층</span>
+    //       <div className="flex flex-col gap-6 xl:flex xl:flex-row xl:gap-12">
+    //         <FormField
+    //           control={form.control}
+    //           name="basementFloors"
+    //           render={({ field }) => (
+    //             <TextFormItem
+    //               label="지하"
+    //               placeholder="지하"
+    //               type="number"
+    //               {...field}
+    //               onChange={(e) => {
+    //                 const value =
+    //                   e.target.value === "" ? 0 : Number(e.target.value);
+    //                 field.onChange(value);
+    //               }}
+    //             />
+    //           )}
+    //         />
+    //         <FormField
+    //           control={form.control}
+    //           name="groundFloors"
+    //           render={({ field }) => (
+    //             <TextFormItem
+    //               label="지상"
+    //               placeholder="지상"
+    //               type="number"
+    //               {...field}
+    //               onChange={(e) => {
+    //                 const value =
+    //                   e.target.value === "" ? 0 : Number(e.target.value);
+    //                 field.onChange(value);
+    //               }}
+    //             />
+    //           )}
+    //         />
+    //       </div>
+    //       <FormField
+    //         control={form.control}
+    //         name="images"
+    //         render={({ field }) => {
+    //           const handleRemove = () => {
+    //             form.setValue("removeImage", true);
+    //           };
+    //           const existingFiles = () => {
+    //             if (!building) return;
+    //             const isRemove = form.watch("removeImage");
+    //             console.log("삭제 여부 : ", isRemove);
+    //             console.log(isRemove ? null : building.images);
+
+    //             return isRemove ? null : building.images;
+    //           };
+    //           return (
+    //             <ImageFormItem
+    //               label="이미지"
+    //               multiple={false}
+    //               {...field}
+    //               value={field.value}
+    //               isRemove={form.watch("removeImage")}
+    //               onChange={field.onChange}
+    //               existingFile={existingFiles()}
+    //               onRemoveExistingFile={handleRemove}
+    //             />
+    //           );
+    //         }}
+    //       />
+    //     </div>
+    //     <div className="w-full flex justify-end">
+    //       <Button label="저장" className="" />
+    //     </div>
+    //   </form>
+    // </Form>
   );
 };
 

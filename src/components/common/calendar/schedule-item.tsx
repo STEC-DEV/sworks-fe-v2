@@ -136,9 +136,10 @@ const ScheduleItem = ({ data }: ScheduleItemProps) => {
         sticky="partial" // 부분적으로 화면에 붙음
       >
         {canWorkerEdit && (
-          <div className="flex justify-end">
+          <div className="flex justify-end gap-2">
             <IconButton
               icon="SquarePen"
+              bgClassName="border border-border-strong"
               size={16}
               onClick={() => {
                 router.push(`/schedule/edit/${data.schSeq}`);
@@ -150,17 +151,21 @@ const ScheduleItem = ({ data }: ScheduleItemProps) => {
               actionLabel={dialogText.defaultDelete.actionLabel}
               onClick={onDelete}
             >
-              <IconButton icon="Trash2" size={16} />
+              <IconButton
+                icon="Trash2"
+                size={16}
+                bgClassName="border border-border-strong"
+              />
             </CheckDialog>
           </div>
         )}
 
         <div className="space-y-4">
           <div className="flex flex-col gap-1">
-            <span>{data.title}</span>
-            <span className="text-xs text-[var(--description-light)]">{`${format(
+            <span className="font-bold">{data.title}</span>
+            <span className="text-xs text-description-light">{`${format(
               data.startDt,
-              "yyyy-MM-dd "
+              "yyyy-MM-dd ",
             )} ~ ${data.endDt ? format(data.endDt, "yyyy-MM-dd ") : ""}`}</span>
           </div>
 
@@ -199,8 +204,8 @@ const ScheduleIconValue = ({
   if (!value) return null;
   return (
     <div className="flex items-center  gap-2">
-      <Icon size={16} className="text-[var(--icon)]" />
-      <span className="text-sm text-[var(--description-dark)]">{value}</span>
+      <Icon size={16} className="text-icon" />
+      <span className="text-sm text-description font-semibold">{value}</span>
     </div>
   );
 };
@@ -389,7 +394,7 @@ const ImageCarousel = ({ pathList }: ImageCarouselProps) => {
                   </span>
                 </div>
               </>,
-              document.body
+              document.body,
             )}
         </>
       )}

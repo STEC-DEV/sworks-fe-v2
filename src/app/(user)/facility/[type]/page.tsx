@@ -12,6 +12,7 @@ import { mroColumns } from "../_components/mro-columns";
 import BaseTable from "@/components/common/base-table";
 import { useUIStore } from "@/store/common/ui-store";
 import { CogIcon, HammerIcon, LucideIcon, Package } from "lucide-react";
+import { OptionSectionWrapper } from "@/components/common/option-wrapper";
 
 const Page = () => {
   const { facilityList, getFacilityList, loadingKeys } = useFacilityMainStore();
@@ -91,9 +92,12 @@ const Page = () => {
 
   return (
     <>
-      <AppTitle icon={icon()} title={decodeValue} />
-      <FacilityFilter />
-      <FacilityPagination />
+      <AppTitle title={decodeValue} />
+      <OptionSectionWrapper>
+        <FacilityFilter />
+        <FacilityPagination />
+      </OptionSectionWrapper>
+
       {getList()}
     </>
   );

@@ -81,7 +81,7 @@ const WorkplaceChecklistEditForm = () => {
     if (selectedAvailableChecklistItem) {
       setItems(selectedAvailableChecklistItem);
       const newSeq = selectedAvailableChecklistItem.map(
-        (item) => item.chkMainSeq
+        (item) => item.chkMainSeq,
       );
       form.setValue("chkMainSeq", newSeq);
     }
@@ -91,7 +91,7 @@ const WorkplaceChecklistEditForm = () => {
     useSensor(MouseSensor, { activationConstraint: { distance: 5 } }),
     useSensor(TouchSensor, {
       activationConstraint: { delay: 150, tolerance: 5 },
-    })
+    }),
   );
 
   //드래그
@@ -110,7 +110,7 @@ const WorkplaceChecklistEditForm = () => {
       updateSelectedAvailableChecklistItem(newItems);
       form.setValue(
         "chkMainSeq",
-        newItems.map((i) => i.chkMainSeq)
+        newItems.map((i) => i.chkMainSeq),
       );
     }
   };
@@ -145,7 +145,13 @@ const WorkplaceChecklistEditForm = () => {
         <div className="flex justify-between items-center">
           <AppTitle title="평가항목" />
           <BaseDialog
-            triggerChildren={<IconButton icon={"SquarePen"} size={16} />}
+            triggerChildren={
+              <IconButton
+                icon={"SquarePen"}
+                size={16}
+                bgClassName="!rounded-DEFAULT border border-border-strong shadow-sm hover:bg-primary-background"
+              />
+            }
             title="평가항목 수정"
             open={open}
             setOpen={setOpen}

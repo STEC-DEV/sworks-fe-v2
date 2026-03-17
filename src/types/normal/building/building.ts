@@ -103,7 +103,7 @@ export interface UiBuildingInfo {
   pumpDetails: DynamicDetail[];
 }
 
-interface DynamicDetail {
+export interface DynamicDetail {
   detailSeq: number;
   typeGubun: boolean; //true - 냉난방 , false- pump
   typeSeq: number; // 구분값

@@ -2,6 +2,7 @@
 import BaseSkeleton from "@/components/common/base-skeleton";
 import CustomCard from "@/components/common/card";
 import IconButton from "@/components/common/icon-button";
+import AppTitle from "@/components/common/label/title";
 import WorkplaceInfoEditForm from "@/components/form/admin/workplace/workplace-edit";
 import BaseDialog from "@/components/ui/custom/base-dialog";
 import { usePermission } from "@/hooks/usePermission";
@@ -28,17 +29,20 @@ const InfoCard = () => {
   if (hasError(loadingKeys.INFO)) return <div>에러 발생</div>;
 
   return (
-    <CustomCard className="flex-col xl:flex-row p-0 gap-0 ">
-      <div className="flex items-center justify-center w-full h-50 xl:h-auto xl:w-100  bg-[var(--background)] rounded-[4px]">
-        <ImageIcon className="text-[var(--icon)]" />
-      </div>
+    <CustomCard className="flex-col xl:flex-row p-0 gap-0 border-border-strong ">
       <div className="flex flex-col flex-1">
-        <div className="flex justify-between items-center w-full px-6 py-4 border-b border-[var(--border)]">
-          <span className="font-bold">{workplace.siteName}</span>
+        <div className="flex justify-between items-center w-full px-6 py-4 bg-background">
+          <span className="font-bold text-xl">{workplace.siteName}</span>
           {canEdit && (
             <BaseDialog
               title="사업장 정보수정"
-              triggerChildren={<IconButton icon="SquarePen" size={16} />}
+              triggerChildren={
+                <IconButton
+                  icon="SquarePen"
+                  size={16}
+                  bgClassName="!rounded-DEFAULT border border-border-strong shadow-sm hover:bg-primary-background"
+                />
+              }
               open={editInfoOpen}
               setOpen={setEditInfoOpen}
             >
@@ -126,7 +130,6 @@ export default InfoCard;
 const InfoCardSkeleton = () => {
   return (
     <div className=" flex flex-col gap-4 xl:flex-row xl:gap-6 w-full xl:h-50 shrink-0">
-      <BaseSkeleton className=" h-50 xl:w-100 xl:h-full" />
       <div className="flex flex-col gap-4 w-full xl:h-full">
         <BaseSkeleton className="h-10" />
         <BaseSkeleton className="h-15 xl:flex-1" />

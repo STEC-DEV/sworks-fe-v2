@@ -24,14 +24,15 @@ const IconButton = ({
     <Tooltip text={tooltip}>
       <div
         className={cn(
-          "group p-2 rounded-[50px] hover:bg-[var(--background)] hover:cursor-pointer relative",
-          bgClassName
+          "flex items-center justify-center h-9 w-9 group p-2 bg-white/70 rounded-[50px] hover:bg-[var(--background)] cursor-pointer relative",
+          bgClassName,
         )}
         {...props}
       >
         <SelectLucideIcon
-          className={cn("text-[var(--icon)]", className)}
+          className={cn("text-icon", className)}
           size={size}
+          strokeWidth={1.5}
         />
       </div>
     </Tooltip>
