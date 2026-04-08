@@ -38,8 +38,24 @@ interface MenuSection {
   items: MenuItem[];
 }
 
+const isDev = process.env.NODE_ENV === "development";
+
 const NormalMenu: MenuSection[] = [
   // { items: [{ title: "현황", icon: "LayoutDashboard", path: "/status" }] },
+  ...(isDev
+    ? [
+        {
+          items: [
+            {
+              title: "대시보드",
+              icon: "LayoutDashboard" as const,
+              path: "/dashboard",
+            },
+          ],
+        },
+      ]
+    : []),
+
   { items: [{ title: "일정", icon: "CalendarDays", path: "/schedule" }] },
   { items: [{ title: "사업장", icon: "Factory", path: "/workplace" }] },
 

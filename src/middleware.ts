@@ -101,7 +101,20 @@ const setUnauthorizedCookie = (res: NextResponse) => {
 };
 
 export async function middleware(req: NextRequest) {
+  const isDev = process.env.NODE_ENV === "development";
   const { pathname } = req.nextUrl;
+
+  // 0. 운영 환경(Production)에서 대시보드 경로로 진입을 시도할 경우
+  if (
+    !isDev &&
+    (pathname.startsWith("/dashboard") || pathname.startsWith("/demo"))
+  ) {
+    // 방법 A: 홈으로 리다이렉트 시키기 (가장 일반적)
+    return NextResponse.redirect(new URL("/login", req.url));
+
+    // 방법 B: 아예 없는 페이지처럼 404 페이지를 보여주기 (보안상 더 권장)
+    // return NextResponse.rewrite(new URL('/404', request.url));
+  }
 
   // 1. 정적 파일 및 API 요청 스킵
   const isFileRequest = pathname.match(/\.\w+$/);
@@ -114,7 +127,7 @@ export async function middleware(req: NextRequest) {
   }
 
   //2. 인증없이 접근 가능한 경로
-  const publicPath = ["/", "/login", "/complain", "/cancel"];
+  const publicPath = ["/", "/login", "/complain", "/cancel", "/demo"];
   if (publicPath.some((path) => pathname.startsWith(path))) {
     return NextResponse.next();
   }

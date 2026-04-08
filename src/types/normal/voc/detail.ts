@@ -1,4 +1,5 @@
 interface VocDetail {
+  clients: VocClient;
   logs: LogInfo;
   replys: VocReply[];
 }
@@ -13,6 +14,11 @@ interface LogInfo {
   phone: string;
   replyYn: boolean;
   attaches: Attach[];
+}
+
+interface VocClient {
+  comments: string;
+  tel: string;
 }
 
 interface VocReply {

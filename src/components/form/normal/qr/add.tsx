@@ -67,7 +67,7 @@ const QrAddForm = ({
                 <SelectFormItem
                   label="업무 유형"
                   selectItem={convertSelectOptionType(
-                    basicCode.contractCodes ?? []
+                    basicCode.contractCodes ?? [],
                   )}
                   onValueChange={handleValue}
                   value={field.value?.toString()}
@@ -81,7 +81,11 @@ const QrAddForm = ({
           control={form.control}
           name="comments"
           render={({ field }) => (
-            <TextFormItem label="설명" placeholder="설명" {...field} />
+            <TextFormItem
+              label="고객 안내문"
+              placeholder="고객 안내문"
+              {...field}
+            />
           )}
         />
         <FormField

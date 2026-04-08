@@ -38,6 +38,18 @@ const Page = () => {
             <div className="pb-4 border-b-2 border-border text-md font-semibold">
               처리현황
             </div>
+            <div className="border-2 p-2 border-primary rounded-[4px] bg-background text-sm">
+              <div>
+                <span>상담 업무 시간 : </span>
+                <span className="font-semibold">
+                  {complain.clients.comments || "평일 09:00 ~ 18:00"}
+                </span>
+              </div>
+              <div>
+                <span>전화 문의 : </span>
+                <span className="font-semibold"> {complain.clients.tel}</span>
+              </div>
+            </div>
             {complain.replys.length > 0 ? (
               complain.replys.map((v, i) => <Reply key={i} data={v} />)
             ) : (
@@ -56,15 +68,28 @@ export default Page;
 
 const Log = ({ data }: { data: LogInfo }) => {
   return (
-    <div className="px-6 flex flex-col gap-2">
+    <div className="px-6 flex flex-col gap-4">
       <div className="flex justify-between items-center">
-        <span className="text-sm">{data.createUser}</span>
+        <div className="flex flex-col gap-1">
+          <span className="text-sm text-[var(--description)]">작성자</span>
+          <span className="text-sm">{data.createUser}</span>
+        </div>
+
         {/* <span className="text-sm text-blue-500">{data.serviceTypeName}</span> */}
       </div>
-      <DialogCarousel pathList={data.attaches.map((v) => v.path)} isSmall />
-      <span className="text-sm">{data.title}</span>
+      <div className="h-0.25 w-full bg-border" />
+      <div className="flex flex-col gap-1">
+        <span className="text-sm text-[var(--description)]">제목</span>
+        <span className="text-sm">{data.title}</span>
+      </div>
+      <div className="h-0.25 w-full bg-border" />
+      <div className="flex flex-col gap-1">
+        <span className="text-sm text-[var(--description)]">민원내용</span>
 
-      <span className="text-sm">{data.content}</span>
+        <span className="text-sm">{data.content}</span>
+      </div>
+
+      <DialogCarousel pathList={data.attaches.map((v) => v.path)} isSmall />
     </div>
   );
 };
