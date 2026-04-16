@@ -10,6 +10,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
+import { KpiSection } from "./_components/KpiSection";
 
 // ─── Mock Data ───────────────────────────────────────────────
 const complaintTrendData = [
@@ -161,8 +162,9 @@ const DashboardPage = () => {
       {/* ── Body ── */}
       <div className="mb-6">
         {/* KPI Row */}
-        <div className="grid grid-cols-4 gap-2.5 mb-4">
-          {/* 업무 진행률 */}
+        <KpiSection />
+        {/* <div className="grid grid-cols-4 gap-2.5 mb-4">
+         
           <Card>
             <div className="text-xs text-description mb-1">
               금일 업무 진행률
@@ -181,7 +183,7 @@ const DashboardPage = () => {
             </div>
           </Card>
 
-          {/* 민원 발생 */}
+    
           <Card>
             <div className="text-xs text-description mb-1">금일 민원 발생</div>
             <div className="text-2xl font-medium text-[#1a2340]">5건</div>
@@ -191,7 +193,6 @@ const DashboardPage = () => {
             </div>
           </Card>
 
-          {/* 민원 처리율 */}
           <Card>
             <div className="text-xs text-description mb-1">
               이번달 민원 처리율
@@ -204,7 +205,7 @@ const DashboardPage = () => {
             </div>
           </Card>
 
-          {/* 품질 평균 */}
+     
           <Card>
             <div className="text-xs text-description mb-1">
               이번달 품질 평균
@@ -220,7 +221,7 @@ const DashboardPage = () => {
               전월 대비
             </div>
           </Card>
-        </div>
+        </div> */}
 
         {/* Main Grid */}
         <div
