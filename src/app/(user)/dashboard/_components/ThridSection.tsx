@@ -124,7 +124,7 @@ function DashSchSkeleton() {
 // ─── ThirdSection 스켈레톤 ────────────────────────────────────
 function ThirdSectionSkeleton() {
   return (
-    <div className="grid grid-cols-3 gap-3.5 items-stretch">
+    <div className="grid grid-cols-1 xl:grid-cols-3 gap-3.5 items-stretch">
       <QeTransitionSkeleton />
       <DashNoticeSkeleton />
       <DashSchSkeleton />
@@ -216,7 +216,7 @@ export function ThirdSection() {
   console.log(dashNotice.data?.slice(0, 6));
 
   return (
-    <div className="grid grid-cols-3 gap-3.5 items-stretch">
+    <div className="grid grid-cols-1 xl:grid-cols-3 gap-3.5 items-stretch">
       {/* 품질평가 점수 추이 */}
       <CustomCard className="flex flex-col p-4 gap-0 border-border-strong">
         <div className="text-sm font-medium text-[#1a2340] mb-2.5">

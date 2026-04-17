@@ -55,7 +55,7 @@ export function KpiSection() {
   };
 
   return (
-    <div className="grid grid-cols-4 gap-2.5 mb-4">
+    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-2.5 mb-4">
       {/* 업무 진행률 */}
       <CustomCard className="p-4 gap-0  border-border-strong">
         <div className="text-xs text-description mb-1">금일 업무 진행률</div>
@@ -117,7 +117,7 @@ export function KpiSection() {
 
 function KpiSkeleton() {
   return (
-    <div className="grid grid-cols-4 gap-2.5 mb-4">
+    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-2.5 mb-4">
       {Array.from({ length: 4 }).map((_, i) => (
         <CustomCard key={i} className="p-4 gap-0 border-border-strong">
           <div className="h-3 w-20 bg-gray-100 rounded animate-pulse mb-2" />

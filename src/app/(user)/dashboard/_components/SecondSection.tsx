@@ -176,10 +176,7 @@ function TodayTaskSkeleton() {
 
 function SecondSectionSkeleton() {
   return (
-    <div
-      className="grid gap-3.5 mb-3.5 items-stretch"
-      style={{ gridTemplateColumns: "1.8fr 1fr" }}
-    >
+    <div className="grid grid-cols-1 gap-3.5 mb-3.5 items-stretch xl:grid-cols-[1.8fr_1fr]">
       <VocTransitionSkeleton />
       <TodayTaskSkeleton />
     </div>
@@ -198,10 +195,7 @@ export function SecondSection() {
   if (isLoading) return <SecondSectionSkeleton />;
 
   return (
-    <div
-      className="grid gap-3.5 mb-3.5 items-stretch"
-      style={{ gridTemplateColumns: "1.8fr 1fr" }}
-    >
+    <div className="grid grid-cols-1 gap-3.5 mb-3.5 items-stretch xl:grid-cols-[1.8fr_1fr]">
       {/* 민원 발생 추이 */}
       <CustomCard className="flex flex-col p-4 gap-0 border-border-strong">
         <div className="text-sm font-medium text-[#1a2340] mb-2.5">
