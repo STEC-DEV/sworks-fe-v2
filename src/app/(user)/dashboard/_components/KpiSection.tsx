@@ -6,15 +6,7 @@ export function KpiSection() {
 
   if (isLoading) return <KpiSkeleton />;
 
-  // 에러
-
-  console.log(taskRate.data);
-  console.log(todayVoc.data);
-  console.log(monthVocRate.data);
-  console.log(qeAvg.data);
-
   if (taskRate.isError) {
-    console.log(taskRate.error);
     return <div>데이터를 불러오지 못했습니다.</div>;
   }
 
@@ -55,7 +47,7 @@ export function KpiSection() {
         <span
           className={`text-xs font-medium ${status.className} px-1.5 py-0.5 rounded-lg`}
         >
-          {diff}
+          {diff > 0 ? "+" + diff : diff}
         </span>
         전월 대비
       </div>
@@ -68,7 +60,8 @@ export function KpiSection() {
       <CustomCard className="p-4 gap-0  border-border-strong">
         <div className="text-xs text-description mb-1">금일 업무 진행률</div>
         <div className="text-2xl font-medium text-[#1a2340]">
-          {taskRate.data?.completePercent}%
+          <span>{taskRate.data?.completePercent.toFixed(1)}</span>
+          <span className="text-lg">&nbsp;%</span>
         </div>
         <div className="h-1 bg-gray-100 rounded-full my-1.5 overflow-hidden">
           <div
@@ -86,7 +79,8 @@ export function KpiSection() {
       <CustomCard className="p-4 gap-0  border-border-strong">
         <div className="text-xs text-description mb-1">금일 민원 발생</div>
         <div className="text-2xl font-medium text-[#1a2340]">
-          {todayVoc.data?.total}건
+          {todayVoc.data?.total}
+          <span className="text-lg">&nbsp;건</span>
         </div>
         <div className="text-xs text-description mt-1.5">
           처리완료 {todayVoc.data?.completed} · 처리중
@@ -100,7 +94,8 @@ export function KpiSection() {
       <CustomCard className="p-4 gap-0  border-border-strong">
         <div className="text-xs text-description mb-1">이번달 민원 처리율</div>
         <div className="text-2xl font-medium text-[#1a2340]">
-          {monthVocRate.data?.completedPercent}%
+          {monthVocRate.data?.completedPercent}
+          <span className="text-lg">&nbsp;%</span>
         </div>
         <div className="flex items-center gap-1.5 text-xs text-description mt-1.5">
           <VocRateStatus percent={monthVocRate.data?.completedPercent} />
@@ -111,10 +106,10 @@ export function KpiSection() {
       <CustomCard className="p-4 gap-0 border-border-strong">
         <div className="text-xs text-description mb-1">이번달 품질 평균</div>
         <div className="text-2xl font-medium text-[#1a2340]">
-          {qeAvg.data?.currentMonthAvg}
-          <span className="text-sm text-description font-normal">점</span>
+          {qeAvg.data?.currentMonthAvg.toFixed(1)}
+          <span className="text-lg">&nbsp;점</span>
         </div>
-        <QeDiffStatus diff={qeAvg.data?.diffAvg || 0} />
+        <QeDiffStatus diff={Number(qeAvg.data?.diffAvg.toFixed(1)) || 0} />
       </CustomCard>
     </div>
   );

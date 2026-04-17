@@ -11,6 +11,11 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { KpiSection } from "./_components/KpiSection";
+import { SecondSection } from "./_components/SecondSection";
+import { ThirdSection } from "./_components/ThridSection";
+import { useAuthStore } from "@/store/auth/auth-store";
+import { format } from "date-fns/format";
+import { ko } from "date-fns/locale";
 
 // ─── Mock Data ───────────────────────────────────────────────
 const complaintTrendData = [
@@ -129,6 +134,7 @@ function CardTitle({
 // ─── Main Page ───────────────────────────────────────────────
 
 const DashboardPage = () => {
+  const { loginProfile } = useAuthStore();
   const totalTasks = 30;
   const doneTasks = 22;
   const inProgressTasks = 5;
@@ -136,17 +142,24 @@ const DashboardPage = () => {
   const progressPct = Math.round((doneTasks / totalTasks) * 100);
 
   return (
-    <div className="bg-gray-50 min-h-screen">
+    <div className="bg-gray-50 ">
       {/* ── Header ── */}
       <div className="bg-[#1a2340] px-6 py-3.5 flex items-center justify-between mb-6">
         <div className="flex flex-col gap-0.5">
-          <span className="text-base font-lg text-white">대명루센타워</span>
+          <span className="text-lg font-medium text-white">대명루센타워</span>
           <span className="text-sm text-white/70">
-            이동희 사원 · 마스터 &nbsp;·&nbsp; 보안 · 시설 · 미화 &nbsp;·&nbsp;
-            2025.01.23 목
+            {loginProfile?.userName} {loginProfile?.job} · {loginProfile?.role}{" "}
+            {/* &nbsp;·&nbsp; 보안 · 시설 · 미화 &nbsp;·&nbsp;{" "} */}
+            {/* {format(new Date(), "yyyy.MM.dd EEEE", { locale: ko })} */}
           </span>
         </div>
-        <div className="flex items-center gap-2.5">
+        <div>
+          <span className="text-white font-medium">
+            {" "}
+            {format(new Date(), "yyyy.MM.dd  EEEE", { locale: ko })}
+          </span>
+        </div>
+        {/* <div className="flex items-center gap-2.5">
           <span className="bg-red-500/20 border border-red-400/40 text-red-300 text-xs px-2.5 py-1 rounded-full">
             공지 3건 미확인
           </span>
@@ -156,297 +169,17 @@ const DashboardPage = () => {
           <div className="w-7 h-7 rounded-full bg-[#378add] flex items-center justify-center text-xs font-medium text-white">
             이동
           </div>
-        </div>
+        </div> */}
       </div>
 
       {/* ── Body ── */}
-      <div className="mb-6">
+      <div className="">
         {/* KPI Row */}
         <KpiSection />
-        {/* <div className="grid grid-cols-4 gap-2.5 mb-4">
-         
-          <Card>
-            <div className="text-xs text-description mb-1">
-              금일 업무 진행률
-            </div>
-            <div className="text-2xl font-medium text-[#1a2340]">
-              {progressPct}%
-            </div>
-            <div className="h-1 bg-gray-100 rounded-full my-1.5 overflow-hidden">
-              <div
-                className="h-1 bg-[#1D9E75] rounded-full"
-                style={{ width: `${progressPct}%` }}
-              />
-            </div>
-            <div className="text-xs text-description">
-              완료 {doneTasks}건 / 전체 {totalTasks}건
-            </div>
-          </Card>
-
-    
-          <Card>
-            <div className="text-xs text-description mb-1">금일 민원 발생</div>
-            <div className="text-2xl font-medium text-[#1a2340]">5건</div>
-            <div className="text-xs text-description mt-1.5">
-              처리완료 3 · 처리중{" "}
-              <span className="text-amber-600 font-medium">2</span>
-            </div>
-          </Card>
-
-          <Card>
-            <div className="text-xs text-description mb-1">
-              이번달 민원 처리율
-            </div>
-            <div className="text-2xl font-medium text-[#1a2340]">94%</div>
-            <div className="flex items-center gap-1.5 text-xs text-description mt-1.5">
-              <span className="text-xs font-medium bg-green-50 text-green-800 px-1.5 py-0.5 rounded-lg">
-                양호
-              </span>
-            </div>
-          </Card>
-
-     
-          <Card>
-            <div className="text-xs text-description mb-1">
-              이번달 품질 평균
-            </div>
-            <div className="text-2xl font-medium text-[#1a2340]">
-              87.4
-              <span className="text-sm text-description font-normal">점</span>
-            </div>
-            <div className="flex items-center gap-1.5 text-xs text-description mt-1.5">
-              <span className="text-xs font-medium bg-green-50 text-green-800 px-1.5 py-0.5 rounded-lg">
-                +2.1pt
-              </span>
-              전월 대비
-            </div>
-          </Card>
-        </div> */}
-
-        {/* Main Grid */}
-        <div
-          className="grid gap-3.5 mb-3.5 items-stretch"
-          style={{ gridTemplateColumns: "1.8fr 1fr" }}
-        >
-          {/* 민원 발생 추이 */}
-          <Card className="flex flex-col">
-            <CardTitle sub="최근 6개월">민원 발생 추이</CardTitle>
-            <div className="flex-1 min-h-0">
-              <ResponsiveContainer width="100%" height="100%">
-                <AreaChart
-                  data={complaintTrendData}
-                  margin={{ top: 4, right: 8, left: -20, bottom: 0 }}
-                >
-                  <defs>
-                    <linearGradient id="gradBlue" x1="0" y1="0" x2="0" y2="1">
-                      <stop
-                        offset="0%"
-                        stopColor="#378add"
-                        stopOpacity={0.18}
-                      />
-                      <stop offset="100%" stopColor="#378add" stopOpacity={0} />
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                  <XAxis
-                    dataKey="month"
-                    tick={{ fontSize: 11, fill: "var(--description)" }}
-                    axisLine={false}
-                    tickLine={false}
-                  />
-                  <YAxis
-                    tick={{ fontSize: 11, fill: "var(--description)" }}
-                    axisLine={false}
-                    tickLine={false}
-                  />
-                  <Tooltip
-                    contentStyle={{
-                      fontSize: 12,
-                      borderRadius: 8,
-                      border: "0.5px solid #eee",
-                    }}
-                    formatter={(v: number) => [`${v}건`, "민원"]}
-                  />
-                  <Area
-                    type="monotone"
-                    dataKey="count"
-                    stroke="#378add"
-                    strokeWidth={2}
-                    fill="url(#gradBlue)"
-                    dot={{
-                      r: 3,
-                      fill: "#fff",
-                      stroke: "#378add",
-                      strokeWidth: 2,
-                    }}
-                    activeDot={{ r: 4 }}
-                  />
-                </AreaChart>
-              </ResponsiveContainer>
-            </div>
-          </Card>
-
-          {/* 금일 업무 현황 */}
-          <Card>
-            <CardTitle>금일 업무 현황</CardTitle>
-
-            {/* 세그먼트 바 */}
-            <div className="flex h-2 rounded overflow-hidden gap-0.5 mt-1 mb-1.5">
-              <div className="bg-[#1D9E75]" style={{ flex: doneTasks }} />
-              <div className="bg-[#378add]" style={{ flex: inProgressTasks }} />
-              <div className="bg-gray-200" style={{ flex: waitingTasks }} />
-            </div>
-            <div className="flex gap-3 mb-3.5">
-              {[
-                { color: "#1D9E75", label: `완료 ${doneTasks}` },
-                { color: "#378add", label: `진행 ${inProgressTasks}` },
-                { color: "#e0e0e0", label: `미착수 ${waitingTasks}` },
-              ].map((item) => (
-                <div
-                  key={item.label}
-                  className="flex items-center gap-1 text-xs text-description"
-                >
-                  <div
-                    className="w-1.5 h-1.5 rounded-full"
-                    style={{ background: item.color }}
-                  />
-                  {item.label}
-                </div>
-              ))}
-            </div>
-
-            {/* 오늘 민원 현황 */}
-            <div className="text-sm font-medium text-[#1a2340] mb-2">
-              오늘 민원 현황
-            </div>
-            {todayComplaints.map((c) => (
-              <div
-                key={c.id}
-                className="flex items-center justify-between py-1.5 border-b border-gray-50 last:border-0"
-              >
-                <div>
-                  <div className="text-sm text-description">{c.title}</div>
-                  <div className="text-xs text-description">{c.time}</div>
-                </div>
-                <StatusBadge status={c.status as "done" | "proc" | "wait"} />
-              </div>
-            ))}
-          </Card>
-        </div>
-
-        {/* Bottom Grid */}
-        <div className="grid grid-cols-3 gap-3.5 items-stretch">
-          {/* 품질평가 점수 추이 */}
-          <Card className="flex flex-col">
-            <CardTitle sub="최근 3개월">품질평가 점수 추이</CardTitle>
-            <div className="flex-1 min-h-0">
-              <ResponsiveContainer width="100%" height="100%">
-                <AreaChart
-                  data={qualityScoreData}
-                  margin={{ top: 4, right: 8, left: -20, bottom: 0 }}
-                >
-                  <defs>
-                    <linearGradient id="gradGreen" x1="0" y1="0" x2="0" y2="1">
-                      <stop
-                        offset="0%"
-                        stopColor="#1D9E75"
-                        stopOpacity={0.18}
-                      />
-                      <stop offset="100%" stopColor="#1D9E75" stopOpacity={0} />
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                  <XAxis
-                    dataKey="period"
-                    tick={{ fontSize: 11, fill: "var(--description)" }}
-                    axisLine={false}
-                    tickLine={false}
-                  />
-                  <YAxis
-                    domain={[75, 95]}
-                    tick={{ fontSize: 11, fill: "var(--description)" }}
-                    axisLine={false}
-                    tickLine={false}
-                  />
-                  <Tooltip
-                    contentStyle={{
-                      fontSize: 12,
-                      borderRadius: 8,
-                      border: "0.5px solid #eee",
-                    }}
-                    formatter={(v: number) => [`${v}점`, "품질평가"]}
-                  />
-                  <Area
-                    type="monotone"
-                    dataKey="score"
-                    stroke="#1D9E75"
-                    strokeWidth={2}
-                    fill="url(#gradGreen)"
-                    dot={{
-                      r: 3,
-                      fill: "#fff",
-                      stroke: "#1D9E75",
-                      strokeWidth: 2,
-                    }}
-                    activeDot={{ r: 4 }}
-                  />
-                </AreaChart>
-              </ResponsiveContainer>
-            </div>
-          </Card>
-
-          {/* 공지사항 */}
-          <Card>
-            <CardTitle>최근 공지사항</CardTitle>
-            {notices.map((n) => (
-              <div
-                key={n.id}
-                className="flex items-start gap-2 py-1.5 border-b border-gray-50 last:border-0"
-              >
-                <div
-                  className="w-1.5 h-1.5 rounded-full mt-1 shrink-0"
-                  style={{ background: n.unread ? "#378add" : "#ddd" }}
-                />
-                <div className="flex-1 min-w-0">
-                  <div
-                    className={`text-sm truncate ${n.unread ? "text-description" : "text-description opacity-50"}`}
-                  >
-                    {n.title}
-                  </div>
-                  <div className="text-xs text-description opacity-70 mt-0.5">
-                    {n.date}
-                    {n.unread ? " · 읽지않음" : ""}
-                  </div>
-                </div>
-              </div>
-            ))}
-          </Card>
-
-          {/* 일정 */}
-          <Card>
-            <CardTitle>오늘 · 내일 일정</CardTitle>
-            {schedules.map((s, i) => (
-              <div
-                key={i}
-                className={`flex gap-2 py-1.5 border-b border-gray-50 last:border-0 ${s.day === "tomorrow" ? "opacity-60" : ""}`}
-              >
-                <div className="text-xs text-description min-w-[32px] pt-0.5">
-                  {s.time}
-                </div>
-                <div
-                  className="w-1.5 h-1.5 rounded-full mt-1 shrink-0"
-                  style={{ background: s.color }}
-                />
-                <div>
-                  <div className="text-sm text-description">{s.title}</div>
-                  <div className="text-xs text-description">
-                    {s.location} · {s.day === "today" ? "오늘" : "내일"}
-                  </div>
-                </div>
-              </div>
-            ))}
-          </Card>
-        </div>
+        {/* 2nd */}
+        <SecondSection />
+        {/* 3rd */}
+        <ThirdSection />
       </div>
     </div>
   );

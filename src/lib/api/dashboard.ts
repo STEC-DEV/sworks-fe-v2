@@ -34,6 +34,45 @@ export interface QEAvg {
   diffAvg: number;
 }
 
+export interface VocTransition {
+  dates: string;
+  counts: number;
+}
+export interface TodayTaskCount {
+  notStartedCount: number;
+  inProgressCount: number;
+  completedCount: number;
+}
+export interface TodayVocList {
+  title: string;
+  pointName: string;
+  statusName: string;
+  createDt: string;
+}
+
+export interface QeTransition {
+  dates: string;
+  score: number;
+}
+export interface DashNotice {
+  id: string; // 현재 api에 없음
+  title: string;
+  isPin: boolean;
+  creator: boolean;
+  createDt: string;
+}
+export interface DashSch {
+  dates: string;
+  schSeq: number;
+  schTitle: string;
+  viewColor: string;
+  isAllday: boolean;
+  serviceTypeSeq: number;
+  serviceTypeName: string;
+  startTime: string;
+  endTime: string;
+}
+
 export const dashboardApi = {
   /** 금일 업무 진행률 */
   getTaskRate: () => {
@@ -45,4 +84,22 @@ export const dashboardApi = {
   getMonthVocRate: () => dashGet<MonthVocRate>("GetMonthVocRate"),
   /** QE 평균 점수 */
   getQEAvg: () => dashGet<QEAvg>("GetQEAvg"),
+
+  /** =========================== */
+
+  /** 민원 6개월 추이 */
+  getVocTransition: () => dashGet<VocTransition[]>("GetVocTransition"),
+  /** 금일 업무 진행현황 카운트 */
+  getTodaySiteTaskCount: () => dashGet<TodayTaskCount>("GetTodaySiteTaskCount"),
+  /** 금일 voc 리스트 */
+  getTodayVocList: () => dashGet<TodayVocList[]>("GetTodayVocList"),
+
+  /** =========================== */
+
+  /** 금일 voc 리스트 */
+  getQETransition: () => dashGet<QeTransition[]>("GetQETransition"),
+  /** 금일 voc 리스트 */
+  getNotice: () => dashGet<DashNotice[]>("GetNotice"),
+  /** 금일 voc 리스트 */
+  getSch: () => dashGet<DashSch[]>("GetSch"),
 };
