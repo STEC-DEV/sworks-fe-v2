@@ -85,12 +85,12 @@ export const PRIVACY_TERMS: Term = {
       subSections: [
         {
           title:
-            "가. 회사는 고객님의 질문에 대한 답변을 위해 아래와 같은 개인정보를 수집하고 있습니다.",
-          content: "- 필수항목 : 상호명, 소재지, 휴대폰 번호, 이메일",
+            "가. 회사는 민원 접수 및 답변을 위해 아래와 같은 개인정보를 수집하고 있습니다.",
+          content: "- 필수항목 : 성함, 휴대폰 번호, 민원 제목 및 내용",
         },
         {
           title:
-            "나. 서비스 이용과정에서 아래와 같은 정보들이 자동으로 생성되어 수집될 수 있습니다.",
+            "나. 서비스 이용 과정에서 아래와 같은 정보들이 자동으로 생성되어 수집될 수 있습니다.",
           content: "- IP Address, 쿠키, 방문 일시, 서비스 이용 기록",
         },
       ],
@@ -100,22 +100,23 @@ export const PRIVACY_TERMS: Term = {
       content: "",
       subSections: [
         {
-          title: "가. 질문에 대한 답변",
+          title: "가. 민원 접수 및 결과 회신",
           content:
-            "- 질문에 대한 답변, 본인확인, 개인식별, 기타 답변을 위한 기본자료 활용",
+            "- 민원 사항의 확인, 사실조사를 위한 연락·통지, 처리 결과 회신 및 본인 확인",
         },
       ],
     },
     {
       title: "개인정보의 보유 및 이용기간",
       content:
-        "이용자의 개인정보는 원칙적으로 개인정보의 수집 및 이용목적이 달성되면 지체 없이 파기합니다.\n단, 다음의 정보에 대해서는 아래의 이유로 명시한 기간 동안 보존합니다.",
+        "이용자의 개인정보는 원칙적으로 개인정보의 수집 및 이용목적이 달성되면 지체 없이 파기합니다.\n단, 관련 법령 및 내부 방침에 의해 보존할 필요가 있는 경우 아래와 같이 보유합니다.",
       subSections: [
         {
-          title: "가. 회사 내부 방침에 의한 정보보유 사유",
+          title: "가. 내부 방침 및 관련 법령에 의한 정보보유 사유",
           content: [
-            "부정이용기록 - 보존 근거: 부정 이용 방지, 보존 기간: 1년",
-            "본인확인에 관한 기록 - 보존 근거: 정보통신 이용촉진 및 정보보호 등에 관한 법률, 보존 기간: 6개월",
+            "부정이용기록 - 보존 근거: 불만 처리 및 분쟁 해결, 보존 기간: 1년",
+            "본인확인에 관한 기록 - 보존 근거: 정보통신망 이용촉진 및 정보보호 등에 관한 법률, 보존 기간: 6개월",
+            "소비자의 불만 또는 분쟁처리에 관한 기록 - 보존 근거: 전자상거래 등에서의 소비자보호에 관한 법률, 보존 기간: 3년",
           ],
         },
       ],
@@ -173,12 +174,17 @@ const Section = ({ data }: { data: TermSection }) => {
           <div key={i} className="flex flex-col gap-2">
             <span className="text-sm">{s.title}</span>
             <div className="flex flex-col gap-1">
-              {Array.isArray(s.content) &&
+              {Array.isArray(s.content) ? (
                 s.content.map((item, i) => (
                   <span className="text-sm" key={i}>
-                    {item}
+                    &nbsp;&nbsp;&nbsp;&nbsp;{item}
                   </span>
-                ))}
+                ))
+              ) : (
+                <span className="text-sm" key={i}>
+                  &nbsp;&nbsp;&nbsp;&nbsp;{s.content}
+                </span>
+              )}
             </div>
           </div>
         ))}
