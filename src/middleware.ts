@@ -105,10 +105,7 @@ export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
   // 0. 운영 환경(Production)에서 대시보드 경로로 진입을 시도할 경우
-  if (
-    !isDev &&
-    (pathname.startsWith("/dashboard") || pathname.startsWith("/demo"))
-  ) {
+  if (!isDev && pathname.startsWith("/demo")) {
     // 방법 A: 홈으로 리다이렉트 시키기 (가장 일반적)
     return NextResponse.redirect(new URL("/login", req.url));
 
