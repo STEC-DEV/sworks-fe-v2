@@ -460,7 +460,11 @@ const ComplainAddForm = ({ seq, language }: ComplainAddFormProps) => {
                     name="receiver"
                     render={({ field }) => (
                       <TextFormItem
-                        label={t.receiver}
+                        label={
+                          contactMethod === "kakao"
+                            ? t.methodKakao
+                            : t.methodEmail
+                        }
                         placeholder={
                           contactMethod === "kakao"
                             ? t.receiverPlaceholderKakao
