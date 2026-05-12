@@ -42,20 +42,28 @@ const isDev = process.env.NODE_ENV === "development";
 
 const NormalMenu: MenuSection[] = [
   // { items: [{ title: "현황", icon: "LayoutDashboard", path: "/status" }] },
-  ...(isDev
-    ? [
-        {
-          items: [
-            {
-              title: "대시보드",
-              icon: "LayoutDashboard" as const,
-              path: "/dashboard",
-            },
-          ],
-        },
-      ]
-    : []),
-
+  // ...(isDev
+  //   ? [
+  //       {
+  //         items: [
+  //           {
+  //             title: "대시보드",
+  //             icon: "LayoutDashboard" as const,
+  //             path: "/dashboard",
+  //           },
+  //         ],
+  //       },
+  //     ]
+  //   : []),
+  {
+    items: [
+      {
+        title: "대시보드",
+        icon: "LayoutDashboard" as const,
+        path: "/dashboard",
+      },
+    ],
+  },
   { items: [{ title: "일정", icon: "CalendarDays", path: "/schedule" }] },
   { items: [{ title: "사업장 정보", icon: "Factory", path: "/workplace" }] },
 
@@ -275,7 +283,7 @@ const SideBar = ({ loginMode }: SideBarProps) => {
       <div className="flex justify-between items-center px-6 py-6">
         <div
           className="text-2xl font-bold text-white cursor-pointer"
-          onClick={() => router.push(`/schedule`)}
+          onClick={() => router.push(`/dashboard`)}
         >
           S-Agent
         </div>
