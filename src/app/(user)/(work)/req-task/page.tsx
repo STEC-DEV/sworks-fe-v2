@@ -38,7 +38,7 @@ const Page = () => {
   };
   return (
     <>
-      <AppTitle title="업무요청" />
+      <AppTitle title="요청업무" />
       <OptionSectionWrapper>
         <ReqFilter />
         <ReqPagination />

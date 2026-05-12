@@ -1,3 +1,4 @@
+import { ContactMethod } from "@/app/complain/add/_components/add";
 import api from "@/lib/api/api-manager";
 import { useAuthStore } from "@/store/auth/auth-store";
 import { useUIStore } from "@/store/common/ui-store";
@@ -22,8 +23,13 @@ interface VocState {
   postAddVoc: (values: FormData) => Promise<string | null>;
 
   //민원접수 인증번호
-  postCreateVerificationCode: (seq: number, phone: string) => Promise<void>;
-  postValidationCode: (code: string, phone: string) => Promise<boolean>;
+  postCreateVerificationCode: (
+    seq: number,
+    receiver: string,
+    method: ContactMethod,
+    region: "ko" | "en",
+  ) => Promise<void>;
+  postValidationCode: (code: string, receiver: string) => Promise<boolean>;
 }
 
 export const useVocStore = create<VocState>()(
@@ -91,11 +97,16 @@ export const useVocStore = create<VocState>()(
             return null;
           }
         },
-        postCreateVerificationCode: async (seq, phone) => {
+        postCreateVerificationCode: async (seq, receiver, method, region) => {
           try {
             const res: Response<boolean> = await api
               .post(`voc/w/createauthcode`, {
-                json: { vocSeq: seq, phoneNumber: phone },
+                json: {
+                  vocSeq: seq,
+                  receiver, // [변경] phoneNumber → receiver
+                  method, // [추가]
+                  region, // [추가]
+                },
               })
               .json();
             toast.message("인증번호를 발송하였습니다.");
@@ -104,11 +115,11 @@ export const useVocStore = create<VocState>()(
             toast.error("문제가 발생하였습니다. 잠시후 다시 시도해주세요.");
           }
         },
-        postValidationCode: async (code, phone) => {
+        postValidationCode: async (code, receiver) => {
           try {
             const res: Response<boolean> = await api
               .post(`voc/w/validateauthcode`, {
-                json: { authCode: code, phoneNumber: phone },
+                json: { authCode: code, receiver: receiver },
               })
               .json();
             if (!res.data) {
@@ -124,7 +135,7 @@ export const useVocStore = create<VocState>()(
           }
         },
       }),
-      { name: "voc-store" }
-    )
-  )
+      { name: "voc-store" },
+    ),
+  ),
 );

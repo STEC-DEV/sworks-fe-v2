@@ -24,7 +24,7 @@ export interface LoginResponse {
  */
 export async function LoginAction(
   data: Record<string, string>,
-  adminMode: boolean
+  adminMode: boolean,
 ): Promise<LoginResponse> {
   const cookie = await cookies();
   let redirectUrl: string | null = null;
@@ -37,7 +37,7 @@ export async function LoginAction(
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ...data, mode: adminMode }),
-      }
+      },
     );
 
     const returnData: LoginResponse = {
@@ -66,7 +66,7 @@ export async function LoginAction(
       if (result.code === 200 || result.code === 201 || result.code === 202) {
         returnData.message = "로그인 성공";
         returnData.result = true;
-        returnData.url = "/schedule";
+        returnData.url = "/dashboard";
         returnData.code = result.code;
       }
       //일반모드 관리자 -> 사업장 선택화면 이동
@@ -99,7 +99,7 @@ export async function LoginAction(
         c.bold
       } ✅ LOGIN [${adminMode ? "관리" : "사업장"}] ${c.r} ${
         payload.UserType
-      } ${payload.UserSeq}`
+      } ${payload.UserSeq}`,
     );
 
     const cryptMode = encryptCookie(payload.mode ? "true" : "false");
@@ -127,7 +127,7 @@ export async function normalModeLoginAction(data: Record<string, string>) {
   const redirectUrl: string | null = null;
   try {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/login/w/login`
+      `${process.env.NEXT_PUBLIC_BASE_URL}/login/w/login`,
     );
   } catch (err) {}
 }
@@ -146,13 +146,13 @@ export async function logout() {
       console.log(
         `${c.cyan}[${getTime()}] ${c.r}${c.bgYellow}${c.bold} ❌ 로그아웃 ${
           c.r
-        } ${payload.UserType} ${payload.UserSeq}`
+        } ${payload.UserType} ${payload.UserSeq}`,
       );
     } catch {
       console.log(
         `${c.cyan}[${getTime()}] ${c.r}${c.bgYellow}${c.bold} ❌ 로그아웃 ${
           c.r
-        } (만료된 세션)`
+        } (만료된 세션)`,
       );
     }
   }

@@ -9,6 +9,7 @@ import {
   TextFormItem,
 } from "@/components/common/form-input/text-field";
 import { CheckBox } from "@/components/common/input";
+import { TextEditor } from "@/components/common/TextEditor";
 import { FormCard } from "@/components/layout/form/form-container";
 import { Form, FormField } from "@/components/ui/form";
 import { useBasicStore } from "@/store/basic-store";
@@ -146,14 +147,18 @@ const NoticeAddForm = () => {
             control={form.control}
             name="description"
             render={({ field }) => (
-              <TextAreaFormItem
-                className="h-60"
-                label="공지사항 본문"
-                placeholder="내용을 입력해주세요."
-                required
-                showCount={true}
-                {...field}
-              />
+              <div>
+                <TextAreaFormItem
+                  className="h-60"
+                  label="공지사항 본문"
+                  placeholder="내용을 입력해주세요."
+                  required
+                  showCount={true}
+                  {...field}
+                />
+                {/* html 태그들이 함께 저장돼야해서 글자수가 훨신 많아짐 */}
+                {/* <TextEditor value={field.value} onChange={field.onChange} /> */}
+              </div>
             )}
           />
         </FormCard>

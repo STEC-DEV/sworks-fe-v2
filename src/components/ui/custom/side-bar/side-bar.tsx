@@ -57,7 +57,7 @@ const NormalMenu: MenuSection[] = [
     : []),
 
   { items: [{ title: "일정", icon: "CalendarDays", path: "/schedule" }] },
-  { items: [{ title: "사업장", icon: "Factory", path: "/workplace" }] },
+  { items: [{ title: "사업장 정보", icon: "Factory", path: "/workplace" }] },
 
   { items: [{ title: "공지사항", icon: "AudioLines", path: "/notice" }] },
   {

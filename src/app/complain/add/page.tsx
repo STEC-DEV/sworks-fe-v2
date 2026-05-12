@@ -6,18 +6,23 @@ import BaseSkeleton from "@/components/common/base-skeleton";
 import { useSearchParams } from "next/navigation";
 import Button from "@/components/common/button";
 import { CircleCheck } from "lucide-react";
+import { PRIVACY_TERMS_MAP } from "@/lib/terms";
 
-const ComplainAddContent = () => {
+const LANGUAGES = ["한국어", "English"] as const;
+type Languages = (typeof LANGUAGES)[number];
+
+const ComplainAddContent = ({ language }: { language: Languages }) => {
   const searchParams = useSearchParams();
 
   const seq = searchParams.get("vocSeq");
   if (!seq) return <BaseSkeleton />;
-  return <ComplainAddForm seq={parseInt(seq)} />;
+  return <ComplainAddForm seq={parseInt(seq)} language={language} />;
 };
 
 const Page = () => {
   const [agree, setAgree] = useState<boolean>(false);
   const [step, setStep] = useState<number>(0);
+  const [language, setLanguage] = useState<Languages>("한국어");
 
   useEffect(() => {}, [agree]);
 
@@ -33,23 +38,54 @@ const Page = () => {
     switch (step) {
       case 0:
         return (
-          <ToS isAgree={agree} onAgree={handleAgree} onNext={handleNext} />
+          <ToS
+            isAgree={agree}
+            onAgree={handleAgree}
+            onNext={handleNext}
+            language={language}
+          />
         );
       case 1:
-        return <ComplainAddContent />;
+        return <ComplainAddContent language={language} />;
+    }
+  };
+
+  const titleLanguage = () => {
+    switch (language) {
+      case "한국어":
+        return "민원접수";
+      case "English":
+        return "Service Request";
     }
   };
   return (
     <div className="flex justify-center h-screen overflow-hidden">
       <div className="flex flex-col gap-6 w-full xl:max-w-[769px] xl:border py-6 h-full bg-white shadow-xl overflow-auto">
         <div className="px-6 shrink-0">
-          <AppTitle title="민원접수" isBorder />
+          {/* 언어탭 */}
+          <div className="flex justify-end">
+            <div className="flex items-center bg-gray-200 dark:bg-zinc-700 rounded-lg p-0.5 w-fit">
+              {LANGUAGES.map((v, i) => (
+                <div
+                  key={i}
+                  onClick={() => setLanguage(v)}
+                  className={`px-3 py-1.5 rounded-md text-xs font-medium cursor-pointer transition-all
+          ${
+            language === v
+              ? "bg-white dark:bg-zinc-950 text-[#1a2340] dark:text-white shadow-sm font-semibold"
+              : "text-gray-400 dark:text-zinc-500"
+          }`}
+                >
+                  {v}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <AppTitle title={titleLanguage()} isBorder />
         </div>
 
-        <Suspense fallback={<BaseSkeleton />}>
-          {view()}
-          {/* <ComplainAddContent /> */}
-        </Suspense>
+        <Suspense fallback={<BaseSkeleton />}>{view()}</Suspense>
       </div>
     </div>
   );
@@ -72,97 +108,6 @@ export interface Term {
   effectiveDate?: string;
 }
 
-export const PRIVACY_TERMS: Term = {
-  id: "privacy",
-  title: "개인정보 수집 및 이용 동의",
-  isRequired: true,
-  version: "1.0",
-  effectiveDate: "2024-01-01",
-  sections: [
-    {
-      title: "수집하는 개인정보의 항목",
-      content: "",
-      subSections: [
-        {
-          title:
-            "가. 회사는 민원 접수 및 답변을 위해 아래와 같은 개인정보를 수집하고 있습니다.",
-          content: "- 필수항목 : 성함, 휴대폰 번호, 민원 제목 및 내용",
-        },
-        {
-          title:
-            "나. 서비스 이용 과정에서 아래와 같은 정보들이 자동으로 생성되어 수집될 수 있습니다.",
-          content: "- IP Address, 쿠키, 방문 일시, 서비스 이용 기록",
-        },
-      ],
-    },
-    {
-      title: "개인정보의 수집 및 이용 목적",
-      content: "",
-      subSections: [
-        {
-          title: "가. 민원 접수 및 결과 회신",
-          content:
-            "- 민원 사항의 확인, 사실조사를 위한 연락·통지, 처리 결과 회신 및 본인 확인",
-        },
-      ],
-    },
-    {
-      title: "개인정보의 보유 및 이용기간",
-      content:
-        "이용자의 개인정보는 원칙적으로 개인정보의 수집 및 이용목적이 달성되면 지체 없이 파기합니다.\n단, 관련 법령 및 내부 방침에 의해 보존할 필요가 있는 경우 아래와 같이 보유합니다.",
-      subSections: [
-        {
-          title: "가. 내부 방침 및 관련 법령에 의한 정보보유 사유",
-          content: [
-            "부정이용기록 - 보존 근거: 불만 처리 및 분쟁 해결, 보존 기간: 1년",
-            "본인확인에 관한 기록 - 보존 근거: 정보통신망 이용촉진 및 정보보호 등에 관한 법률, 보존 기간: 6개월",
-            "소비자의 불만 또는 분쟁처리에 관한 기록 - 보존 근거: 전자상거래 등에서의 소비자보호에 관한 법률, 보존 기간: 3년",
-          ],
-        },
-      ],
-    },
-  ],
-};
-
-const ToS = ({
-  isAgree,
-  onAgree,
-  onNext,
-}: {
-  isAgree: boolean;
-  onAgree: (agree: boolean) => void;
-  onNext: () => void;
-}) => {
-  return (
-    <div className="px-6 flex flex-col gap-6 flex-1">
-      <span className="text-lg font-medium">{PRIVACY_TERMS.title}</span>
-
-      <div className="flex flex-col gap-6 flex-1">
-        {PRIVACY_TERMS.sections.map((s, i) => (
-          <Section data={s} key={i} />
-        ))}
-      </div>
-      <div className="flex gap-2 items-center">
-        <span>개인정보 수집 및 이용 동의 (필수)</span>
-        <label>
-          <CircleCheck
-            className={`cursor-pointer ${
-              isAgree ? "text-blue-500" : "text-[var(--icon)] "
-            } `}
-            onClick={() => onAgree(!isAgree)}
-            strokeWidth={1.5}
-          />
-        </label>
-      </div>
-      <Button
-        label="다음"
-        variant={isAgree ? "default" : "disabled"}
-        onClick={onNext}
-      />
-    </div>
-  );
-};
-
 const Section = ({ data }: { data: TermSection }) => {
   return (
     <div className="flex flex-col gap-4">
@@ -175,13 +120,13 @@ const Section = ({ data }: { data: TermSection }) => {
             <span className="text-sm">{s.title}</span>
             <div className="flex flex-col gap-1">
               {Array.isArray(s.content) ? (
-                s.content.map((item, i) => (
-                  <span className="text-sm" key={i}>
+                s.content.map((item, j) => (
+                  <span className="text-sm" key={j}>
                     &nbsp;&nbsp;&nbsp;&nbsp;{item}
                   </span>
                 ))
               ) : (
-                <span className="text-sm" key={i}>
+                <span className="text-sm">
                   &nbsp;&nbsp;&nbsp;&nbsp;{s.content}
                 </span>
               )}
@@ -192,3 +137,181 @@ const Section = ({ data }: { data: TermSection }) => {
     </div>
   );
 };
+
+const ToS = ({
+  isAgree,
+  language,
+  onAgree,
+  onNext,
+}: {
+  isAgree: boolean;
+  language: Languages;
+  onAgree: (agree: boolean) => void;
+  onNext: () => void;
+}) => {
+  const terms = PRIVACY_TERMS_MAP[language]; // ← language로 데이터 꺼내기
+
+  const buttonLabel = () => {
+    switch (language) {
+      case "한국어":
+        return "다음";
+      case "English":
+        return "Next";
+    }
+  };
+
+  return (
+    <div className="px-6 flex flex-col gap-6 flex-1">
+      <span className="text-lg font-medium">{terms.title}</span>
+
+      <div className="flex flex-col gap-6 flex-1">
+        {terms.sections.map((s, i) => (
+          <Section data={s} key={i} />
+        ))}
+      </div>
+
+      <div className="flex gap-2 items-center">
+        <span>{terms.agreeLabel}</span>
+        <label>
+          <CircleCheck
+            className={`cursor-pointer ${
+              isAgree ? "text-blue-500" : "text-[var(--icon)]"
+            }`}
+            onClick={() => onAgree(!isAgree)}
+            strokeWidth={1.5}
+          />
+        </label>
+      </div>
+
+      <Button
+        label={buttonLabel()}
+        variant={isAgree ? "default" : "disabled"}
+        disabled={!isAgree}
+        onClick={onNext}
+      />
+    </div>
+  );
+};
+
+// export const PRIVACY_TERMS: Term = {
+//   id: "privacy",
+//   title: "개인정보 수집 및 이용 동의",
+//   isRequired: true,
+//   version: "1.0",
+//   effectiveDate: "2024-01-01",
+//   sections: [
+//     {
+//       title: "수집하는 개인정보의 항목",
+//       content: "",
+//       subSections: [
+//         {
+//           title:
+//             "가. 회사는 민원 접수 및 답변을 위해 아래와 같은 개인정보를 수집하고 있습니다.",
+//           content: "- 필수항목 : 성함, 휴대폰 번호",
+//         },
+//         {
+//           title:
+//             "나. 서비스 이용 과정에서 아래와 같은 정보들이 자동으로 생성되어 수집될 수 있습니다.",
+//           content: "- IP Address, 쿠키, 방문 일시, 서비스 이용 기록",
+//         },
+//       ],
+//     },
+//     {
+//       title: "개인정보의 수집 및 이용 목적",
+//       content: "",
+//       subSections: [
+//         {
+//           title: "가. 민원 접수 및 결과 회신",
+//           content:
+//             "- 민원 사항의 확인, 사실조사를 위한 연락·통지, 처리 결과 회신 및 본인 확인",
+//         },
+//       ],
+//     },
+//     {
+//       title: "개인정보의 보유 및 이용기간",
+//       content:
+//         "이용자의 개인정보는 원칙적으로 개인정보의 수집 및 이용목적이 달성되면 지체 없이 파기합니다.\n단, 관련 법령 및 내부 방침에 의해 보존할 필요가 있는 경우 아래와 같이 보유합니다.",
+//       subSections: [
+//         {
+//           title: "가. 내부 방침 및 관련 법령에 의한 정보보유 사유",
+//           content: [
+//             "부정이용기록 - 보존 근거: 불만 처리 및 분쟁 해결, 보존 기간: 1년",
+//             "본인확인에 관한 기록 - 보존 근거: 정보통신망 이용촉진 및 정보보호 등에 관한 법률, 보존 기간: 6개월",
+//             "소비자의 불만 또는 분쟁처리에 관한 기록 - 보존 근거: 전자상거래 등에서의 소비자보호에 관한 법률, 보존 기간: 3년",
+//           ],
+//         },
+//       ],
+//     },
+//   ],
+// };
+
+// const ToS = ({
+//   isAgree,
+//   language,
+//   onAgree,
+//   onNext,
+// }: {
+//   isAgree: boolean;
+//   language: Languages;
+//   onAgree: (agree: boolean) => void;
+//   onNext: () => void;
+// }) => {
+//   return (
+//     <div className="px-6 flex flex-col gap-6 flex-1">
+//       <span className="text-lg font-medium">{PRIVACY_TERMS.title}</span>
+
+//       <div className="flex flex-col gap-6 flex-1">
+//         {PRIVACY_TERMS.sections.map((s, i) => (
+//           <Section data={s} key={i} />
+//         ))}
+//       </div>
+//       <div className="flex gap-2 items-center">
+//         <span>개인정보 수집 및 이용 동의 (필수)</span>
+//         <label>
+//           <CircleCheck
+//             className={`cursor-pointer ${
+//               isAgree ? "text-blue-500" : "text-[var(--icon)] "
+//             } `}
+//             onClick={() => onAgree(!isAgree)}
+//             strokeWidth={1.5}
+//           />
+//         </label>
+//       </div>
+//       <Button
+//         label="다음"
+//         variant={isAgree ? "default" : "disabled"}
+//         onClick={onNext}
+//       />
+//     </div>
+//   );
+// };
+
+// const Section = ({ data }: { data: TermSection }) => {
+//   return (
+//     <div className="flex flex-col gap-4">
+//       <span className="text-md font-medium">{data.title}</span>
+//       {data.content && <span className="text-sm">{data.content}</span>}
+
+//       <div className="flex flex-col gap-2">
+//         {data.subSections?.map((s, i) => (
+//           <div key={i} className="flex flex-col gap-2">
+//             <span className="text-sm">{s.title}</span>
+//             <div className="flex flex-col gap-1">
+//               {Array.isArray(s.content) ? (
+//                 s.content.map((item, i) => (
+//                   <span className="text-sm" key={i}>
+//                     &nbsp;&nbsp;&nbsp;&nbsp;{item}
+//                   </span>
+//                 ))
+//               ) : (
+//                 <span className="text-sm" key={i}>
+//                   &nbsp;&nbsp;&nbsp;&nbsp;{s.content}
+//                 </span>
+//               )}
+//             </div>
+//           </div>
+//         ))}
+//       </div>
+//     </div>
+//   );
+// };

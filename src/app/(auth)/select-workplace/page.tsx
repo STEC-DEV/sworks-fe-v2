@@ -24,7 +24,7 @@ const Page = () => {
   const handleEnter = (workplace: AdminWorkplaceSelectListItem) => {
     setEnter(true);
     getWorkplacePermission(workplace.siteSeq.toString());
-    router.replace("/schedule");
+    router.replace("/dashboard");
   };
 
   const getList = () => {
