@@ -1,4 +1,5 @@
 "use client";
+import { ContactMethod } from "@/app/complain/add/_components/add";
 import Button from "@/components/common/button";
 import CheckFormItem from "@/components/common/form-input/check-field";
 import FileFormItem, {
@@ -23,33 +24,58 @@ import { useForm } from "react-hook-form";
 
 import z from "zod";
 
-const AddSchema = z
-  .object({
-    vocSeq: z.number("위치를 선택해주세요.").min(1),
-    // vocSeq: z.number("위치를 선택해주세요.").optional(),
-    createUser: z.string().min(1, "이름을 입력해주세요."),
+const AddSchema = z.object({
+  vocSeq: z.number("위치를 선택해주세요.").min(1),
+  // vocSeq: z.number("위치를 선택해주세요.").optional(),
+  createUser: z.string().min(1, "이름을 입력해주세요."),
 
-    phone: z.string().optional(),
-    serviceTypeSeq: z.number("유형을 선택해주세요."),
-    title: z.string().min(1, "제목을 입력해주세요."),
-    content: z.string().min(1, "내용을 입력해주세요."),
-    //true -> 모바일, false -> 수기
-    division: z.boolean(),
-    replyYn: z.boolean(),
-    images: z.array(z.instanceof(File)),
-  })
-  .refine(
-    (data) => {
-      if (data.replyYn) {
-        return data.phone && data.phone.length >= 9 && data.phone.length <= 11;
-      }
-      return true;
-    },
-    {
-      message: "전화번호를 올바르게 입력해주세요.",
-      path: ["phone"], // 에러가 phone 필드에 표시됨
-    }
-  );
+  // phone: z.string().optional(),
+  /** */
+  region: z.enum(["ko", "en"]).optional(),
+  /** */
+  serviceTypeSeq: z.number("유형을 선택해주세요."),
+  title: z.string().min(1, "제목을 입력해주세요."),
+  content: z.string().min(1, "내용을 입력해주세요."),
+  //true -> 모바일, false -> 수기
+  division: z.boolean(),
+  // replyYn: z.boolean(),
+  images: z.array(z.instanceof(File)),
+});
+// .superRefine((data, ctx) => {
+//   if (!data.receiver) return;
+
+//   if (data.method === "kakao") {
+//     if (!/^010\d{8}$/.test(data.receiver.replace(/-/g, ""))) {
+//       ctx.addIssue({
+//         code: z.ZodIssueCode.custom,
+//         message: "올바른 전화번호를 입력해주세요. (010XXXXXXXX)",
+//         path: ["receiver"],
+//       });
+//     }
+//   }
+
+//   if (data.method === "email") {
+//     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.receiver)) {
+//       ctx.addIssue({
+//         code: z.ZodIssueCode.custom,
+//         message: "올바른 이메일 형식을 입력해주세요.",
+//         path: ["receiver"],
+//       });
+//     }
+//   }
+// });
+// .refine(
+//   (data) => {
+//     if (data.replyYn) {
+//       return data.phone && data.phone.length >= 9 && data.phone.length <= 11;
+//     }
+//     return true;
+//   },
+//   {
+//     message: "전화번호를 올바르게 입력해주세요.",
+//     path: ["phone"], // 에러가 phone 필드에 표시됨
+//   },
+// )
 type AddFormType = z.infer<typeof AddSchema>;
 
 interface VocAddFormProps {
@@ -66,13 +92,15 @@ const VocAddForm = ({ onSubmit }: VocAddFormProps) => {
     defaultValues: {
       vocSeq: undefined,
       createUser: "",
-      phone: "",
+
       division: true, // 추가
-      replyYn: false, // 추가
+      // replyYn: false, // 추가
       images: [],
       serviceTypeSeq: 0,
       title: "",
       content: "",
+      // 회신여부 방식 변경
+      region: "ko", // [추가]
     },
   });
 
@@ -92,10 +120,11 @@ const VocAddForm = ({ onSubmit }: VocAddFormProps) => {
   //   formData ? toast.success("등록") : toast.error("실패");
   //   setOpen(false);
   // };
+
   return (
     <Form {...form}>
       <form
-        onSubmit={form.handleSubmit(onSubmit)}
+        onSubmit={form.handleSubmit(onSubmit, (errors) => console.log(errors))}
         className=" flex-1  min-h-0 flex flex-col gap-4 "
       >
         <ScrollArea className="flex-1  overflow-hidden ">
@@ -131,7 +160,7 @@ const VocAddForm = ({ onSubmit }: VocAddFormProps) => {
                       <SelectFormItem
                         label="업무 유형"
                         selectItem={convertSelectOptionType(
-                          userPermission ?? []
+                          userPermission ?? [],
                         )}
                         onValueChange={handleValue}
                         value={field.value?.toString()}
@@ -153,7 +182,7 @@ const VocAddForm = ({ onSubmit }: VocAddFormProps) => {
                   />
                 )}
               />
-              <FormField
+              {/* <FormField
                 control={form.control}
                 name="replyYn"
                 render={({ field }) => (
@@ -167,8 +196,9 @@ const VocAddForm = ({ onSubmit }: VocAddFormProps) => {
                     ref={field.ref}
                   />
                 )}
-              />
-              {form.watch("replyYn") ? (
+              /> */}
+
+              {/* {form.watch("replyYn") ? (
                 <FormField
                   control={form.control}
                   name="phone"
@@ -181,7 +211,7 @@ const VocAddForm = ({ onSubmit }: VocAddFormProps) => {
                     />
                   )}
                 />
-              ) : null}
+              ) : null} */}
 
               <FormField
                 control={form.control}

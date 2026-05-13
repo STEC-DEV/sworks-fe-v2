@@ -260,7 +260,7 @@ const ComplainAddForm = ({ seq, language }: ComplainAddFormProps) => {
       receiver: "", // [변경] phone → receiver
       method: "kakao", // [추가]
       region: LANGUAGE_TO_REGION[language], // [추가]
-      division: true,
+      division: false,
       replyYn: false,
       images: [],
       serviceTypeSeq: 0,
@@ -282,7 +282,7 @@ const ComplainAddForm = ({ seq, language }: ComplainAddFormProps) => {
       receiver: "", // [변경] phone → receiver
       method: "kakao", // [추가]
       region: LANGUAGE_TO_REGION[language], // [추가]
-      division: true,
+      division: false,
       replyYn: false,
       images: [],
       serviceTypeSeq: 0,
