@@ -73,7 +73,7 @@ const NormalMenu: MenuSection[] = [
       { title: "업무", isGroup: true },
       { title: "일일업무", icon: "BriefcaseBusiness", path: "/daily" },
       { title: "요청업무", icon: "MessageSquareReply", path: "/req-task" },
-      { title: "품질", icon: "BadgeCheck", path: "/qe" },
+      { title: "품질평가", icon: "BadgeCheck", path: "/qe" },
     ],
   },
   {
