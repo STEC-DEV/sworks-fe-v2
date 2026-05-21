@@ -41,7 +41,7 @@ import {
 const EditSchema = z.object({
   schSeq: z.number(),
   serviceTypeSeq: z.number("업무 유형을 선택해주세요.").min(1),
-  title: z.string().min(1, "제목을 입력하세요."),
+  schTitle: z.string().min(1, "제목을 입력하세요."),
   viewYn: z.boolean(),
   description: z.string(),
   isAllDay: z.boolean(),
@@ -94,7 +94,7 @@ const DayScheduleEditForm = ({
       schSeq: undefined,
       serviceTypeSeq: undefined,
       viewYn: false,
-      title: "",
+      schTitle: "",
       description: "",
       isAllDay: false,
       startDt: new Date(),
@@ -121,7 +121,7 @@ const DayScheduleEditForm = ({
       schSeq: schedule.schSeq,
       viewYn: schedule.viewYn,
       serviceTypeSeq: schedule.serviceTypeSeq,
-      title: schedule.title,
+      schTitle: schedule.title,
       description: schedule.description ?? "",
       isAllDay: schedule.isAllday,
       startDt: new Date(schedule.startDt),
@@ -201,7 +201,7 @@ const DayScheduleEditForm = ({
                 )}
                 <FormField
                   control={form.control}
-                  name="title"
+                  name="schTitle"
                   render={({ field }) => (
                     <TextFormItem
                       label="제목"
