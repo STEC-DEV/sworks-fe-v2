@@ -134,7 +134,8 @@ function CardTitle({
 // ─── Main Page ───────────────────────────────────────────────
 
 const DashboardPage = () => {
-  const { loginProfile } = useAuthStore();
+  const { loginProfile, enteredWorkplace } = useAuthStore();
+
   const totalTasks = 30;
   const doneTasks = 22;
   const inProgressTasks = 5;
@@ -146,7 +147,9 @@ const DashboardPage = () => {
       {/* ── Header ── */}
       <div className="bg-[#1a2340] px-6 py-3.5 flex items-center justify-between mb-6">
         <div className="flex flex-col gap-0.5">
-          <span className="text-lg font-medium text-white">대명루센타워</span>
+          <span className="text-lg font-medium text-white">
+            {enteredWorkplace?.siteName}
+          </span>
           <span className="text-sm text-white/70">
             {loginProfile?.userName} {loginProfile?.job} · {loginProfile?.role}{" "}
             {/* &nbsp;·&nbsp; 보안 · 시설 · 미화 &nbsp;·&nbsp;{" "} */}
