@@ -569,7 +569,9 @@ const Profile = ({
             {job}
           </span>
           <span className="text-xs text-sidebar-muted">·</span>
-          <span className="text-xs text-sidebar-muted">{permission}</span>
+          <span className="text-xs text-sidebar-muted whitespace-nowrap">
+            {permission}
+          </span>
         </div>
       </div>
 

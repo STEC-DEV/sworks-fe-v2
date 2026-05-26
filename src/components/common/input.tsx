@@ -190,11 +190,6 @@ const DragNDropInput = React.forwardRef<HTMLInputElement, FileInputProps>(
     const [isDragOver, setIsDragOver] = useState(false);
     const internalRef = React.useRef<HTMLInputElement>(null);
 
-    useEffect(() => {
-      console.log("=======값");
-      console.log(value);
-    }, [value]);
-
     // 두 ref를 모두 세팅
     const setRefs = (el: HTMLInputElement | null) => {
       internalRef.current = el;

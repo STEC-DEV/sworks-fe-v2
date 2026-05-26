@@ -361,7 +361,7 @@ const DayScheduleEditForm = ({
                       if (!schedule?.logs?.files) return [];
                       return schedule.logs.files
                         .filter((v) => !removeFiles.includes(v.attachSeq))
-                        .map((v) => v.attachSeq.toString());
+                        .map((v) => v.fileName);
                     };
                     const fileValue = useMemo(() => {
                       if (!field.value) return [];

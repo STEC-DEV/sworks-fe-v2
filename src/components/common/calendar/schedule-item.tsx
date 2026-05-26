@@ -75,6 +75,7 @@ const ScheduleItem = ({ data }: ScheduleItemProps) => {
           <ImageCarousel
             key={`before-${data.logs.beforeImages.length}`}
             pathList={data.logs.beforeImages.map((v) => v.path)}
+            comments={data.logs.beforeImages.map((v) => v.comments ?? "")}
           />
         ),
         size: "sm" as const,
@@ -88,6 +89,7 @@ const ScheduleItem = ({ data }: ScheduleItemProps) => {
           <ImageCarousel
             key={`after-${data.logs.afterImages.length}`}
             pathList={data.logs.afterImages.map((v) => v.path)}
+            comments={data.logs.afterImages.map((v) => v.comments ?? "")}
           />
         ),
         size: "sm" as const,
@@ -126,7 +128,7 @@ const ScheduleItem = ({ data }: ScheduleItemProps) => {
         </div>
       </PopoverTrigger>
       <PopoverContent
-        className="bg-white  "
+        className="bg-white "
         side="left"
         sideOffset={5}
         align="start"
@@ -289,9 +291,10 @@ export const ExtendedSchedule = ({
 
 interface ImageCarouselProps {
   pathList: string[];
+  comments?: string[];
 }
 
-const ImageCarousel = ({ pathList }: ImageCarouselProps) => {
+const ImageCarousel = ({ pathList, comments }: ImageCarouselProps) => {
   const [open, setOpen] = useState<boolean>(false);
   const [index, setIndex] = useState<number>(0);
   const handlePrev = () => {
@@ -331,6 +334,9 @@ const ImageCarousel = ({ pathList }: ImageCarouselProps) => {
                       }}
                     />
                   </div>
+                  {comments && (
+                    <div className="text-sm text-center">{comments[index]}</div>
+                  )}
                 </CarouselItem>
               ))}
           </CarouselContent>
