@@ -39,7 +39,7 @@ const page = () => {
       </div>
       <CustomCard className={`py-12 w-[95%] md:w-[60%] xl:w-130 `} size={"lg"}>
         {/* 헤드 */}
-        <div className="flex flex-col gap-2 px-12 text-2xl font-medium text-[var(--description-light)]">
+        <div className="flex flex-col gap-2 px-12 text-2xl font-medium text-primary">
           로그인
         </div>
         {/* 바디 */}

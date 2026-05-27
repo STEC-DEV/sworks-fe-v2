@@ -98,11 +98,11 @@ const LoginForm = () => {
           }}
         >
           <Switch
-            className="ring ring-[var(--border)]  hover:cursor-pointer data-[state=checked]:bg-blue-500 data-[state=unchecked]:bg-[var(--background)] [&_[data-slot=switch-thumb]]:bg-white focus-visible:ring-0 focus-visible:outline-none"
+            className="ring ring-[var(--border)]  hover:cursor-pointer  data-[state=unchecked]:bg-[var(--background)] [&_[data-slot=switch-thumb]]:bg-white focus-visible:ring-0 focus-visible:outline-none"
             checked={loginMode}
             onCheckedChange={(checked) => setLoginMode(checked)}
           />
-          <span className="text-xs text-[var(--description-light)]  hover:cursor-pointer">
+          <span className="text-xs text-primary  hover:cursor-pointer">
             관리 모드
           </span>
         </div>
