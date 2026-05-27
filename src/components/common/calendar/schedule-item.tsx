@@ -17,8 +17,8 @@ import {
   DownloadIcon,
   Ellipsis,
   File,
-  Icon,
   LucideIcon,
+  TagIcon,
 } from "lucide-react";
 import { format } from "date-fns";
 import Tab from "../tab";
@@ -173,6 +173,7 @@ const ScheduleItem = ({ data }: ScheduleItemProps) => {
 
           <div className="space-y-2">
             <ScheduleIconValue icon={AlignLeft} value={data.description} />
+            <ScheduleIconValue icon={TagIcon} value={data.remarkName} />
             <ScheduleIconValue
               icon={BellIcon}
               value={

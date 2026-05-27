@@ -13,30 +13,21 @@ import {
   TextFormItem,
 } from "@/components/common/form-input/text-field";
 import { Form, FormField } from "@/components/ui/form";
-import { ScrollArea } from "@/components/ui/scroll-area";
+
 import { Switch } from "@/components/ui/switch";
 import useDateValidation from "@/hooks/date/useDateSet";
 import { useAuthStore } from "@/store/auth/auth-store";
 import { useScheduleStore } from "@/store/normal/schedule/shcedule-store";
-import {
-  convertRecordDataToFormData,
-  convertSelectOptionType,
-  objectToFormData,
-} from "@/utils/convert";
+import { convertSelectOptionType, objectToFormData } from "@/utils/convert";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import z from "zod";
-import {
-  ImageFileItem,
-  ScheduleImageFileFormItem,
-} from "./_components/file-input";
-import {
-  ScheduleAttach,
-  ScheduleFormAttach,
-} from "@/types/normal/schedule/day-schedule";
+import { ScheduleImageFileFormItem } from "./_components/file-input";
+import { ScheduleFormAttach } from "@/types/normal/schedule/day-schedule";
+import { REMARK_ITEMS } from "./day-add";
 
 const EditSchema = z.object({
   schSeq: z.number(),
@@ -52,6 +43,7 @@ const EditSchema = z.object({
   alarmMin: z.number().nullable(),
   alarmOffSetDays: z.number(),
   viewColor: z.string().min(1, "색상을 선택해주세요."),
+  remark: z.number("카테고리를 선택해주세요"),
   logs: z.object({
     logComments: z.string(),
     deleteAttaches: z.array(z.number()),
@@ -104,6 +96,7 @@ const DayScheduleEditForm = ({
       alarmMin: 0,
       alarmOffSetDays: 0,
       viewColor: "",
+      remark: 0,
       logs: {
         logComments: "",
         deleteAttaches: [],
@@ -131,6 +124,8 @@ const DayScheduleEditForm = ({
       alarmMin: 0,
       alarmOffSetDays: schedule.alarmOffsetDays ?? 0,
       viewColor: schedule.viewColor,
+      //NOTE: 서버에서 NULL처리는 그냥 일시적으로 허용해둔거라 UI에서 null못가게 막아야함. 해제하는것에 문제가있었음.
+      remark: schedule.remark ?? 0,
       logs: {
         logComments: schedule.logs?.logComments ?? "",
         deleteAttaches: [],
@@ -199,6 +194,25 @@ const DayScheduleEditForm = ({
                     )}
                   />
                 )}
+                <FormField
+                  control={form.control}
+                  name="remark"
+                  render={({ field }) => {
+                    const handleValue = (value: string) => {
+                      field.onChange(Number(value));
+                    };
+                    console.log("field.value:", field.value);
+                    return (
+                      <SelectFormItem
+                        label="카테고리"
+                        selectItem={REMARK_ITEMS}
+                        onValueChange={handleValue}
+                        value={field.value?.toString()}
+                        required
+                      />
+                    );
+                  }}
+                />
                 <FormField
                   control={form.control}
                   name="schTitle"

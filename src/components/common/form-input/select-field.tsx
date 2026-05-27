@@ -60,7 +60,6 @@ const SelectFormItem = <T extends FieldValues>({
         onValueChange={(value) => {
           onValueChange(value);
         }}
-        defaultValue={value}
         value={value}
         {...props}
       >

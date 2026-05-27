@@ -13,9 +13,11 @@ import { MonthScheduleListItem } from "@/types/normal/schedule/month";
 import { useDraggable } from "@dnd-kit/core";
 import { format } from "date-fns";
 import {
+  DotIcon,
   EllipsisVertical,
   GripVertical,
   SquarePenIcon,
+  TagIcon,
   Trash2Icon,
 } from "lucide-react";
 import { useSearchParams } from "next/navigation";
@@ -78,10 +80,10 @@ const MonthSchedule = () => {
               {monthSchedules.map((v, i) =>
                 canWorkerEdit ? (
                   <DraggableBox key={i} id={v.planSeq}>
-                    <MonthScheduleItem key={i} data={v} />
+                    <MonthScheduleItem key={v.planSeq} data={v} />
                   </DraggableBox>
                 ) : (
-                  <MonthScheduleItem key={i} data={v} />
+                  <MonthScheduleItem key={v.planSeq} data={v} />
                 ),
               )}
             </div>
@@ -126,6 +128,7 @@ export const MonthScheduleItem = ({
   isDrag?: boolean;
 }) => {
   const [open, setOpen] = useState<boolean>(false);
+  const [popoverOpen, setPopoverOpen] = useState<boolean>(false); // 추가
   const { canWorkerEdit } = usePermission();
   const searchParams = useSearchParams();
   const { deleteMonthSchedule } = useScheduleStore();
@@ -151,86 +154,204 @@ export const MonthScheduleItem = ({
       );
     }
   };
+
+  // return (
+  //   <div
+  //     className={cn(
+  //       `group h-full w-full flex  px-2  pr-4 items-center ${
+  //         canWorkerEdit && "cursor-pointer"
+  //       } hover:bg-gray-50`,
+  //       className,
+  //     )}
+  //   >
+  //     <div className=" self-stretch  w-0.75 bg-primary mr-2" />
+  //     <div className="flex gap-2 items-center py-2 flex-1 ">
+  //       {/* <EllipsisVertical className="text-[var(--icon)]" strokeWidth={1.5} /> */}
+  //       <GripDots5
+  //         size={28}
+  //         className="text-gray-300 group-hover:text-gray-400"
+  //       />
+  //       <div className="flex flex-col">
+  //         <div className="flex items-center ">
+  //           <div className="w-fit leading-none px-2 bg-primary-background rounded-[2px]">
+  //             <span className="text-xs text-primary font-semibold ">
+  //               {data.serviceTypeName}
+  //             </span>
+  //           </div>
+
+  //           <DotIcon className="text-border-strong" size={16} />
+  //           <div>
+  //             <span className="text-xs text-primary font-semibold ">
+  //               {data.remarkName}
+  //             </span>
+  //           </div>
+  //         </div>
+
+  //         <span className="text-sm font-medium">{data.planTitle}</span>
+  //         <span className="text-xs text-[var(--description-light)]">
+  //           {data.description}
+  //         </span>
+  //       </div>
+  //     </div>
+  //     {/* 팝오버 */}
+  //     {!isDrag && canWorkerEdit && (
+  //       <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
+  //         <PopoverTrigger
+  //           asChild
+  //           className="hidden group-hover:block"
+  //           onClick={(e) => e.stopPropagation()}
+  //           onPointerDown={(e) => e.stopPropagation()}
+  //         >
+  //           <IconButton
+  //             icon="EllipsisVertical"
+  //             bgClassName="hover:bg-gray-200 rounded-[4px] px-"
+  //           />
+  //         </PopoverTrigger>
+  //         <PopoverContent className=" bg-white w-25 p-0 ">
+  //           <div
+  //             onPointerDown={(e) => e.stopPropagation()}
+  //             // onClick={(e) => e.stopPropagation()}
+  //             className="flex flex-col  items-start justify-center "
+  //           >
+  //             <BaseDialog
+  //               title="월간일정 수정"
+  //               open={open}
+  //               // setOpen={setOpen}
+  //               setOpen={(v) => {
+  //                 setOpen(v);
+  //                 if (v) setPopoverOpen(false); // 다이얼로그 열릴 때 팝오버 닫기
+  //               }}
+  //               triggerChildren={
+  //                 <div className="w-full flex  items-center gap-2 px-4 py-2 hover:bg-gray-50 cursor-pointer">
+  //                   <SquarePenIcon size={16} className="text-[var(--icon)]" />
+  //                   <span className="text-sm text-[var(--description-dark)]">
+  //                     수정
+  //                   </span>
+  //                 </div>
+  //               }
+  //             >
+  //               <MonthEditForm
+  //                 key={data.planSeq}
+  //                 data={data}
+  //                 onClose={() => setOpen(false)}
+  //               />
+  //             </BaseDialog>
+  //             <CheckDialog
+  //               title={dialogText.defaultDelete.title}
+  //               description={dialogText.defaultDelete.description}
+  //               actionLabel={dialogText.defaultDelete.actionLabel}
+  //               onClick={onDelete}
+  //             >
+  //               <div className="w-full flex  items-center gap-2 px-4 py-2 hover:bg-gray-50 cursor-pointer">
+  //                 <Trash2Icon size={16} className="text-red-500" />
+  //                 <span className="text-sm text-[var(--description-dark)]">
+  //                   삭제
+  //                 </span>
+  //               </div>
+  //             </CheckDialog>
+  //           </div>
+  //         </PopoverContent>
+  //       </Popover>
+  //     )}
+  //   </div>
+  // );
   return (
     <div
       className={cn(
-        `group h-full w-full flex  px-2  pr-4 items-center ${
+        `group h-full w-full flex px-2 pr-4 items-center ${
           canWorkerEdit && "cursor-pointer"
         } hover:bg-gray-50`,
         className,
       )}
     >
-      <div className=" self-stretch  w-0.75 bg-primary mr-2" />
-      <div className="flex gap-2 items-center py-2 flex-1 ">
-        {/* <EllipsisVertical className="text-[var(--icon)]" strokeWidth={1.5} /> */}
+      <div className="self-stretch w-0.75 bg-primary mr-2" />
+      <div className="flex gap-2 items-center py-2 flex-1">
         <GripDots5
           size={28}
           className="text-gray-300 group-hover:text-gray-400"
         />
         <div className="flex flex-col">
-          <div className="w-fit leading-none px-2 bg-primary-background rounded-[2px]">
-            <span className="text-xs text-primary font-semibold ">
-              {data.serviceTypeName}
-            </span>
+          <div className="flex items-center">
+            <div className="w-fit leading-none px-2 bg-primary-background rounded-[2px]">
+              <span className="text-xs text-primary font-semibold">
+                {data.serviceTypeName}
+              </span>
+            </div>
+            <DotIcon className="text-border-strong" size={16} />
+            <div>
+              <span className="text-xs text-primary font-semibold">
+                {data.remarkName}
+              </span>
+            </div>
           </div>
-
           <span className="text-sm font-medium">{data.planTitle}</span>
           <span className="text-xs text-[var(--description-light)]">
             {data.description}
           </span>
         </div>
       </div>
-      {/* 팝오버 */}
+
       {!isDrag && canWorkerEdit && (
-        <Popover>
-          <PopoverTrigger
-            asChild
-            className="hidden group-hover:block"
-            onClick={(e) => e.stopPropagation()}
-            onPointerDown={(e) => e.stopPropagation()}
-          >
-            <IconButton
-              icon="EllipsisVertical"
-              bgClassName="hover:bg-gray-200 rounded-[4px] px-"
-            />
-          </PopoverTrigger>
-          <PopoverContent className=" bg-white w-25 p-0 ">
-            <div
+        <>
+          <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
+            <PopoverTrigger
+              asChild
+              className="hidden group-hover:block"
+              onClick={(e) => e.stopPropagation()}
               onPointerDown={(e) => e.stopPropagation()}
-              // onClick={(e) => e.stopPropagation()}
-              className="flex flex-col  items-start justify-center "
             >
-              <BaseDialog
-                title="월간일정 수정"
-                open={open}
-                setOpen={setOpen}
-                triggerChildren={
-                  <div className="w-full flex  items-center gap-2 px-4 py-2 hover:bg-gray-50 cursor-pointer">
-                    <SquarePenIcon size={16} className="text-[var(--icon)]" />
-                    <span className="text-sm text-[var(--description-dark)]">
-                      수정
-                    </span>
-                  </div>
-                }
+              <IconButton
+                icon="EllipsisVertical"
+                bgClassName="hover:bg-gray-200 rounded-[4px] px-"
+              />
+            </PopoverTrigger>
+            <PopoverContent className="bg-white w-25 p-0">
+              <div
+                onPointerDown={(e) => e.stopPropagation()}
+                className="flex flex-col items-start justify-center"
               >
-                <MonthEditForm data={data} onClose={() => setOpen(false)} />
-              </BaseDialog>
-              <CheckDialog
-                title={dialogText.defaultDelete.title}
-                description={dialogText.defaultDelete.description}
-                actionLabel={dialogText.defaultDelete.actionLabel}
-                onClick={onDelete}
-              >
-                <div className="w-full flex  items-center gap-2 px-4 py-2 hover:bg-gray-50 cursor-pointer">
-                  <Trash2Icon size={16} className="text-red-500" />
+                <div
+                  className="w-full flex items-center gap-2 px-4 py-2 hover:bg-gray-50 cursor-pointer"
+                  onClick={() => {
+                    setPopoverOpen(false);
+                    setOpen(true);
+                  }}
+                >
+                  <SquarePenIcon size={16} className="text-[var(--icon)]" />
                   <span className="text-sm text-[var(--description-dark)]">
-                    삭제
+                    수정
                   </span>
                 </div>
-              </CheckDialog>
-            </div>
-          </PopoverContent>
-        </Popover>
+                <CheckDialog
+                  title={dialogText.defaultDelete.title}
+                  description={dialogText.defaultDelete.description}
+                  actionLabel={dialogText.defaultDelete.actionLabel}
+                  onClick={onDelete}
+                >
+                  <div className="w-full flex items-center gap-2 px-4 py-2 hover:bg-gray-50 cursor-pointer">
+                    <Trash2Icon size={16} className="text-red-500" />
+                    <span className="text-sm text-[var(--description-dark)]">
+                      삭제
+                    </span>
+                  </div>
+                </CheckDialog>
+              </div>
+            </PopoverContent>
+          </Popover>
+
+          <BaseDialog
+            title="월간일정 수정"
+            open={open}
+            setOpen={setOpen}
+            triggerChildren={<div className="hidden" />}
+          >
+            <MonthEditForm
+              key={data.planSeq}
+              data={data}
+              onClose={() => setOpen(false)}
+            />
+          </BaseDialog>
+        </>
       )}
     </div>
   );
@@ -265,10 +386,18 @@ const DraggableBox = ({ children, id }: DraggableBoxProps) => {
       {...listeners}
       {...attributes}
       onKeyDown={(e) => {
-        // Popover 내부에서 키 이벤트 발생 시 드래그 방지
-        if ((e.target as HTMLElement).closest('[role="dialog"]')) {
+        const target = e.target as HTMLElement;
+        if (
+          target.closest('[role="dialog"]') ||
+          target.tagName === "TEXTAREA" ||
+          target.tagName === "INPUT"
+        ) {
           e.stopPropagation();
         }
+      }}
+      onPointerDown={(e) => {
+        if (document.querySelector('[role="dialog"]')) return;
+        listeners?.onPointerDown?.(e);
       }}
     >
       {children}

@@ -25,6 +25,34 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import z from "zod";
 
+//NOTE: 일정구분 상수
+export const REMARK_ITEMS = [
+  {
+    key: "기타",
+    value: 0,
+  },
+  {
+    key: "업무(비정기)",
+    value: 1,
+  },
+  {
+    key: "교육",
+    value: 2,
+  },
+  {
+    key: "점검",
+    value: 3,
+  },
+  {
+    key: "회의",
+    value: 4,
+  },
+  {
+    key: "행사/지원",
+    value: 5,
+  },
+];
+
 const AddSchema = z.object({
   serviceTypeSeq: z.number("업무 유형을 선택해주세요.").min(1),
   title: z.string().min(1, "제목을 입력하세요."),
@@ -37,6 +65,7 @@ const AddSchema = z.object({
   alarmMin: z.number().nullable(),
   alarmOffSetDays: z.number(),
   viewColor: z.string().min(1, "색상을 선택해주세요."),
+  remark: z.number("카테고리를 선택해주세요."),
   // files: z.array(z.instanceof(File)),
 });
 
@@ -70,6 +99,7 @@ const DayScheduleAddForm = ({
       alarmMin: 0,
       alarmOffSetDays: 0,
       viewColor: "",
+      remark: 0,
       // files: [],
     },
   });
@@ -125,7 +155,7 @@ const DayScheduleAddForm = ({
                   control={form.control}
                   name="serviceTypeSeq"
                   render={({ field }) => {
-                    const handleValue = (value: string) => {
+                    const handleValue = (value: string | null) => {
                       field.onChange(Number(value));
                     };
 
@@ -154,6 +184,26 @@ const DayScheduleAddForm = ({
                     required
                   />
                 )}
+              />
+
+              <FormField
+                control={form.control}
+                name="remark"
+                render={({ field }) => {
+                  const handleValue = (value: string) => {
+                    field.onChange(Number(value));
+                  };
+
+                  return (
+                    <SelectFormItem
+                      label="카테고리"
+                      selectItem={REMARK_ITEMS}
+                      onValueChange={handleValue}
+                      value={field.value?.toString()}
+                      required
+                    />
+                  );
+                }}
               />
               <FormField
                 control={form.control}

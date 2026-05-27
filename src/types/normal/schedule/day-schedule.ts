@@ -6,6 +6,8 @@ export interface DaySchedule {
   viewYn: boolean;
   title: string;
   description?: string | null;
+  remark: number | null;
+  remarkName: string;
   isAllday: boolean;
   startDt: Date; //일정 시작일시
   endDt: Date; //일정 종료일시
@@ -48,7 +50,7 @@ export interface NewScheduleAttach {
 export type ScheduleFormAttach = NewScheduleAttach | ScheduleAttach;
 
 export function isExistingAttach(
-  data: ScheduleFormAttach
+  data: ScheduleFormAttach,
 ): data is ScheduleAttach {
   // console.log("============================");
   // console.log(data);

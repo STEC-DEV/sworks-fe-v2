@@ -488,7 +488,8 @@ const Profile = ({
   permission,
 }: ProfileProps) => {
   const [open, setOpen] = useState<boolean>(false);
-  const { adminWorkplaceList, getWorkplacePermission } = useAuthStore();
+  const { adminWorkplaceList, getWorkplacePermission, enteredWorkplace } =
+    useAuthStore();
   //////
   const [enter, setEnter] = useState<boolean>(false);
   const router = useRouter();
@@ -499,10 +500,9 @@ const Profile = ({
       await getWorkplacePermission(workplace.siteSeq.toString());
 
       // 전체 새로고침 (팝업도 자동으로 닫힘)
-      window.location.href = "/schedule";
+      window.location.href = "/dashboard";
     } catch (error) {
       console.error("Failed to change workplace:", error);
-      setEnter(false);
     }
   };
 
@@ -522,9 +522,9 @@ const Profile = ({
         </span>
       );
     }
-    return adminWorkplaceList.map((v, i) => (
-      <WorkplaceBox key={i} data={v} onClick={handleEnter} />
-    ));
+    return adminWorkplaceList
+      .filter((v) => v.siteSeq !== enteredWorkplace?.siteSeq)
+      .map((v, i) => <WorkplaceBox key={i} data={v} onClick={handleEnter} />);
   };
   return (
     <div className="flex flex-col gap-2 px-6 py-4 ">

@@ -39,7 +39,7 @@ export const convertSelectOptionType = (arrayItems: Array<any>) => {
  */
 export const convertRecordDataToFormData = (
   data: Record<string, any>,
-  dateOnly: boolean = false
+  dateOnly: boolean = false,
 ) => {
   const formData = new FormData();
   Object.entries(data).forEach(([key, value]) => {
@@ -92,7 +92,7 @@ export const objectToFormData = (
   data: any,
   dateOnly?: boolean,
   formData: FormData = new FormData(),
-  parentKey: string = ""
+  parentKey: string = "",
 ): FormData => {
   const useDateOnly = dateOnly ?? false;
   if (data === null || data === undefined) {

@@ -16,6 +16,7 @@ import { useSearchParams } from "next/navigation";
 import React, { Suspense, useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import z from "zod";
+import { REMARK_ITEMS } from "./day-add";
 
 const EditSchema = z.object({
   planSeq: z.number(),
@@ -23,6 +24,7 @@ const EditSchema = z.object({
   planTitle: z.string().min(1, "제목을 입력해주세요."),
   description: z.string(),
   planDt: z.string(),
+  remark: z.number("카테고리를 선택해주세요."),
 });
 
 type EditFormType = z.infer<typeof EditSchema>;
@@ -40,23 +42,26 @@ const MonthEditForm = ({
   const form = useForm<EditFormType>({
     resolver: zodResolver(EditSchema),
     defaultValues: {
-      planSeq: undefined,
-      serviceTypeSeq: undefined,
-      planTitle: "",
-      description: "",
-      planDt: format(new Date(), "yyyy-MM-dd"),
-    },
-  });
-
-  useEffect(() => {
-    if (!data) return;
-    form.reset({
       planSeq: data.planSeq,
       serviceTypeSeq: data.serviceTypeSeq,
       planTitle: data.planTitle,
       description: data.description ?? "",
-    });
-  }, [data, form]);
+      planDt: format(new Date(), "yyyy-MM-dd"),
+      remark: data.remark ?? 0,
+    },
+  });
+
+  // useEffect(() => {
+  //   if (!data) return;
+  //   console.log("remark:", data.remark);
+  //   form.reset({
+  //     planSeq: data.planSeq,
+  //     serviceTypeSeq: data.serviceTypeSeq,
+  //     planTitle: data.planTitle,
+  //     description: data.description ?? "",
+  //     remark: data.remark ?? 0,
+  //   });
+  // }, [data?.planSeq]);
 
   useEffect(() => {
     const year = searchParams.get("year");
@@ -66,12 +71,10 @@ const MonthEditForm = ({
     } else {
       form.setValue(
         "planDt",
-        format(new Date(parseInt(year), parseInt(month) - 1, 1), "yyyy-MM-dd")
+        format(new Date(parseInt(year), parseInt(month) - 1, 1), "yyyy-MM-dd"),
       );
     }
   }, [searchParams]);
-
-  const getSearchParams = useMemo(() => {}, [searchParams]);
 
   const handleSubmit = async (values: EditFormType) => {
     console.log(values);
@@ -81,12 +84,12 @@ const MonthEditForm = ({
     if (!year || !month) {
       await patchUpdateMonthSchedule(
         values,
-        new URLSearchParams({ targetDt: format(new Date(), "yyyy-MM") })
+        new URLSearchParams({ targetDt: format(new Date(), "yyyy-MM") }),
       );
     } else {
       await patchUpdateMonthSchedule(
         values,
-        new URLSearchParams({ targetDt: `${year}-${month}` })
+        new URLSearchParams({ targetDt: `${year}-${month}` }),
       );
     }
 
@@ -116,7 +119,7 @@ const MonthEditForm = ({
                       <SelectFormItem
                         label="업무 유형"
                         selectItem={convertSelectOptionType(
-                          enteredWorkplace.contracts ?? []
+                          enteredWorkplace.contracts ?? [],
                         )}
                         onValueChange={handleValue}
                         value={field.value?.toString()}
@@ -126,6 +129,27 @@ const MonthEditForm = ({
                   }}
                 />
               ) : null}
+              <FormField
+                control={form.control}
+                name="remark"
+                render={({ field }) => {
+                  const handleValue = (value: string) => {
+                    field.onChange(Number(value));
+                  };
+
+                  console.log("field.value:", field.value);
+
+                  return (
+                    <SelectFormItem
+                      label="카테고리"
+                      selectItem={REMARK_ITEMS}
+                      onValueChange={handleValue}
+                      value={field.value?.toString()}
+                      required
+                    />
+                  );
+                }}
+              />
               <FormField
                 control={form.control}
                 name="planTitle"

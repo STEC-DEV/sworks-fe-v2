@@ -15,12 +15,14 @@ import { useSearchParams } from "next/navigation";
 import React, { Suspense, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import z from "zod";
+import { REMARK_ITEMS } from "./day-add";
 
 const AddSchema = z.object({
   serviceTypeSeq: z.number("업무유형을 선택해주세요."),
   planTitle: z.string().min(1, "제목을 입력해주세요."),
   description: z.string(),
   planDt: z.string(),
+  remark: z.number("카테고리를 선택해주세요."),
 });
 
 type AddFormType = z.infer<typeof AddSchema>;
@@ -36,6 +38,7 @@ const MonthAddForm = ({ onClose }: { onClose: () => void }) => {
       planTitle: "",
       description: "",
       planDt: format(new Date(), "yyyy-MM-dd"),
+      remark: 0,
     },
   });
 
@@ -48,15 +51,10 @@ const MonthAddForm = ({ onClose }: { onClose: () => void }) => {
     } else {
       form.setValue(
         "planDt",
-        format(new Date(parseInt(year), parseInt(month) - 1, 1), "yyyy-MM-dd")
+        format(new Date(parseInt(year), parseInt(month) - 1, 1), "yyyy-MM-dd"),
       );
     }
   }, [searchParams]);
-
-  useEffect(() => {
-    const data = form.watch("planDt");
-    console.log(data);
-  }, [form]);
 
   const handleSubmit = async (values: AddFormType) => {
     await postAddMonthSchedule(values);
@@ -85,7 +83,7 @@ const MonthAddForm = ({ onClose }: { onClose: () => void }) => {
                       <SelectFormItem
                         label="업무 유형"
                         selectItem={convertSelectOptionType(
-                          enteredWorkplace.contracts ?? []
+                          enteredWorkplace.contracts ?? [],
                         )}
                         onValueChange={handleValue}
                         value={field.value?.toString()}
@@ -95,6 +93,25 @@ const MonthAddForm = ({ onClose }: { onClose: () => void }) => {
                   }}
                 />
               ) : null}
+              <FormField
+                control={form.control}
+                name="remark"
+                render={({ field }) => {
+                  const handleValue = (value: string) => {
+                    field.onChange(Number(value));
+                  };
+
+                  return (
+                    <SelectFormItem
+                      label="카테고리"
+                      selectItem={REMARK_ITEMS}
+                      onValueChange={handleValue}
+                      value={field.value?.toString()}
+                      required
+                    />
+                  );
+                }}
+              />
               <FormField
                 control={form.control}
                 name="planTitle"

@@ -3,10 +3,7 @@ import { handleApiError } from "@/lib/api/errorHandler";
 import { useAuthStore } from "@/store/auth/auth-store";
 import { Response } from "@/types/common/response";
 import { DaySchedule } from "@/types/normal/schedule/day-schedule";
-import {
-  MonthScheduleListItem,
-  monthSchedules,
-} from "@/types/normal/schedule/month";
+import { MonthScheduleListItem } from "@/types/normal/schedule/month";
 import { format } from "date-fns";
 import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
@@ -28,7 +25,7 @@ interface ScheduleState {
   postAddMonthSchedule: (data: Record<string, any>) => Promise<void>;
   patchUpdateMonthSchedule: (
     data: Record<string, any>,
-    date: URLSearchParams
+    date: URLSearchParams,
   ) => Promise<void>;
   deleteMonthSchedule: (delSeq: number, date: URLSearchParams) => Promise<void>;
   //Month to Day
@@ -206,6 +203,7 @@ export const useScheduleStore = create<ScheduleState>()(
               alarmMin: 0,
               alarmOffsetDays: 0,
               viewColor: "d32f2f",
+              remark: data.remark,
             };
 
             const res: Response<boolean> = await api
@@ -219,7 +217,7 @@ export const useScheduleStore = create<ScheduleState>()(
           }
         },
       }),
-      { name: "schedule-store" }
-    )
-  )
+      { name: "schedule-store" },
+    ),
+  ),
 );
