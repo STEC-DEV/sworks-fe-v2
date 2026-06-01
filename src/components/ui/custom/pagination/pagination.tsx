@@ -44,6 +44,10 @@ const Pagination = ({
       ? 1
       : Math.min(startPage + pageRangeDisplayed - 1, allDisplayedPage);
 
+  console.log("allDisplayedPage : ", allDisplayedPage);
+  console.log("startPage : ", startPage);
+  console.log("endPage : ", endPage);
+
   // useEffect(() => {
   //   console.log(startPage);
   //   console.log(endPage);
@@ -65,14 +69,14 @@ const Pagination = ({
     // console.log(value);
     switch (value) {
       case PageActionState.FirstPage:
-        pageHandler({ pageNumber: startPage });
+        pageHandler({ pageNumber: 1 });
         break;
       case PageActionState.PrevPage:
         if (activePage - 1 != 0) pageHandler({ pageNumber: activePage - 1 });
         else pageHandler({ pageNumber: 1 });
         break;
       case PageActionState.NextPage:
-        if (activePage + 1 <= endPage) {
+        if (activePage + 1 <= allDisplayedPage) {
           pageHandler({ pageNumber: activePage + 1 });
           break;
         } else {
@@ -81,7 +85,8 @@ const Pagination = ({
         }
 
       case PageActionState.LastPage:
-        pageHandler({ pageNumber: endPage });
+        // pageHandler({ pageNumber: endPage });
+        pageHandler({ pageNumber: allDisplayedPage });
         break;
     }
   };
