@@ -13,6 +13,7 @@ import {
 } from "recharts";
 
 function formatTime(time: string) {
+  if (!time) return "";
   // "09:30:00" → Date 객체로 변환 후 "09:30" 형식으로
   return format(parse(time, "HH:mm:ss", new Date()), "HH:mm");
 }
@@ -152,7 +153,11 @@ const DashScheduleItem = ({ item }: { item: DashSch }) => {
       <div>
         <div className="text-sm text-description">{item.schTitle}</div>
         <div className="text-xs text-description">
-          {formatTime(item.startTime)} ~ {formatTime(item.endTime)}
+          {/* {formatTime(item.startTime)} ~ {formatTime(item.endTime)} */}
+
+          {item.isAllday
+            ? "종일"
+            : `${formatTime(item.startTime)} ~ ${formatTime(item.endTime)}`}
         </div>
 
         {/* <div className="text-xs text-description">
