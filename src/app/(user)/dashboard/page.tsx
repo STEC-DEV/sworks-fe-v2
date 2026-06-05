@@ -38,9 +38,9 @@ const DashboardPage = () => {
       </div>
 
       {/* ── Body ── */}
-      <div className="flex-1 min-h-0 xl:flex gap-6">
+      <div className="flex-1 min-h-0 flex flex-col xl:flex-row gap-6">
         {/* 왼쪽 - min-h-0 추가, 브라켓 추가 */}
-        <div className="xl:flex-[8]  xl:grid xl:grid-cols-3 xl:grid-rows-5 gap-6">
+        <div className="flex flex-col xl:flex-[8]  xl:grid xl:grid-cols-3 xl:grid-rows-5 gap-6">
           <VocTrendChart className="col-span-3 row-span-3 " />
           <TodayVocKpi className="col-start-1 row-start-4 col-span-1 row-span-1" />
           <MonthVocKpi className="col-start-1 row-start-5 col-span-1 row-span-1" />
@@ -49,7 +49,7 @@ const DashboardPage = () => {
         </div>
 
         {/* 오른쪽 - 브라켓 추가 */}
-        <div className="xl:flex-[3]  xl:flex xl:flex-col xl:gap-6">
+        <div className="xl:flex-[3]  xl:flex xl:flex-col flex flex-col gap-6">
           <TodayTaskChart className="flex-1" />
           <NoticeCard className="flex-2" />
           <ScheduleCard className="flex-3" />

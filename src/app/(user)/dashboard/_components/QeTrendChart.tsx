@@ -38,7 +38,7 @@ const QeTrendChart = ({ className }: { className?: string }) => {
           최근 3개월
         </span>
       </div>
-      <div className="flex-1 min-h-0">
+      <div className="h-[250px] xl:h-full xl:flex-1 xl:min-h-0">
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart
             data={data}
