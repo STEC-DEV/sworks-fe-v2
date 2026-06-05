@@ -10,7 +10,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { ChartError, ChartLoading } from "./VocTrendChart";
+import { ChartEmpty, ChartError, ChartLoading } from "./VocTrendChart";
 import { cn } from "@/lib/utils";
 
 const QeTrendChart = ({ className }: { className?: string }) => {
@@ -22,6 +22,8 @@ const QeTrendChart = ({ className }: { className?: string }) => {
   if (isLoading) return <ChartLoading className={className} />;
 
   if (isError) return <ChartError className={className} />;
+
+  if (!data || data.length === 0) return <ChartEmpty className={className} />;
 
   return (
     <CustomCard
@@ -48,13 +50,13 @@ const QeTrendChart = ({ className }: { className?: string }) => {
             </defs>
             <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
             <XAxis
-              dataKey="period"
+              dataKey="dates"
               tick={{ fontSize: 11, fill: "var(--description)" }}
               axisLine={false}
               tickLine={false}
             />
             <YAxis
-              domain={[75, 95]}
+              domain={[0, 100]}
               tick={{ fontSize: 11, fill: "var(--description)" }}
               axisLine={false}
               tickLine={false}

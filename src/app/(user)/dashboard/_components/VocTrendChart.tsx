@@ -19,6 +19,8 @@ const VocTrendChart = ({ className }: { className?: string }) => {
 
   if (isError) return <ChartError className={className} />;
 
+  if (!data || data.length === 0) return <ChartEmpty className={className} />;
+
   return (
     <CustomCard
       className={cn(
@@ -133,6 +135,28 @@ export function ChartError({
             다시 시도
           </button>
         )}
+      </div>
+    </div>
+  );
+}
+
+export function ChartEmpty({
+  className,
+  message = "데이터가 없습니다.",
+}: {
+  className?: string;
+  message?: string;
+}) {
+  return (
+    <div
+      className={cn(
+        "flex items-center justify-center rounded-xl bg-white shadow-md",
+        className,
+      )}
+    >
+      <div className="flex flex-col items-center gap-2 text-description">
+        <span className="text-2xl">📭</span>
+        <span className="text-xs">{message}</span>
       </div>
     </div>
   );
