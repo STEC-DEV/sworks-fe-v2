@@ -1,6 +1,5 @@
 import CustomCard from "@/components/common/card";
 import { useVocTrend } from "@/hooks/dashboard/useVocTrend";
-import { useSecondCard } from "@/hooks/useDashboard";
 import { cn } from "@/lib/utils";
 import React from "react";
 import {
