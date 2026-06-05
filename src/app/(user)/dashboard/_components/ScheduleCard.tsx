@@ -37,8 +37,10 @@ function isPastSchedule(dates: string, endTime: string) {
 }
 
 export const DashScheduleItem = ({ item }: { item: DashSch }) => {
-  function formatTime(startTime: string) {
-    throw new Error("Function not implemented.");
+  function formatTime(time: string) {
+    if (!time) return "";
+    // "09:30:00" → Date 객체로 변환 후 "09:30" 형식으로
+    return format(parse(time, "HH:mm:ss", new Date()), "HH:mm");
   }
 
   return (
