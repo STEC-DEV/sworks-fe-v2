@@ -41,11 +41,11 @@ const DashboardPage = () => {
       <div className="flex-1 min-h-0 xl:flex gap-6">
         {/* 왼쪽 - min-h-0 추가, 브라켓 추가 */}
         <div className="xl:flex-[8]  xl:grid xl:grid-cols-3 xl:grid-rows-5 gap-6">
-          <VocTrendChart className="col-span-3 row-span-3 " />
+          {/* <VocTrendChart className="col-span-3 row-span-3 " /> */}
           <TodayVocKpi className="col-start-1 row-start-4 col-span-1 row-span-1" />
           <MonthVocKpi className="col-start-1 row-start-5 col-span-1 row-span-1" />
 
-          <QeTrendChart className="col-span-2 row-span-2" />
+          {/* <QeTrendChart className="col-span-2 row-span-2" /> */}
         </div>
 
         {/* 오른쪽 - 브라켓 추가 */}
