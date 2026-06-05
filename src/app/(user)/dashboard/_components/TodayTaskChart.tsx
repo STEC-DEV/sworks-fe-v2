@@ -12,8 +12,9 @@ const TodayTaskChart = ({ className }: { className?: string }) => {
   if (isError || !data) return <ChartError className={className} />;
 
   const completeRate = (
-    data.completedCount /
-    (data.completedCount + data.inProgressCount + data.notStartedCount)
+    (data.completedCount /
+      (data.completedCount + data.inProgressCount + data.notStartedCount)) *
+    100
   ).toFixed(2);
   return (
     <CustomCard
