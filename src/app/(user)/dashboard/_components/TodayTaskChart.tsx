@@ -9,7 +9,12 @@ const TodayTaskChart = ({ className }: { className?: string }) => {
 
   if (isLoading) return <ChartLoading className={className} />;
 
-  if (isError) return <ChartError className={className} />;
+  if (isError || !data) return <ChartError className={className} />;
+
+  const completeRate = (
+    data.completedCount /
+    (data.completedCount + data.inProgressCount + data.notStartedCount)
+  ).toFixed(2);
   return (
     <CustomCard
       className={cn(
@@ -17,8 +22,14 @@ const TodayTaskChart = ({ className }: { className?: string }) => {
         className,
       )}
     >
-      <div className="text-sm font-medium text-[#1a2340] mb-2.5">
-        금일 업무 현황
+      <div className="flex items-center justify-between">
+        <div className="text-base font-bold text-[#1a2340]">금일 업무 현황</div>
+        <div className="flex items-center gap-2">
+          <span className="text-sm text-description-light">완료율</span>
+          <span className="text-lg font-extrabold text-[#1D9E75]">
+            {completeRate} %
+          </span>
+        </div>
       </div>
 
       {/* 세그먼트 바 */}

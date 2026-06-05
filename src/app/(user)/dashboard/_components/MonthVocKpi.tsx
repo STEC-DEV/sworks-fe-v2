@@ -40,7 +40,7 @@ const MonthVocKpi = ({ className }: { className?: string }) => {
         className,
       )}
     >
-      <div className="text-sm font-semibold text-description mb-1">
+      <div className="text-sm font-bold text-description mb-1">
         이번달 민원 처리율
       </div>
       <div className="text-3xl font-extrabold text-[#223377]">

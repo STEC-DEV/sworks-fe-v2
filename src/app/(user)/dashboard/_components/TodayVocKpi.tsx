@@ -18,7 +18,7 @@ const TodayVocKpi = ({ className }: { className?: string }) => {
         className,
       )}
     >
-      <div className="text-sm font-semibold text-description mb-1">
+      <div className="text-sm font-bold text-description mb-1">
         금일 민원 발생
       </div>
       <div className="text-3xl font-extrabold text-[#223377]">

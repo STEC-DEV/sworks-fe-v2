@@ -23,7 +23,7 @@ const QeTrendChart = ({ className }: { className?: string }) => {
 
   if (isError) return <ChartError className={className} />;
 
-  if (!data || data.length === 0) return <ChartEmpty className={className} />;
+  // if (!data || data.length === 0) return <ChartEmpty className={className} />;
 
   return (
     <CustomCard
@@ -32,9 +32,11 @@ const QeTrendChart = ({ className }: { className?: string }) => {
         className,
       )}
     >
-      <div className="text-sm font-medium text-[#1a2340] mb-2.5">
+      <div className="text-sm font-bold text-[#1a2340] mb-2.5">
         품질평가 점수 추이
-        <span className="font-normal text-description ml-1.5">최근 3개월</span>
+        <span className="text-xs font-semibold text-description ml-1.5">
+          최근 3개월
+        </span>
       </div>
       <div className="flex-1 min-h-0">
         <ResponsiveContainer width="100%" height="100%">
@@ -48,7 +50,13 @@ const QeTrendChart = ({ className }: { className?: string }) => {
                 <stop offset="100%" stopColor="#1D9E75" stopOpacity={0} />
               </linearGradient>
             </defs>
-            <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+            <CartesianGrid
+              // strokeDasharray="3 3" stroke="#f0f0f0"
+              strokeDasharray="3 3"
+              stroke="#cbd5e1" // #f0f0f0 → 더 진하게
+              strokeOpacity={0.8} // 불투명도 추가
+              vertical={false} // 세로선 제거하고 가로선만 (선택사항)
+            />
             <XAxis
               dataKey="dates"
               tick={{ fontSize: 11, fill: "var(--description)" }}

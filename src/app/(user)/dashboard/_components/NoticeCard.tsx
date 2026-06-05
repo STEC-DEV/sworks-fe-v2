@@ -13,7 +13,7 @@ const NoticeCard = ({ className }: { className?: string }) => {
   if (isError) return <ChartError className={className} />;
   return (
     <CustomCard className={cn("p-4 gap-0 border-none shadow-md", className)}>
-      <div className="text-sm font-medium text-[#1a2340] mb-2.5">
+      <div className="text-base font-bold text-[#1a2340] mb-2.5">
         최근 공지사항
       </div>
       <div className="overflow-auto">

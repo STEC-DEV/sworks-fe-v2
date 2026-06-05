@@ -19,7 +19,7 @@ const VocTrendChart = ({ className }: { className?: string }) => {
 
   if (isError) return <ChartError className={className} />;
 
-  if (!data || data.length === 0) return <ChartEmpty className={className} />;
+  // if (!data || data.length === 0) return <ChartEmpty className={className} />;
 
   return (
     <CustomCard
@@ -47,7 +47,13 @@ const VocTrendChart = ({ className }: { className?: string }) => {
                 <stop offset="100%" stopColor="#3B6FBF" stopOpacity={0} />
               </linearGradient>
             </defs>
-            <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+            <CartesianGrid
+              // strokeDasharray="3 3" stroke="#f0f0f0"
+              strokeDasharray="3 3"
+              stroke="#cbd5e1" // #f0f0f0 → 더 진하게
+              strokeOpacity={0.8} // 불투명도 추가
+              vertical={false} // 세로선 제거하고 가로선만 (선택사항)
+            />
             <XAxis
               dataKey="dates" // ← VocTransition.dates
               tick={{ fontSize: 11, fill: "var(--description)" }}
