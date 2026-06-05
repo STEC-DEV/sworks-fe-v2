@@ -50,9 +50,9 @@ const DashboardPage = () => {
 
         {/* 오른쪽 - 브라켓 추가 */}
         <div className="xl:flex-[3]  xl:flex xl:flex-col xl:gap-6">
-          {/* <TodayTaskChart className="flex-1" />
+          <TodayTaskChart className="flex-1" />
           <NoticeCard className="flex-2" />
-          <ScheduleCard className="flex-3" /> */}
+          <ScheduleCard className="flex-3" />
         </div>
       </div>
     </div>
