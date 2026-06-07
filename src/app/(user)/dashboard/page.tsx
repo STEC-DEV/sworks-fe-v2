@@ -25,7 +25,7 @@ const DashboardPage = () => {
       <div className="space-y-1 mb-8 shrink-0">
         <div>
           <span className="text-2xl font-extrabold">
-            안녕하세요, {loginProfile?.userName}님
+            안녕하세요. {loginProfile?.userName}님
           </span>
           <span className="text-xl font-bold text-description-light">
             · {enteredWorkplace?.siteName}
