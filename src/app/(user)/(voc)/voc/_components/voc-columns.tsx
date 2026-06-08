@@ -43,7 +43,7 @@ export const vocListCol: ColumnDef<VocListItem>[] = [
   },
   {
     accessorKey: "phone",
-    header: "전화번호",
+    header: "연락처",
     cell: ({ row }) => {
       const value = row.original.phone;
       return <span className="">{value}</span>;

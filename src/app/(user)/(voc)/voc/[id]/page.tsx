@@ -21,6 +21,7 @@ import { KeyValueItem } from "@/components/ui/custom/key-value";
 import { useUIStore } from "@/store/common/ui-store";
 import { useDecodeParam } from "@/hooks/params";
 import EmptyBox from "@/components/ui/custom/empty";
+import useDeleteVoc from "@/hooks/voc/useDeleteVoc";
 
 const VocProcessBadge = ({ value }: { value: number }) => {
   switch (value) {
@@ -100,6 +101,8 @@ const VocCard = ({
   const latestStatus =
     data.replys.length > 0 ? data.replys[data.replys.length - 1].status : null;
 
+  const { mutate: deleteVoc, isPending } = useDeleteVoc();
+
   return (
     <CustomCard className="gap-0 py-0 divide-y divide-border flex-shrink-0">
       {/* 메타바 */}
@@ -122,7 +125,7 @@ const VocCard = ({
               <>
                 <div className="w-0.25 h-5 bg-border-strong" />
                 <span className="text-xs text-description-light">
-                  📞 <strong className="text-white">{data.logs.phone}</strong>
+                  <strong className="text-white">{data.logs.phone}</strong>
                 </span>
               </>
             )}
@@ -132,7 +135,20 @@ const VocCard = ({
           </h1>
         </div>
         {/* 우측 버튼 */}
+
         <div className="flex items-center gap-2 flex-shrink-0">
+          <CheckDialog
+            title={dialogText.defaultDelete.title}
+            description={dialogText.defaultDelete.description}
+            actionLabel={dialogText.defaultDelete.actionLabel}
+            onClick={() => deleteVoc(data.logs.logSeq)}
+          >
+            <IconButton
+              icon="Trash2"
+              bgClassName="!rounded-DEFAULT  border bg-white/10 border-white/20 hover:border-destructive hover:bg-white/30 shadow-sm"
+              className="text-white group-hover:text-destructive"
+            />
+          </CheckDialog>
           <BaseDialog
             title="담당 유형 수정"
             triggerChildren={
